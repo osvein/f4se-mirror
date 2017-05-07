@@ -116,9 +116,24 @@
     <ClCompile Include="GameUtilities.cpp">
       <Filter>api</Filter>
     </ClCompile>
+    <ClCompile Include="GameExtraData.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInput.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="GameRTTI.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="BSSkin.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
+    <None Include="GameRTTI.inl">
+      <Filter>api</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="api">
@@ -254,6 +269,18 @@
     </ClInclude>
     <ClInclude Include="GameUtilities.h">
       <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="GameExtraData.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInput.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRTTI.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="BSSkin.h">
+      <Filter>netimmerse</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

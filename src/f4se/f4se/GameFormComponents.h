@@ -2,6 +2,7 @@
 
 #include "f4se/GameTypes.h"
 #include "f4se/NiObjects.h"
+#include "f4se/GameEvents.h"
 
 class BGSEquipSlot;
 class EnchantmentItem;
@@ -22,6 +23,10 @@ class BGSBodyPartData;
 class BGSTextureSet;
 class BGSMaterialSwap;
 class BGSTerminal;
+class BGSObjectInstanceExtra;
+class TESObjectARMA;
+class IAnimationGraphManagerHolder;
+class ExtraDataList;
 
 // 10
 class TBO_InstanceData : public BSIntrusiveRefCounted
@@ -705,4 +710,74 @@ class IPostAnimationChannelUpdateFunctor
 	virtual ~IPostAnimationChannelUpdateFunctor();
 
 	virtual void	Unk_01();
+};
+
+// ??
+class ActorEquipData
+{
+public:
+	UInt64	unk00;					// 00
+	NiNode	* flattenedBoneTree;	// 08
+
+	enum
+	{
+		kMaxSlots = 44
+	};
+
+	// 58
+	struct SlotData
+	{
+		TESForm				* item;			// 00 - not necessarily ARMO
+		TBO_InstanceData	* instanceData;	// 08
+		BGSObjectInstanceExtra * extraData;	// 10
+		TESObjectARMA		* arma;			// 18
+		BGSMaterialSwap		* materialSwap;	// 20
+		BGSTextureSet		* textureSet;	// 28
+		NiNode				* node;			// 30
+		void				* unk38;		// 38
+		IAnimationGraphManagerHolder	* unk40;			// 40
+		UInt64				unk48;			// 48
+		UInt32				unk50;			// 50
+		UInt32				unk54;			// 54
+	};
+
+	SlotData	slots[kMaxSlots];
+};
+
+// 10
+struct BGSInventoryItem
+{
+	TESForm * form;	// 00
+
+	// 28
+	class Stack : public BSIntrusiveRefCounted
+	{
+	public:
+		virtual ~Stack();
+
+		Stack	* next;		// 10
+		ExtraDataList	* extraData;	// 18
+		UInt32	unk20;		// 20
+		UInt16	unk24;		// 24
+
+#ifdef _DEBUG
+		void Dump();
+#endif
+	};
+
+#ifdef _DEBUG
+	void Dump();
+#endif
+
+	Stack * stack;	// 08
+};
+
+// ??
+class BGSInventoryList
+{
+public:
+	UInt64	unk00;	// 00
+	tArray<BSTEventSink<BGSInventoryListEvent::Event>> eventSinks;	// 08
+	UInt64	unk20[(0x58-0x20)/8];
+	tArray<BGSInventoryItem> items;
 };

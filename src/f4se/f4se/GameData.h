@@ -1,5 +1,6 @@
 #pragma once
 
+#include "f4se_common/Utilities.h"
 #include "f4se_common/Relocation.h"
 #include "f4se/GameTypes.h"
 #include "f4se/GameForms.h"
@@ -15,7 +16,41 @@ class EffectSetting;
 class TESObjectARMO;
 class TESObjectARMA;
 class TESObjectCONT;
+class TESObjectCELL;
+class TESRegionList;
+class BGSAddonNode;
 
+struct ModInfo		// referred to by game as TESFile
+{
+	ModInfo();
+	~ModInfo();
+
+	UInt64								unk00[10];			// 000
+	BSFile*								file;				// 050
+	UInt64								unk58;				// 058
+	UInt64								unk60;				// 060
+	void								* unk68;			// 068
+	char								name[MAX_PATH];		// 070
+	char								directory[MAX_PATH];	// 174
+	UInt64								unk278[0xF8/8];		// 278
+	UInt8								modIndex;			// 370
+	UInt8								pad[7];				// 371
+	BSString							author;				// 378
+	BSString							description;		// 388
+	// ...
+};
+
+STATIC_ASSERT(offsetof(ModInfo, author) == 0x378);
+
+struct ModList
+{
+	tList<ModInfo>		modInfoList;		// 00
+	UInt32				loadedModCount;		// 10
+	UInt32				pad14;				// 14
+	ModInfo*			loadedMods[0xFF];	// 18
+};
+
+// 17E8?
 class DataHandler
 {
 public:
@@ -184,6 +219,26 @@ public:
 	UnkFormArray						arrLSPR;	// Form Type 156
 	UnkFormArray						arrGDRY;	// Form Type 157
 	UnkFormArray						arrOVIS;	// Form Type 158
+
+	TESRegionList						* regionList;	// F50
+	NiTArray<TESObjectCELL*>			cellList;		// F58
+	NiTArray<BGSAddonNode*>				addonNodes;		// F70
+
+	UInt64								unkF88;			// F88
+	UInt64								unkF90;			// F90
+	UInt64								unkF98;			// F98
+	UInt32								unkFA0;			// FA0 - FormID?
+	UInt32								unkFA4;			// FA4
+	UInt64								unkFA8;			// FA8
+
+	ModList								modList;		// FB0
+
+	UInt64								unk17C0[(0x17E8-0x17C0)/8];	// F88
+
+	const ModInfo* LookupModByName(const char* modName);
+	UInt8 GetModIndex(const char* modName);
 };
+
+STATIC_ASSERT(offsetof(DataHandler, unk17C0) == 0x17C0);
 
 extern RelocPtr <DataHandler*> g_dataHandler;

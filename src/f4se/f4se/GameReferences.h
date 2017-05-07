@@ -10,6 +10,10 @@ class BSAnimationGraphEvent;
 
 class TESObjectCELL;
 class NiNode;
+class ExtraDataList;
+
+typedef TESForm* (* _LookupREFRByHandle)(UInt32 handle, TESObjectREFR ** ref);
+extern RelocAddr <_LookupREFRByHandle> LookupREFRByHandle;
 
 // 10
 class BSHandleRefObject : public NiRefObject
@@ -124,7 +128,7 @@ public:
 	virtual void	Unk_9D();
 	virtual void	Unk_9E();
 	virtual void	Unk_9F();
-	virtual void	Unk_A0();
+	virtual ActorEquipData	** GetEquipData();
 	virtual void	Unk_A1();
 	virtual void	Unk_A2();
 	virtual void	Unk_A3();
@@ -189,8 +193,8 @@ public:
 	TESForm										* baseForm;				// E0
 	void										* unkE8;				// E8
 	void										* unkF0;				// F0 - Root node at 0x08
-	void										* unkF8;				// F8
-	void										* unk100;				// 100 - ExtraData?
+	BGSInventoryList							* inventoryList;		// F8
+	ExtraDataList								* extraDataList;		// 100 - ExtraData?
 	UInt32										unk104;					// 104
 	UInt32										unk108;					// 108
 };
@@ -323,7 +327,9 @@ public:
 	BSTEventSink<bhkNonSupportContactEvent>		nonSupportContact;		// 158
 	BSTEventSink<bhkCharacterStateChangeEvent>	characterStateChanged;	// 160
 
-	UInt64	unk168[(0x430-0x168)/8];	// 168
+	UInt64	unk168[(0x3D0-0x168)/8];	// 168
+	ActorEquipData	* equipData;
+	UInt64	unk3D8[(0x430-0x3D8)/8];	// 3D8
 };
 
 // D90
@@ -343,7 +349,9 @@ public:
 	BSTEventSink<TESHitEvent>			hitEvent;			// 448
 	BSTEventSink<PerkEntryUpdatedEvent::PerkValueEvents>	perkValueEvents;	// 450
 
-	UInt64	unk458[(0xC88-0x458)/8];	// 458
+	UInt64	unk458[(0xB00-0x458)/8];	// 458
+	ActorEquipData	* playerEquipData;	// B00 - First person?
+	UInt64	unkB08[(0xC88-0xB08)/8];	// B08
 	tArray<BGSCharacterTint::Entry*> * tints;	// C88
 	UInt64	unkC90[(0xD90-0xC90)/8];	// C90
 };

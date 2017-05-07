@@ -151,7 +151,7 @@ public:
 	UInt64						unk2C0;					// 2C0
 	TESFaction					* unk2C8;				// 2C8
 	BGSHeadPart					** headParts;			// 2D0
-	void						* unk2D8;				// 2D8
+	tArray<float>				* unk2D8;				// 2D8 - 5 elements
 	void						* unk2E0;				// 2E0
 	UInt8						numHeadParts;			// 2E8
 	UInt8						unk2E9;					// 2E9
@@ -159,15 +159,27 @@ public:
 	UInt8						unk2EB;					// 2EB
 	float						unk2EC;					// 2EC
 	UInt64						unk2F0;					// 2F0
-	void						* unk2F8;				// 2F8
+
+	// 30
+	struct Data2
+	{
+		UInt64	unk00;
+		UInt64	unk08;
+		UInt64	unk10;
+		UInt64	unk18;
+		UInt64	unk20;
+		UInt64	unk28;
+	};
+
+	Data2						* unk2F8;				// 2F8
 	tArray<BGSCharacterTint::Entry*> * tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00580ED0);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x00592400);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x00592510);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005925A0);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x00574FB0); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00589CC0);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x0059B200);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x0059B310);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x0059B3A0);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0057DDA0); // npc->actorData.unk08 & 1
 	
 };
 STATIC_ASSERT(offsetof(TESNPC, npcClass) == 0x240);
@@ -339,7 +351,9 @@ public:
 
 	BSTextureSet textureSet; // 68
 
-	UInt64		 unk78[(0x350-0x78)/8]; // 78
+	void		* unk78;				// 78
+	TESTexture	texture[8];				// 80
+	UInt64		unk100[(0x350-0x100)/8]; // 100
 };
 STATIC_ASSERT(sizeof(BGSTextureSet) == 0x350);
 

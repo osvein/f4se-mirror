@@ -1,6 +1,7 @@
 #pragma once
 
 #include "f4se/NiObjects.h"
+#include "f4se/BSSkin.h"
 
 class NiProperty;
 
@@ -50,16 +51,63 @@ public:
 	virtual void Unk_3F();
 	virtual void Unk_40();
 
-	float	unk120[4];			// 120
-	NiProperty	* effectState;		// 130
-	NiProperty	* shaderProperty;	// 138
-	void	* skinInstance;		// 140
-	void	* unk148;			// 148
-	UInt64	unk150;				// 150
-	UInt8	unk158;				// 158
-	UInt8	unk159;				// 159
-	UInt16	pad15A;				// 15A
-	UInt32	unk15C;				// 15C
+	float	unk120[4];						// 120
+	NiProperty			* effectState;		// 130
+	NiProperty			* shaderProperty;	// 138
+	BSSkin::Instance	* skinInstance;		// 140
+
+	struct GeometryData
+	{
+		UInt64	flags;
+
+		struct VertexData
+		{
+			void * unk00;	// 00
+
+			struct Vertex
+			{
+				typedef UInt16 hfloat;
+				struct HalfVector3
+				{
+					hfloat	x;	// 00
+					hfloat	y;	// 02
+					hfloat	z;	// 04
+				};
+
+				HalfVector3 position;
+				hfloat		bitangent_x;
+				struct UV
+				{
+					hfloat u;
+					hfloat v;
+				} uv;
+				HalfVector3	normal;
+				UInt8		bitangent_y;
+				HalfVector3	tangent;
+				UInt8		bitangent_z;
+				hfloat		boneWeights[4];
+				UInt8		boneIndices[4];
+			};
+
+			Vertex	* vertices;	// 08
+		};
+
+		struct TriangleData
+		{
+			void	* unk00;		// 00 - same ptr as the one on vertexData
+			UInt16	* triangles;	// 08
+		};
+
+		VertexData		* vertexData;	// 08
+		TriangleData	* triangleData;	// 10
+	};
+
+	GeometryData	* geometryData;			// 148
+	UInt64	unk150;							// 150
+	UInt8	unk158;							// 158
+	UInt8	unk159;							// 159
+	UInt16	pad15A;							// 15A
+	UInt32	unk15C;							// 15C
 };
 STATIC_ASSERT(sizeof(BSGeometry) == 0x160);
 
@@ -67,8 +115,8 @@ STATIC_ASSERT(sizeof(BSGeometry) == 0x160);
 class BSTriShape : public BSGeometry
 {
 public:
-	UInt32	unk160;	// 160
-	UInt16	unk164;	// 164
+	UInt32	numTriangles;	// 160
+	UInt16	numVertices;	// 164
 	UInt16	unk166;	// 166
 	float	unk168;	// 168
 	float	unk16C;	// 16C

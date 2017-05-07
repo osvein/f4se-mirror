@@ -1,3 +1,8 @@
+0.1.6:
+- support for beta runtime 1.4.125
+- internal tools updates
+- more internal class decoding (inventory, input, netimmerse skin)
+
 0.1.5:
 - support for beta runtime 1.3.47
 - initial game menu support and utilities

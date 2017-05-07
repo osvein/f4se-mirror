@@ -71,7 +71,7 @@ public:
 	virtual ~BSGFxFunctionHandler();
 };
 
-class SWFToCodeFunctionHandler : public BSGFxFunctionHandler
+class SWFToCodeFunctionHandler : public GFxFunctionHandler
 {
 public:
 	virtual ~SWFToCodeFunctionHandler();

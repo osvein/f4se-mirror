@@ -27,12 +27,12 @@ public:
 			virtual void Unk_03();
 			virtual void Load(void * unk1) = 0; // Loads template from plugin stream
 
-			BSFixedString	name;		// 08
-			void			* unk10;	// 10
-			UInt32			unk18;		// 18
-			UInt16			unk1C;		// 1C
-			UInt8			unk1E;		// 1E
-			UInt8			unk1F;		// 1F
+			BSFixedString	name;			// 08
+			void			* unk10;		// 10
+			UInt32			unk18;			// 18
+			UInt16			templateIndex;	// 1C
+			UInt8			unk1E;			// 1E
+			UInt8			unk1F;			// 1F
 		};
 
 		// 30
@@ -44,7 +44,7 @@ public:
 			virtual void Unk_03();
 			virtual void Load(void * unk1);
 
-			void	* unk20;	// 20
+			BSFixedString texture;	// 20
 			UInt32	unk28;		// 28
 			UInt32	unk2C;		// 2C
 		};
@@ -68,7 +68,7 @@ public:
 				UInt32		unk14;			// 14
 			};
 
-			BSFixedString texturePath;	// 20
+			BSFixedString texture;		// 20
 			UInt32	unk28;				// 28
 			UInt32	unk2C;				// 2C
 			tArray<ColorData>	colors;	// 30
@@ -83,9 +83,9 @@ public:
 			virtual void Unk_03();
 			virtual void Load(void * unk1);
 
-			BSFixedString texturePath;	// 20
-			BSFixedString unk28;	// 28
-			BSFixedString unk30;	// 30
+			BSFixedString diffuse;	// 20
+			BSFixedString normal;	// 28
+			BSFixedString specular;	// 30
 			UInt32	unk38;		// 38
 			UInt32	unk3C;		// 3C
 		};
@@ -104,8 +104,15 @@ public:
 		virtual UInt32 GetType(void) = 0;
 		virtual void Unk_06(void);
 
+		enum
+		{
+			kTypeMask = 0,
+			kTypePalette,
+			kTypeTexture
+		};
+
 		Template * templateEntry;	// 08
-		UInt16		unk10;			// 10
+		UInt16		tintIndex;		// 10
 		UInt8		unk12;			// 12	divided by 100
 		UInt8		pad13;			// 13
 		UInt32		pad14;			// 14

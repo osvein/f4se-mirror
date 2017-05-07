@@ -39,8 +39,8 @@ struct ObScriptCommand
 
 enum
 {
-	kObScript_NumObScriptCommands =	0x0330,
-	kObScript_NumConsoleCommands =	0x01F9,
+	kObScript_NumObScriptCommands =	0x0331,
+	kObScript_NumConsoleCommands =	0x0203,
 
 	kObScript_ScriptOpBase =		0x1000,
 	kObScript_ConsoleOpBase =		0x0100,

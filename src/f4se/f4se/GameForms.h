@@ -24,7 +24,6 @@ class BGSMusicType;
 typedef TESForm* (* _LookupFormByID)(UInt32 id);
 extern RelocAddr <_LookupFormByID> LookupFormByID;
 
-
 /**** form types ***************************************************************
 *	
 *
@@ -709,7 +708,7 @@ public:
 	UInt32				flags;			// 30
 };
 
-// 6B0
+// 6C8
 class TESRace : public TESForm
 {
 public:
@@ -735,12 +734,13 @@ public:
 	BGSVoiceType		* voiceType[2];	// 368
 	BGSBodyPartData		* bodyPartData;	// 378
 	BGSSoundTagComponent	unk380;	// 380
-	BSFixedString		editorId; // 388
-	BGSMaterialType		* materialType;	// 390
-	void				* unk398;		// 398
-	BGSTextureSet		* textureSets[2];	// 3A0
-	BGSSoundDescriptorForm * soundDescriptors[2]; // 3B0
-	BSFixedString		bipedObjectNames[0x20]; // 3C0
+	BGSAttachParentArray	unk388;	// 388
+	BSFixedString		editorId; // 3A0
+	BGSMaterialType		* materialType;	// 3A8
+	void				* unk3B0;		// 3B0
+	BGSTextureSet		* textureSets[2];	// 3B8
+	BGSSoundDescriptorForm * soundDescriptors[2]; // 3C8
+	BSFixedString		bipedObjectNames[0x20]; // 3D8
 
 	// 48+
 	struct CharGenData
@@ -756,14 +756,14 @@ public:
 		tArray<UInt64>			* unk40;			// 40
 	};
 
-	UInt64				unk4C0[(0x680-0x4C0)/8];	// 4C0
-	CharGenData			* chargenData[2];			// 680
-	void				* unk690[2];				// 690
-	TESTexture			unk6A0;						// 6A0
+	UInt64				unk4C0[(0x698-0x4D8)/8];	// 4D8
+	CharGenData			* chargenData[2];			// 698
+	void				* unk6A8[2];				// 6A8
+	TESTexture			unk6B8;						// 6B8
 };
 
-STATIC_ASSERT(offsetof(TESRace, chargenData) == 0x680);
-STATIC_ASSERT(sizeof(TESRace) == 0x6B0);
+STATIC_ASSERT(offsetof(TESRace, chargenData) == 0x698);
+STATIC_ASSERT(sizeof(TESRace) == 0x6C8);
 
 // 48
 class BGSListForm : public TESForm
@@ -902,6 +902,25 @@ public:
 			void	* unk08;	// 08
 			void	* unk10;	// 10
 			void	* unk18;	// 18
+		};
+
+		// 38
+		class Item : public TESFullName
+		{
+		public:
+			virtual ~Item();
+
+			virtual void	Unk_07(void);
+			virtual void	Unk_08(void);
+
+			void	* unk08;	// 08
+			void	* unk10;	// 10
+			UInt32	unk18;		// 18
+			UInt32	unk1C;		// 1C
+			void	* unk20;		// 20
+			UInt64	unk28;		// 28
+			UInt32	unk30;		// 30
+			UInt8	unk34[4];	// 34
 		};
 	};
 
@@ -1044,4 +1063,11 @@ public:
 	UInt64					unk30;		// 30
 	UInt64					unk38;		// 38
 	UInt64					unk40;		// 40
+};
+
+// 38
+class BGSOutfit : public TESForm
+{
+public:
+	tArray<TESForm*>	forms;	// 20
 };
