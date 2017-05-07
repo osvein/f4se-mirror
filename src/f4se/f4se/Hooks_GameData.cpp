@@ -8,11 +8,11 @@
 #include "f4se/PluginManager.h"
 
 typedef UInt64 (* _InitGameDataThread_Run_Original)(InitGameDataThread * thread);
-RelocAddr <_InitGameDataThread_Run_Original> InitGameDataThread_Run_Original(0x00D01880);
+RelocAddr <_InitGameDataThread_Run_Original> InitGameDataThread_Run_Original(0x00D026A0);
 
 typedef void (* _GameDataReady_Original)(bool isReady);
 // writes to g_isGameDataReady
-RelocAddr <_GameDataReady_Original> GameDataReady_Original(0x0080EAF0);
+RelocAddr <_GameDataReady_Original> GameDataReady_Original(0x0080EC80);
 
 UInt64 InitGameDataRun_Hook(InitGameDataThread * thread)
 {
@@ -35,7 +35,7 @@ void Hooks_GameData_Init()
 
 void Hooks_GameData_Commit()
 {
-	RelocAddr <uintptr_t> InitGameDataThread_Run(0x02BECA38 + 8); // InitGameDataThread vtable func1
+	RelocAddr <uintptr_t> InitGameDataThread_Run(0x02BEEC68 + 8); // InitGameDataThread vtable func1
 
 	SafeWrite64(InitGameDataThread_Run.GetUIntPtr(), (UInt64)InitGameDataRun_Hook);
 	g_branchTrampoline.Write6Branch(GameDataReady_Original.GetUIntPtr(), (uintptr_t)GameDataReady_Hook);

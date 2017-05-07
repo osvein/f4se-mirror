@@ -351,7 +351,7 @@ public:
 	UInt64	unk430[(0x490-0x430)/8];	// 430
 
 	MEMBER_FN_PREFIX(Actor);
-	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D37CF0, bool bDoFaceGen, UInt32 unk2, bool unk3, UInt32 unk4); // 0, 0, 1, 0
+	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D38B10, bool bDoFaceGen, UInt32 unk2, bool unk3, UInt32 unk4); // 0, 0, 1, 0
 };
 
 // E00

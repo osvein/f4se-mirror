@@ -68,7 +68,7 @@ public:
 		UInt32		pad0C;
 
 		MEMBER_FN_PREFIX(ParameterInfo);
-		DEFINE_MEMBER_FN(GetParam, UInt64, 0x025D64B0, UInt32 idx, BSFixedString * outName, UInt64 * outType);
+		DEFINE_MEMBER_FN(GetParam, UInt64, 0x025D7E40, UInt32 idx, BSFixedString * outName, UInt64 * outType);
 	};
 
 	virtual BSFixedString *	GetName()							{ return &m_fnName; }
@@ -98,9 +98,9 @@ public:
 	virtual bool			Run(VMValue * baseValue, VirtualMachine * vm, UInt32 arg2, VMValue * resultValue, VMState * state) = 0;
 
 	MEMBER_FN_PREFIX(NativeFunctionBase);
-	DEFINE_MEMBER_FN(Impl_Invoke, UInt32, 0x025D5C00, void * arg0, void * arg1, VirtualMachine * arg2, VMState * arg3);
-	DEFINE_MEMBER_FN(Impl_GetSourceFile, BSFixedString *, 0x025D5AD0);
-	DEFINE_MEMBER_FN(Impl_GetParamName, bool, 0x025D5AF0, UInt32 idx, BSFixedString * out);
+	DEFINE_MEMBER_FN(Impl_Invoke, UInt32, 0x025D7590, void * arg0, void * arg1, VirtualMachine * arg2, VMState * arg3);
+	DEFINE_MEMBER_FN(Impl_GetSourceFile, BSFixedString *, 0x025D7460);
+	DEFINE_MEMBER_FN(Impl_GetParamName, bool, 0x025D7480, UInt32 idx, BSFixedString * out);
 
 protected:
 	BSFixedString	m_fnName;		// 10
@@ -130,8 +130,8 @@ public:
 	virtual bool	Run(VMValue * baseValue, VirtualMachine * vm, UInt32 arg2, VMValue * resultValue, VMState * state) = 0;
 
 	MEMBER_FN_PREFIX(NativeFunction);
-	DEFINE_MEMBER_FN(Impl_ctor, NativeFunction *, 0x025D6100, const char * fnName, const char * className, UInt32 unk0, UInt32 numParams);
-	DEFINE_MEMBER_FN(Impl_dtor, void, 0x025D6320);
+	DEFINE_MEMBER_FN(Impl_ctor, NativeFunction *, 0x025D7A90, const char * fnName, const char * className, UInt32 unk0, UInt32 numParams);
+	DEFINE_MEMBER_FN(Impl_dtor, void, 0x025D7CB0);
 
 protected:
 	void	* m_callback;	// 50

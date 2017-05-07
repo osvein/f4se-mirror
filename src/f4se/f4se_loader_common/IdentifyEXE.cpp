@@ -190,6 +190,12 @@ bool IdentifyEXE(const char * procName, bool isEditor, std::string * dllSuffix, 
 		return false;
 	}
 
+	if(productName == "Fallout 4 Launcher")
+	{
+		PrintLoaderError("You have instructed f4se_loader to run the vanilla Fallout 4 launcher, which cannot work. Most likely you have renamed files incorrectly.");
+		return false;
+	}
+
 	// check protection type
 	if(!ScanEXE(procName, hookInfo))
 	{
@@ -208,15 +214,39 @@ bool IdentifyEXE(const char * procName, bool isEditor, std::string * dllSuffix, 
 
 	bool result = false;
 
-	const UInt64 kCurVersion = 0x0001000501330000;	// 1.5.307.0
+	const UInt64 kCurVersion = 0x00010005019C0000;	// 1.5.412.0
+
+	// convert version resource to internal version format
+	UInt32 versionInternal = MAKE_EXE_VERSION(version >> 48, version >> 32, version >> 16);
 
 	if(version < kCurVersion)
 	{
-		PrintLoaderError("Please update to the latest version of %s.", (isEditor ? "the editor" : "Fallout 4"));
+#if F4SE_TARGETING_BETA_VERSION
+		if(versionInternal == CURRENT_RELEASE_RUNTIME)
+			PrintLoaderError(
+				"You are using the version of F4SE intended for the Steam beta branch (%d.%d.%d).\n"
+				"Download and install the non-beta branch version (%s) from http://f4se.silverlock.org/.",
+				F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA, CURRENT_RELEASE_F4SE_STR);
+		else
+			PrintLoaderError(
+				"You are using Fallout version %d.%d.%d, which is out of date and incompatible with this version of F4SE. Update to the latest beta version.",
+				GET_EXE_VERSION_MAJOR(versionInternal), GET_EXE_VERSION_MINOR(versionInternal), GET_EXE_VERSION_BUILD(versionInternal));
+#else
+		PrintLoaderError(
+			"You are using Fallout version %d.%d.%d, which is out of date and incompatible with this version of F4SE. Update to the latest version.",
+			GET_EXE_VERSION_MAJOR(versionInternal), GET_EXE_VERSION_MINOR(versionInternal), GET_EXE_VERSION_BUILD(versionInternal));
+#endif
 	}
 	else if(version > kCurVersion)
 	{
-		PrintLoaderError("You are using a newer version of %s than this version of F4SE supports. If the patch to this version just came out, please be patient while we update our code. In the meantime, please check http://f4se.silverlock.org to make sure you're using the latest version of F4SE. (version = %016I64X %08X)", (isEditor ? "the editor" : "Fallout 4"), version, PACKED_F4SE_VERSION);
+		PrintLoaderError(
+			"You are using a newer version of Fallout than this version of F4SE supports.\n"
+			"If this version just came out, please be patient while we update our code.\n"
+			"In the meantime, please check http://f4se.silverlock.org for updates.\n"
+			"Runtime: %d.%d.%d\n"
+			"F4SE: %d.%d.%d",
+			GET_EXE_VERSION_MAJOR(versionInternal), GET_EXE_VERSION_MINOR(versionInternal), GET_EXE_VERSION_BUILD(versionInternal),
+			F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA);
 	}
 	else if(isEditor)
 	{
@@ -241,7 +271,7 @@ bool IdentifyEXE(const char * procName, bool isEditor, std::string * dllSuffix, 
 		{
 		case kProcType_Steam:
 		case kProcType_Normal:
-			*dllSuffix = "1_5_307";
+			*dllSuffix = "1_5_412";
 
 			result = true;
 

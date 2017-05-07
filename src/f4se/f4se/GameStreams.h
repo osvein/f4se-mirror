@@ -51,15 +51,15 @@ public:
 	UInt32	unk2C;		// 2C
 
 	MEMBER_FN_PREFIX(BSResourceNiBinaryStream);
-	DEFINE_MEMBER_FN(Construct, BSResourceNiBinaryStream *, 0x01B1FEE0, const char * filePath, UInt8 unk1, UInt64 unk2, SInt8 unk3);	// unk1 = 0, unk2 = 0, unk3 = 0
-	DEFINE_MEMBER_FN(ReadLine, UInt32, 0x01B203E0, char * dst, UInt32 dstLen, UInt32 terminator);
-	DEFINE_MEMBER_FN(Destroy, void, 0x01B201A0);	// ??_7BSResourceNiBinaryStream@@6B@ first entry
-	DEFINE_MEMBER_FN(IsValid, bool, 0x01B202C0, void);
-	DEFINE_MEMBER_FN(Seek, void, 0x01B202D0, SInt64);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x01B20330, void);
-	DEFINE_MEMBER_FN(Unk_04, SInt64, 0x01B20340, void * unk1);
-	DEFINE_MEMBER_FN(Read, UInt32, 0x01B204A0, void * buf, UInt64 length);
-	DEFINE_MEMBER_FN(Write, UInt32, 0x01B20530, void * buf, UInt64 length);
+	DEFINE_MEMBER_FN(Construct, BSResourceNiBinaryStream *, 0x01B20DD0, const char * filePath, UInt8 unk1, UInt64 unk2, SInt8 unk3);	// unk1 = 0, unk2 = 0, unk3 = 0
+	DEFINE_MEMBER_FN(ReadLine, UInt32, 0x01B212D0, char * dst, UInt32 dstLen, UInt32 terminator);
+	DEFINE_MEMBER_FN(Destroy, void, 0x01B21090);	// ??_7BSResourceNiBinaryStream@@6B@ first entry
+	DEFINE_MEMBER_FN(IsValid, bool, 0x01B211B0, void);
+	DEFINE_MEMBER_FN(Seek, void, 0x01B211C0, SInt64);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x01B21220, void);
+	DEFINE_MEMBER_FN(Unk_04, SInt64, 0x01B21230, void * unk1);
+	DEFINE_MEMBER_FN(Read, UInt32, 0x01B21390, void * buf, UInt64 length);
+	DEFINE_MEMBER_FN(Write, UInt32, 0x01B21420, void * buf, UInt64 length);
 
 	UInt32 ReadLine(char * dst, UInt32 dstLen, UInt32 terminator);
 	UInt32 ReadLine_w(wchar_t * dst, UInt32 dstLen, UInt32 terminator);	// length in characters

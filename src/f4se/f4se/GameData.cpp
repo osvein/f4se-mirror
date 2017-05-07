@@ -1,10 +1,10 @@
 #include "f4se/GameData.h"
 
 // 856197F11173AF60E35EBF54A88E7BF43AFC3588+305
-RelocPtr <DataHandler*> g_dataHandler(0x05712F00);
+RelocPtr <DataHandler*> g_dataHandler(0x05715000);
 
 // C5B21010DCF340FCDDDC7866C50C3D78AEF34CB5+6B
-RelocPtr <bool> g_isGameDataReady(0x0589CD34);
+RelocPtr <bool> g_isGameDataReady(0x0589EE34);
 
 class LoadedModFinder
 {

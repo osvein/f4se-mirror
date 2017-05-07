@@ -37,5 +37,5 @@ public:
 	void * unk10[(0x60 - 0x10) >> 3];	// 10
 
 	MEMBER_FN_PREFIX(BSShaderTextureSet);
-	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004B01F0);
+	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004B0100);
 };
