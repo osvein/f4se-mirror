@@ -672,6 +672,22 @@ public:
 //172               ActionLegsCritical
 };
 
+// 190
+class ActorValueInfo : public TESForm
+{
+public:
+	TESFullName			fullName;		// 20
+	TESDescription		description;	// 30
+
+	void	* func_impl;	// 48
+	void	* func;			// 50
+	void	* unk58;		// 58
+	void	* func_ptr;		// 60 - address of offset 48
+	const char * avName;	// 68
+
+	UInt64	unk70[(0x190-0x70)/8];	// 70
+};
+
 // 80
 class BGSMaterialType : public TESForm
 {
@@ -759,6 +775,7 @@ public:
 	};
 
 	// 10
+	template<int T>
 	struct BoneScale // (BSMB/BSMS) pair
 	{
 		BSFixedString	bone;		// 00
@@ -768,16 +785,16 @@ public:
 
 		void Dump(void)
 		{
-			_MESSAGE("\t\tkey: %08X ", bone->Get<char>());
-			for(UInt32 i = 0; i < 8; i++)
+			_MESSAGE("\t\tkey: %s", bone->Get<char>());
+			for(UInt32 i = 0; i < T; i++)
 				_MESSAGE("\t\tdata: %f", value[i]);
 		}
 	};
 
 	struct BoneScaleMap
 	{
-		tLinkedHashSet<BoneScale, BSFixedString>	weightMap1;	// value array length 8
-		tLinkedHashSet<BoneScale, BSFixedString>	weightMap2;	// value array length 4
+		tHashSet<BoneScale<8>, BSFixedString>	weightMap1;	// value array length 8
+		tHashSet<BoneScale<4>, BSFixedString>	weightMap2;	// value array length 4
 	};
 
 	UInt64				unk4C0[(0x698-0x4D8)/8];	// 4D8

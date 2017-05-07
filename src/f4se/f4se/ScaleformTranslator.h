@@ -45,6 +45,6 @@ typedef tHashSet<TranslationTableItem, BSFixedString> TranslationTable;
 class BSScaleformTranslator : public GFxTranslator
 {
 public:
-	UInt64 unk18[(0x28- 0x18) / 8];	// 18
-	TranslationTable	translations;	// 28
+	UInt64 unk18[(0x20- 0x18) / 8];		// 18
+	TranslationTable	translations;	// 20
 };

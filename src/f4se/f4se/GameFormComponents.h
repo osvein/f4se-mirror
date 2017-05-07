@@ -27,6 +27,7 @@ class BGSObjectInstanceExtra;
 class TESObjectARMA;
 class IAnimationGraphManagerHolder;
 class ExtraDataList;
+class ActorValueInfo;
 
 // 10
 class TBO_InstanceData : public BSIntrusiveRefCounted
@@ -428,11 +429,20 @@ public:
 	UInt32	pad14;		// 14
 };
 
+
 // 10
 class BGSPropertySheet : public BaseFormComponent
 {
 public:
-	void	* unk08;	// 08
+
+	struct AVIFProperty
+	{
+		ActorValueInfo * actorValue;	// 00
+		float			value;			// 08
+		UInt32			pad0C;			// 0C
+	};
+
+	tArray<AVIFProperty>	* sheet;	// 08
 };
 
 // 10
@@ -561,31 +571,33 @@ public:
 	//	void	** _vtbl;	// 00
 };
 
-// 08
+// 10
 class TESWeightForm : public BaseFormComponent
 {
 public:
-	float	weight;	// 04
-	UInt32	padding;
+	float	weight;	// 08
+	UInt32	pad0C;	// 0C
 };
 
-// 08
+// 10
 class BGSCraftingUseSound : public BaseFormComponent
 {
 public:
-	UInt64	unk04;	// 04
+	UInt64	unk08;	// 08
 };
 
-class BGSMenuDisplayObject : BaseFormComponent
+// 10
+class BGSMenuDisplayObject : public BaseFormComponent
 {
 public:
-	UInt64	unk04;
+	UInt64	unk08;	// 08
 };
 
+// 10
 class TESValueForm : public BaseFormComponent
 {
 public:
-	UInt64 unk04;	// 04
+	UInt64 unk08;	// 08
 };
 
 // 108

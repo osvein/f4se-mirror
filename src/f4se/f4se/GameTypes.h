@@ -578,6 +578,7 @@ public:
 
 STATIC_ASSERT(sizeof(tList<void *>) == 0x10);
 
+// 30
 template <typename Item, typename Key = Item>
 class tHashSet
 {
@@ -602,13 +603,14 @@ class tHashSet
 	// When creating a new tHashSet, init sentinel pointer with address of this entry
 	static _Entry sentinel;
 
-	UInt32		unk_000;		// 000
-	UInt32		m_size;			// 004
-	UInt32		m_freeCount;	// 008
-	UInt32		m_freeOffset;	// 00C
-	_Entry 		* m_eolPtr;		// 010
-	UInt64		unk_018;		// 018
-	_Entry		* m_entries;	// 020
+	void		* unk00;		// 000
+	UInt32		unk_000;		// 008
+	UInt32		m_size;			// 00C
+	UInt32		m_freeCount;	// 010
+	UInt32		m_freeOffset;	// 014
+	_Entry 		* m_eolPtr;		// 018
+	UInt64		unk_018;		// 020
+	_Entry		* m_entries;	// 028
 
 
 	_Entry * GetEntry(UInt32 hash) const
@@ -933,11 +935,3 @@ public:
 
 template <typename Key, typename Item>
 typename tHashSet<Key,Item>::_Entry tHashSet<Key,Item>::sentinel = tHashSet<Key,Item>::_Entry();
-
-template <typename Item, typename Key = Item>
-class tLinkedHashSet
-{
-public:
-	void				* nextHash;	// 00
-	tHashSet<Item, Key>	hash;	// 08
-};

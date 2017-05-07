@@ -4,8 +4,8 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	1
-#define F4SE_VERSION_INTEGER_BETA	7
-#define F4SE_VERSION_VERSTRING		"0, 0, 1, 7"
+#define F4SE_VERSION_INTEGER_BETA	8
+#define F4SE_VERSION_VERSTRING		"0, 0, 1, 8"
 #define F4SE_VERSION_PADDEDSTRING	"0001"
 #define F4SE_VERSION_RELEASEIDX		1
 
@@ -21,6 +21,7 @@
 #define RUNTIME_VERSION_1_4_124	MAKE_EXE_VERSION(1, 4, 124)	// 0x010407C0	beta - preliminary internal mod manager
 #define RUNTIME_VERSION_1_4_125	MAKE_EXE_VERSION(1, 4, 125)	// 0x010407D0	beta - released same day as previous version. about 300K smaller
 #define RUNTIME_VERSION_1_4_131	MAKE_EXE_VERSION(1, 4, 131)	// 0x01040830	beta - 
+#define RUNTIME_VERSION_1_4_132	MAKE_EXE_VERSION(1, 4, 132)	// 0x01040840	released without a beta version 
 
 #define PACKED_F4SE_VERSION		MAKE_EXE_VERSION(F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA)
 

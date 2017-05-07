@@ -26,7 +26,8 @@ BGSCharacterTint::Template::Entry * TESRace::CharGenData::GetTemplateByIndex(UIn
 	return nullptr;
 }
 
-UInt32 TESRace::BoneScale::GetHash(const BSFixedString * key)
+template<int T>
+UInt32 TESRace::BoneScale<T>::GetHash(const BSFixedString * key)
 {
 	UInt32 hash;
 	CalculateCRC32_64(&hash, (UInt64)(*key)->Get<char>(), 0);

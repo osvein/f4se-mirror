@@ -60,12 +60,12 @@ public:
 
 			struct ColorData
 			{
-				BGSColorForm * colorForm;	// 00
-				float		unk08;			// 08
-				UInt32		unk0C;			// 0C
-				UInt16		unk10;			// 10
-				UInt16		unk12;			// 12
-				UInt32		unk14;			// 14
+				BGSColorForm	* colorForm;	// 00
+				float			alpha;			// 08
+				UInt32			unk0C;			// 0C
+				UInt16			colorID;		// 10
+				UInt16			unk12;			// 12
+				UInt32			unk14;			// 14
 			};
 
 			BSFixedString texture;		// 20
@@ -145,9 +145,9 @@ public:
 		virtual UInt32 GetType(void);	// 1
 		virtual void Unk_06(void);
 
-		SInt32	unk18;	// 18
-		SInt16	unk1C;	// 1C
-		UInt16	pad1E;	// 1E
+		SInt32	color;		// 18
+		SInt16	colorID;	// 1C - ID of the color from the template's list
+		UInt16	pad1E;		// 1E
 	};
 
 	// 18
@@ -229,8 +229,18 @@ public:
 			UInt64			unk10;		// 10
 			BSFixedString	bone;		// 18
 			float			* values;	// 20
+
+			void Dump(void)
+			{
+				_MESSAGE("\t\tkey: %16lX bone: %s unk08: %16lX unk10: %16lX", key, bone ? bone->Get<char>() : "", unk08, unk10);
+				if(values)
+				{
+					for(UInt32 i = 0; i < 4; i++)
+						_MESSAGE("\t\tdata: %f", values[i]);
+				}
+			}
 		};
-		tLinkedHashSet<Data>	dataSet;		// 40
+		tHashSet<Data>			dataSet;		// 40
 		UInt64					unk70;			// 70
 		UInt64					unk78;			// 78
 		UInt64					unk80;			// 80

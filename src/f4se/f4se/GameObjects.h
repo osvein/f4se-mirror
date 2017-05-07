@@ -183,7 +183,7 @@ public:
 		}
 	};
 
-	tLinkedHashSet<FaceMorphRegion>		* morphRegionData;	// 2E0 - (key links to CharacterCreation::FaceMorphRegion::index)
+	tHashSet<FaceMorphRegion>			* morphRegionData;	// 2E0 - (key links to CharacterCreation::FaceMorphRegion::index)
 	UInt8								numHeadParts;		// 2E8
 	UInt8								unk2E9;				// 2E9
 	UInt8								unk2EA;				// 2EA
@@ -193,15 +193,15 @@ public:
 	UInt8								unk2EE;				// 2EE
 	UInt8								unk2EF;				// 2EF
 	UInt64								unk2F0;				// 2F0
-	tLinkedHashSet<MorphSetData>		* morphSetData;		// 2F8 - (key links to CharacterCreation::MorphGroup::Preset::index)
+	tHashSet<MorphSetData>				* morphSetData;		// 2F8 - (key links to CharacterCreation::MorphGroup::Preset::index)
 	tArray<BGSCharacterTint::Entry*>	* tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00589E00);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x0059B340);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x0059B450);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x0059B4E0);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0057DEE0); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00589CE0);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x0059B220);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x0059B330);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x0059B3C0);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0057DDC0); // npc->actorData.unk08 & 1
 	
 };
 STATIC_ASSERT(offsetof(TESNPC, npcClass) == 0x240);
