@@ -4,8 +4,8 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	1
-#define F4SE_VERSION_INTEGER_BETA	17
-#define F4SE_VERSION_VERSTRING		"0, 0, 1, 17"
+#define F4SE_VERSION_INTEGER_BETA	18
+#define F4SE_VERSION_VERSTRING		"0, 0, 1, 18"
 #define F4SE_VERSION_PADDEDSTRING	"0001"
 #define F4SE_VERSION_RELEASEIDX		1
 
@@ -36,12 +36,14 @@
 #define RUNTIME_VERSION_1_5_210	MAKE_EXE_VERSION(1, 5, 210)	// 0x01050D20	beta - no whatsnew
 #define RUNTIME_VERSION_1_5_307	MAKE_EXE_VERSION(1, 5, 307)	// 0x01051330	release - exe almost identical
 #define RUNTIME_VERSION_1_5_412	MAKE_EXE_VERSION(1, 5, 412)	// 0x010519C0	beta - that's a big number. added GetOrbisModInfo console cmd (does nothing)
+#define RUNTIME_VERSION_1_5_414	MAKE_EXE_VERSION(1, 5, 414)	// 0x010519E0	beta - why so many releases all at once
+#define RUNTIME_VERSION_1_5_416	MAKE_EXE_VERSION(1, 5, 416)	// 0x01051A00	release - why so many releases all at once
 
 #define PACKED_F4SE_VERSION		MAKE_EXE_VERSION(F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA)
 
 // information about the state of the game at the time of release
-#define F4SE_TARGETING_BETA_VERSION	1
-#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_5_307
-#define CURRENT_RELEASE_F4SE_STR	"0.1.16"
+#define F4SE_TARGETING_BETA_VERSION	0
+#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_5_416
+#define CURRENT_RELEASE_F4SE_STR	"0.1.18"
 
 #endif /* __F4SE_VERSION_H__ */

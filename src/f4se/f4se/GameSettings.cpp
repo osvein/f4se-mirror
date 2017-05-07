@@ -1,11 +1,11 @@
 #include "f4se/GameSettings.h"
 
 // 5B1FD95B3A1729A1781BED06D47E1A47EB6D89F2+91
-RelocPtr <INISettingCollection *> g_iniSettings(0x05AD34E8);
+RelocPtr <INISettingCollection *> g_iniSettings(0x05AD4568);
 // 239A2F4B85F2D36A7E4E77D681108A197210AE0B+1C3
-RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x059A1B58);
+RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x059A2BD8);
 // ??_7RegSettingCollection@@6B@
-RelocPtr <RegSettingCollection *> g_regSettings(0x05ED75E0);
+RelocPtr <RegSettingCollection *> g_regSettings(0x05ED8660);
 
 UInt32 Setting::GetType(void) const
 {

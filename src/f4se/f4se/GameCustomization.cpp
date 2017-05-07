@@ -2,24 +2,24 @@
 #include "f4se/GameAPI.h"
 
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+B5
-RelocPtr <CharacterCreation*> g_characterCreation(0x058AD760);	// array
+RelocPtr <CharacterCreation*> g_characterCreation(0x058AE790);	// array
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+AF
-RelocPtr <UInt32> g_characterIndex(0x058AD798);
+RelocPtr <UInt32> g_characterIndex(0x058AE7C8);
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x00298C40);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x00297C30);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x0029DE80);
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x00298C30);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x00297C20);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x0029DE70);
 
 // These aren't grabbed by RTTI script due to namespacing
-const void * RTTI_BGSCharacter_Template_Entry = (void *)0x0352EDE0;
-const void * RTTI_BGSCharacter_Template_Mask = (void *)0x0352EE18;
-const void * RTTI_BGSCharacter_Template_Palette = (void *)0x0352EE50;
-const void * RTTI_BGSCharacter_Template_TextureSet = (void *)0x0352EEC0;
+const void * RTTI_BGSCharacter_Template_Entry = (void *)0x0352FDE0;
+const void * RTTI_BGSCharacter_Template_Mask = (void *)0x0352FE18;
+const void * RTTI_BGSCharacter_Template_Palette = (void *)0x0352FE50;
+const void * RTTI_BGSCharacter_Template_TextureSet = (void *)0x0352FEC0;
 
 // These are for creating new instances
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02B1EFB8);
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02B1EFE8);
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02B1F018);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02B20018);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02B20048);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02B20078);
 
 bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 {
