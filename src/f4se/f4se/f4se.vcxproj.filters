@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ResourceCompile Include="..\f4se_common\f4se_version.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="f4se.cpp" />
+    <ClCompile Include="GameSettings.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="GameAPI.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_ObScript.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="ObScript.cpp">
+      <Filter>obscript</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFormComponents.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTypes.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="GameForms.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="GameReferences.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="NiObjects.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiTypes.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMemory.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="NiNodes.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiRTTI.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="BSGeometry.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiExtraData.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjects.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginManager.cpp">
+      <Filter>internal</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEvents.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleformAPI.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Scaleform.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Papyrus.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Gameplay.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exports.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="api">
+      <UniqueIdentifier>{9450fc4c-75b6-4488-bbcf-eb85ab09adc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hooks">
+      <UniqueIdentifier>{4d6b0bc6-fcd2-4a6a-8d71-66b2661e6676}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="obscript">
+      <UniqueIdentifier>{69b04711-4ce5-4233-a001-6239f33bac37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="netimmerse">
+      <UniqueIdentifier>{0d737e95-d0ef-4c7c-8ba0-1dd5bab3aa26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="internal">
+      <UniqueIdentifier>{c674ab06-93c6-4c9e-be2c-93ce2ca09274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scaleform">
+      <UniqueIdentifier>{bb1e4e23-e1ba-4913-a905-60ff75e60297}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameSettings.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="GameAPI.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_ObScript.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="ObScript.h">
+      <Filter>obscript</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFormComponents.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTypes.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="GameForms.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="GameReferences.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="NiObjects.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiTypes.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMemory.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="NiNodes.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiRTTI.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="BSGeometry.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiExtraData.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjects.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginAPI.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginManager.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEvents.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformAPI.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Scaleform.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Papyrus.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Gameplay.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

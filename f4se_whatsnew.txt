@@ -1,0 +1,11 @@
+0.1.0:
+- everything
+- plugin manager
+- simple hooks for papyrus, scaleform, and the classic script system, but nothing useful for modders yet
+- customization of internal keymappings
+	Copy CustomControlMap.txt to Data\F4SE\CustomControlMap.txt.
+	Edit that file to set your bindings. The format is the same as Skyrim, it's a space-separated file.
+	The first column is the name of the internal keybind. The second column is the keyboard scan code that should activate the bind in hex, or 0xFF if unbound. Use google to find a table of scan codes. The third column is for mice, the fourth for controllers. The next three columns control whether or not a control should be written to the user's config file. The final column specifies which input layer the bind is associated with - you will probably not want to change that.
+- currently-installed version of F4SE is shown in the Settings menu next to the game version
+- running GetF4SEVersion from the console will print the current version as well
+- log spam is written to My Documents\My Games\Fallout4\F4SE\
