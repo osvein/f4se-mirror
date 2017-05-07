@@ -64,6 +64,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(Fallout4Path)\$(TargetFileName)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Installing Steam Loader...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -85,6 +91,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(Fallout4Path)\$(TargetFileName)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Installing Steam Loader...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ResourceCompile Include="..\f4se_common\f4se_version.rc" />

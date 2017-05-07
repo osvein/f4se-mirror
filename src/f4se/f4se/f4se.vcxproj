@@ -133,6 +133,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(Fallout4Path)\$(TargetFileName)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Installing DLL...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -154,6 +160,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(Fallout4Path)\$(TargetFileName)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Installing DLL...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

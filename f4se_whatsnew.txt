@@ -1,3 +1,6 @@
+0.1.1:
+- fixed crash when resetting keybindings from ui
+
 0.1.0:
 - everything
 - plugin manager

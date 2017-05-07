@@ -35,6 +35,7 @@ static void CommitVersionHook()
 static char * s_customControlMap = nullptr;
 
 RelocAddr <uintptr_t> kHook_CustomControlMap_Offset(0x01F9C990);
+RelocAddr <void *> kHook_CustomControlMap_Return(0x01F9C990 + 5);
 
 static void InitControlMap()
 {
@@ -62,7 +63,7 @@ static void CommitControlMap()
 
 				mov(ptr [rsp + 0x10], rbx);
 				mov(rdx, ptr [rip + addrLabel]);
-				ret();
+				jmp(kHook_CustomControlMap_Return);
 
 				L(addrLabel);
 				dq(uintptr_t(controlMapPtr));
@@ -73,7 +74,7 @@ static void CommitControlMap()
 		CustomControlMap_Code code(codeBuf, s_customControlMap);
 		g_branchTrampoline.EndAlloc(code.getCurr());
 
-		ASSERT(SafeWriteCall(kHook_CustomControlMap_Offset, uintptr_t(codeBuf)));
+		ASSERT(SafeWriteJump(kHook_CustomControlMap_Offset, uintptr_t(codeBuf)));
 	}
 }
 

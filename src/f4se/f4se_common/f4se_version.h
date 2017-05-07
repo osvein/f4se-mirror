@@ -4,8 +4,8 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	1
-#define F4SE_VERSION_INTEGER_BETA	0
-#define F4SE_VERSION_VERSTRING		"0, 0, 1, 0"
+#define F4SE_VERSION_INTEGER_BETA	1
+#define F4SE_VERSION_VERSTRING		"0, 0, 1, 1"
 #define F4SE_VERSION_PADDEDSTRING	"0001"
 #define F4SE_VERSION_RELEASEIDX		1
 
