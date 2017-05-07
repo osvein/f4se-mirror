@@ -146,45 +146,68 @@ public:
 	void						* unk298;				// 298
 	UInt64						unk2A0;					// 2A0
 	UInt64						unk2A8;					// 2A8
-	BGSOutfit					* outfit;				// 2B0
-	UInt64						unk2B8;					// 2B8
+	BGSOutfit					* outfit[2];			// 2B0
 	UInt64						unk2C0;					// 2C0
 	TESFaction					* unk2C8;				// 2C8
 	BGSHeadPart					** headParts;			// 2D0
-	tArray<float>				* unk2D8;				// 2D8 - 5 elements
-	void						* unk2E0;				// 2E0
-	UInt8						numHeadParts;			// 2E8
-	UInt8						unk2E9;					// 2E9
-	UInt8						unk2EA;					// 2EA
-	UInt8						unk2EB;					// 2EB
-	float						unk2EC;					// 2EC
-	UInt64						unk2F0;					// 2F0
+	tArray<float>				* unk2D8;				// 2D8 - 5 elements (MRSV)
 
-	// 30
-	struct Data2
+	// 08
+	struct MorphSetData // (MSDK/MSDV) pair
 	{
-		UInt64	unk00;
-		UInt64	unk08;
-		UInt64	unk10;
-		UInt64	unk18;
-		UInt64	unk20;
-		UInt64	unk28;
+		UInt32	key;		// 00
+		float	value;		// 04
+
+		static inline UInt32 GetHash(const UInt32 * key);
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\tkey: %08X ", key);
+			_MESSAGE("\t\tdata: %f", value);
+		}
 	};
 
-	Data2						* unk2F8;				// 2F8
-	tArray<BGSCharacterTint::Entry*> * tints;			// 300
+	// 28
+	struct FaceMorphRegion	// (FMRI/FMRS) pair
+	{
+		UInt32	index;		// 00
+		float	value[8];	// 04
+
+		static inline UInt32 GetHash(const UInt32 * key);
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\tkey: %08X ", index);
+			for(UInt32 i = 0; i < 8; i++)
+				_MESSAGE("\t\tdata: %f", value[i]);
+		}
+	};
+
+	tLinkedHashSet<FaceMorphRegion>		* morphRegionData;	// 2E0 - (key links to CharacterCreation::FaceMorphRegion::index)
+	UInt8								numHeadParts;		// 2E8
+	UInt8								unk2E9;				// 2E9
+	UInt8								unk2EA;				// 2EA
+	UInt8								unk2EB;				// 2EB
+	UInt8								unk2EC;				// 2EC
+	UInt8								unk2ED;				// 2ED
+	UInt8								unk2EE;				// 2EE
+	UInt8								unk2EF;				// 2EF
+	UInt64								unk2F0;				// 2F0
+	tLinkedHashSet<MorphSetData>		* morphSetData;		// 2F8 - (key links to CharacterCreation::MorphGroup::Preset::index)
+	tArray<BGSCharacterTint::Entry*>	* tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00589CC0);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x0059B200);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x0059B310);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x0059B3A0);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0057DDA0); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00589E00);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x0059B340);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x0059B450);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x0059B4E0);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0057DEE0); // npc->actorData.unk08 & 1
 	
 };
 STATIC_ASSERT(offsetof(TESNPC, npcClass) == 0x240);
 STATIC_ASSERT(offsetof(TESNPC, combatStyle) == 0x258);
 STATIC_ASSERT(offsetof(TESNPC, outfit) == 0x2B0);
+STATIC_ASSERT(offsetof(TESNPC, tints) == 0x300);
 STATIC_ASSERT(sizeof(TESNPC) == 0x308);
 
 // 300

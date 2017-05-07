@@ -745,20 +745,44 @@ public:
 	// 48+
 	struct CharGenData
 	{
-		tArray<CharacterCreation::TintData*>	* tintData;			// 00
-		tArray<BGSTextureSet*>	* textureSets;		// 08
-		BGSTextureSet			* defaultTexture;	// 10
-		tArray<TESNPC*>			* presets;			// 18
-		tArray<BGSColorForm*>	* colors;			// 20
-		BGSColorForm			* defaultColor;		// 28
-		tArray<BGSHeadPart*>	* headParts;		// 30
-		tArray<CharacterCreation::RegionData*>	* regions;			// 38
-		tArray<UInt64>			* unk40;			// 40
+		tArray<CharacterCreation::TintData*>		* tintData;			// 00
+		tArray<BGSTextureSet*>						* textureSets;		// 08
+		BGSTextureSet								* defaultTexture;	// 10
+		tArray<TESNPC*>								* presets;			// 18
+		tArray<BGSColorForm*>						* colors;			// 20
+		BGSColorForm								* defaultColor;		// 28
+		tArray<BGSHeadPart*>						* headParts;		// 30
+		tArray<CharacterCreation::MorphGroup*>		* morphGroups;		// 38
+		tArray<CharacterCreation::FaceMorphRegion*>	* faceMorphs;		// 40
+
+		BGSCharacterTint::Template::Entry * GetTemplateByIndex(UInt16 index);
+	};
+
+	// 10
+	struct BoneScale // (BSMB/BSMS) pair
+	{
+		BSFixedString	bone;		// 00
+		float			* value;	// 08
+
+		static inline UInt32 GetHash(const BSFixedString * key);
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\tkey: %08X ", bone->Get<char>());
+			for(UInt32 i = 0; i < 8; i++)
+				_MESSAGE("\t\tdata: %f", value[i]);
+		}
+	};
+
+	struct BoneScaleMap
+	{
+		tLinkedHashSet<BoneScale, BSFixedString>	weightMap1;	// value array length 8
+		tLinkedHashSet<BoneScale, BSFixedString>	weightMap2;	// value array length 4
 	};
 
 	UInt64				unk4C0[(0x698-0x4D8)/8];	// 4D8
 	CharGenData			* chargenData[2];			// 698
-	void				* unk6A8[2];				// 6A8
+	BoneScaleMap		* boneScaleMap[2];			// 6A8
 	TESTexture			unk6B8;						// 6B8
 };
 

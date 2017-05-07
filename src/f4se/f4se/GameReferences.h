@@ -202,7 +202,7 @@ STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);
 STATIC_ASSERT(sizeof(TESObjectREFR) == 0x110);
 
-// 430
+// 490
 class Actor : public TESObjectREFR
 {
 public:
@@ -327,12 +327,12 @@ public:
 	BSTEventSink<bhkNonSupportContactEvent>		nonSupportContact;		// 158
 	BSTEventSink<bhkCharacterStateChangeEvent>	characterStateChanged;	// 160
 
-	UInt64	unk168[(0x3D0-0x168)/8];	// 168
-	ActorEquipData	* equipData;
-	UInt64	unk3D8[(0x430-0x3D8)/8];	// 3D8
+	UInt64	unk168[(0x428-0x168)/8];	// 168
+	ActorEquipData	* equipData;		// 428
+	UInt64	unk430[(0x490-0x430)/8];	// 430
 };
 
-// D90
+// E00
 class PlayerCharacter : public Actor
 {
 public:
@@ -343,15 +343,18 @@ public:
 	virtual void	Unk_133();
 	virtual void	Unk_134();
 
-	BSTEventSink<MenuOpenCloseEvent>	menuOpenClose;		// 430
-	BSTEventSink<MenuModeChangeEvent>	menuModeChange;		// 438
-	BSTEventSink<UserEventEnabledEvent>	userEventEnabled;	// 440
-	BSTEventSink<TESHitEvent>			hitEvent;			// 448
-	BSTEventSink<PerkEntryUpdatedEvent::PerkValueEvents>	perkValueEvents;	// 450
+	BSTEventSink<MenuOpenCloseEvent>	menuOpenClose;		// 490
+	BSTEventSink<MenuModeChangeEvent>	menuModeChange;		// 498
+	BSTEventSink<UserEventEnabledEvent>	userEventEnabled;	// 4A0
+	BSTEventSink<TESHitEvent>			hitEvent;			// 4A8
+	BSTEventSink<PerkEntryUpdatedEvent::PerkValueEvents>	perkValueEvents;	// 4B0
+	IMovementPlayerControlsFilter		movementControlsFilter;	// 4B8
 
-	UInt64	unk458[(0xB00-0x458)/8];	// 458
-	ActorEquipData	* playerEquipData;	// B00 - First person?
-	UInt64	unkB08[(0xC88-0xB08)/8];	// B08
-	tArray<BGSCharacterTint::Entry*> * tints;	// C88
-	UInt64	unkC90[(0xD90-0xC90)/8];	// C90
+	UInt64	unk458[(0xB60-0x4C0)/8];	// 4C0
+	ActorEquipData	* playerEquipData;	// B60 - First person?
+	UInt64	unkB68[(0xCF0-0xB68)/8];	// B68
+	tArray<BGSCharacterTint::Entry*> * tints;	// CF0
+	UInt64	unkC90[(0xD90-0xCF8)/8];	// CF8
 };
+
+STATIC_ASSERT(offsetof(PlayerCharacter, menuOpenClose) == 0x490);

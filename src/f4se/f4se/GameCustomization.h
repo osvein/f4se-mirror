@@ -111,9 +111,9 @@ public:
 			kTypeTexture
 		};
 
-		Template * templateEntry;	// 08
+		Template::Entry * templateEntry;	// 08
 		UInt16		tintIndex;		// 10
-		UInt8		unk12;			// 12	divided by 100
+		UInt8		percent;		// 12	divided by 100
 		UInt8		pad13;			// 13
 		UInt32		pad14;			// 14
 	};
@@ -187,30 +187,54 @@ public:
 
 	struct TintData
 	{
-		BSFixedString	category;	// 00
-		SInt32			unk08;		// 08
-		UInt32			type;		// 0C
+		BSFixedString								category;	// 00
+		SInt32										unk08;		// 08
+		UInt32										type;		// 0C
 		tArray<BGSCharacterTint::Template::Entry*>	entry;		// 10 BGSCharacterTint::Template::Entry
 	};
 
 	// 40
-	struct RegionData
+	struct MorphGroup
 	{
-		BSFixedString	name;	// 00
-
-		// 20
-		struct Type
+		BSFixedString name;				// 00 - MPGN
+		struct Preset
 		{
-			BSFixedString	name;			// 00
-			BSFixedString	type;			// 08
-			BGSTextureSet	* textureSet;	// 10
-			UInt32			unk18;			// 18
-			float			unk1C;			// 1C
+			BSFixedString	name;		// 00 - MPPN
+			BSFixedString	morph;		// 08 - MPPM
+			BGSTextureSet	* texture;	// 10 - MPPT
+			UInt32			unk18;		// 18 - MPPF
+			UInt32			index;		// 1C - MPPI (morph index?)
 		};
+		tArray<Preset>		presets;	// 08 - MPPC (count)
+		tArray<float>		unk20;		// 20
+		UInt32				key;		// 38 - MPPK (group key?)
+	};
 
-		tArray<Type>		types;	// 08
-		tArray<float>		unk20;	// 20
-		UInt64				unk38;	// 38
+	// 90
+	struct FaceMorphRegion
+	{
+		UInt64			unk00;			// 00
+		UInt64			unk08;			// 08
+		UInt64			unk10;			// 10
+		UInt64			unk18;			// 18
+		UInt64			unk20;			// 20
+		BSFixedString	name;			// 28 - FMRN
+		UInt32			* unk30;		// 30
+		UInt32			unk30_capacity;	// 38
+		UInt32			unk30_size;		// 3C
+		struct Data
+		{
+			void			* key;		// 00 - ??
+			UInt64			unk08;		// 08
+			UInt64			unk10;		// 10
+			BSFixedString	bone;		// 18
+			float			* values;	// 20
+		};
+		tLinkedHashSet<Data>	dataSet;		// 40
+		UInt64					unk70;			// 70
+		UInt64					unk78;			// 78
+		UInt64					unk80;			// 80
+		UInt64					index;			// 88 - FMRI
 	};
 
 	struct Data1

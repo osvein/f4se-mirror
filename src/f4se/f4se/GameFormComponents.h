@@ -620,7 +620,7 @@ public:
 };
 
 // 08
-class IMovementInterface
+struct IMovementInterface
 {
 public:
 	virtual ~IMovementInterface();
@@ -710,6 +710,21 @@ class IPostAnimationChannelUpdateFunctor
 	virtual ~IPostAnimationChannelUpdateFunctor();
 
 	virtual void	Unk_01();
+};
+
+// ??
+struct IMovementPlayerControlsFilter : public IMovementInterface
+{
+public:
+	virtual void	Unk_01();
+	virtual void	Unk_02();
+	virtual void	Unk_03();
+	virtual void	Unk_04();
+	virtual void	Unk_05();
+	virtual void	Unk_06();
+	virtual void	Unk_07();
+	virtual void	Unk_08();
+	virtual void	Unk_09();
 };
 
 // ??

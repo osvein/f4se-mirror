@@ -933,3 +933,11 @@ public:
 
 template <typename Key, typename Item>
 typename tHashSet<Key,Item>::_Entry tHashSet<Key,Item>::sentinel = tHashSet<Key,Item>::_Entry();
+
+template <typename Item, typename Key = Item>
+class tLinkedHashSet
+{
+public:
+	void				* nextHash;	// 00
+	tHashSet<Item, Key>	hash;	// 08
+};

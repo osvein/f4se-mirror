@@ -1,3 +1,7 @@
+0.1.7:
+- support for beta runtime 1.4.131
+- more internal class decoding
+
 0.1.6:
 - support for beta runtime 1.4.125
 - internal tools updates
