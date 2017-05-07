@@ -46,7 +46,7 @@ int main(int argc, char ** argv)
 
 	if(g_options.m_launchCS)
 	{
-		PrintLoaderError("The editor hasn't been released as of this version of F4SE.");
+		PrintLoaderError("The editor should be launched directly.");
 
 		return 1;
 	}

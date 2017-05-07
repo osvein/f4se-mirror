@@ -1,3 +1,8 @@
+0.2.1
+- support for runtime 1.7.9
+- plugin serialization interface
+- plugin delete message
+
 0.2.0
 - support for runtime 1.6.9
 - alpha papyrus support (see scripts for details)

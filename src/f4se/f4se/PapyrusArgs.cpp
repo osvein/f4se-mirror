@@ -1,6 +1,5 @@
 #include "PapyrusArgs.h"
 
-
 template <> void PackValue <void>(VMValue * dst, void * src, VirtualMachine * vm)
 {
 	dst->SetNone();
@@ -110,7 +109,6 @@ void PackHandle(VMValue * dst, void * src, UInt32 typeID, VirtualMachine * vm)
 	}
 }
 
-
 //// VMValue -> type
 
 template <> void UnpackValue <float>(float * dst, VMValue * src)
@@ -216,7 +214,6 @@ template <> void UnpackValue <VMVariable>(VMVariable * dst, VMValue * src)
 	dst->UnpackVariable(src);
 }
 
-
 template <> void UnpackValue <VMArray<UInt32>>(VMArray<UInt32> * dst, VMValue * src)
 {
 	UnpackArray(dst, src, VMValue::kType_IntArray);
@@ -259,7 +256,6 @@ void * UnpackHandle(VMValue * src, UInt32 typeID)
 
 	return (*g_objectHandlePolicy)->Resolve(typeID, handle);
 }
-
 
 template <> UInt64 GetTypeID <void>(VirtualMachine * vm)					{ return VMValue::kType_None; }
 template <> UInt64 GetTypeID <UInt32>(VirtualMachine * vm)					{ return VMValue::kType_Int; }

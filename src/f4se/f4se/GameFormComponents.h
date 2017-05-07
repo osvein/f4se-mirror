@@ -54,8 +54,8 @@ public:
 	virtual void	Unk_11(void);
 	virtual void	Unk_12(void);
 
-	//	void	** _vtbl;	// 00
-	//  BSIntrusiveRefCounted refCount; // 08
+//	void	** _vtbl;	// 00
+//  BSIntrusiveRefCounted refCount; // 08
 };
 
 // 08
@@ -72,7 +72,7 @@ public:
 	virtual void	Unk_05(void);
 	virtual void	Unk_06(void);
 
-	//	void	** _vtbl;	// 00
+//	void	** _vtbl;	// 00
 };
 
 // 08
@@ -118,7 +118,7 @@ public:
 	virtual void	Unk_01(void);
 	virtual void	Unk_02(void);
 
-	//	void	** _vtbl;
+//	void	** _vtbl;
 };
 
 // 08
@@ -265,7 +265,14 @@ public:
 	UInt32				unk18;	// 18
 	void				* unk20;	// 20
 	UInt32				unk28;		// 28
-	UInt8				unk2C;		// 2C
+
+	enum
+	{
+		kFlag_Dynamic = (1 << 0),
+		kFlag_Unknown = (1 << 1)
+	};
+
+	UInt8				flags;		// 2C
 	UInt8				unk2D;		// 2D
 	UInt16				unk2E;		// 2E
 };

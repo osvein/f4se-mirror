@@ -1,11 +1,12 @@
 #include "f4se/GameSettings.h"
+#include "f4se/GameTypes.h"
 
 // 5B1FD95B3A1729A1781BED06D47E1A47EB6D89F2+91
-RelocPtr <INISettingCollection *> g_iniSettings(0x05ADB8E8);
+RelocPtr <INISettingCollection *> g_iniSettings(0x05D75B98);
 // 239A2F4B85F2D36A7E4E77D681108A197210AE0B+1C3
-RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x059A9F58);
+RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x05A00958);
 // ??_7RegSettingCollection@@6B@
-RelocPtr <RegSettingCollection *> g_regSettings(0x05EDF9E0);
+RelocPtr <RegSettingCollection *> g_regSettings(0x05F36430);
 
 UInt32 Setting::GetType(void) const
 {
@@ -26,4 +27,33 @@ UInt32 Setting::GetType(void) const
 	}
 
 	return kType_Unknown;
+}
+
+Setting * GetINISetting(const char * name)
+{
+	Setting	* setting = (*g_iniSettings)->Get(name);
+	if(!setting)
+		setting = (*g_iniPrefSettings)->Get(name);
+
+	return setting;
+}
+
+Setting * SettingCollectionList::Get(const char * name)
+{
+	Node * node = data;
+	do
+	{
+		Setting * setting = node->data;
+		if(setting) {
+			BSAutoFixedString searchName(name);
+			BSAutoFixedString settingName(setting->name);
+			if(searchName == settingName) {
+				return setting;
+			}
+		}
+
+		node = node->next;
+	} while(node);
+
+	return nullptr;
 }

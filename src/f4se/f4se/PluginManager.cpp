@@ -28,7 +28,7 @@ static const F4SEInterface g_F4SEInterface =
 	PluginManager::GetReleaseIndex
 };
 
-static F4SEMessagingInterface g_F4SEMessagingInterface =
+static const F4SEMessagingInterface g_F4SEMessagingInterface =
 {
 	F4SEMessagingInterface::kInterfaceVersion,
 	PluginManager::RegisterListener,
@@ -50,6 +50,30 @@ static const F4SEPapyrusInterface g_F4SEPapyrusInterface =
 	F4SEPapyrusInterface::kInterfaceVersion,
 	RegisterPapyrusPlugin
 };
+
+#include "f4se/Serialization.h"
+
+static const F4SESerializationInterface	g_F4SESerializationInterface =
+{
+	F4SESerializationInterface::kVersion,
+
+	Serialization::SetUniqueID,
+
+	Serialization::SetRevertCallback,
+	Serialization::SetSaveCallback,
+	Serialization::SetLoadCallback,
+	Serialization::SetFormDeleteCallback,
+
+	Serialization::WriteRecord,
+	Serialization::OpenRecord,
+	Serialization::WriteRecordData,
+
+	Serialization::GetNextRecordInfo,
+	Serialization::ReadRecordData,
+	Serialization::ResolveHandle,
+	Serialization::ResolveFormId
+};
+
 
 PluginManager::PluginManager()
 {
@@ -135,6 +159,14 @@ void * PluginManager::QueryInterface(UInt32 id)
 		break;
 	case kInterface_Scaleform:
 		result = (void *)&g_F4SEScaleformInterface;
+		break;
+#if 0
+	case kInterface_Papyrus:
+		result = (void *)&g_F4SEPapyrusInterface;
+		break;
+#endif
+	case kInterface_Serialization:
+		result = (void *)&g_F4SESerializationInterface;
 		break;
 	default:
 		_WARNING("unknown QueryInterface %08X", id);

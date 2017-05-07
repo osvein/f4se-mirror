@@ -127,13 +127,13 @@ STATIC_ASSERT(sizeof(BSTriShape) == 0x170);
 class BSDynamicTriShape : public BSTriShape
 {
 public:
-	UInt32					unk170;			// 170
-	UInt32					unk174;			// 174
-	SimpleLock				lock;			// 178
-	void					* unk180;		// 180 - geometry pointer, must lock/unlock when altering
-	BSGeometrySegmentData	* segmentData;	// 188
-	void					* unk190;		// 190
-	void					* unk198;		// 198
+	UInt32					unk170;				// 170
+	UInt32					unk174;				// 174
+	SimpleLock				lock;				// 178
+	UInt8					* dynamicVertices;	// 180 - geometry pointer, must lock/unlock when altering
+	BSGeometrySegmentData	* segmentData;		// 188
+	void					* unk190;			// 190
+	void					* unk198;			// 198
 
 	UInt16 GetDynamicVertexSize() const { return (vertexDesc >> 2) & 0x3C; }
 };
@@ -150,5 +150,9 @@ public:
 };
 STATIC_ASSERT(sizeof(BSSubIndexTriShape) == 0x190);
 
-typedef void (* _ConvertHalfToFloat)(UInt8 * src, NiPoint3 * dest, UInt32 numVertices, UInt32 vertexSize);
+// Offset is the amount of bytes until the next iteration
+// e.g.
+// ConvertHalfToFloat(&in, 0x04, &out, 0x02, 1);
+// Converts a single float to a single half-float
+typedef void (* _ConvertHalfToFloat)(float * src, UInt64 offsetFloat, UInt16 * dest, UInt64 offsetHalf, UInt64 count);
 extern RelocAddr <_ConvertHalfToFloat> ConvertHalfToFloat;

@@ -1,6 +1,5 @@
 #include "f4se/NiTypes.h"
 
-
 NiPoint3::NiPoint3()
 {
 	x = 0.0f;

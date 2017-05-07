@@ -17,7 +17,7 @@ void NiRefObject::DecRef(void)
 		DeleteThis();
 }
 
-bool NiObjectNET::HasExtraData(const BSFixedString & name)
+NiExtraData * NiObjectNET::GetExtraData(const BSFixedString & name)
 {
 	if(!m_extraData)
 		return false;
@@ -27,10 +27,10 @@ bool NiObjectNET::HasExtraData(const BSFixedString & name)
 	{
 		NiExtraData * data = m_extraData->entries[i];
 		if(data->m_name == name)
-			return true;
+			return data;
 	}
 
-	return false;
+	return nullptr;
 }
 
 bool NiObjectNET::AddExtraData(NiExtraData * extraData)

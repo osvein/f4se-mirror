@@ -129,7 +129,7 @@ public:
 	virtual void	Unk_9D();
 	virtual void	Unk_9E();
 	virtual void	Unk_9F();
-	virtual ActorEquipData	** GetEquipData();
+	virtual ActorEquipData	** GetEquipData(bool bFirstPerson);
 	virtual void	Unk_A1();
 	virtual void	Unk_A2();
 	virtual void	Unk_A3();
@@ -352,10 +352,10 @@ public:
 	UInt64	unk430[(0x490-0x430)/8];	// 430
 
 	MEMBER_FN_PREFIX(Actor);
-	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D3D3E0, bool bDoFaceGen, UInt32 unk2, bool unk3, UInt32 unk4); // 0, 0, 1, 0
+	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D6C360, bool bDoFaceGen, UInt32 unk2, bool unk3, UInt32 unk4); // 0, 0, 1, 0
 };
 
-// E00
+// E10
 class PlayerCharacter : public Actor
 {
 public:
@@ -373,13 +373,15 @@ public:
 	BSTEventSink<PerkEntryUpdatedEvent::PerkValueEvents>	perkValueEvents;	// 4B0
 	IMovementPlayerControlsFilter		movementControlsFilter;	// 4B8
 
-	UInt64	unk458[(0xB60-0x4C0)/8];	// 4C0
-	ActorEquipData	* playerEquipData;	// B60 - First person?
-	UInt64	unkB68[(0xCF0-0xB68)/8];	// B68
-	tArray<BGSCharacterTint::Entry*> * tints;	// CF0
-	UInt64	unkC90[(0xD90-0xCF8)/8];	// CF8
+	UInt64	unk458[(0xB70-0x4C0)/8];	// 4C0
+	ActorEquipData	* playerEquipData;	// B70 - First person?
+	UInt64	unkB68[(0xD00-0xB78)/8];	// B78
+	tArray<BGSCharacterTint::Entry*> * tints;	// D00
+	UInt64	unkC90[(0xE10-0xCF8)/8];	// CF8
 };
 
 extern RelocPtr <PlayerCharacter*> g_player;
 
 STATIC_ASSERT(offsetof(PlayerCharacter, menuOpenClose) == 0x490);
+STATIC_ASSERT(offsetof(PlayerCharacter, playerEquipData) == 0xB70);
+STATIC_ASSERT(offsetof(PlayerCharacter, tints) == 0xD00);

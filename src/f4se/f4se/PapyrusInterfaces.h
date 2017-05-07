@@ -155,6 +155,7 @@ public:
 	virtual bool	Unk_02(UInt64 unk1, UInt32 * formType);
 	virtual bool	Unk_03(UInt64 handle);
 	virtual bool	Unk_04(UInt64 unk1);
+	virtual bool	Unk_05(UInt64 unk1);
 	virtual UInt64	GetInvalidHandle(void);
 	virtual UInt64	Create(UInt32 typeID, void * srcData);
 	virtual bool	IsREFR(UInt64 handle);	// return IsType(TESObjectREFR::kTypeID, handle);
@@ -191,5 +192,5 @@ public:
 	virtual void	Unk_0E(UInt64 unk0, UInt64 unk1, UInt8 unk2, UInt64 unk3, UInt64 unk4);
 
 	MEMBER_FN_PREFIX(IObjectBindPolicy);
-	DEFINE_MEMBER_FN(BindObject, void, 0x025B3420, VMIdentifier ** identifier, UInt64 handle);
+	DEFINE_MEMBER_FN(BindObject, void, 0x025F9D10, VMIdentifier ** identifier, UInt64 handle);
 };

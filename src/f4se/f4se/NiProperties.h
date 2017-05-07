@@ -89,8 +89,8 @@ public:
 	UInt32	unkE4;		// E4
 
 	MEMBER_FN_PREFIX(BSLightingShaderProperty);
-	DEFINE_MEMBER_FN(MakeValidForRendering, void, 0x0269A6B0, BSGeometry * geometry); // previously InvalidateShader
-	DEFINE_MEMBER_FN(ApplyMaterial, bool, 0x00050030); // Calls BSShaderProperty::SetMaterial
-	DEFINE_MEMBER_FN(LoadTextureSet, void, 0x0269AD40, UInt32 unk1); // unk1 usually 0, called after material Releases textures (previously InvalidateTextures)
+	DEFINE_MEMBER_FN(MakeValidForRendering, void, 0x026E2D60, BSGeometry * geometry); // previously InvalidateShader
+	DEFINE_MEMBER_FN(ApplyMaterial, bool, 0x00053690); // Calls BSShaderProperty::SetMaterial
+	DEFINE_MEMBER_FN(LoadTextureSet, void, 0x026E33F0, UInt32 unk1); // unk1 usually 0, called after material Releases textures (previously InvalidateTextures)
 };
 STATIC_ASSERT(sizeof(BSLightingShaderProperty) == 0xE8);

@@ -18,10 +18,10 @@ class BSSubIndexTriShape;
 class NiRefObject
 {
 public:
-	NiRefObject();
-	virtual ~NiRefObject();
+	NiRefObject() : m_uiRefCount(0) { };
+	virtual ~NiRefObject() { };
 
-	virtual void	DeleteThis(void);	// calls virtual dtor
+	virtual void	DeleteThis(void) { delete this; };	// calls virtual dtor
 
 	void	IncRef(void);
 	void	DecRef(void);
@@ -35,44 +35,44 @@ public:
 class NiObject : public NiRefObject
 {
 public:
-	virtual NiRTTI				* GetRTTI(void);
-	virtual NiNode				* GetAsNiNode(void);
-	virtual NiSwitchNode		* GetAsNiSwitchNode(void);
-	virtual void Unk_05();
-	virtual void Unk_06();
-	virtual void Unk_07();
-	virtual BSGeometry			* GetAsBSGeometry(void);
-	virtual void GetAsBStriStrips();
-	virtual BSTriShape			* GetAsBSTriShape(void);
-	virtual BSDynamicTriShape	* GetAsBSDynamicTriShape(void);
-	virtual void GetAsSegmentedTriShape();
-	virtual BSSubIndexTriShape	* GetAsBSSubIndexTriShape(void);
-	virtual void GetAsNiGeometry();
-	virtual void GetAsNiTriBasedGeom();
-	virtual void GetAsNiTriShape();
-	virtual void GetAsParticlesGeom();
-	virtual void GetAsParticleSystem();
-	virtual void GetAsLinesGeom();
-	virtual void GetAsLight();
-	virtual void GetAsBhkNiCollisionObject();
-	virtual void GetAsBhkBlendCollisionObject();
-	virtual void GetAsBhkRigidBody();
-	virtual void GetAsBhkLimitedHingeConstraint();
-	virtual void GetAsbhkNPCollisionObject();
-	virtual void Unk_1A();
-	virtual void Unk_1B(); // LoadBinary
-	virtual void Unk_1C();
-	virtual void Unk_1D();
-	virtual void Unk_1E();
-	virtual void Unk_1F();
-	virtual void Unk_20();
-	virtual void Unk_21();
-	virtual void Unk_22();
-	virtual void Unk_23();
-	virtual void Unk_24();
-	virtual void Unk_25();
-	virtual void Unk_26();
-	virtual void Unk_27();
+	virtual NiRTTI				* GetRTTI(void) { return nullptr; };
+	virtual NiNode				* GetAsNiNode(void) { return nullptr; };
+	virtual NiSwitchNode		* GetAsNiSwitchNode(void) { return nullptr; };
+	virtual void				* Unk_05() { return nullptr; };
+	virtual void				* Unk_06() { return nullptr; };
+	virtual void				* Unk_07() { return nullptr; };
+	virtual BSGeometry			* GetAsBSGeometry(void) { return nullptr; };
+	virtual void				* GetAsBStriStrips() { return nullptr; };
+	virtual BSTriShape			* GetAsBSTriShape(void) { return nullptr; };
+	virtual BSDynamicTriShape	* GetAsBSDynamicTriShape(void) { return nullptr; };
+	virtual void				* GetAsSegmentedTriShape() { return nullptr; };
+	virtual BSSubIndexTriShape	* GetAsBSSubIndexTriShape(void) { return nullptr; };
+	virtual void				* GetAsNiGeometry() { return nullptr; };
+	virtual void				* GetAsNiTriBasedGeom() { return nullptr; };
+	virtual void				* GetAsNiTriShape() { return nullptr; };
+	virtual void				* GetAsParticlesGeom() { return nullptr; };
+	virtual void				* GetAsParticleSystem() { return nullptr; };
+	virtual void				* GetAsLinesGeom() { return nullptr; };
+	virtual void				* GetAsLight() { return nullptr; };
+	virtual void				* GetAsBhkNiCollisionObject() { return nullptr; };
+	virtual void				* GetAsBhkBlendCollisionObject() { return nullptr; };
+	virtual void				* GetAsBhkRigidBody() { return nullptr; };
+	virtual void				* GetAsBhkLimitedHingeConstraint() { return nullptr; };
+	virtual void				* GetAsbhkNPCollisionObject() { return nullptr; };
+	virtual NiObject			* CreateClone(void * unk1) { return nullptr; };
+	virtual void				LoadBinary(void * stream) { }; // LoadBinary
+	virtual void				Unk_1C() { };
+	virtual bool				Unk_1D() { return false; };
+	virtual void				SaveBinary(void * stream) { }; // SaveBinary
+	virtual bool				IsEqual(NiObject * object) { return false; }	// IsEqual
+	virtual bool				Unk_20(void * unk1) { return false; };
+	virtual void				Unk_21() { };
+	virtual bool				Unk_22() { return false; };
+	virtual NiRTTI				* GetStreamableRTTI() { return GetRTTI(); };
+	virtual bool				Unk_24() { return false; };
+	virtual bool				Unk_25() { return false; };
+	virtual void				Unk_26() { };
+	virtual bool				Unk_27() { return false; };
 };
 
 // 28
@@ -83,11 +83,12 @@ public:
 	void							* unk10;		// 18 - Controller?
 	tMutexArray<NiExtraData*>		* m_extraData;	// 20 - must be locked/unlocked when altering/acquiring
 
-	bool HasExtraData(const BSFixedString & name);
 	bool AddExtraData(NiExtraData * extraData);
+	NiExtraData * GetExtraData(const BSFixedString & name);
+	bool HasExtraData(const BSFixedString & name) { return GetExtraData(name) != nullptr; }
 
 	MEMBER_FN_PREFIX(NiObjectNET);
-	DEFINE_MEMBER_FN(Internal_AddExtraData, bool, 0x01B2A3C0, NiExtraData * extraData);
+	DEFINE_MEMBER_FN(Internal_AddExtraData, bool, 0x01B6A480, NiExtraData * extraData);
 };
 
 // 120
@@ -113,7 +114,7 @@ public:
 	virtual void SetMaterialNeedsUpdate();
 	virtual void SetDefaultMaterialNeedsUpdateFlag();
 	virtual void SetAppCulled();
-	virtual NiAVObject * GetObjectByName(BSFixedString * nodeName);
+	virtual NiAVObject * GetObjectByName(const BSFixedString * nodeName);
 	virtual void SetSelectiveUpdateFlags();
 	virtual void UpdateDownwardPass();
 	virtual void UpdateSelectedDownwardPass();
@@ -173,7 +174,7 @@ public:
 	UInt32			unk11C;				// 11C
 
 	MEMBER_FN_PREFIX(NiAVObject);
-	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C25DF0, BSFixedString * name, bool unk1, bool unk2);
+	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C72BC0, BSFixedString * name, bool unk1, bool unk2);
 };
 STATIC_ASSERT(offsetof(NiAVObject, m_reference) == 0x110);
 STATIC_ASSERT(sizeof(NiAVObject) == 0x120);

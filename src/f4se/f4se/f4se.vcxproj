@@ -45,6 +45,7 @@
     <ClCompile Include="GameThreads.cpp" />
     <ClCompile Include="GameTypes.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
+    <ClCompile Include="Hooks_Debug.cpp" />
     <ClCompile Include="Hooks_Gameplay.cpp" />
     <ClCompile Include="Hooks_Input.cpp" />
     <ClCompile Include="Hooks_Memory.cpp" />
@@ -53,6 +54,7 @@
     <ClCompile Include="Hooks_SaveLoad.cpp" />
     <ClCompile Include="Hooks_Scaleform.cpp" />
     <ClCompile Include="Hooks_GameData.cpp" />
+    <ClCompile Include="InternalSerialization.cpp" />
     <ClCompile Include="NiExtraData.cpp" />
     <ClCompile Include="NiMaterials.cpp" />
     <ClCompile Include="NiNodes.cpp" />
@@ -84,6 +86,7 @@
     <ClCompile Include="ScaleformTranslator.cpp" />
     <ClCompile Include="ScaleformTypes.cpp" />
     <ClCompile Include="ScaleformValue.cpp" />
+    <ClCompile Include="Serialization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -116,6 +119,7 @@
     <ClInclude Include="GameThreads.h" />
     <ClInclude Include="GameTypes.h" />
     <ClInclude Include="GameUtilities.h" />
+    <ClInclude Include="Hooks_Debug.h" />
     <ClInclude Include="Hooks_Gameplay.h" />
     <ClInclude Include="Hooks_Input.h" />
     <ClInclude Include="Hooks_Memory.h" />
@@ -124,6 +128,7 @@
     <ClInclude Include="Hooks_SaveLoad.h" />
     <ClInclude Include="Hooks_Scaleform.h" />
     <ClInclude Include="Hooks_GameData.h" />
+    <ClInclude Include="InternalSerialization.h" />
     <ClInclude Include="NiExtraData.h" />
     <ClInclude Include="NiMaterials.h" />
     <ClInclude Include="NiNodes.h" />
@@ -156,6 +161,7 @@
     <ClInclude Include="ScaleformTranslator.h" />
     <ClInclude Include="ScaleformTypes.h" />
     <ClInclude Include="ScaleformValue.h" />
+    <ClInclude Include="Serialization.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A236F69D-8FF9-4491-AC5F-45BF49448BBE}</ProjectGuid>
@@ -192,11 +198,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)_1_6_9</TargetName>
+    <TargetName>$(ProjectName)_1_7_9</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)_1_6_9</TargetName>
+    <TargetName>$(ProjectName)_1_7_9</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -204,7 +210,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01060090;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01070090;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -229,7 +235,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01060090;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01070090;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

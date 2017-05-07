@@ -236,6 +236,9 @@ public:
 
 	const ModInfo* LookupModByName(const char* modName);
 	UInt8 GetModIndex(const char* modName);
+
+	const ModInfo* LookupLoadedModByName(const char* modName);
+	UInt8 GetLoadedModIndex(const char* modName);
 };
 
 STATIC_ASSERT(offsetof(DataHandler, unk17C0) == 0x17C0);

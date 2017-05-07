@@ -94,5 +94,5 @@ void papyrusActor::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new NativeFunction1<Actor, VMArray<BGSMod::Attachment::Mod*>, UInt32>("GetWornItemMods", "Actor", papyrusActor::GetWornItemMods, vm));
 
-	vm->SetFunctionFlags("Actor", "GetEquippedItem", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("Actor", "GetWornItem", IFunction::kFunctionFlag_NoWait);
 }

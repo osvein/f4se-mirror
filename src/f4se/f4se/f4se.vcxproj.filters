@@ -188,6 +188,15 @@
     <ClCompile Include="BSModelDB.cpp">
       <Filter>netimmerse</Filter>
     </ClCompile>
+    <ClCompile Include="Serialization.cpp">
+      <Filter>internal</Filter>
+    </ClCompile>
+    <ClCompile Include="InternalSerialization.cpp">
+      <Filter>internal</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Debug.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -422,6 +431,15 @@
     </ClInclude>
     <ClInclude Include="BSModelDB.h">
       <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="InternalSerialization.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Debug.h">
+      <Filter>hooks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

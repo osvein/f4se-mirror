@@ -6,6 +6,8 @@
 #include "GameAPI.h"
 #include <set>
 
+#if 0
+
 static RelocAddr <uintptr_t> kHook_IMemoryStoreCtor_Offset(0x01F90780);
 static RelocAddr <void *> kHook_IMemoryStoreCtor_VTable(0x039853F8);
 
@@ -94,3 +96,5 @@ void PrintHeapStatus()
 		gLog.Outdent();
 	}
 }
+
+#endif

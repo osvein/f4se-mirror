@@ -2,21 +2,25 @@
 #include "f4se/GameAPI.h"
 
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+B5
-RelocPtr <CharacterCreation*> g_characterCreation(0x058B5B40);	// array
+RelocPtr <CharacterCreation*> g_characterCreation(0x0590C4E0);	// array
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+AF
-RelocPtr <UInt32> g_characterIndex(0x058B5B78);
+RelocPtr <UInt32> g_characterIndex(0x0590C4B8);
 
 // 89B16A159EF66C1743643F2F457380448C4803F0+18
-RelocPtr <BSFaceGenManager*> g_faceGenManager(0x0571E950);
+RelocPtr <BSFaceGenManager*> g_faceGenManager(0x05775200);
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x0029A850);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x00299840);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x0029FA90);
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A3790);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A2780);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002A8A00);
 
 // These are for creating new instances
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02B253D8);
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02B25408);
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02B25438);
+
+// ??_7Mask@Template@BGSCharacterTint@@6B@
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02B75628);
+// ??_7Palette@Template@BGSCharacterTint@@6B@
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02B75658);
+// ??_7TextureSet@Template@BGSCharacterTint@@6B@
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02B75688);
 
 bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 {

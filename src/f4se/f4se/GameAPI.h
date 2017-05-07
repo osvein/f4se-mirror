@@ -6,8 +6,8 @@ class Heap
 {
 public:
 	MEMBER_FN_PREFIX(Heap);
-	DEFINE_MEMBER_FN(Allocate, void *, 0x01AACBB0, size_t size, size_t alignment, bool aligned);
-	DEFINE_MEMBER_FN(Free, void, 0x01AACEB0, void * buf, bool aligned);
+	DEFINE_MEMBER_FN(Allocate, void *, 0x01AECA80, size_t size, size_t alignment, bool aligned);
+	DEFINE_MEMBER_FN(Free, void, 0x01AECD90, void * buf, bool aligned);
 };
 
 extern RelocPtr <Heap> g_mainHeap;
@@ -19,8 +19,8 @@ class ConsoleManager
 {
 public:
 	MEMBER_FN_PREFIX(ConsoleManager);
-	DEFINE_MEMBER_FN(VPrint, void, 0x0120C240, const char * fmt, va_list args);
-	DEFINE_MEMBER_FN(Print, void, 0x0120C2D0, const char * str);
+	DEFINE_MEMBER_FN(VPrint, void, 0x01244850, const char * fmt, va_list args);
+	DEFINE_MEMBER_FN(Print, void, 0x012448E0, const char * str);
 };
 
 extern RelocPtr <ConsoleManager *> g_console;

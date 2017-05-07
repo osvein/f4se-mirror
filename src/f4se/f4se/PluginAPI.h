@@ -16,6 +16,7 @@ enum
 	kInterface_Messaging,
 	kInterface_Scaleform,
 	kInterface_Papyrus,
+	kInterface_Serialization,
 	kInterface_Max,
 };
 
@@ -130,6 +131,36 @@ struct F4SEScaleformInterface
 	// Make sure that the memory it points to is valid from the point the callback
 	// is registered until the game exits.
 	bool	(* Register)(const char * name, RegisterCallback callback);
+};
+
+
+struct F4SESerializationInterface
+{
+	enum
+	{
+		kVersion = 1,
+	};
+	
+	typedef void (* EventCallback)(const F4SESerializationInterface * intfc);
+	typedef void (* FormDeleteCallback)(UInt64 handle);
+
+	UInt32	version;
+
+	void	(* SetUniqueID)(PluginHandle plugin, UInt32 uid);
+
+	void	(* SetRevertCallback)(PluginHandle plugin, EventCallback callback);
+	void	(* SetSaveCallback)(PluginHandle plugin, EventCallback callback);
+	void	(* SetLoadCallback)(PluginHandle plugin, EventCallback callback);
+	void	(* SetFormDeleteCallback)(PluginHandle plugin, FormDeleteCallback callback);
+
+	bool	(* WriteRecord)(UInt32 type, UInt32 version, const void * buf, UInt32 length);
+	bool	(* OpenRecord)(UInt32 type, UInt32 version);
+	bool	(* WriteRecordData)(const void * buf, UInt32 length);
+
+	bool	(* GetNextRecordInfo)(UInt32 * type, UInt32 * version, UInt32 * length);
+	UInt32	(* ReadRecordData)(void * buf, UInt32 length);
+	bool	(* ResolveHandle)(UInt64 handle, UInt64 * handleOut);
+	bool	(* ResolveFormId)(UInt32 formId, UInt32 * formIdOut);
 };
 
 class VirtualMachine;

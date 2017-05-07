@@ -1,37 +1,19 @@
 #include "f4se/NiExtraData.h"
 #include "f4se/BSGeometry.h"
 
-// ??_7BSDynPosData@@6B@
-RelocAddr<uintptr_t> s_BSDynPosDataVtbl(0x02CCF468);
+// ??_7NiStringExtraData@@6B@
+RelocAddr<uintptr_t> s_NiStringExtraDataVtbl(0x02D1EDC8);
+// ??_7BSFaceGenBaseMorphExtraData@@6B@
+RelocAddr<uintptr_t> s_BSFaceGenBaseMorphExtraDataVtbl(0x02BF5A18);
 
-BSDynPosData * BSDynPosData::Create(const BSFixedString & name, BSTriShape * shape)
+NiStringExtraData * NiStringExtraData::Create(const BSFixedString & name, const BSFixedString & string)
 {
-	void* memory = Heap_Allocate(sizeof(BSDynPosData));
-	memset(memory, 0, sizeof(BSDynPosData));
-	((UInt64*)memory)[0] = s_BSDynPosDataVtbl.GetUIntPtr();
-	BSDynPosData * data = (BSDynPosData*)memory;
+	void* memory = Heap_Allocate(sizeof(NiStringExtraData));
+	memset(memory, 0, sizeof(NiStringExtraData));
+	((UInt64*)memory)[0] = s_NiStringExtraDataVtbl.GetUIntPtr();
+	NiStringExtraData * data = (NiStringExtraData*)memory;
 	data->m_name = name;
-
-	auto geometryData = shape->geometryData;
-	if(geometryData)
-	{
-		auto vertexData = geometryData->vertexData;
-		if(vertexData)
-		{
-			// Yes this is really what it does.
-			data->vertexData = (UInt8*)Heap_Allocate(shape->numVertices * 0x0C);
-			UInt8 * src = vertexData->vertexBlock;
-			UInt8 * dst = data->vertexData;
-			for(UInt32 i = 0; i < shape->numVertices; i++)
-			{
-				memcpy_s(dst, 0x08, src, 0x08);
-				*(dst + 0x08) = 0;
-
-				dst += 0x0C;
-				src += shape->GetVertexSize();
-			}
-		}
-	}
+	data->m_string = string;
 	return data;
 }
 
@@ -39,5 +21,19 @@ BSFaceGenBaseMorphExtraData * BSFaceGenBaseMorphExtraData::Create(BSTriShape * s
 {
 	BSFaceGenBaseMorphExtraData * data = (BSFaceGenBaseMorphExtraData*)Heap_Allocate(sizeof(BSFaceGenBaseMorphExtraData));
 	CALL_MEMBER_FN(data, ctor)(shape);
+	return data;
+}
+
+BSFaceGenBaseMorphExtraData* BSFaceGenBaseMorphExtraData::Create(const BSFixedString & name, UInt32 vertexCount)
+{
+	void* memory = Heap_Allocate(sizeof(BSFaceGenBaseMorphExtraData));
+	memset(memory, 0, sizeof(BSFaceGenBaseMorphExtraData));
+	((UInt64*)memory)[0] = s_BSFaceGenBaseMorphExtraDataVtbl.GetUIntPtr();
+	BSFaceGenBaseMorphExtraData * data = (BSFaceGenBaseMorphExtraData*)memory;
+	data->m_name = name;
+	data->modelVertexCount = vertexCount;
+	data->vertexCount = vertexCount;
+	data->vertexData = (NiPoint3*)Heap_Allocate(sizeof(NiPoint3) * vertexCount);
+	memset(data->vertexData, 0, sizeof(NiPoint3) * vertexCount);
 	return data;
 }

@@ -28,8 +28,8 @@ class VMArgList
 {
 public:
 	MEMBER_FN_PREFIX(VMArgList);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x025D3600, VMState * state);
-	DEFINE_MEMBER_FN(Get, VMValue *, 0x025D3660, VMState * state, UInt32 idx, UInt32 offset);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x0261A150, VMState * state);
+	DEFINE_MEMBER_FN(Get, VMValue *, 0x0261A1B0, VMState * state, UInt32 idx, UInt32 offset);
 };
 
 template <typename T>

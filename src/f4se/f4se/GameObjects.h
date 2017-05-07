@@ -218,13 +218,13 @@ public:
 	tArray<BGSCharacterTint::Entry*>	* tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x0059AA50);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005AC2A0);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005AC3B0);
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x005ABFC0);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005BD890);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005BD9B0);
 	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005AC440);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0058ED00); // npc->actorData.unk08 & 1
-	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005A1750, BGSHeadPart *, bool bRemoveExtraParts);
-	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005A5CD0, BGSHeadPart *);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0059FD20); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005B2D20, BGSHeadPart *, bool bRemoveExtraParts);
+	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005B72B0, BGSHeadPart *);
 
 	void ChangeHeadPart(BGSHeadPart * headPart, bool bRemovePart, bool bRemoveExtraParts);
 	BGSHeadPart * GetHeadPartByType(UInt32 type, bool bOverlays = false);
@@ -351,13 +351,16 @@ public:
 		UInt64 unk50;
 	};
 	InstanceData				instanceData;	// 250 - 2A8 ( 592 - 680)
-	UInt64						unk2A8;
-	UInt32						unk2B0;
-	UInt32						pad2B4;
-	UInt32						unk2B8;
-	UInt32						pad2BC;
-	UInt64						unk2C0;
-	BGSAttachParentArray		parentArray; // 2C8
+
+	struct ArmorAddons
+	{
+		void			* unk00;		// 00
+		TESObjectARMA	* armorAddon;	// 08
+	};
+
+	tArray<ArmorAddons>			addons;			// 2A8
+	UInt64						unk2C0;			// 2C0
+	BGSAttachParentArray		parentArray;	// 2C8
 
 };
 STATIC_ASSERT(sizeof(TESObjectARMO::InstanceData) == 0x58);

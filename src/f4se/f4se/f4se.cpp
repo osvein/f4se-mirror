@@ -13,7 +13,9 @@
 #include "Hooks_GameData.h"
 #include "Hooks_SaveLoad.h"
 #include "Hooks_Input.h"
+#include "Hooks_Debug.h"
 #include "PluginManager.h"
+#include "InternalSerialization.h"
 
 IDebugLog gLog;
 void * g_moduleHandle = nullptr;
@@ -69,6 +71,7 @@ void F4SE_Initialize(void)
 			return;
 		}
 
+		Hooks_Debug_Init();
 		Hooks_ObScript_Init();
 		Hooks_Papyrus_Init();
 		Hooks_Scaleform_Init();
@@ -79,6 +82,7 @@ void F4SE_Initialize(void)
 
 		g_pluginManager.Init();
 
+		Hooks_Debug_Commit();
 		Hooks_ObScript_Commit();
 		Hooks_Papyrus_Commit();
 		Hooks_Scaleform_Commit();
@@ -86,6 +90,8 @@ void F4SE_Initialize(void)
 		Hooks_GameData_Commit();
 		Hooks_SaveLoad_Commit();
 		Hooks_Input_Commit();
+
+		Init_CoreSerialization_Callbacks();
 
 		FlushInstructionCache(GetCurrentProcess(), NULL, 0);
 

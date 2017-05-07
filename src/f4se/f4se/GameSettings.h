@@ -72,6 +72,8 @@ public:
 
 	void	* unk118;	// 118
 	Node	* data;		// 120
+
+	Setting * Get(const char * name);
 };
 
 // 128
@@ -98,3 +100,5 @@ public:
 extern RelocPtr <INISettingCollection *> g_iniSettings;
 extern RelocPtr <INIPrefSettingCollection *> g_iniPrefSettings;
 extern RelocPtr <RegSettingCollection*> g_regSettings;
+
+extern Setting * GetINISetting(const char * name);

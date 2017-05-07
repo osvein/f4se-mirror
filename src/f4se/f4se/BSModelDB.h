@@ -29,7 +29,7 @@ public:
 	public:
 		virtual ~BSModelProcessor() { };
 
-		virtual void Process(ModelData * modelData, const char * modelName, NiAVObject ** root) { };
+		virtual void Process(ModelData * modelData, const char * modelName, NiAVObject ** root, UInt32 * typeOut) { };
 	};
 
 	class TESProcessor : public BSModelProcessor
@@ -38,11 +38,11 @@ public:
 		TESProcessor() { }
 		virtual ~TESProcessor() { CALL_MEMBER_FN(this, dtor)(); };
 
-		virtual void Process(ModelData * modelData, const char * modelName, NiAVObject ** root) { CALL_MEMBER_FN(this, Impl_Process)(modelData, modelName, root); }
+		virtual void Process(ModelData * modelData, const char * modelName, NiAVObject ** root, UInt32 * typeOut) override { CALL_MEMBER_FN(this, Impl_Process)(modelData, modelName, root, typeOut); }
 
 		MEMBER_FN_PREFIX(TESProcessor);
-		DEFINE_MEMBER_FN(dtor, void, 0x00133290);
-		DEFINE_MEMBER_FN(Impl_Process, void, 0x00133310, ModelData * modelData, const char * modelName, NiAVObject ** root);
+		DEFINE_MEMBER_FN(dtor, void, 0x01C607B0);
+		DEFINE_MEMBER_FN(Impl_Process, void, 0x00136780, ModelData * modelData, const char * modelName, NiAVObject ** root, UInt32 * typeOut);
 	};
 };
 
