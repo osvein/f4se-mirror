@@ -1233,4 +1233,3 @@ class ConcreteFormFactory : public IFormFactory
 public:
 	const char	* name;		// 08
 };
-
