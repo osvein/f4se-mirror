@@ -98,9 +98,9 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B15AD0, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01B15C00, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
-		DEFINE_MEMBER_FN(Release, void, 0x01B16D60);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B163B0, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01B164E0, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
+		DEFINE_MEMBER_FN(Release, void, 0x01B17640);
 
 		Ref();
 		Ref(const char * buf);
@@ -119,7 +119,7 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(RefW);
-		DEFINE_MEMBER_FN(ctor, RefW *, 0x01B15FD0, const wchar_t * buf);
+		DEFINE_MEMBER_FN(ctor, RefW *, 0x01B168B0, const wchar_t * buf);
 
 		RefW();
 		RefW(const wchar_t * buf);

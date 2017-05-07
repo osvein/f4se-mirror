@@ -167,6 +167,10 @@ bool BranchTrampoline::Write6Branch_Internal(uintptr_t src, uintptr_t dst, UInt8
 			*trampoline = dst;
 
 			result = true;
+
+#if defined(_DEBUG)
+			_MESSAGE("Write6Branch: %016I64X %016I64X %016I64X", src, dst, trampoline);
+#endif
 		}
 	}
 
@@ -234,6 +238,10 @@ bool BranchTrampoline::Write5Branch_Internal(uintptr_t src, uintptr_t dst, UInt8
 		hookCode.Init(trampolineDispl, op);
 
 		SafeWriteBuf(src, &hookCode, sizeof(hookCode));
+
+#if defined(_DEBUG)
+		_MESSAGE("Write5Branch: %016I64X %016I64X %016I64X", src, dst, trampolineCode);
+#endif
 
 		result = true;
 	}

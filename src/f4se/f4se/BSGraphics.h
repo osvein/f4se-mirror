@@ -24,12 +24,12 @@ class BSRenderTargetManager
 public:
 	MEMBER_FN_PREFIX(BSRenderTargetManager);
 	// 264CB6DCC7DACA88AC30E4EC83671FAAFBA2E490+7E
-	DEFINE_MEMBER_FN(LockTextureType, void, 0x01D06500, UInt32 type);
+	DEFINE_MEMBER_FN(LockTextureType, void, 0x01D07000, UInt32 type);
 	// 043E0332BAAAC13F99024C3C6EF85D0377BBAA12+14D
-	DEFINE_MEMBER_FN(ReleaseTextureType, void, 0x01D06590, UInt32 type);
-	DEFINE_MEMBER_FN(GetRenderData, BSRenderData *, 0x01D06460, UInt32 type, UInt64 unk1, UInt64 unk2, UInt32 unk3); // type, 0, 1, 0
+	DEFINE_MEMBER_FN(ReleaseTextureType, void, 0x01D07090, UInt32 type);
+	DEFINE_MEMBER_FN(GetRenderData, BSRenderData *, 0x01D06F60, UInt32 type, UInt64 unk1, UInt64 unk2, UInt32 unk3); // type, 0, 1, 0
 	// 264CB6DCC7DACA88AC30E4EC83671FAAFBA2E490+1FD
-	DEFINE_MEMBER_FN(Unk_01, void, 0x01D064B0, UInt32 type, BSRenderData *, UInt8 unk3); // type, rendererData, 1
+	DEFINE_MEMBER_FN(Unk_01, void, 0x01D06FB0, UInt32 type, BSRenderData *, UInt8 unk3); // type, rendererData, 1
 };
 
 // 1B8

@@ -20,6 +20,11 @@ void Hooks_ObScript_Init()
 			break;
 		}
 	}
+
+	if(!s_hijackedCommand)
+	{
+		_ERROR("couldn't find obscript command to use");
+	}
 }
 
 bool GetF4SEVersion_Execute(void * paramInfo, void * scriptData, TESObjectREFR * thisObj, void * containingObj, void * scriptObj, void * locals, double * result, void * opcodeOffsetPtr)

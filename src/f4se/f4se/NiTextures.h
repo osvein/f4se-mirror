@@ -39,7 +39,7 @@ public:
 	void * unk10[(0x60 - 0x10) >> 3];	// 10
 
 	MEMBER_FN_PREFIX(BSShaderTextureSet);
-	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C0F80);
+	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C1510);
 };
 
 typedef NiTexture * (* _CreateTexture)(const BSFixedString & name, UInt8 unk1); // unk1 is true on diffuses?

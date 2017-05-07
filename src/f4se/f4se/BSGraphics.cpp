@@ -1,10 +1,10 @@
 #include "f4se/BSGraphics.h"
 
 // 2CA5233612B3158658DB6DB9C90FD0258F1836E2+124
-RelocPtr <BSRenderer*> g_renderer(0x066B2DD8);
+RelocPtr <BSRenderer*> g_renderer(0x066A6C68);
 
 // 6BF9214E9DC5338FC817F85B0716990E5CA7C862+31
-RelocPtr <BSRenderManager> g_renderManager(0x0607BF80);
+RelocPtr <BSRenderManager> g_renderManager(0x0606FE00);
 
 // FA43F2F87927D8F20B17E756782BC91BB6BD04C2+3B
-RelocPtr <BSRenderTargetManager> g_renderTargetManager(0x036FC8B0);
+RelocPtr <BSRenderTargetManager> g_renderTargetManager(0x036F08D0);

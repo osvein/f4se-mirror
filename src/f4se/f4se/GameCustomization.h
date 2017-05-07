@@ -378,7 +378,7 @@ public:
 	UInt64					unk520[(0x548-0x520)/8];	// 520
 
 	MEMBER_FN_PREFIX(CharacterCreation);
-	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C8F4E0, UInt32 presetIndex); // Loads preset by index onto the actor
+	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C8FD20, UInt32 presetIndex); // Loads preset by index onto the actor
 };
 
 // ??
@@ -398,7 +398,7 @@ public:
 	NiAVObject	* camera;							// 34A8 - NiCamera (WorldRoot Camera)
 
 	MEMBER_FN_PREFIX(BSFaceGenManager);
-	DEFINE_MEMBER_FN(ApplyDynamicData, void, 0x00676640, BSTriShape * trishape);
+	DEFINE_MEMBER_FN(ApplyDynamicData, void, 0x00676BD0, BSTriShape * trishape);
 };
 STATIC_ASSERT(offsetof(BSFaceGenManager, unk3230) == 0x3230);
 STATIC_ASSERT(offsetof(BSFaceGenManager, unk3478) == 0x3478);
