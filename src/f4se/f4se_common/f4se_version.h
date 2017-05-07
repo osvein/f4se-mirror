@@ -4,8 +4,8 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	2
-#define F4SE_VERSION_INTEGER_BETA	6
-#define F4SE_VERSION_VERSTRING		"0, 0, 2, 6"
+#define F4SE_VERSION_INTEGER_BETA	7
+#define F4SE_VERSION_VERSTRING		"0, 0, 2, 7"
 #define F4SE_VERSION_PADDEDSTRING	"0001"
 #define F4SE_VERSION_RELEASEIDX		1
 
@@ -46,13 +46,14 @@
 #define RUNTIME_VERSION_1_7_10	MAKE_EXE_VERSION(1, 7, 10)	// 0x010700A0	release - no interim beta
 #define RUNTIME_VERSION_1_7_12	MAKE_EXE_VERSION(1, 7, 12)	// 0x010700C0	release - no interim beta, wtf bethesda
 #define RUNTIME_VERSION_1_7_15	MAKE_EXE_VERSION(1, 7, 15)	// 0x010700F0	release - no interim beta, released on a holiday weekend, wtf bethesda
-#define RUNTIME_VERSION_1_7_19	MAKE_EXE_VERSION(1, 7, 19)	// 0x01070130	release
+#define RUNTIME_VERSION_1_7_19	MAKE_EXE_VERSION(1, 7, 19)	// 0x01070130	release - rolled back
+#define RUNTIME_VERSION_1_7_22	MAKE_EXE_VERSION(1, 7, 22)	// 0x01070160	release - bugfix for 1.7.19
 
 #define PACKED_F4SE_VERSION		MAKE_EXE_VERSION(F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA)
 
 // information about the state of the game at the time of release
 #define F4SE_TARGETING_BETA_VERSION	0
-#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_7_19
-#define CURRENT_RELEASE_F4SE_STR	"0.2.6"
+#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_7_22
+#define CURRENT_RELEASE_F4SE_STR	"0.2.7"
 
 #endif /* __F4SE_VERSION_H__ */
