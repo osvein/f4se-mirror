@@ -15,6 +15,7 @@ enum
 	kInterface_Invalid = 0,
 	kInterface_Messaging,
 	kInterface_Scaleform,
+	kInterface_Papyrus,
 	kInterface_Max,
 };
 
@@ -129,6 +130,20 @@ struct F4SEScaleformInterface
 	// Make sure that the memory it points to is valid from the point the callback
 	// is registered until the game exits.
 	bool	(* Register)(const char * name, RegisterCallback callback);
+};
+
+class VirtualMachine;
+
+struct F4SEPapyrusInterface
+{
+	enum
+	{
+		kInterfaceVersion = 1
+	};
+	UInt32	interfaceVersion;
+
+	typedef bool (* RegisterFunctions)(VirtualMachine * vm);
+	bool	(* Register)(RegisterFunctions callback);
 };
 
 struct PluginInfo

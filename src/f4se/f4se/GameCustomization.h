@@ -359,7 +359,7 @@ public:
 	UInt64					unk520[(0x548-0x520)/8];	// 520
 
 	MEMBER_FN_PREFIX(CharacterCreation);
-	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C5F560, UInt32 presetIndex); // Loads preset by index onto the actor
+	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C63090, UInt32 presetIndex); // Loads preset by index onto the actor
 };
 
 extern RelocPtr <CharacterCreation*> g_characterCreation;
@@ -377,8 +377,3 @@ extern RelocAddr <_CopyCharacterTints> CopyCharacterTints;
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl;
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl;
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl;
-
-extern const void * RTTI_BGSCharacter_Template_Entry;
-extern const void * RTTI_BGSCharacter_Template_Mask;
-extern const void * RTTI_BGSCharacter_Template_Palette;
-extern const void * RTTI_BGSCharacter_Template_TextureSet;

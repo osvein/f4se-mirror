@@ -43,6 +43,14 @@ static const F4SEScaleformInterface g_F4SEScaleformInterface =
 	RegisterScaleformPlugin
 };
 
+#include "Hooks_Papyrus.h"
+
+static const F4SEPapyrusInterface g_F4SEPapyrusInterface =
+{
+	F4SEPapyrusInterface::kInterfaceVersion,
+	RegisterPapyrusPlugin
+};
+
 PluginManager::PluginManager()
 {
 	//

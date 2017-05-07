@@ -1,3 +1,7 @@
+0.1.19
+- support for beta runtime 1.6.3
+- papyrus mostly done, plugin support currently disabled until it's more tested
+
 0.1.18
 - support for runtime 1.5.416
 

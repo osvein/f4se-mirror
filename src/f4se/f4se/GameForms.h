@@ -188,6 +188,14 @@ extern RelocAddr <_LookupFormByID> LookupFormByID;
 	LSPR	156
 	GDRY	157
 	OVIS	158
+
+	// Special types
+	160
+	161
+	162
+	163
+	164
+	165
 */
 
 enum FormType
@@ -977,7 +985,7 @@ public:
 	UInt32					unk2C;	// strange - written to in ctor as UInt64 as 0, but can't line up that way
 	UInt32					unk30;
 	UInt32					unk34;
-	UInt64					unk38; // init to a char[5]  (aNQ_10), 'Ì¡¥´'
+	UInt64					unk38; // init to a char[5]
 	UInt64					unk40;
 	UInt64					unk48;
 };

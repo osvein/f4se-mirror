@@ -70,24 +70,24 @@ public:
 		GFxMovieRoot * movieRoot;
 
 		MEMBER_FN_PREFIX(ObjectInterface);
-		DEFINE_MEMBER_FN(HasMember, bool, 0x0203C410, void* pData, const char* name);
-		DEFINE_MEMBER_FN(GetMember, bool, 0x020347C0, void* pData, const char* name, GFxValue* pValue, bool isDisplayObj);
-		DEFINE_MEMBER_FN(SetMember, bool, 0x0205CD40, void* pData, const char* name, const GFxValue* pValue, bool isDisplayObj);
-		DEFINE_MEMBER_FN(Invoke, bool, 0x0203E480, void * pData, GFxValue * result, const char * name, GFxValue * args, UInt64 numArgs, UInt8 isDisplayObj);
-		DEFINE_MEMBER_FN(CreateEmptyMovieClip, bool, 0x02016820, void* pData, GFxValue* pValue, const char* instanceName, SInt32 depth);
-		DEFINE_MEMBER_FN(AttachMovie, bool, 0x0200DD90, void* pData, GFxValue* pValue, const char* symbolName, const char* instanceName, SInt32 depth, const void * initArgs);
-		DEFINE_MEMBER_FN(GetArraySize, UInt32, 0x0202E5C0, void * pData);
-		// ref 0x02128FF0 (+4)
-		DEFINE_MEMBER_FN(SetArraySize, bool, 0x02057180, void * pData, UInt32 size);
-		DEFINE_MEMBER_FN(GetElement, bool, 0x020322B0, void * pData, UInt32 index, GFxValue * value);
-		DEFINE_MEMBER_FN(PushBack, bool, 0x0204F0D0, void * pData, GFxValue * value);
-		DEFINE_MEMBER_FN(PopBack, bool, 0x0204AFF0, void * pData, GFxValue * value);
-		DEFINE_MEMBER_FN(VisitElements, void, 0x02067840, void * pData, ArrayVisitor * visitor, UInt32 idx, SInt32 count);
-		// ref 0x02172970 (+485)
-		DEFINE_MEMBER_FN(VisitMembers, void, 0x02067970, void * pData, ObjVisitor * visitor, bool isDisplayObj);
-		DEFINE_MEMBER_FN(GetText, bool, 0x0203A030, void * pData, GFxValue * value, bool html);
-		DEFINE_MEMBER_FN(SetText, bool, 0x0205FE20, void * pData, const char * text, bool html);
-		DEFINE_MEMBER_FN(ReleaseManaged_Internal, void, 0x020463E0, GFxValue * value, void * pData);
+		DEFINE_MEMBER_FN(HasMember, bool, 0x02040E00, void* pData, const char* name);
+		DEFINE_MEMBER_FN(GetMember, bool, 0x020391B0, void* pData, const char* name, GFxValue* pValue, bool isDisplayObj);
+		DEFINE_MEMBER_FN(SetMember, bool, 0x02061730, void* pData, const char* name, const GFxValue* pValue, bool isDisplayObj);
+		DEFINE_MEMBER_FN(Invoke, bool, 0x02042E70, void * pData, GFxValue * result, const char * name, GFxValue * args, UInt64 numArgs, UInt8 isDisplayObj);
+		DEFINE_MEMBER_FN(CreateEmptyMovieClip, bool, 0x0201B210, void* pData, GFxValue* pValue, const char* instanceName, SInt32 depth);
+		DEFINE_MEMBER_FN(AttachMovie, bool, 0x02012780, void* pData, GFxValue* pValue, const char* symbolName, const char* instanceName, SInt32 depth, const void * initArgs);
+		DEFINE_MEMBER_FN(GetArraySize, UInt32, 0x02032FB0, void * pData);
+		// ref 0x0212D9E0 (+4)
+		DEFINE_MEMBER_FN(SetArraySize, bool, 0x0205BB70, void * pData, UInt32 size);
+		DEFINE_MEMBER_FN(GetElement, bool, 0x02036CA0, void * pData, UInt32 index, GFxValue * value);
+		DEFINE_MEMBER_FN(PushBack, bool, 0x02053AC0, void * pData, GFxValue * value);
+		DEFINE_MEMBER_FN(PopBack, bool, 0x0204F9E0, void * pData, GFxValue * value);
+		DEFINE_MEMBER_FN(VisitElements, void, 0x0206C230, void * pData, ArrayVisitor * visitor, UInt32 idx, SInt32 count);
+		// ref 0x02177360 (+485)
+		DEFINE_MEMBER_FN(VisitMembers, void, 0x0206C360, void * pData, ObjVisitor * visitor, bool isDisplayObj);
+		DEFINE_MEMBER_FN(GetText, bool, 0x0203EA20, void * pData, GFxValue * value, bool html);
+		DEFINE_MEMBER_FN(SetText, bool, 0x02064810, void * pData, const char * text, bool html);
+		DEFINE_MEMBER_FN(ReleaseManaged_Internal, void, 0x0204ADD0, GFxValue * value, void * pData);
 	};
 
 	ObjectInterface	* objectInterface;	// 00

@@ -1,1 +1,4 @@
 #include "PapyrusVM.h"
+
+// EE2D25F9116A28EAB3122A286C43FF35CCE5B975+48
+RelocPtr <GameVM *> g_gameVM(0x05721BB8);

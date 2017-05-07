@@ -70,9 +70,9 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01AD0340, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01AD0470, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
-		DEFINE_MEMBER_FN(Release, void, 0x01AD15D0);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01AD4D30, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01AD4E60, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
+		DEFINE_MEMBER_FN(Release, void, 0x01AD5FC0);
 
 		Ref();
 		Ref(const char * buf);
@@ -91,7 +91,7 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(RefW);
-		DEFINE_MEMBER_FN(ctor, RefW *, 0x01AD0840, const wchar_t * buf);
+		DEFINE_MEMBER_FN(ctor, RefW *, 0x01AD5230, const wchar_t * buf);
 
 		RefW();
 		RefW(const wchar_t * buf);
@@ -151,7 +151,7 @@ private:
 // Container types
 
 // 18
-template <class T>
+template <class T, int nGrow = 10, int nShrink = 10>
 class tArray
 {
 public:
@@ -188,6 +188,128 @@ public:
 		count = numEntries;
 
 		return true;
+	}
+
+	bool Resize(UInt32 numEntries)
+	{
+		if(numEntries == capacity)
+			return false;
+
+		if(!entries) {
+			Allocate(numEntries);
+			return true;
+		}
+		if(numEntries < capacity) {
+			// Delete the truncated entries
+			for(UInt32 i = numEntries; i < capacity; i++)
+				delete &entries[i];
+		}
+		
+		T * newBlock = (T *)Heap_Allocate(sizeof(T) * numEntries);						// Create a new block
+		memmove_s(newBlock, sizeof(T) * numEntries, entries, sizeof(T) * numEntries);	// Move the old memory to the new block
+		if(numEntries > capacity) {														// Fill in new remaining entries
+			for(UInt32 i = capacity; i < numEntries; i++)
+				new (&entries[i]) T;
+		}
+		Heap_Free(entries);																// Free the old block
+		entries = newBlock;																// Assign the new block
+		capacity = numEntries;															// Capacity is now the number of total entries in the block
+		count = min(capacity, count);													// Count stays the same, or is truncated to capacity
+		return true;
+	}
+
+	bool Push(const T & entry)
+	{
+		if(!entries) return false;
+ 
+		if(count + 1 > capacity) {
+			if(!Grow(nGrow))
+				return false;
+		}
+ 
+		entries[count] = entry;
+		count++;
+		return true;
+	};
+ 
+	bool Insert(UInt32 index, const T & entry)
+	{
+		if(!entries || index < count)
+				return false;
+ 
+		entries[index] = entry;
+		return true;
+	};
+
+	bool Remove(UInt32 index)
+	{
+		if(!entries || index >= count)
+			return false;
+ 
+		// This might not be right for pointer types...
+		(&entries[index])->~T();
+
+		if(index + 1 < count) {
+			UInt32 remaining = count - index;
+			memmove_s(&entries[index + 1], sizeof(T) * remaining, &entries[index], sizeof(T) * remaining); // Move the rest up
+		}
+		count--;
+ 
+		if(capacity > count + nShrink)
+			Shrink();
+ 
+		return true;
+	}
+
+	bool Shrink()
+	{
+		if(!entries || count == capacity) return false;
+ 
+		try {
+			UInt32 newSize = count;
+			T * oldArray = entries;
+			T * newArray = (T *)Heap_Allocate(sizeof(T) * newSize); // Allocate new block
+			memmove_s(newArray, sizeof(T) * newSize, entries, sizeof(T) * newSize); // Move the old block
+			entries = newArray;
+			capacity = count;
+			Heap_Free(oldArray); // Free the old block
+			return true;
+		}
+		catch(...) {
+			return false;
+		}
+ 
+		return false;
+	}
+
+	bool Grow(UInt32 numEntries)
+	{
+		if(!entries)
+			return false;
+ 
+		try {
+			UInt32 oldSize = capacity;
+			UInt32 newSize = oldSize + numEntries;
+			T * oldArray = entries;
+			T * newArray = (T *)Heap_Allocate(sizeof(T) * newSize); // Allocate new block
+			if(oldArray)
+				memmove_s(newArray, sizeof(T) * newSize, entries, sizeof(T) * capacity); // Move the old block
+			entries = newArray;
+			capacity = newSize;
+
+			if(oldArray)
+				Heap_Free(oldArray); // Free the old block
+ 
+			for(UInt32 i = oldSize; i < newSize; i++) // Allocate the rest of the free blocks
+				new (&entries[i]) T;
+
+			return true;
+		}
+		catch(...) {
+			return false;
+		}
+ 
+		return false;
 	}
 
 	bool GetNthItem(UInt64 index, T& pT) const

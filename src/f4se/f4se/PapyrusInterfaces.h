@@ -1,5 +1,12 @@
 #pragma once
 
+#include "f4se_common/Relocation.h"
+#include "f4se_common/Utilities.h"
+
+#include "f4se/GameTypes.h"
+
+class VMIdentifier;
+
 // 08
 class IClientVM
 {
@@ -119,4 +126,70 @@ public:
 	UInt64	unk20;	// 20
 	UInt64	unk28;	// 28
 	UInt64	unk30;	// 30
+};
+
+// 08
+class IComplexType
+{
+public:
+	virtual ~IComplexType();
+
+	virtual UInt32	GetType() = 0;
+
+	SInt32				m_refCount;	// 08
+	UInt32				unk0C;		// 0C
+	BSFixedString		m_typeName;	// 10
+	IComplexType		* m_parent;	// 18
+
+	void	AddRef(void);
+	void	Release(void);
+};
+
+class IObjectHandlePolicy
+{
+public:
+	IObjectHandlePolicy();
+	virtual ~IObjectHandlePolicy();
+
+	virtual bool	IsType(UInt32 typeID, UInt64 handle);
+	virtual bool	Unk_02(UInt64 unk1, UInt32 * formType);
+	virtual bool	Unk_03(UInt64 handle);
+	virtual bool	Unk_04(UInt64 unk1);
+	virtual UInt64	GetInvalidHandle(void);
+	virtual UInt64	Create(UInt32 typeID, void * srcData);
+	virtual bool	IsREFR(UInt64 handle);	// return IsType(TESObjectREFR::kTypeID, handle);
+	virtual UInt64	Unk_08(UInt64 unk1);
+	virtual UInt32	Unk_09(UInt64 unk1);
+	virtual UInt32	Unk_0A(UInt64 unk1);
+	virtual void *	Resolve(UInt32 typeID, UInt64 handle);
+	virtual void	AddRef(UInt64 handle);
+	virtual void	Release(UInt64 handle);
+	virtual void	GetName(UInt64 handle, void * outStr);
+};
+
+extern RelocPtr <IObjectHandlePolicy *> g_objectHandlePolicy;
+
+class IObjectBindPolicy
+{
+public:
+	IObjectBindPolicy();
+	virtual ~IObjectBindPolicy();
+
+	virtual void	Unk_01(UInt64 unk);
+	virtual void	Unk_02(UInt64 unk);
+	virtual void	Unk_03(UInt64 unk);
+	virtual void	Unk_04(UInt64 unk);
+	virtual SInt32	Unk_05(void);
+	virtual UInt32	Unk_06(UInt64 unk);
+	virtual UInt32	Unk_07(void);
+	virtual void	Unk_08(void);
+	virtual void	Unk_09(UInt64 unk0, UInt16 unk1, UInt64 unk2, UInt64 unk3);
+	virtual void	* Unk_0A(void);
+	virtual void	Unk_0B(UInt64 unk0, UInt64 unk1, UInt64 unk2, UInt8 unk3);
+	virtual void	Unk_0C(UInt64 unk0, UInt64 unk1, UInt64 unk2, UInt8 unk3);
+	virtual UInt64	Unk_0D(UInt64 unk0, UInt64 unk1, UInt8 unk2, UInt64 unk3, UInt64 unk4);
+	virtual void	Unk_0E(UInt64 unk0, UInt64 unk1, UInt8 unk2, UInt64 unk3, UInt64 unk4);
+
+	MEMBER_FN_PREFIX(IObjectBindPolicy);
+	DEFINE_MEMBER_FN(BindObject, void, 0x025B3030, VMIdentifier ** identifier, UInt64 handle);
 };

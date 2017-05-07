@@ -155,6 +155,12 @@
     <ClCompile Include="PapyrusArgs.cpp">
       <Filter>papyrus\vm</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusValue.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusStruct.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -162,6 +168,15 @@
       <Filter>api</Filter>
     </None>
     <None Include="PapyrusNativeFunctionDef.inl">
+      <Filter>papyrus\vm</Filter>
+    </None>
+    <None Include="PapyrusStructDef_Base.inl">
+      <Filter>papyrus\vm</Filter>
+    </None>
+    <None Include="PapyrusStructDef.inl">
+      <Filter>papyrus\vm</Filter>
+    </None>
+    <None Include="PapyrusNativeFunctionDef_Base.inl">
       <Filter>papyrus\vm</Filter>
     </None>
   </ItemGroup>
@@ -343,6 +358,12 @@
       <Filter>papyrus\vm</Filter>
     </ClInclude>
     <ClInclude Include="PapyrusArgs.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusValue.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusStruct.h">
       <Filter>papyrus\vm</Filter>
     </ClInclude>
   </ItemGroup>
