@@ -8,6 +8,7 @@
 #include "f4se/GameData.h"
 #include "f4se/InternalSerialization.h"
 #include "f4se/Serialization.h"
+#include "f4se/PapyrusEvents.h"
 
 // Internal
 
@@ -62,12 +63,19 @@ UInt8 ResolveModIndex(UInt8 modIndex)
 
 void Core_RevertCallback(const F4SESerializationInterface * intfc)
 {
-	
+	g_inputKeyEventRegs.Clear();
+	g_inputControlEventRegs.Clear();
 }
 
 void Core_SaveCallback(const F4SESerializationInterface * intfc)
 {
 	SaveModList(intfc);
+
+	_MESSAGE("Saving key input event registrations...");
+	g_inputKeyEventRegs.Save(intfc, 'KEYR', 1);
+
+	_MESSAGE("Saving control input event registrations...");
+	g_inputControlEventRegs.Save(intfc, 'CTLR', 1);
 }
 
 void Core_LoadCallback(const F4SESerializationInterface * intfc)
@@ -81,6 +89,18 @@ void Core_LoadCallback(const F4SESerializationInterface * intfc)
 		// Mod list
 		case 'MODS':
 			LoadModList(intfc);
+			break;
+
+			// Key input events
+		case 'KEYR':
+			_MESSAGE("Loading key input event registrations...");
+			g_inputKeyEventRegs.Load(intfc, 1);
+			break;
+
+			// Control input events
+		case 'CTLR':
+			_MESSAGE("Loading control input event registrations...");
+			g_inputControlEventRegs.Load(intfc, 1);
 			break;
 
 		default:

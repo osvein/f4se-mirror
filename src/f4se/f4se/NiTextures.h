@@ -3,7 +3,25 @@
 #include "f4se/NiObjects.h"
 #include "f4se/GameTypes.h"
 
-class BSRenderData;
+struct ID3D11ShaderResourceView;
+struct ID3D11Resource;
+
+// 40
+struct BSRenderData
+{
+	ID3D11ShaderResourceView	* resourceView;	// 00
+	ID3D11Resource				* resource;		// 08
+	UInt64						unk10;			// 10
+	UInt64						unk18;			// 18
+	UInt64						unk20;			// 20
+	UInt16						width;			// 28
+	UInt16						height;			// 2A
+	UInt8						unk2B;			// 2B
+	UInt8						unk2C;			// 2C
+	UInt16						unk2D;			// 2D
+	UInt64						unk30;			// 30
+	UInt64						unk38;			// 38
+};
 
 // 48
 class NiTexture : public NiObject
@@ -21,6 +39,28 @@ public:
 	UInt32			unk44;				// 44
 };
 
+class BSTextureArray
+{
+public:
+	class StaticTexture : public NiTexture
+	{
+	public:
+		virtual ~StaticTexture();
+	};
+
+	// 78
+	class StaticTextureIndexed : public StaticTexture
+	{
+	public:
+		virtual ~StaticTextureIndexed();
+
+		MEMBER_FN_PREFIX(StaticTextureIndexed);
+		DEFINE_MEMBER_FN(ctor, StaticTextureIndexed*, 0x01CBDF70, UInt32 unk1, int unk2, bool unk3);
+
+		UInt64	unk48[(0x78 - 0x48) >> 3];
+	};
+};
+
 // 10
 class BSTextureSet : public NiObject
 {
@@ -36,11 +76,12 @@ public:
 class BSShaderTextureSet : public BSTextureSet
 {
 public:
-	void * unk10[(0x60 - 0x10) >> 3];	// 10
-
-	MEMBER_FN_PREFIX(BSShaderTextureSet);
-	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C1510);
+	BSFixedString	textures[10];	// 10
 };
+STATIC_ASSERT(sizeof(BSShaderTextureSet) == 0x60);
+
+typedef BSShaderTextureSet * (* _CreateBSShaderTextureSet)();
+extern RelocAddr <_CreateBSShaderTextureSet> CreateBSShaderTextureSet;
 
 typedef NiTexture * (* _CreateTexture)(const BSFixedString & name, UInt8 unk1); // unk1 is true on diffuses?
 extern RelocAddr <_CreateTexture> CreateTexture;

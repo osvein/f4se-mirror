@@ -255,6 +255,9 @@ bool Function CanProduceForWorkshop() native
 ; Clears all effects of destruction from this object
 Function ClearDestruction() native
 
+; Clears this object from data on all invalid locations
+Function ClearFromOldLocations() native
+
 ; Set conveyor belt on.
 Function ConveyorBeltOn( bool abOn = true ) native
 
@@ -1164,6 +1167,6 @@ int Property Motion_Keyframed = 2 AutoReadOnly
 
 
 
-; F4SE additions built 2016-08-06 00:10:48.819000 UTC
+; F4SE additions built 2017-02-07 05:37:32.528000 UTC
 ; Returns all the mods for this reference
 ObjectMod[] Function GetAllMods() native

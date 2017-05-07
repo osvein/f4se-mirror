@@ -8,10 +8,10 @@
 #include "xbyak/xbyak.h"
 
 // DDB041F109C6211C69F6E5F20EEC28E4448B796B+53
-RelocAddr <char *> g_gameVersion(0x02B5D068);
+RelocAddr <char *> g_gameVersion(0x02C08088);
 
-RelocAddr <uintptr_t> kHook_ShowVersion_Offset(0x00B9F4A0 + 0x53 + 3);
-RelocAddr <uintptr_t> kHook_ShowVersion_OffsetBase(0x00B9F4A0 + 0x5A);
+RelocAddr <uintptr_t> kHook_ShowVersion_Offset(0x00BA2AC0 + 0x53 + 3);
+RelocAddr <uintptr_t> kHook_ShowVersion_OffsetBase(0x00BA2AC0 + 0x5A);
 
 static char s_patchedGameVersion[256];
 
@@ -35,8 +35,8 @@ static void CommitVersionHook()
 
 static char * s_customControlMap = nullptr;
 
-RelocAddr <uintptr_t> kHook_CustomControlMap_Offset(0x01B08F30);
-RelocAddr <void *> kHook_CustomControlMap_Return(0x01B08F30 + 5);
+RelocAddr <uintptr_t> kHook_CustomControlMap_Offset(0x01B0C5D0);
+RelocAddr <void *> kHook_CustomControlMap_Return(0x01B0C5D0 + 5);
 
 static void InitControlMap()
 {

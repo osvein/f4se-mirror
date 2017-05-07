@@ -1,8 +1,23 @@
 #include "f4se/ScaleformValue.h"
 
+RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020CA930);
+RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020CA630);
+RelocAddr <_SetDefaultColors> SetDefaultColors(0x020CA880);
+
+RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x020E5880);
+RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x020E5B90);
+RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x020E5A10);
+
+
 GFxValue::~GFxValue()
 {
 	CleanManaged();
+}
+
+void GFxValue::AddManaged(void)
+{
+	if(IsManaged())
+		CALL_MEMBER_FN(objectInterface, AddManaged_Internal)(this, data.obj);
 }
 
 void GFxValue::CleanManaged(void)
@@ -202,3 +217,45 @@ void GFxValue::VisitMembers(ObjectInterface::ObjVisitor * visitor)
 {
 	CALL_MEMBER_FN(objectInterface, VisitMembers)(data.obj, visitor, IsDisplayObject());
 }
+
+bool GFxValue::GetDisplayInfo(DisplayInfo * displayInfo)
+{
+	return CALL_MEMBER_FN(objectInterface, GetDisplayInfo)(data.obj, displayInfo);
+}
+
+bool GFxValue::SetDisplayInfo(DisplayInfo * displayInfo)
+{
+	return CALL_MEMBER_FN(objectInterface, SetDisplayInfo)(data.obj, displayInfo);
+}
+
+bool GFxValue::GotoLabeledFrame(const char * frameLabel, bool stop)
+{
+	return CALL_MEMBER_FN(objectInterface, GotoLabeledFrame)(data.obj, frameLabel, stop);
+}
+
+void BSGFxShaderFXTarget::SetFilterColor(bool isHostile)
+{
+	UInt32 type = kColorNormal;
+	FilterColor color;
+	if(isHostile)
+		type = kColorWarning;
+	colorType = type;
+
+	GetFilterColorByType(this, &color);
+	ApplyColorFilter(this, &color, 1.0f);
+}
+
+EventResult	BSGFxShaderFXTarget::ReceiveEvent(ApplyColorUpdateEvent * evn, void * dispatcher)
+{
+	FilterColor color;
+	if(((colorFlags >> 1) & 1) && colorType != kColorUnk7)
+	{
+		FilterColor * filtered = GetFilterColorByType(this, &color);
+		ApplyColorFilter(this, filtered, blue);
+	}
+	if((colorFlags & 1) && unkAC != 4)
+	{
+		SetDefaultColors(this);
+	}
+	return kEvent_Continue;
+};

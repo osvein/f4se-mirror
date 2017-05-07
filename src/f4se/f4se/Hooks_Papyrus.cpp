@@ -11,23 +11,24 @@
 #include "f4se/PapyrusHeadPart.h"
 #include "f4se/PapyrusObjectReference.h"
 #include "f4se/PapyrusGame.h"
+#include "f4se/PapyrusScriptObject.h"
 
 #include "f4se/Serialization.h"
 
 #include "xbyak/xbyak.h"
 
-RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013C5910 + 0x461);
+RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013C8FB0 + 0x461);
 
 typedef bool (* _SaveRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, void * saveStorageWrapper);
-RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x01453820);
+RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x01456EC0);
 _SaveRegistrationHandles SaveRegistrationHandles_Original = nullptr;
 
 typedef bool (* _LoadRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, UInt16 version, void * loadStorageWrapper, void * unk2);
-RelocAddr <_LoadRegistrationHandles> LoadRegistrationHandles(0x014538B0);
+RelocAddr <_LoadRegistrationHandles> LoadRegistrationHandles(0x01456F50);
 _LoadRegistrationHandles LoadRegistrationHandles_Original = nullptr;
 
 typedef void (* _RevertGlobalData)(void * vm);
-RelocAddr <_RevertGlobalData> RevertGlobalData(0x01355030);
+RelocAddr <_RevertGlobalData> RevertGlobalData(0x013586D0);
 _RevertGlobalData RevertGlobalData_Original = nullptr;
 
 typedef std::list <F4SEPapyrusInterface::RegisterFunctions> PapyrusPluginList;
@@ -49,6 +50,9 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 	_MESSAGE("RegisterPapyrusFunctions_Hook");
 
 	VirtualMachine * vm = (*vmPtr);
+
+	// ScriptObject
+	papyrusScriptObject::RegisterFuncs(vm);
 
 	// F4SE
 	papyrusF4SE::RegisterFuncs(vm);

@@ -28,8 +28,8 @@ class VMArgList
 {
 public:
 	MEMBER_FN_PREFIX(VMArgList);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x0261CD90, VMState * state);
-	DEFINE_MEMBER_FN(Get, VMValue *, 0x0261CDF0, VMState * state, UInt32 idx, UInt32 offset);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x026B5970, VMState * state);
+	DEFINE_MEMBER_FN(Get, VMValue *, 0x026B59D0, VMState * state, UInt32 idx, UInt32 offset);
 };
 
 template <typename T>
@@ -234,6 +234,15 @@ public:
 		}
 
 		return false;
+	}
+
+	UInt64 GetHandle()
+	{
+		if(m_value.IsIdentifier() && m_value.data.id) {
+			return m_value.data.id->GetHandle();
+		}
+
+		return (*g_objectHandlePolicy)->GetInvalidHandle();
 	}
 
 	void PackObject(VMValue * dst)

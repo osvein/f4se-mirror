@@ -1,7 +1,9 @@
 #include "f4se/GameMenus.h"
 
 // 2CA5233612B3158658DB6DB9C90FD0258F1836E2+AD
-RelocPtr <UI*> g_ui(0x0576A098);
+RelocPtr <UI*> g_ui(0x0585BB18);
+
+RelocAddr <_HasHUDContext> HasHUDContext(0x00A4D0C0);
 
 bool UI::IsMenuOpen(BSFixedString * menuName)
 {
@@ -35,14 +37,54 @@ IMenu * UI::GetMenuByMovie(GFxMovieView * movie)
 	{
 		IMenu * itemMenu = item->menuInstance;
 		if(itemMenu) {
-			if(movie == itemMenu->movie) {
-				menu = itemMenu;
-				return false;
+			GFxMovieView * view = itemMenu->movie;
+			if(view) {
+				if(movie == view) {
+					menu = itemMenu;
+					return false;
+				}
 			}
 		}
-
 		return true;
 	});
 
 	return menu;
+}
+
+HUDComponentBase::HUDComponentBase(GFxValue * parent, const char * componentName, HUDContextArray<BSFixedString> * contextList)
+{
+	CALL_MEMBER_FN(this, Impl_ctor)(parent, componentName, contextList);
+}
+
+HUDComponentBase::~HUDComponentBase()
+{
+	for(UInt32 i = 0; i < contexts.count; i++)
+	{
+		contexts.entries[i].Release();
+	}
+
+	Heap_Free(contexts.entries);
+	contexts.count = 0;
+}
+
+void HUDComponentBase::UpdateVisibilityContext(void * unk1)
+{
+	HasHUDContext(&contexts, unk1);
+	bool bVisible = IsVisible();
+	double alpha = 0.0;
+	if(bVisible) {
+		alpha = 100.0;
+	}
+
+	BSGFxDisplayObject::BSDisplayInfo dInfo;
+	void * unk2 = GetExtDisplayInfo(&dInfo, this);
+	SetExtDisplayInfoAlpha(unk2, alpha);
+	SetExtDisplayInfo(&dInfo);
+
+	unkEC = bVisible == false;
+}
+
+void HUDComponentBase::ColorizeComponent()
+{
+	SetFilterColor(isWarning);
 }

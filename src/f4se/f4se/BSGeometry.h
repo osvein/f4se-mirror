@@ -105,6 +105,9 @@ public:
 	UInt8	unk159;							// 159
 	UInt16	pad15A;							// 15A
 	UInt32	unk15C;							// 15C
+
+	MEMBER_FN_PREFIX(BSGeometry);
+	DEFINE_MEMBER_FN(UpdateShaderProperty, UInt32, 0x027D4360);
 };
 STATIC_ASSERT(sizeof(BSGeometry) == 0x160);
 
@@ -119,7 +122,7 @@ public:
 	float	unk16C;	// 16C
 
 	MEMBER_FN_PREFIX(BSTriShape);
-	DEFINE_MEMBER_FN(CreateDynamicTriShape, BSDynamicTriShape*, 0x01CFC7B0, NiAVObject * unk1);
+	DEFINE_MEMBER_FN(CreateDynamicTriShape, BSDynamicTriShape*, 0x01CFFE50, NiAVObject * unk1);
 };
 STATIC_ASSERT(sizeof(BSTriShape) == 0x170);
 

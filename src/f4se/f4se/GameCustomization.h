@@ -378,7 +378,7 @@ public:
 	UInt64					unk520[(0x548-0x520)/8];	// 520
 
 	MEMBER_FN_PREFIX(CharacterCreation);
-	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C8FD20, UInt32 presetIndex); // Loads preset by index onto the actor
+	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C93350, UInt32 presetIndex); // Loads preset by index onto the actor
 };
 
 // ??
@@ -390,7 +390,9 @@ public:
 	UInt16	unk02;								// 02
 	UInt32	numActorsAllowedToMorph;			// 04 numActorsAllowedToMorph
 
-	UInt64		unk08[(0x3230 - 0x08) >> 3];		// 08
+	UInt64		unk08[(0x31E8 - 0x08) >> 3];		// 08
+	void		* unk31E8;							// 31E8
+	UInt64		unk31F0[(0x3230 - 0x31F0) >> 3];	// 31F0
 	void		* unk3230;							// 3230
 	UInt64		unk3238[(0x3478 - 0x3238) >> 3];	// 3238
 	void		* unk3478;							// 3478
@@ -398,7 +400,7 @@ public:
 	NiAVObject	* camera;							// 34A8 - NiCamera (WorldRoot Camera)
 
 	MEMBER_FN_PREFIX(BSFaceGenManager);
-	DEFINE_MEMBER_FN(ApplyDynamicData, void, 0x00676BD0, BSTriShape * trishape);
+	DEFINE_MEMBER_FN(ApplyDynamicData, void, 0x00676BB0, BSTriShape * trishape);
 };
 STATIC_ASSERT(offsetof(BSFaceGenManager, unk3230) == 0x3230);
 STATIC_ASSERT(offsetof(BSFaceGenManager, unk3478) == 0x3478);
@@ -425,8 +427,12 @@ typedef void (* _FillTintTemplates)(tArray<BGSCharacterTint::Entry*> dst, Charac
 extern RelocAddr <_FillTintTemplates> FillTintTemplates;
 
 // Signature might not be correct
-typedef void (* _MergeTintTextures)(TESNPC * npc, tArray<BGSCharacterTint::Entry*> * dst, void * unk3478, void * unk3230, UInt32 unk1, UInt8 unk2);
+typedef bool (* _MergeTintTextures)(TESNPC * npc, tArray<BGSCharacterTint::Entry*> * dst, void * unk3478, void * unk3230, UInt64 unk1, UInt64 unk2);
 extern RelocAddr <_MergeTintTextures> MergeTintTextures;
+
+// Signature might not be correct
+typedef void (* _CreateMergeTintTextures)(TESNPC * npc, tArray<BGSCharacterTint::Entry*> * dst, void * unk1, UInt64 unk2);
+extern RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures;
 
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl;
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl;

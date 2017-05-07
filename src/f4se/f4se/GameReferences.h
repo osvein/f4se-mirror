@@ -12,9 +12,16 @@ class TESObjectCELL;
 class NiNode;
 class ExtraDataList;
 
+typedef bool (* _CreateHandleByREFR)(UInt32 * handle, TESObjectREFR * ref);
+extern RelocAddr <_CreateHandleByREFR> CreateHandleByREFR;
+
 typedef bool (* _LookupREFRByHandle)(UInt32 * handle, TESObjectREFR ** ref);
 extern RelocAddr <_LookupREFRByHandle> LookupREFRByHandle;
+
 extern RelocPtr <UInt32> g_invalidRefHandle;
+
+typedef bool (* _HasDetectionLOS)(Actor* source, TESObjectREFR* target, UInt8 * unk1);
+extern RelocAddr<_HasDetectionLOS> HasDetectionLOS;
 
 // 10
 class BSHandleRefObject : public NiRefObject
@@ -92,7 +99,7 @@ public:
 	virtual void	Unk_78();
 	virtual void	Unk_79();
 	virtual void	Unk_7A();
-	virtual void	Unk_7B();
+	virtual void	GetMarkerPosition(NiPoint3 * pos);
 	virtual void	Unk_7C();
 	virtual void	Unk_7D();
 	virtual void	Unk_7E();
@@ -198,6 +205,11 @@ public:
 	ExtraDataList								* extraDataList;		// 100 - ExtraData?
 	UInt32										unk104;					// 104
 	UInt32										unk108;					// 108
+
+	UInt32 CreateRefHandle(void);
+
+	MEMBER_FN_PREFIX(TESObjectREFR);
+	DEFINE_MEMBER_FN(GetReferenceName, const char *, 0x004095A0);
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);
@@ -328,7 +340,17 @@ public:
 	BSTEventSink<bhkNonSupportContactEvent>		nonSupportContact;		// 158
 	BSTEventSink<bhkCharacterStateChangeEvent>	characterStateChanged;	// 160
 
-	UInt64	unk168[(0x300-0x168)/8];	// 168
+	UInt64	unk168[(0x2D0-0x168)/8];	// 168
+	UInt32	actorFlags; // 2D0
+
+	enum ActorFlags
+	{
+		kFlag_Teammate = (1 << 26)
+	};
+
+	UInt32	unk2D4;
+	UInt64	unk2D8[(0x300-0x2D8)/8];	// 2D8
+
 	struct Data300
 	{
 		void * unk00;	// 00
@@ -351,9 +373,16 @@ public:
 	ActorEquipData	* equipData;		// 428
 	UInt64	unk430[(0x490-0x430)/8];	// 430
 
+	bool IsPlayerTeammate()
+	{
+		return (actorFlags & kFlag_Teammate) == kFlag_Teammate;
+	}
+
 	MEMBER_FN_PREFIX(Actor);
-	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D6CDC0, bool bDoFaceGen, UInt32 unk2, bool unk3, UInt32 unk4); // 0, 0, 1, 0
+	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D70400, bool bDoFaceGen, UInt32 unk2, bool unk3, UInt32 unk4); // 0, 0, 1, 0
+	DEFINE_MEMBER_FN(IsHostileToActor, bool, 0x00D77290, Actor * actor);
 };
+STATIC_ASSERT(offsetof(Actor, equipData) == 0x428);
 
 // E10
 class PlayerCharacter : public Actor

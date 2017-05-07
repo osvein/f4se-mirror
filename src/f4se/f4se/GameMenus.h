@@ -50,8 +50,12 @@ public:
 	virtual void	Unk_11(void);
 	virtual void	Unk_12(void);
 
-	UInt64 unk68[(0xE0-0x68)/8];
+	UInt64							unk68;							// 68
+	tArray<BSGFxDisplayObject*>		subcomponents;					// 70
+	BSGFxShaderFXTarget				* shaderTarget;					// 88
+	UInt64							unk90[(0xE0 - 0x90)>>3];		// 90
 };
+STATIC_ASSERT(offsetof(GameMenuBase, shaderTarget) == 0x88);
 
 // 218
 class LooksMenu : public GameMenuBase
@@ -67,10 +71,92 @@ public:
 
 
 	MEMBER_FN_PREFIX(LooksMenu);
-	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B3F110); // This function updates all the internals from the current character
+	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B3F0E0); // This function updates all the internals from the current character
 																 // It's followed by a call to onCommitCharacterPresetChange
 };
 STATIC_ASSERT(offsetof(LooksMenu, nextBoneID) == 0x150);
+
+// 20
+template <class T>
+class HUDContextArray
+{
+public:
+	T			* entries;	// 00
+	UInt32		count;		// 08
+	UInt32		unk0C;		// 0C
+	UInt32		flags;		// 10
+	UInt32		unk14;		// 14
+	UInt32		unk18;		// 18
+	bool		unk1C;		// 1C
+};
+
+// F8
+class HUDComponentBase : public BSGFxShaderFXTarget
+{
+public:
+	HUDComponentBase(GFxValue * parent, const char * componentName, HUDContextArray<BSFixedString> * contextList);
+	virtual ~HUDComponentBase();
+
+	virtual bool Unk_02() { return false; }
+	virtual void Unk_03() { }
+	virtual void UpdateComponent() { CALL_MEMBER_FN(this, Impl_UpdateComponent)(); } // Does stuff
+	virtual void UpdateVisibilityContext(void * unk1);
+	virtual void ColorizeComponent();
+	virtual bool IsVisible() { return CALL_MEMBER_FN(this, Impl_IsVisible)(); }
+	virtual bool Unk_08() { return contexts.unk1C; }
+
+	UInt64							unkB0;			// B0
+	UInt64							unkB8;			// B8
+	UInt64							unkC0;			// C0
+	HUDContextArray<BSFixedString>	contexts;		// C8
+	UInt32							unkE8;			// E8
+	UInt32							unkEC;			// EC
+	UInt8							unkF0;			// F0
+	UInt8							unkF1;			// F1
+	bool							isWarning;		// F2 - This chooses the warning color over the default color
+	UInt8							padF3[5];		// F3
+
+	MEMBER_FN_PREFIX(HUDComponentBase);
+	DEFINE_MEMBER_FN(Impl_ctor, HUDComponentBase *, 0x00A207A0, GFxValue * parent, const char * componentName, HUDContextArray<BSFixedString> * contextList);
+	DEFINE_MEMBER_FN(Impl_IsVisible, bool, 0x00A20AE0);
+	DEFINE_MEMBER_FN(Impl_UpdateComponent, void, 0x00A20840);
+	
+};
+STATIC_ASSERT(offsetof(HUDComponentBase, contexts) == 0xC8);
+STATIC_ASSERT(offsetof(HUDComponentBase, unkE8) == 0xE8);
+STATIC_ASSERT(sizeof(HUDComponentBase) == 0xF8);
+
+typedef bool (* _HasHUDContext)(HUDContextArray<BSFixedString> * contexts, void * unk1);
+extern RelocAddr <_HasHUDContext> HasHUDContext;
+
+
+// 110
+class HUDComponents
+{
+public:
+	UInt64								unk00;					// 00
+	HUDComponentBase					* components[0x1E];		// 08
+	UInt64								unk98;					// 98
+	UInt64								unk100;					// 100
+	UInt32								numComponents;			// 108 - 0x1E
+
+	MEMBER_FN_PREFIX(HUDComponents);
+	DEFINE_MEMBER_FN(Impl_Destroy, void, 0x01268F20);	// 3DD133AB9DDB89D138FB8958EB3A68CBF2F15DD9+FE
+};
+
+// 220
+class HUDMenu : public GameMenuBase
+{
+public:
+	BSTEventSink<UserEventEnabledEvent> inputEnabledSink;		// E0
+	BSTEventSink<RequestHUDModesEvent>	requestHudModesSink;	// E8
+	HUDComponents						children;				// F0
+	UInt64								unk200;					// 200
+	UInt64								unk208;					// 208
+	UInt64								unk210;					// 210
+	UInt64								unk218;					// 218
+};
+STATIC_ASSERT(offsetof(HUDMenu, unk200) == 0x200);
 
 // 00C
 class MenuTableItem
@@ -118,10 +204,16 @@ public:
 		CALL_MEMBER_FN(this, RegisterMenu)(name, creator, 0);
 	}
 
+	template<typename T>
+	void ForEachMenu(T & menuFunc)
+	{
+		menuTable.ForEach(menuFunc);
+	}
+
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02018340, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x020167B0, BSFixedString * name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x0201B9F0, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02019E60, BSFixedString * name);
 
 	UInt64	unk08[(0x190-0x08)/8];	// 458
 	tArray<IMenu*>	menuStack;		// 190

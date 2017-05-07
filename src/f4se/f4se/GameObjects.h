@@ -123,11 +123,11 @@ public:
 
 	struct HeadData
 	{
-		HeadData() : hairColor(nullptr), unk08(nullptr), unk10(nullptr) { }
+		HeadData() : hairColor(nullptr), unk08(nullptr), faceTextures(nullptr) { }
 
-		BGSColorForm	* hairColor;	// 00
-		void			* unk08;		// 08
-		void			* unk10;		// 10
+		BGSColorForm	* hairColor;		// 00
+		void			* unk08;			// 08
+		BGSTextureSet	* faceTextures;		// 10
 
 		DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
 	};
@@ -207,10 +207,13 @@ public:
 	tHashSet<FaceMorphRegion, UInt32>	* morphRegionData;	// 2E0 - (key links to CharacterCreation::FaceMorphRegion::index)
 	UInt8								numHeadParts;		// 2E8
 	UInt8								unk2E9;				// 2E9
-	UInt8								unk2EA;				// 2EA
-	UInt8								unk2EB;				// 2EB
-	UInt8								unk2EC;				// 2EC
-	UInt8								unk2ED;				// 2ED
+	struct SkinColor
+	{
+		UInt8 red;
+		UInt8 green;
+		UInt8 blue;
+		UInt8 alpha;
+	} skinColor;
 	UInt8								unk2EE;				// 2EE
 	UInt8								unk2EF;				// 2EF
 	UInt64								unk2F0;				// 2F0
@@ -218,16 +221,19 @@ public:
 	tArray<BGSCharacterTint::Entry*>	* tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x005AC740);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005BE010);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005BE130);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005BE1E0);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x005A04A0); // npc->actorData.unk08 & 1
-	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005B34A0, BGSHeadPart *, bool bRemoveExtraParts);
-	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005B7A30, BGSHeadPart *);
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x005AC720);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005BDFF0);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005BE110);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005BE1C0);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x005A0480); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005B3480, BGSHeadPart *, bool bRemoveExtraParts);
+	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005B7A10, BGSHeadPart *);
+	DEFINE_MEMBER_FN(GetSkinColorFromTint, void, 0x005B37E0, NiColorA * outColor, BGSCharacterTint::PaletteEntry* paletteEntry, bool allowCustomization); // This function alters the npc's Skin Color values
 
 	void ChangeHeadPart(BGSHeadPart * headPart, bool bRemovePart, bool bRemoveExtraParts);
 	BGSHeadPart * GetHeadPartByType(UInt32 type, bool bOverlays = false);
+
+	BGSColorForm * GetHairColor();
 };
 STATIC_ASSERT(offsetof(TESNPC, npcClass) == 0x240);
 STATIC_ASSERT(offsetof(TESNPC, combatStyle) == 0x258);

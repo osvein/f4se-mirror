@@ -127,8 +127,8 @@ class ActorValueOwner
 public:
 	virtual ~ActorValueOwner();
 
-	virtual void	Unk_01(void);
-	virtual void	Unk_02(void);
+	virtual float	GetValue(ActorValueInfo * actorValueInfo);
+	virtual float	GetMaximum(ActorValueInfo * actorValueInfo);
 	virtual void	Unk_03(void);
 	virtual void	Unk_04(void);
 	virtual void	Unk_05(void);
@@ -199,6 +199,9 @@ public:
 	UInt64			unk20;			// 20
 	BGSVoiceType	* voiceType;	// 28
 	UInt64			unk30[7];		// 30
+
+	MEMBER_FN_PREFIX(TESActorBaseData);
+	DEFINE_MEMBER_FN(SetSex, void, 0x001480A0, UInt32 unk1, bool isFemale, UInt32 unk2); // unk1 = 1, unk2 = 1
 };
 STATIC_ASSERT(sizeof(TESActorBaseData) == 0x68);
 

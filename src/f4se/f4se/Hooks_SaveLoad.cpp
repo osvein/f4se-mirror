@@ -12,15 +12,15 @@
 class BGSSaveLoadGame;
 
 typedef void (* _SaveGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1);
-RelocAddr <_SaveGame> SaveGame(0x00CC14F0);
+RelocAddr <_SaveGame> SaveGame(0x00CC4B20);
 _SaveGame SaveGame_Original = nullptr;
 
 typedef bool (* _LoadGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1, void * unk2);
-RelocAddr <_LoadGame> LoadGame(0x00CC19F0);
+RelocAddr <_LoadGame> LoadGame(0x00CC5020);
 _LoadGame LoadGame_Original = nullptr;
 
 typedef void (* _DeleteSaveGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt32 unk1, UInt8 unk2);
-RelocAddr <_DeleteSaveGame> DeleteSaveGame(0x00CCFCD0);
+RelocAddr <_DeleteSaveGame> DeleteSaveGame(0x00CD3300);
 _DeleteSaveGame DeleteSaveGame_Original = nullptr;
 
 void SaveGame_Hook(BGSSaveLoadGame * saveLoadMgr, const char * saveName, UInt8 unk1)

@@ -206,6 +206,15 @@
     <ClCompile Include="PapyrusEvents.cpp">
       <Filter>papyrus\vm</Filter>
     </ClCompile>
+    <ClCompile Include="InputMap.cpp">
+      <Filter>internal</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusUtilities.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusScriptObject.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -222,6 +231,12 @@
       <Filter>papyrus\vm</Filter>
     </None>
     <None Include="PapyrusNativeFunctionDef_Base.inl">
+      <Filter>papyrus\vm</Filter>
+    </None>
+    <None Include="PapyrusEventsDef.inl">
+      <Filter>papyrus\vm</Filter>
+    </None>
+    <None Include="PapyrusEventsDef_Base.inl">
       <Filter>papyrus\vm</Filter>
     </None>
   </ItemGroup>
@@ -458,6 +473,15 @@
     </ClInclude>
     <ClInclude Include="PapyrusEvents.h">
       <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="InputMap.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusUtilities.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusScriptObject.h">
+      <Filter>papyrus\functions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

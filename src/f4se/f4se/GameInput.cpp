@@ -1,11 +1,14 @@
 #include "f4se/GameInput.h"
 
 // 143DFBBBC9422B50436ED42E5F2E83564DD49923+280
-RelocPtr <InputEventTable*> g_inputEventTable(0x058F9980);
+RelocPtr <InputEventTable*> g_inputEventTable(0x059EB400);
 // 78EBF165B2B1065FD2448FCFC00FEA5B8AA7B28F+9C
-RelocPtr <InputDeviceManager*> g_inputDeviceMgr(0x058F9588);
+RelocPtr <InputDeviceManager*> g_inputDeviceMgr(0x059EB008);
 // C34730A09C170DD83B6E000FC6B0D2E1EAEC63A4+121
-RelocPtr <InputManager*> g_inputMgr(0x05874170);
+RelocPtr <InputManager*> g_inputMgr(0x05965BF0);
+
+// 596277207F98DF39B4A6684C55367AE307B03594+17
+RelocPtr<MenuControls*> g_menuControls(0x0585BD58); // BSInputEventReceiver
 
 UInt8 InputManager::AllowTextInput(bool allow)
 {
@@ -32,9 +35,9 @@ UInt32 InputManager::GetMappedKey(BSFixedString name, UInt32 deviceType, UInt32 
 	ASSERT(contextIdx < kContextCount);
 
 	tArray<InputContext::Mapping> * mappings;
-	if (deviceType == kDeviceType_Mouse)
+	if (deviceType == InputEvent::kDeviceType_Mouse)
 		mappings = &context[contextIdx]->mouseMap;
-	else if (deviceType == kDeviceType_Gamepad)
+	else if (deviceType == InputEvent::kDeviceType_Gamepad)
 		mappings = &context[contextIdx]->gamepadMap;
 	else
 		mappings = &context[contextIdx]->keyboardMap;
@@ -61,9 +64,9 @@ BSFixedString InputManager::GetMappedControl(UInt32 buttonID, UInt32 deviceType,
 		return BSFixedString();
 
 	tArray<InputContext::Mapping> * mappings;
-	if (deviceType == kDeviceType_Mouse)
+	if (deviceType == InputEvent::kDeviceType_Mouse)
 		mappings = &context[contextIdx]->mouseMap;
-	else if (deviceType == kDeviceType_Gamepad)
+	else if (deviceType == InputEvent::kDeviceType_Gamepad)
 		mappings = &context[contextIdx]->gamepadMap;
 	else
 		mappings = &context[contextIdx]->keyboardMap;

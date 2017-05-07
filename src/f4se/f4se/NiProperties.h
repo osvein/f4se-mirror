@@ -54,7 +54,7 @@ public:
 
 	enum : UInt64
 	{
-		kShaderFlag_GrayscaleToPalette	= 0x0000080000000ULL,
+		kShaderFlags_GrayscaleToPalette	= 0x0000080000000ULL,
 		kShaderFlags_Hair				= 0x0400000000000ULL
 	};
 };
@@ -95,10 +95,10 @@ public:
 	UInt32	unkE4;		// E4
 
 	MEMBER_FN_PREFIX(BSLightingShaderProperty);
-	DEFINE_MEMBER_FN(MakeValidForRendering, void, 0x026E5900, BSGeometry * geometry); // previously InvalidateShader
-	DEFINE_MEMBER_FN(ApplyMaterial, bool, 0x00054180); // Calls BSShaderProperty::SetMaterial
-	DEFINE_MEMBER_FN(SetMaterial, bool, 0x026D52F0, BSShaderMaterial * material, bool unk1);
-	DEFINE_MEMBER_FN(SetFlag, void, 0x026D5170, UInt8 flags, bool enabled); // sets or unsets particular flags
-	DEFINE_MEMBER_FN(LoadTextureSet, void, 0x026E5F90, UInt32 unk1); // unk1 usually 0, called after material Releases textures (previously InvalidateTextures)
+	DEFINE_MEMBER_FN(MakeValidForRendering, void, 0x0277E4E0, BSGeometry * geometry); // previously InvalidateShader
+	DEFINE_MEMBER_FN(ApplyMaterial, bool, 0x00054170); // Calls BSShaderProperty::SetMaterial
+	DEFINE_MEMBER_FN(SetMaterial, bool, 0x0276DED0, BSShaderMaterial * material, bool unk1);
+	DEFINE_MEMBER_FN(SetFlag, void, 0x0276DD50, UInt8 flags, bool enabled); // sets or unsets particular flags
+	DEFINE_MEMBER_FN(LoadTextureSet, void, 0x0277EB70, UInt32 unk1); // unk1 usually 0, called after material Releases textures (previously InvalidateTextures)
 };
 STATIC_ASSERT(sizeof(BSLightingShaderProperty) == 0xE8);

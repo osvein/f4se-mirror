@@ -2,34 +2,35 @@
 #include "f4se/GameAPI.h"
 
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+B5
-RelocPtr <CharacterCreation*> g_characterCreation(0x05901360);	// array
+RelocPtr <CharacterCreation*> g_characterCreation(0x059F2DE0);	// array
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+AF
-RelocPtr <UInt32> g_characterIndex(0x05901338);
+RelocPtr <UInt32> g_characterIndex(0x059F2DB8);
 
 // 89B16A159EF66C1743643F2F457380448C4803F0+18
-RelocPtr <BSFaceGenManager*> g_faceGenManager(0x0576A080);
+RelocPtr <BSFaceGenManager*> g_faceGenManager(0x0585BB00);
 
 // E5618E306F15B8DF84D22F68B984045D0DD91165+29
-RelocPtr <TESNPC*> g_customizationDummy1(0x05874CF8);	// Either Nora or Nate's dummy actors
+RelocPtr <TESNPC*> g_customizationDummy1(0x05966778);	// Either Nora or Nate's dummy actors
 // E5618E306F15B8DF84D22F68B984045D0DD91165+32
-RelocPtr <TESNPC*> g_customizationDummy2(0x05874CC0);	// Either Nora or Nate's dummy actors
+RelocPtr <TESNPC*> g_customizationDummy2(0x05966740);	// Either Nora or Nate's dummy actors
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A38C0);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A28B0);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002A8B30);
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A38A0);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A2890);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002A8B10);
 
 // For manipulating the tint lists, their signatures aren't quite right yet
-RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A2A50);
-RelocAddr <_MergeTintTextures> MergeTintTextures(0x00687940);
+RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A2A30);
+RelocAddr <_MergeTintTextures> MergeTintTextures(0x00687920);
+RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00687710);
 
 // These are for creating new instances
 
 // ??_7Mask@Template@BGSCharacterTint@@6B@
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02B6A688);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02C156A8);
 // ??_7Palette@Template@BGSCharacterTint@@6B@
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02B6A6B8);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02C156D8);
 // ??_7TextureSet@Template@BGSCharacterTint@@6B@
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02B6A6E8);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02C15708);
 
 bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 {

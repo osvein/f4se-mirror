@@ -41,3 +41,19 @@ BGSHeadPart * TESNPC::GetHeadPartByType(UInt32 type, bool bOverlays)
 
 	return nullptr;
 }
+
+BGSColorForm * TESNPC::GetHairColor()
+{
+	if(!headData || headData->hairColor == nullptr)
+	{
+		TESRace * raceForm = race.race;
+		if(raceForm) {
+			CharacterCreation::CharGenData * charGenData = raceForm->chargenData[ CALL_MEMBER_FN(this, GetSex)()];
+			if(charGenData) {
+				return charGenData->defaultColor;
+			}
+		}
+	}
+
+	return headData->hairColor;
+}

@@ -1,3 +1,10 @@
+0.3.0
+- support for runtime 1.9.4
+- input event hook
+- event sending
+- ScriptObject.Register/UnregisterForKey/Control
+- enabled papyrus API for plugins
+
 0.2.8
 - support for runtime 1.8.7
 

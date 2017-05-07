@@ -98,9 +98,9 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B163B0, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01B164E0, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
-		DEFINE_MEMBER_FN(Release, void, 0x01B17640);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B19A50, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01B19B80, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
+		DEFINE_MEMBER_FN(Release, void, 0x01B1ACE0);
 
 		Ref();
 		Ref(const char * buf);
@@ -119,7 +119,7 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(RefW);
-		DEFINE_MEMBER_FN(ctor, RefW *, 0x01B168B0, const wchar_t * buf);
+		DEFINE_MEMBER_FN(ctor, RefW *, 0x01B19F50, const wchar_t * buf);
 
 		RefW();
 		RefW(const wchar_t * buf);
@@ -260,10 +260,24 @@ public:
  
 	bool Insert(UInt32 index, const T & entry)
 	{
-		if(!entries || index < count)
+		if(!entries)
 				return false;
+
+		UInt32 lastSize = count;
+		if(count + 1 > capacity) // Not enough space, grow
+		{
+			if(!Grow(nGrow))
+				return false;
+		}
  
+		if(index != lastSize)  // Not inserting onto the end, need to move everything down
+		{
+			UInt32 remaining = count - index;
+			memmove_s(&entries[index + 1], sizeof(T) * remaining, &entries[index], sizeof(T) * remaining); // Move the rest up
+		}
+		
 		entries[index] = entry;
+		count++;
 		return true;
 	};
 
@@ -277,7 +291,7 @@ public:
 
 		if(index + 1 < count) {
 			UInt32 remaining = count - index;
-			memmove_s(&entries[index + 1], sizeof(T) * remaining, &entries[index], sizeof(T) * remaining); // Move the rest up
+			memmove_s(&entries[index], sizeof(T) * remaining, &entries[index + 1], sizeof(T) * remaining); // Move the rest up
 		}
 		count--;
  
@@ -1189,3 +1203,15 @@ public:
 
 template <typename Key, typename Item>
 typename tHashSet<Key,Item>::_Entry tHashSet<Key,Item>::sentinel = tHashSet<Key,Item>::_Entry();
+
+template <typename T>
+class SafeDataHolder
+{
+protected:
+	SimpleLock	m_lock;
+public:
+	T			m_data;
+
+	void	Lock(void) { m_lock.Lock(); }
+	void	Release(void) { m_lock.Release(); }
+};

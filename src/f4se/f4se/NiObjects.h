@@ -14,6 +14,9 @@ class BSTriShape;
 class BSDynamicTriShape;
 class BSSubIndexTriShape;
 
+typedef void (* _WorldToScreen)(NiPoint3 * in, NiPoint3 * out);
+extern RelocAddr <_WorldToScreen> WorldToScreen_Internal;
+
 // 10
 class NiRefObject
 {
@@ -88,7 +91,7 @@ public:
 	bool HasExtraData(const BSFixedString & name) { return GetExtraData(name) != nullptr; }
 
 	MEMBER_FN_PREFIX(NiObjectNET);
-	DEFINE_MEMBER_FN(Internal_AddExtraData, bool, 0x01B6B940, NiExtraData * extraData);
+	DEFINE_MEMBER_FN(Internal_AddExtraData, bool, 0x01B6EFE0, NiExtraData * extraData);
 };
 
 // 120
@@ -111,11 +114,11 @@ public:
 	virtual void UpdateControllers();
 	virtual void PerformOp();
 	virtual void AttachProperty();
-	virtual void SetMaterialNeedsUpdate();
-	virtual void SetDefaultMaterialNeedsUpdateFlag();
-	virtual void SetAppCulled();
+	virtual void SetMaterialNeedsUpdate(); // empty?
+	virtual void SetDefaultMaterialNeedsUpdateFlag(); // empty?
+	virtual void SetAppCulled(bool set);
 	virtual NiAVObject * GetObjectByName(const BSFixedString * nodeName);
-	virtual void SetSelectiveUpdateFlags();
+	virtual void SetSelectiveUpdateFlags(bool * unk1, bool unk2, bool * unk3);
 	virtual void UpdateDownwardPass();
 	virtual void UpdateSelectedDownwardPass();
 	virtual void UpdateRigidDownwardPass();
@@ -163,6 +166,7 @@ public:
 		kFlagAccumulated = (1LL << 42),
 		kFlagAlreadyTraversed = (1LL << 43),
 		kFlagPickOff = (1LL << 44),
+		kFlagUpdateWorldData = (1LL << 45),
 		kFlagHasPropController = (1LL << 46),
 		kFlagHasLockedChildAccess = (1LL << 47),
 		kFlagHasMovingSound = (1LL << 49),
@@ -174,7 +178,8 @@ public:
 	UInt32			unk11C;				// 11C
 
 	MEMBER_FN_PREFIX(NiAVObject);
-	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C67990, BSFixedString * name, bool unk1, bool unk2);
+	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C6B030, BSFixedString * name, bool unk1, bool unk2);
 };
 STATIC_ASSERT(offsetof(NiAVObject, m_reference) == 0x110);
 STATIC_ASSERT(sizeof(NiAVObject) == 0x120);
+

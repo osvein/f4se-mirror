@@ -2,9 +2,11 @@
 #include "f4se/BSGeometry.h"
 
 // ??_7NiStringExtraData@@6B@
-RelocAddr<uintptr_t> s_NiStringExtraDataVtbl(0x02D13E08);
+RelocAddr<uintptr_t> s_NiStringExtraDataVtbl(0x02DBF058);
 // ??_7BSFaceGenBaseMorphExtraData@@6B@
-RelocAddr<uintptr_t> s_BSFaceGenBaseMorphExtraDataVtbl(0x02BEAAA8);
+RelocAddr<uintptr_t> s_BSFaceGenBaseMorphExtraDataVtbl(0x02C95AB8);
+// ??_7BSDynPosData@@6B@
+RelocAddr<uintptr_t> s_BSDynPosDataVtbl(0x02DC02B8);
 
 NiStringExtraData * NiStringExtraData::Create(const BSFixedString & name, const BSFixedString & string)
 {
@@ -14,6 +16,25 @@ NiStringExtraData * NiStringExtraData::Create(const BSFixedString & name, const 
 	NiStringExtraData * data = (NiStringExtraData*)memory;
 	data->m_name = name;
 	data->m_string = string;
+	return data;
+}
+
+BSDynPosData* BSDynPosData::Create(const BSFixedString & name, BSTriShape * shape)
+{
+	void* memory = Heap_Allocate(sizeof(BSDynPosData));
+	memset(memory, 0, sizeof(BSDynPosData));
+	((UInt64*)memory)[0] = s_BSDynPosDataVtbl.GetUIntPtr();
+	BSDynPosData * data = (BSDynPosData*)memory;
+	data->m_name = name;
+
+	UInt16 vertexSize = shape->GetVertexSize();
+	UInt32 dynamicBlock = sizeof(UInt16) * 4;
+
+	data->vertexData = (UInt8*)Heap_Allocate(shape->numVertices * dynamicBlock);
+	for(UInt32 i = 0; i < shape->numVertices; i++)
+	{
+		memcpy_s(&data->vertexData[i * dynamicBlock], dynamicBlock, &shape->geometryData->vertexData->vertexBlock[i * vertexSize], dynamicBlock);
+	}
 	return data;
 }
 

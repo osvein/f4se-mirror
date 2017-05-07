@@ -57,7 +57,7 @@ float Function Min(float afValue1, float afValue2) global
 	endif
 endFunction
 
-; F4SE additions built 2016-08-06 00:10:48.819000 UTC
+; F4SE additions built 2017-02-07 05:37:32.528000 UTC
 int Function LeftShift(int value, int shiftBy) global native
 int Function RightShift(int value, int shiftBy) global native
 int Function LogicalAnd(int arg1, int arg2) global native

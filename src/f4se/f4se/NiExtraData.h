@@ -28,6 +28,8 @@ class BSDynPosData : public NiExtraData
 {
 public:
 	UInt8 * vertexData;	// 18
+
+	static BSDynPosData* Create(const BSFixedString & name, BSTriShape * shape);
 };
 
 // 28 (FOD)
@@ -44,7 +46,7 @@ public:
 protected:
 	// Fills the vertex data from the original object's vertex data in NiPoint3 layout
 	MEMBER_FN_PREFIX(BSFaceGenBaseMorphExtraData);
-	DEFINE_MEMBER_FN(ctor, BSFaceGenBaseMorphExtraData*, 0x006821D0, BSTriShape * shape);
+	DEFINE_MEMBER_FN(ctor, BSFaceGenBaseMorphExtraData*, 0x006821B0, BSTriShape * shape);
 };
 
 extern RelocAddr<uintptr_t> s_BSFaceGenBaseMorphExtraDataVtbl;

@@ -32,3 +32,19 @@ public:
 	GRefCountBase() { }
 	virtual ~GRefCountBase() { }
 };
+
+template <typename T>
+class GRect
+{
+public:
+	T	left;
+	T	top;
+	T	right;
+	T	bottom;
+};
+
+class GMatrix3D
+{
+public:
+	float	m[4][4];
+};

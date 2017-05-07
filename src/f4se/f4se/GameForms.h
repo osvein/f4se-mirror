@@ -862,7 +862,7 @@ public:
 	UInt64								unk678[(0x698-0x678)/8];	// 678
 	CharacterCreation::CharGenData		* chargenData[2];			// 698
 	BoneScaleMap						* boneScaleMap[2];			// 6A8
-	TESTexture							unk6B8;						// 6B8
+	TESTexture							hairColorLUT;				// 6B8
 };
 
 STATIC_ASSERT(offsetof(TESRace, chargenData) == 0x698);
@@ -1179,6 +1179,23 @@ public:
 };
 STATIC_ASSERT(offsetof(BGSLocation, unkFC) == 0xFC);
 STATIC_ASSERT(sizeof(BGSLocation) == 0x140);
+
+// F0
+class TESObjectCELL : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_CELL };
+
+	// parents
+	TESFullName				fullName;		// 20
+
+	// Only care about the objects in the cell right now
+	UInt64	unk30[(0x70 - 0x30) >> 3];		// 30
+	tArray<TESObjectREFR*> objectList;		// 70
+	UInt64	unk88[(0xF0 - 0x88) >> 3];		// 88
+};
+STATIC_ASSERT(offsetof(TESObjectCELL, objectList) == 0x70);
+STATIC_ASSERT(sizeof(TESObjectCELL) == 0xF0);
 
 // 48
 class BGSEncounterZone : public TESForm

@@ -13,4 +13,4 @@ NiObject * DoNiRTTICast(NiObject * src, const NiRTTI * typeInfo)
 }
 
 // E8007B50AB42A5298C03123C69989D33E62E5595+3D
-const NiRTTI *	NiRTTI_BSLightingShaderProperty = (NiRTTI *)0x066A6488;
+const NiRTTI *	NiRTTI_BSLightingShaderProperty = (NiRTTI *)0x0679F598;

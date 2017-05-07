@@ -169,11 +169,9 @@ void * PluginManager::QueryInterface(UInt32 id)
 	case kInterface_Scaleform:
 		result = (void *)&g_F4SEScaleformInterface;
 		break;
-#if 0
 	case kInterface_Papyrus:
 		result = (void *)&g_F4SEPapyrusInterface;
 		break;
-#endif
 	case kInterface_Serialization:
 		result = (void *)&g_F4SESerializationInterface;
 		break;

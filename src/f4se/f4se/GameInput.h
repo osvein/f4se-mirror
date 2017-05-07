@@ -4,55 +4,86 @@
 #include "f4se_common/Relocation.h"
 #include "f4se/GameTypes.h"
 
+// 28
 class InputEvent
 {
 public:
 	virtual ~InputEvent();
 
-	UInt64 unk08[2];
-	InputEvent* next;
-	UInt64 unk20;
+	virtual bool			IsIDEvent();
+	virtual BSFixedString	*	GetControlID();
+
+	enum
+	{
+		kDeviceType_Keyboard = 0,
+		kDeviceType_Mouse,
+		kDeviceType_Gamepad,
+		kDeviceType_Kinect
+	};
+
+	enum
+	{
+		kEventType_Button = 0,
+		kEventType_MouseMove,
+		kEventType_Char,
+		kEventType_Thumbstick,
+		kEventType_DeviceConnect,
+		kEventType_Kinect,
+		kEventType_Unk6
+	};
+
+	UInt64		deviceType;		// 08
+	UInt64		eventType;		// 10
+	InputEvent	* next;			// 18
+	UInt32		unk20;			// 20
+	UInt32		unk24;			// 24
 };
 STATIC_ASSERT(sizeof(InputEvent) == 0x28);
 
-class IDEvent : public InputEvent
+// 08
+class IDEvent
 {
 public:
-	BSFixedString	controlID;
+	BSFixedString	controlID;	// 00
 };
-STATIC_ASSERT(offsetof(IDEvent, controlID) == 0x28);
-STATIC_ASSERT(sizeof(IDEvent) == 0x030);
 
 // 40
-class ButtonEvent : public IDEvent
+class ButtonEvent : public IDEvent, public InputEvent
 {
-	UInt32 unk28[4];
+public:
+	UInt32			keyMask;	// 30
+	UInt32			flags;		// 34 (00000038 when ALT is pressed, 0000001D when STRG is pressed)
+	float			isDown;		// 38
+	float			timer;		// 3C (hold duration)
 };
 STATIC_ASSERT(sizeof(ButtonEvent) == 0x040);
-
 
 // 30
 class CharacterEvent : public InputEvent
 {
-	UInt64 unk28;
+public:
+	UInt32 keyCode;
 };
 STATIC_ASSERT(sizeof(CharacterEvent) == 0x030);
 
 // 40
 class MouseMoveEvent : public IDEvent
 {
+public:
 	UInt32 unk28[4];
 };
 
 // 40
-class CursorMoveEvent : public IDEvent
+class CursorMoveEvent : public IDEvent, public InputEvent
 {
+public:
 	UInt32 unk28[4];
 };
 
 // 48
-class ThumbstickEvent : public IDEvent
+class ThumbstickEvent : public IDEvent, public InputEvent
 {
+public:
 	UInt32 unk20[6];
 };
 STATIC_ASSERT(sizeof(ThumbstickEvent) == 0x048);
@@ -60,13 +91,15 @@ STATIC_ASSERT(sizeof(ThumbstickEvent) == 0x048);
 // 30
 class DeviceConnectEvent : public InputEvent
 {
+public:
 	UInt32 unk20[2];
 };
 STATIC_ASSERT(sizeof(DeviceConnectEvent) == 0x030);
 
 // 40
-class KinectEvent : public IDEvent
+class KinectEvent : public IDEvent, public InputEvent
 {
+public:
 	UInt32 unk28[4];
 };
 STATIC_ASSERT(sizeof(KinectEvent) == 0x040);
@@ -183,7 +216,45 @@ class BSPCVirtualKeyboardDevice : public BSVirtualKeyboardDevice
 };
 STATIC_ASSERT(sizeof(BSPCVirtualKeyboardDevice) == 0x70);
 
-class InputDeviceManager // Probably the dispatcher
+class BSInputEventUser
+{
+public:
+	BSInputEventUser(bool bEnabled) : enabled(bEnabled) { }
+	virtual ~BSInputEventUser() { };
+
+	virtual bool IsEnabled() { return enabled; };
+	virtual void OnKinectEvent(KinectEvent * inputEvent) { };
+	virtual void OnDeviceConnectEvent(DeviceConnectEvent * inputEvent) { };
+	virtual void OnThumbstickEvent(ThumbstickEvent * inputEvent) { };
+	virtual void OnCursorMoveEvent(CursorMoveEvent * inputEvent) { };
+	virtual void OnMouseMoveEvent(MouseMoveEvent * inputEvent) { };
+	virtual void OnCharacterEvent(CharacterEvent * inputEvent) { };
+	virtual void OnButtonEvent(ButtonEvent * inputEvent) { };
+
+	bool	enabled;
+};
+
+class BSInputEventReceiver
+{
+public:
+	virtual ~BSInputEventReceiver();
+};
+
+class MenuControls : public BSInputEventReceiver
+{
+public:
+	virtual ~MenuControls(); // Executes receiving function
+
+	SInt32	unk08;	// 08 - Negative 1 is special case
+	UInt32	unk0C;	// 0C
+	UInt64	unk10;	// 10
+	tArray<BSInputEventUser*>	inputEvents;	// 18
+	BSInputEventUser			* events[8];	// 30
+};
+
+extern RelocPtr<MenuControls*> g_menuControls;
+
+class InputDeviceManager
 {
 public:
 	UInt64						unk00;					// 000
@@ -202,13 +273,6 @@ public:
 	enum
 	{
 		kContextCount = (0xF0/8)
-	};
-
-	enum
-	{
-		kDeviceType_Keyboard = 0,
-		kDeviceType_Mouse,
-		kDeviceType_Gamepad
 	};
 
 	struct InputContext

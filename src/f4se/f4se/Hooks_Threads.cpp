@@ -10,9 +10,16 @@
 ICriticalSection		s_taskQueueLock;
 std::queue<ITaskDelegate*>	s_tasks;
 
+ICriticalSection		s_uiQueueLock;
+std::queue<ITaskDelegate*>	s_uiQueue;
+
 typedef bool (* _MessageQueueProcessTask)(void * messageQueue, float timeout, UInt32 unk1);
-RelocAddr <_MessageQueueProcessTask> MessageQueueProcessTask(0x00D3AB70);
+RelocAddr <_MessageQueueProcessTask> MessageQueueProcessTask(0x00D3E1B0);
 _MessageQueueProcessTask MessageQueueProcessTask_Original = nullptr;
+
+RelocAddr <uintptr_t> ProcessEventQueue_HookTarget(0x0201A130 + 0xE90);
+typedef void (* _ProcessEventQueue_Internal)(void * unk1);
+RelocAddr <_ProcessEventQueue_Internal> ProcessEventQueue_Internal(0x020F4C20);
 
 bool MessageQueueProcessTask_Hook(void * messageQueue, float timeout, UInt32 unk1)
 {
@@ -36,6 +43,28 @@ void TaskInterface::AddTask(ITaskDelegate * task)
 	s_taskQueueLock.Enter();
 	s_tasks.push(task);
 	s_taskQueueLock.Leave();
+}
+
+void ProcessEventQueue_Hook(void * unk1)
+{
+	s_uiQueueLock.Enter();
+	while (!s_uiQueue.empty())
+	{
+		ITaskDelegate * cmd = s_uiQueue.front();
+		s_uiQueue.pop();
+		cmd->Run();
+		delete cmd;
+	}
+	s_uiQueueLock.Leave();
+
+	ProcessEventQueue_Internal(unk1);
+}
+
+void TaskInterface::AddUITask(ITaskDelegate * task)
+{
+	s_uiQueueLock.Enter();
+	s_uiQueue.push(task);
+	s_uiQueueLock.Leave();
 }
 
 void Hooks_Threads_Init(void)
@@ -69,4 +98,6 @@ void Hooks_Threads_Commit(void)
 
 		g_branchTrampoline.Write5Branch(MessageQueueProcessTask.GetUIntPtr(), (uintptr_t)MessageQueueProcessTask_Hook);
 	}
+
+	g_branchTrampoline.Write5Call(ProcessEventQueue_HookTarget.GetUIntPtr(), (uintptr_t)ProcessEventQueue_Hook);
 }
