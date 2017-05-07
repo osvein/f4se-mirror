@@ -123,10 +123,11 @@ public:
 
 	struct HeadData
 	{
-		HeadData() : hairColor(nullptr), unk08(nullptr) { }
+		HeadData() : hairColor(nullptr), unk08(nullptr), unk10(nullptr) { }
 
 		BGSColorForm	* hairColor;	// 00
 		void			* unk08;		// 08
+		void			* unk10;		// 10
 
 		DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
 	};

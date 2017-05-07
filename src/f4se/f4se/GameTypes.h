@@ -74,17 +74,16 @@ public:
 		DEFINE_MEMBER_FN(Set, Ref *, 0x01ACEF40, const char * buf);
 		DEFINE_MEMBER_FN(Release, void, 0x01AD00A0);
 
-		Ref() :data(NULL) { }
+		Ref();
 		Ref(const char * buf);
 		
-
-		inline void Release()
-		{
-			CALL_MEMBER_FN(this, Release)();
-		}
+		void Release() { CALL_MEMBER_FN(this, Release)(); }
 
 		bool operator==(const Ref& lhs) const { return data == lhs.data; }
 		bool operator<(const Ref& lhs) const { return data < lhs.data; }
+
+		const char * c_str() { return operator const char *(); }
+		operator const char *() { return data->Get<char>(); }
 	};
 
 	struct RefW
@@ -94,11 +93,14 @@ public:
 		MEMBER_FN_PREFIX(RefW);
 		DEFINE_MEMBER_FN(ctor, RefW *, 0x01ACF310, const wchar_t * buf);
 
-		RefW() :data(NULL) { }
+		RefW();
 		RefW(const wchar_t * buf);
 
 		bool operator==(const Ref& lhs) const { return data == lhs.data; }
 		bool operator<(const Ref& lhs) const { return data < lhs.data; }
+
+		const wchar_t * c_str() { return operator const wchar_t *(); }
+		operator const wchar_t *() { return data->Get<wchar_t>(); }
 	};
 
 	// 10
@@ -114,8 +116,8 @@ public:
 	UInt8	isInit;			// 80800
 };
 
-typedef StringCache::Ref	BSFixedString;
-typedef StringCache::RefW	BSFixedStringW;
+typedef StringCache::Ref BSFixedString;
+typedef StringCache::RefW BSFixedStringW;
 
 class BSAutoFixedString : public BSFixedString
 {
