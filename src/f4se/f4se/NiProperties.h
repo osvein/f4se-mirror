@@ -2,6 +2,8 @@
 
 #include "f4se/NiObjects.h"
 
+class BSShaderMaterial;
+
 class NiProperty : public NiObjectNET
 {
 public:
@@ -46,7 +48,7 @@ public:
 	UInt64	unk40;	// 40
 	NiNode	* root;	// 48
 	UInt64	unk50;	// 50
-	void	* shaderMaterial;	// 58
+	BSShaderMaterial	* shaderMaterial;	// 58
 	UInt32	unk60;	// 60
 	float	unk64;	// 64
 };
@@ -85,5 +87,10 @@ public:
 	UInt32	unkDC;		// DC
 	UInt32	unkE0;		// E0
 	UInt32	unkE4;		// E4
+
+	MEMBER_FN_PREFIX(BSLightingShaderProperty);
+	DEFINE_MEMBER_FN(MakeValidForRendering, void, 0x02694890, BSGeometry * geometry); // previously InvalidateShader
+	DEFINE_MEMBER_FN(ApplyMaterial, bool, 0x00050140); // Calls BSShaderProperty::SetMaterial
+	DEFINE_MEMBER_FN(LoadTextureSet, void, 0x02694F20, UInt32 unk1); // unk1 usually 0, called after material Releases textures (previously InvalidateTextures)
 };
 STATIC_ASSERT(sizeof(BSLightingShaderProperty) == 0xE8);

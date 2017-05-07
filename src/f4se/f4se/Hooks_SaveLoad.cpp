@@ -9,11 +9,11 @@
 class BGSSaveLoadGame;
 
 typedef void (* _SaveGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1);
-RelocAddr <_SaveGame> SaveGame(0x00C91A30);
+RelocAddr <_SaveGame> SaveGame(0x00C900C0);
 _SaveGame SaveGame_Original = nullptr;
 
 typedef bool (* _LoadGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1);
-RelocAddr <_LoadGame> LoadGame(0x00C91F30);
+RelocAddr <_LoadGame> LoadGame(0x00C905C0);
 _LoadGame LoadGame_Original = nullptr;
 
 void SaveGame_Hook(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1)

@@ -140,6 +140,15 @@
     <ClCompile Include="PapyrusVM.cpp">
       <Filter>papyrus\vm</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusInterfaces.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMessages.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="NiTextures.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -311,6 +320,15 @@
     </ClInclude>
     <ClInclude Include="PapyrusVM.h">
       <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusInterfaces.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMessages.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="NiTextures.h">
+      <Filter>netimmerse</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

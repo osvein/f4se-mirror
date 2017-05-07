@@ -548,16 +548,6 @@ public:
 	Data	data;	// 08
 };
 
-// 10
-class BSTextureSet : public NiObject
-{
-public:
-	virtual void Unk_28();
-	virtual void Unk_29();
-	virtual void Unk_2A();
-	virtual void Unk_2B();
-};
-
 // 08
 class BSISoundDescriptor
 {

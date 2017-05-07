@@ -306,7 +306,7 @@ public:
 	UInt64					unk520[(0x548-0x520)/8];	// 520
 
 	MEMBER_FN_PREFIX(CharacterCreation);
-	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C614E0, UInt32 presetIndex); // Loads preset by index onto the actor
+	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C5FB90, UInt32 presetIndex); // Loads preset by index onto the actor
 };
 
 extern RelocPtr <CharacterCreation*> g_characterCreation;

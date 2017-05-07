@@ -42,23 +42,23 @@ public:
 	virtual void Unk_06();
 	virtual void Unk_07();
 	virtual BSGeometry			* GetAsBSGeometry(void);
-	virtual void Unk_09();
+	virtual void GetAsBStriStrips();
 	virtual BSTriShape			* GetAsBSTriShape(void);
 	virtual BSDynamicTriShape	* GetAsBSDynamicTriShape(void);
-	virtual void Unk_0C();
+	virtual void GetAsSegmentedTriShape();
 	virtual BSSubIndexTriShape	* GetAsBSSubIndexTriShape(void);
-	virtual void Unk_0E();
-	virtual void Unk_0F();
-	virtual void Unk_10();
-	virtual void Unk_11();
-	virtual void Unk_12();
-	virtual void Unk_13();
-	virtual void Unk_14();
-	virtual void Unk_15();
-	virtual void Unk_16();
-	virtual void Unk_17();
-	virtual void Unk_18();
-	virtual void Unk_19();
+	virtual void GetAsNiGeometry();
+	virtual void GetAsNiTriBasedGeom();
+	virtual void GetAsNiTriShape();
+	virtual void GetAsParticlesGeom();
+	virtual void GetAsParticleSystem();
+	virtual void GetAsLinesGeom();
+	virtual void GetAsLight();
+	virtual void GetAsBhkNiCollisionObject();
+	virtual void GetAsBhkBlendCollisionObject();
+	virtual void GetAsBhkRigidBody();
+	virtual void GetAsBhkLimitedHingeConstraint();
+	virtual void GetAsbhkNPCollisionObject();
 	virtual void Unk_1A();
 	virtual void Unk_1B();
 	virtual void Unk_1C();
@@ -100,32 +100,33 @@ class NiAVObject : public NiObjectNET
 {
 public:
 
-	struct ControllerUpdateContext
+	struct NiUpdateData
 	{
-		enum
-		{
-			kDirty =	1 << 0,
-		};
-
-		float	delta;
-		UInt32	flags;
+		float	fTime;				// 00
+		UInt32	RenderUseDepth;		// 04
+		UInt32	bParentsChecked;	// 08
+		UInt32	unk0C;				// 0C
+		void	* pCamera;			// 10
+		UInt32	Flags;				// 18
+		UInt32	RenderObjects;		// 1C
+		UInt32	FadeNodeDepth;		// 20
 	};
 
-	virtual void Unk_28();
-	virtual void Unk_29();
-	virtual void Unk_2A();
-	virtual void Unk_2B();
-	virtual void Unk_2C();
-	virtual void Unk_2D();
-	virtual NiAVObject * GetObjectByName(void * nodeName);
-	virtual void Unk_2F();
-	virtual void Unk_30();
-	virtual void Unk_31();
-	virtual void Unk_32();
-	virtual void Unk_33();
-	virtual void UpdateWorldData(ControllerUpdateContext * ctx);
-	virtual void Unk_35();
-	virtual void Unk_36();
+	virtual void UpdateControllers();
+	virtual void PerformOp();
+	virtual void AttachProperty();
+	virtual void SetMaterialNeedsUpdate();
+	virtual void SetDefaultMaterialNeedsUpdateFlag();
+	virtual void SetAppCulled();
+	virtual NiAVObject * GetObjectByName(BSFixedString * nodeName);
+	virtual void SetSelectiveUpdateFlags();
+	virtual void UpdateDownwardPass();
+	virtual void UpdateSelectedDownwardPass();
+	virtual void UpdateRigidDownwardPass();
+	virtual void UpdateWorldBound();
+	virtual void UpdateWorldData(NiUpdateData * ctx);
+	virtual void UpdateTransformAndBounds();
+	virtual void UpdateTransforms();
 	virtual void Unk_37();
 	virtual void Unk_38();
 
@@ -136,10 +137,48 @@ public:
 	float			unkBC;				// BC
 	NiTransform		unkC0;				// C0
 	UInt64			unk100;				// 100
-	UInt64			unk108;				// 108
+
+	enum : UInt64
+	{
+		kFlagAlwaysDraw = (1 << 11),
+		kFlagIsMeshLOD = (1 << 12),
+		kFlagFixedBound = (1 << 13),
+		kFlagTopFadeNode = (1 << 14),
+		kFlagIgnoreFade = (1 << 15),
+		kFlagNoAnimSyncX = (1 << 16),
+		kFlagNoAnimSyncY = (1 << 17),
+		kFlagNoAnimSyncZ = (1 << 18),
+		kFlagNoAnimSyncS = (1 << 19),
+		kFlagNoDismember = (1 << 20),
+		kFlagNoDismemberValidity = (1 << 21),
+		kFlagRenderUse = (1 << 22),
+		kFlagMaterialsApplied = (1 << 23),
+		kFlagHighDetail = (1 << 24),
+		kFlagForceUpdate = (1 << 25),
+		kFlagPreProcessedNode = (1 << 26),
+		kFlagScenegraphChange = (1 << 29),
+		kFlagInInstanceGroup = (1LL << 35),
+		kFlagLODFadingOut = (1LL << 36),
+		kFlagFadedIn = (1LL << 37),
+		kFlagForcedFadeOut = (1LL << 38),
+		kFlagNotVisible = (1LL << 39),
+		kFlagShadowCaster = (1LL << 40),
+		kFlagNeedsRendererData = (1LL << 41),
+		kFlagAccumulated = (1LL << 42),
+		kFlagAlreadyTraversed = (1LL << 43),
+		kFlagPickOff = (1LL << 44),
+		kFlagHasPropController = (1LL << 46),
+		kFlagHasLockedChildAccess = (1LL << 47),
+		kFlagHasMovingSound = (1LL << 49),
+	};
+
+	UInt64			flags;				// 108
 	TESObjectREFR	* m_reference;		// 110
 	float			unk118;				// 118
 	UInt32			unk11C;				// 11C
+
+	MEMBER_FN_PREFIX(NiAVObject);
+	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C21200, BSFixedString * name, bool unk1, bool unk2);
 };
 STATIC_ASSERT(offsetof(NiAVObject, m_reference) == 0x110);
 STATIC_ASSERT(sizeof(NiAVObject) == 0x120);

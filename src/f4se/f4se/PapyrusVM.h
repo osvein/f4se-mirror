@@ -1,5 +1,7 @@
 #pragma once
 
+#include "f4se/PapyrusInterfaces.h"
+
 // skipping the BSScript::Internal namespace stuff
 
 // 08
@@ -87,4 +89,39 @@ private:
 	UInt64	padC8[(0xE8 - 0xC8) >> 3];	// C8
 	UInt64	m_unkE8;					// E8
 	// F0
+};
+
+// 87A0?
+class GameVM : public IClientVM
+{
+public:
+	virtual ~GameVM();
+
+	virtual void	Unk_01();
+	virtual void	Unk_02();
+
+	IStackCallbackSaveInterface m_callbackSaveInterface;	// 08
+
+	enum
+	{
+		kEventSink_Stats = 0,
+		kEventSink_InputEnableLayerDestroyed,
+		kEventSink_PositionPlayer,
+		kEventSink_FormDelete,
+		kEventSink_FormIDRemap,
+		kEventSink_InitScript,
+		kEventSink_ResolveNPCTemplates,
+		kEventSink_UniqueIDChange,
+		kEventSink_NumEvents
+	};
+
+	void			* m_eventSinks[kEventSink_NumEvents];	// 10
+	UInt64			unk50[(0xB0 - 0x50) >> 3];				// 50
+
+	VirtualMachine			* m_virtualMachine;				// B0
+	IVMSaveLoadInterface	* m_saveLoadInterface;			// B8
+	IVMDebugInterface		* m_debugInterface;				// C0
+	SimpleAllocMemoryPagePolicy	m_memoryPagePolicy;			// C8
+
+	// ...
 };

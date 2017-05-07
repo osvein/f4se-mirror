@@ -1,12 +1,14 @@
 #include "f4se/GameCustomization.h"
 #include "f4se/GameAPI.h"
 
-RelocPtr <CharacterCreation*> g_characterCreation(0x0599BE30);	// array
-RelocPtr <UInt32> g_characterIndex(0x0599BE68);
+// 6E6D6B9C5754133F46724CAD540B520D846299B9+B5
+RelocPtr <CharacterCreation*> g_characterCreation(0x058AB4E0);	// array
+// 6E6D6B9C5754133F46724CAD540B520D846299B9+AF
+RelocPtr <UInt32> g_characterIndex(0x058AB518);
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x00299020);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x00298010);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x0029E260);
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x00298F70);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x00297F60);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x0029E1B0);
 
 bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 {

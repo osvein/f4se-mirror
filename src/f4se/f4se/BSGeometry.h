@@ -52,9 +52,9 @@ public:
 	virtual void Unk_40();
 
 	float	unk120[4];						// 120
-	NiProperty			* effectState;		// 130
-	NiProperty			* shaderProperty;	// 138
-	BSSkin::Instance	* skinInstance;		// 140
+	NiPointer<NiProperty> effectState;		// 130
+	NiPointer<NiProperty> shaderProperty;	// 138
+	NiPointer<BSSkin::Instance>	skinInstance;		// 140
 
 	struct GeometryData
 	{

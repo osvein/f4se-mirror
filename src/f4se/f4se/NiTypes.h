@@ -118,6 +118,26 @@ public:
 };
 
 // 10
+class NiColor
+{
+public:
+	float	r;	// 00
+	float	g;	// 04
+	float	b;	// 08
+	UInt32	pad0C;	// 0C
+};
+
+// 10
+class NiColorA
+{
+public:
+	float	r;	// 00
+	float	g;	// 04
+	float	b;	// 08
+	float	a;	// 0C
+};
+
+// 10
 template <class T>
 class NiRect
 {

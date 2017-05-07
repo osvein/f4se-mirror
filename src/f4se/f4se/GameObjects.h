@@ -7,6 +7,7 @@
 #include "f4se/GameEvents.h"
 #include "f4se/GameCustomization.h"
 #include "f4se/GameUtilities.h"
+#include "f4se/NiTextures.h"
 
 class TESClass;
 class TESCombatStyle;
@@ -216,21 +217,16 @@ public:
 	tArray<BGSCharacterTint::Entry*>	* tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x005994B0);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005AAFB0);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005AB0C0);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005AB150);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0058D590); // npc->actorData.unk08 & 1
-	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005A0220, BGSHeadPart *, bool bRemoveExtraParts);
-	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005A47D0, BGSHeadPart *);
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00598A50);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005AA240);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005AA350);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005AA3E0);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0058CD00); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x0059F720, BGSHeadPart *, bool bRemoveExtraParts);
+	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005A3CA0, BGSHeadPart *);
 
-	void ChangeHeadPart(BGSHeadPart * headPart, bool bRemovePart, bool bRemoveExtraParts)
-	{
-		if(bRemovePart)
-			CALL_MEMBER_FN(this, ChangeHeadPartRemovePart)(headPart, bRemoveExtraParts);
-		else
-			CALL_MEMBER_FN(this, ChangeHeadPart)(headPart);
-	}
+	void ChangeHeadPart(BGSHeadPart * headPart, bool bRemovePart, bool bRemoveExtraParts);
+	BGSHeadPart * GetHeadPartByType(UInt32 type, bool bOverlays = false);
 };
 STATIC_ASSERT(offsetof(TESNPC, npcClass) == 0x240);
 STATIC_ASSERT(offsetof(TESNPC, combatStyle) == 0x258);

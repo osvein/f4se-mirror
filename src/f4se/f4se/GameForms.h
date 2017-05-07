@@ -409,7 +409,7 @@ public:
 	virtual void	Unk_36();
 	virtual void	Unk_37();
 	virtual void	Unk_38();
-	virtual void	Unk_39();
+	virtual const char *	GetEditorID(); // Only returns string for things that actually store the EDID ingame
 	virtual void	Unk_3A();
 	virtual void	Unk_3B();
 	virtual void	Unk_3C();
@@ -878,8 +878,6 @@ public:
 	};
 	UInt32					partFlags;		// 70
 
-	
-
 	enum {
 		kTypeMisc = 0,
 		kTypeFace,
@@ -901,7 +899,7 @@ public:
 	TESModelTri				morphs[3];		// C8
 	UInt64					unk158;			// 158
 	BGSListForm				* validRaces;	// 160
-	void					* unk168;		// 168 - Condition most likely
+	Condition				* conditions;	// 168 - Condition most likely
 	BSFixedString			partName;		// 170
 
 	bool IsExtraPart() { return (partFlags & kFlagExtraPart) == kFlagExtraPart; }

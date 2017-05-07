@@ -10,7 +10,14 @@ struct BSIntrusiveRefCounted
 {
 public:
 	volatile UInt32	m_refCount;	// 00
-	UInt32			unk04;
+	UInt32			unk04;		// 04
+};
+
+// 04
+struct BSNonReentrantSpinLock
+{
+public:
+	volatile UInt32	uiLock;		// 00
 };
 
 // 80808
@@ -63,10 +70,10 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01ADE600, const char * buf);
-		DEFINE_MEMBER_FN(wctor, Ref *, 0x01ADF4D0, const wchar_t * buf);
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01ADE730, const char * buf);
-		DEFINE_MEMBER_FN(Release, void, 0x01ADF890);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01AD05C0, const char * buf);
+		DEFINE_MEMBER_FN(wctor, Ref *, 0x01AD0AC0, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01AD0BF0, const char * buf);
+		DEFINE_MEMBER_FN(Release, void, 0x01AD1850);
 
 		Ref() :data(NULL) { }
 		Ref(const char * buf);

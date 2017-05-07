@@ -12,3 +12,32 @@ bool TESObjectARMA::GetNodeName(char * dstBuff, TESNPC * npc, TESObjectARMO * ar
 
 	return false;
 }
+
+void TESNPC::ChangeHeadPart(BGSHeadPart * headPart, bool bRemovePart, bool bRemoveExtraParts)
+{
+	if(bRemovePart)
+		CALL_MEMBER_FN(this, ChangeHeadPartRemovePart)(headPart, bRemoveExtraParts);
+	else
+		CALL_MEMBER_FN(this, ChangeHeadPart)(headPart);
+}
+
+BGSHeadPart * TESNPC::GetHeadPartByType(UInt32 type, bool bOverlays)
+{
+	BGSHeadPart ** parts = headParts;
+	UInt32 numParts = numHeadParts;
+	if(bOverlays) {
+		parts = CALL_MEMBER_FN(this, GetOverlayHeadParts)();
+		numParts = CALL_MEMBER_FN(this, GetNumOverlayHeadParts)();
+	}
+
+	for(UInt32 i = 0; i < numParts; ++i)
+	{
+		BGSHeadPart * part = parts[i];
+		if(part && part->type == type)
+		{
+			return part;
+		}
+	}
+
+	return nullptr;
+}

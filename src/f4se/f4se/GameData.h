@@ -1,7 +1,6 @@
 #pragma once
 
 #include "f4se_common/Utilities.h"
-#include "f4se_common/Relocation.h"
 #include "f4se/GameTypes.h"
 #include "f4se/GameForms.h"
 #include "f4se/GameObjects.h"

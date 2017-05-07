@@ -1,8 +1,12 @@
 #pragma once
 
 #include "f4se/GameTypes.h"
+#include "f4se/NiTypes.h"
 
 class NiTexture;
+class BSTextureSet;
+class NiStream;
+class BSShaderData;
 
 // 38
 class BSShaderMaterial : public BSIntrusiveRefCounted
@@ -10,26 +14,19 @@ class BSShaderMaterial : public BSIntrusiveRefCounted
 public:
 	virtual ~BSShaderMaterial();
 
-	virtual BSShaderMaterial	* Create(void);
-	virtual void	Copy(BSShaderMaterial * other);
-	virtual void	Unk_03(void);
-	virtual void	Unk_04(void);	// Default material? returns global 1478D7F48
-	virtual UInt32	GetType(void);
+	virtual BSShaderMaterial	* Create();
+	virtual void	CopyMembers(const BSShaderMaterial * other);
+	virtual void	ComputeCRC32(UInt32, bool);
+	virtual BSShaderMaterial	* GetDefault();
+	virtual UInt32	GetType();
 	virtual void	Unk_06(void);	// Returns 2?
-	virtual void	Unk_07(void);
-	virtual void	Unk_08(void);
+	virtual void	Compare(const BSShaderMaterial & other);
+	virtual void	IsCopy(const BSShaderMaterial * other);
 
-	// vtable   00
-	// refCount 08
-	UInt64	unk10;	// 10
-	UInt32	unk18;	// 18
-	float	unk1C;	// 1C
-	float	unk20;	// 20
-	float	unk24;	// 24
-	float	unk28;	// 28
-	SInt32	unk2C;	// 2C
-	UInt32	unk30;	// 30
-	UInt32	pad34;	// 34
+	NiPoint2	textCoordOffset[2];	// 10
+	NiPoint2	textCoordScale[2];	// 20
+	UInt32		uiHashKey;			// 30
+	UInt32		uiUniqueCode;		// 34
 };
 
 class BSEffectShaderMaterial : public BSShaderMaterial
@@ -73,81 +70,70 @@ public:
 		kType_Dismemberment
 	};
 
-	virtual void	Unk_09();
-	virtual void	Unk_0A();
-	virtual void	Unk_0B();
-	virtual void	Unk_0C();
-	virtual void	Unk_0D();
-	virtual void	Unk_0E();
-	virtual void	Unk_0F();
-	virtual void	Unk_10();
-	virtual void	Unk_11();
+	virtual bool	IsLightingShaderMaterialEnvmap();
+	virtual void	ClearTextures();
+	virtual void	GetTextures(NiTexture ** textures);	// Returns textures into this array
+	virtual void	SaveBinary(NiStream * stream);
+	virtual void	LoadBinary(NiStream * stream);
+	virtual void	OnPrefetchTextures();
+	virtual void	OnLoadTextureSet1();
+	virtual void	OnLoadTextureSet(const BSTextureSet *);
+	virtual void	DoReceiveValuesFromRootMaterial(const BSShaderData &);
 
-	float	unk38;	// 38
-	float	unk3C;	// 3C
-	float	unk40;	// 40
-	UInt32	unk44;	// 44
-	NiTexture	* diffuse;	// 48
-	NiTexture	* normal;	// 50
-	NiTexture	* unk58;	// 58
-	NiTexture	* specular;	// 60
-	NiTexture	* unk68;	// 68
-	NiTexture	* unk70;	// 70
-	float		unk78;		// 78
-	UInt32		unk7C;		// 7C
-	UInt32		unk80;		// 80
-	float		unk84;		// 84
-	float		unk88;		// 88
-	UInt16		unk8C;		// 8C
-	UInt16		unk8E;		// 8E
-	UInt32		unk90;		// 90
-	UInt32		unk94;		// 94
-	void		* unk98;	// 98
-	UInt32		unkA0;		// A0
-	float		unkA4;		// A4
-	UInt32		unkA8;		// A8
-	float		unkAC;		// AC
-	float		unkB0;		// B0
-	float		unkB4;		// B4
-	float		unkB8;		// B8
-	float		unkBC;		// BC
-	float		unkC0;		// C0
-	float		unkC4;		// C4
-	float		unkC8;		// C8
-	UInt32		unkCC;		// CC
-	UInt32		unkD0;		// D0
-	UInt32		unkD4;		// D4
-	UInt32		unkD8;		// D8
-	float		unkDC;		// DC
+	NiColor					kSpecularColor;					// 38
+	NiPointer<NiTexture>	spDiffuseTexture;				// 48
+	NiPointer<NiTexture>	spNormalTexture;				// 50
+	NiPointer<NiTexture>	spRimSoftLightingTexture;		// 58
+	NiPointer<NiTexture>	spSmoothnessSpecMaskTexture;	// 60
+	NiPointer<NiTexture>	spLookupTexture;				// 68
+	UInt32					eTextureClampMode;				// 70
+	UInt32					unk74;							// 74
+	NiPointer<BSTextureSet>	spTextureSet;					// 78
+	float					fMaterialAlpha;					// 80
+	float					fRefractionPower;				// 84
+	float					fSmoothness;					// 88
+	float					fSpecularColorScale;			// 8C
+	float					fFresnelPower;					// 90
+	float					fWetnessControl_SpecScale;		// 94
+	float					fWetnessControl_SpecPowerScale;	// 98
+	float					fWetnessControl_SpecMin;		// 9C
+	float					fWetnessControl_EnvMapScale;	// A0
+	float					fWetnessControl_FresnelPower;	// A4
+	float					fWetnessControl_Metalness;		// A8
+	float					fSubsurfaceLightRolloff;		// AC
+	float					fRimLightPower;					// B0
+	float					fBackLightPower;				// B4
+	float					fLookupScale;					// B8
+	BSNonReentrantSpinLock	LoadTextureSetLock;				// BC
 };
 
-// E0
+// D0
 class BSLightingShaderMaterial : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterial();
 };
 
-// E8
+// C8
 class BSLightingShaderMaterialDismemberment : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialDismemberment();
 
-	NiTexture	* unkE0;	// E0
+	NiPointer<NiTexture>	unkC0;	// C0
 };
 
-// F8
+// D8
 class BSLightingShaderMaterialEnvmap : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialEnvmap();
 
-	NiTexture	* envmap;	// E0
-	NiTexture	* unkE8;	// E8
-	float		unkF0;		// F0
-	UInt16		unkF4;		// F4
-	UInt16		padF6;		// F6
+	NiPointer<NiTexture> envmap;	// C0
+	NiPointer<NiTexture> unkC8;		// C8
+	float				unkD0;		// D0
+	UInt16				unkD4;		// D4
+	UInt16				padD6;		// D6
 };
 
 // 110
@@ -157,34 +143,31 @@ public:
 	virtual ~BSLightingShaderMaterialEye();
 };
 
-// E8
+// C8
 class BSLightingShaderMaterialFace : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialFace();
 
-	NiTexture	* baseDiffuse;	// E0
+	NiPointer<NiTexture>	baseDiffuse;	// C0
 };
 
-// E8
+// C8
 class BSLightingShaderMaterialGlowmap : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialGlowmap();
 
-	NiTexture	* unkE0;	// E0
+	NiPointer<NiTexture>	unkC0;	// C0
 };
 
-// F0
+// D0
 class BSLightingShaderMaterialHairTint : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialHairTint();
 	
-	float	unkE0;	// E0
-	float	unkE4;	// E4
-	float	unkE8;	// E8
-	UInt32	unkEC;	// EC
+	NiColorA	kTintColor;	// C0
 };
 
 // 110
@@ -208,45 +191,42 @@ public:
 	virtual ~BSLightingShaderMaterialMultiLayerParallax();
 };
 
-// E8
+// C8
 class BSLightingShaderMaterialParallax : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialParallax();
 
-	NiTexture	* unkE0;	// E0
+	NiPointer<NiTexture> unkC0;	// C0
 };
 
-// F0
+// D0
 class BSLightingShaderMaterialParallaxOcc : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialParallaxOcc();
 
-	NiTexture	* unkE0;	// E0
-	void		* unkE8;	// E8
+	NiPointer<NiTexture> unkC0;		// C0
+	void				* unkC8;	// C8
 };
 
-// F0
+// D0
 class BSLightingShaderMaterialSkinTint : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialSkinTint();
 
-	float	unkE0;	// E0
-	float	unkE4;	// E4
-	float	unkE8;	// E8
-	UInt32	unkEC;	// EC
+	NiColorA	kTintColor;	// C0
 };
 
-// F0
+// D0
 class BSLightingShaderMaterialSnow : public BSLightingShaderMaterialBase
 {
 public:
 	virtual ~BSLightingShaderMaterialSnow();
 
-	float	unkE0;	// E0
-	float	unkE4;	// E4
-	float	unkE8;	// E8
-	float	unkEC;	// EC
+	float	unkC0;	// C0
+	float	unkC4;	// C4
+	float	unkC8;	// C8
+	float	unkCC;	// CC
 };
