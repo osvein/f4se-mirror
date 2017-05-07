@@ -35,6 +35,7 @@
     <ClCompile Include="GameSettings.cpp" />
     <ClCompile Include="GameTypes.cpp" />
     <ClCompile Include="Hooks_Gameplay.cpp" />
+    <ClCompile Include="Hooks_Memory.cpp" />
     <ClCompile Include="Hooks_ObScript.cpp" />
     <ClCompile Include="Hooks_Papyrus.cpp" />
     <ClCompile Include="Hooks_Scaleform.cpp" />
@@ -46,6 +47,13 @@
     <ClCompile Include="ObScript.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="ScaleformAPI.cpp" />
+    <ClCompile Include="ScaleformCallbacks.cpp" />
+    <ClCompile Include="ScaleformLoader.cpp" />
+    <ClCompile Include="ScaleformMovie.cpp" />
+    <ClCompile Include="ScaleformState.cpp" />
+    <ClCompile Include="ScaleformTranslator.cpp" />
+    <ClCompile Include="ScaleformTypes.cpp" />
+    <ClCompile Include="ScaleformValue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -63,6 +71,7 @@
     <ClInclude Include="GameSettings.h" />
     <ClInclude Include="GameTypes.h" />
     <ClInclude Include="Hooks_Gameplay.h" />
+    <ClInclude Include="Hooks_Memory.h" />
     <ClInclude Include="Hooks_ObScript.h" />
     <ClInclude Include="Hooks_Papyrus.h" />
     <ClInclude Include="Hooks_Scaleform.h" />
@@ -75,6 +84,13 @@
     <ClInclude Include="PluginAPI.h" />
     <ClInclude Include="PluginManager.h" />
     <ClInclude Include="ScaleformAPI.h" />
+    <ClInclude Include="ScaleformCallbacks.h" />
+    <ClInclude Include="ScaleformLoader.h" />
+    <ClInclude Include="ScaleformMovie.h" />
+    <ClInclude Include="ScaleformState.h" />
+    <ClInclude Include="ScaleformTranslator.h" />
+    <ClInclude Include="ScaleformTypes.h" />
+    <ClInclude Include="ScaleformValue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A236F69D-8FF9-4491-AC5F-45BF49448BBE}</ProjectGuid>
@@ -111,11 +127,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)_1_1_30</TargetName>
+    <TargetName>$(ProjectName)_1_2_33</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)_1_1_30</TargetName>
+    <TargetName>$(ProjectName)_1_2_33</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -123,7 +139,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010101E0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01020210;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -148,7 +164,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010101E0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01020210;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

@@ -13,9 +13,37 @@ public:
 template <class T>
 class tArray
 {
+public:
 	T* entries;
 	UInt64 capacity;
 	UInt64 count;
+
+	tArray() : entries(NULL), capacity(0), count(0) { }
+
+	T& operator[](UInt64 index)
+	{
+		return entries[index];
+	}
+
+	bool GetNthItem(UInt64 index, T& pT) const
+	{
+		if (index < count) {
+			pT = entries[index];
+			return true;
+		}
+		return false;
+	}
+
+	SInt64 GetItemIndex(T & pFind) const
+	{
+		for (UInt64 n = 0; n < count; n++) {
+			T& pT = entries[n];
+			if (pT == pFind)
+				return n;
+		}
+		return -1;
+	}
+
 };
 
 typedef tArray<UInt64> UnkArray;

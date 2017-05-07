@@ -91,7 +91,6 @@ public:
 	BGSDestructibleObjectForm	destructibleObjectForm;	// 138
 	BGSSkinForm					skinForm;				// 148
 	BGSKeywordForm				keywords;				// 158
-	IKeywordFormBase			iKeywordBase;			// 160
 	BGSAttackDataForm			attackData;				// 178
 	BGSPerkRankArray			perkRankArray;			// 188
 	BGSPropertySheet			propertySheet;			// 1A0
@@ -114,7 +113,7 @@ public:
 	UInt16						unk23C;					// 23C
 	UInt8						unk23E;					// 23E
 	UInt8						pad23F;					// 23F
-	TESClass					* npcClass;				// *
+	TESClass					* npcClass;				// 240
 	void						* unk248;				// 248
 	UInt64						unk250;					// 250
 	TESCombatStyle				* combatStyle;			// 258
@@ -202,8 +201,7 @@ public:
 	BGSMessageIcon				messageIcon;		// 108 BGSMessageIcon
 	BGSPickupPutdownSounds		pickupSounds;		// 120
 	BGSBlockBashData			blockBash;			// 128
-	IKeywordFormBase			iKeywordBase;		// 150 IKeywordBase
-	BGSKeywordForm				keyword;			// 158
+	BGSKeywordForm				keyword;			// 150
 	TESDescription				description;		// 170 TESDescription
 	BGSInstanceNamingRulesForm	namingRules;		// 188 BGSInstanceNamingRulesForm
 	Data						weapData;			// 198 TESObjectWeap::Data

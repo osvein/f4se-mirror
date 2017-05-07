@@ -139,7 +139,7 @@ public:
 	virtual void	Unk_07(void);
 	virtual void	Unk_08(void);
 
-	void	* unk08;	// 08
+	BSFixedString name;	// 08
 };
 
 // 10
@@ -326,16 +326,17 @@ public:
 	BGSMaterialType	* materialType;	// 10	BGSMaterialType *
 };
 
-// 18
+// 20
 class BGSKeywordForm : public BaseFormComponent
 {
 public:
 	virtual bool	HasKeyword(void* keyword); //BGSKeyword
 	virtual UInt32	GetDefaultKeyword(void);
 
-	BGSKeyword	** keywords;	// 08 BGSKeyword
-	UInt32		numKeywords;	// 10
-	UInt32		unk14;			// 14
+	IKeywordFormBase keywordBase;	// 08
+	BGSKeyword	** keywords;		// 10 BGSKeyword
+	UInt32		numKeywords;		// 18
+	UInt32		unk14;				// 1C
 };
 
 // 18

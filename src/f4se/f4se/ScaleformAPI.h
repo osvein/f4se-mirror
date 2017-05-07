@@ -21,3 +21,6 @@ public:
 };
 
 extern RelocPtr <ScaleformHeap *> g_scaleformHeap;
+
+extern void * ScaleformHeap_Allocate(UInt32 size);
+extern void ScaleformHeap_Free(void * ptr);

@@ -1,6 +1,6 @@
-#include "GameAPI.h"
+#include "f4se/GameAPI.h"
 
-RelocPtr <Heap> g_mainHeap(0x0465D280);
+RelocPtr <Heap> g_mainHeap(0x0465E280);
 
 void * Heap_Allocate(size_t size)
 {
@@ -12,7 +12,7 @@ void Heap_Free(void * ptr)
 	CALL_MEMBER_FN(g_mainHeap, Free)(ptr, false);
 }
 
-RelocPtr <ConsoleManager *> g_console(0x06CDBBA8);
+RelocPtr <ConsoleManager *> g_console(0x06CDCBA8);
 
 void Console_Print(const char * fmt, ...)
 {

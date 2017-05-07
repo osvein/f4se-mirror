@@ -1,3 +1,7 @@
+0.1.2:
+- support for beta runtime 1.2.33
+- more internal class decoding
+
 0.1.1:
 - fixed crash when resetting keybindings from ui
 

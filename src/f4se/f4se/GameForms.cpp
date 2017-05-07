@@ -1,3 +1,3 @@
-#include "GameForms.h"
+#include "f4se/GameForms.h"
 
-RelocAddr <_LookupFormByID> LookupFormByID(0x002707A0);
+RelocAddr <_LookupFormByID> LookupFormByID(0x00270A00);

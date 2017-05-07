@@ -1,1 +1,1 @@
-#include "GameTypes.h"
+#include "f4se/GameTypes.h"

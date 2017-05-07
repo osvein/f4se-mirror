@@ -74,6 +74,30 @@
     <ClCompile Include="Hooks_Gameplay.cpp">
       <Filter>hooks</Filter>
     </ClCompile>
+    <ClCompile Include="ScaleformMovie.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleformCallbacks.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleformTypes.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleformValue.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleformState.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleformLoader.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleformTranslator.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Memory.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -169,6 +193,30 @@
       <Filter>hooks</Filter>
     </ClInclude>
     <ClInclude Include="Hooks_Gameplay.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformMovie.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformCallbacks.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformTypes.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformValue.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformState.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformLoader.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformTranslator.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Memory.h">
       <Filter>hooks</Filter>
     </ClInclude>
   </ItemGroup>
