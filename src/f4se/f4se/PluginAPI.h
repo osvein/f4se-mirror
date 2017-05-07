@@ -97,7 +97,8 @@ struct F4SEMessagingInterface
 								// dataLen: length of file path, data: char* file path of .ess savegame file
 		kMessage_InputLoaded,	// sent right after game input is loaded, right before the main menu initializes
 		kMessage_NewGame,		// sent after a new game is created, before the game has loaded (Sends CharGen TESQuest pointer)
-		kMessage_DataLoaded		// send after the data handler has loaded all its forms
+		kMessage_GameLoaded,	// sent after the game has finished loading (only sent once)
+		kMessage_GameDataReady	// sent when the data handler is ready (data is false before loading, true when finished loading)
 	};
 
 	UInt32	interfaceVersion;

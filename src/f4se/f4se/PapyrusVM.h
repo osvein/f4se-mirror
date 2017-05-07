@@ -4,6 +4,8 @@
 
 // skipping the BSScript::Internal namespace stuff
 
+class IFunction;
+
 // 08
 class Lock
 {
@@ -25,7 +27,7 @@ public:
 	virtual void	Unk_04();
 	virtual void	Unk_05(UInt8 unk);	// set m_unk82BC
 	virtual bool	Unk_06();	// take m_lockBDC4, return m_BDF4 & 2
-	virtual void	Unk_07();
+	virtual void	RegisterForm(UInt32 typeID, const char * papyrusClassName);
 	virtual void	Unk_08();
 	virtual void	Unk_09();
 	virtual void	Unk_0A();
@@ -45,7 +47,7 @@ public:
 	virtual void	Unk_18();
 	virtual void	Unk_19();
 	virtual void	Unk_1A();
-	virtual void	Unk_1B();
+	virtual void	RegisterFunction(IFunction * fn);
 	virtual void	Unk_1C();
 	virtual void	Unk_1D();
 	virtual void	Unk_1E();

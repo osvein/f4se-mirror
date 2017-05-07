@@ -128,9 +128,6 @@
     <ClCompile Include="BSSkin.cpp">
       <Filter>netimmerse</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks_Threads.cpp">
-      <Filter>hooks</Filter>
-    </ClCompile>
     <ClCompile Include="GameThreads.cpp">
       <Filter>api</Filter>
     </ClCompile>
@@ -149,11 +146,23 @@
     <ClCompile Include="NiTextures.cpp">
       <Filter>netimmerse</Filter>
     </ClCompile>
+    <ClCompile Include="Hooks_GameData.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusNativeFunctions.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusArgs.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
     <None Include="GameRTTI.inl">
       <Filter>api</Filter>
+    </None>
+    <None Include="PapyrusNativeFunctionDef.inl">
+      <Filter>papyrus\vm</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -312,9 +321,6 @@
     <ClInclude Include="GameThreads.h">
       <Filter>api</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks_Threads.h">
-      <Filter>hooks</Filter>
-    </ClInclude>
     <ClInclude Include="Hooks_SaveLoad.h">
       <Filter>hooks</Filter>
     </ClInclude>
@@ -329,6 +335,15 @@
     </ClInclude>
     <ClInclude Include="NiTextures.h">
       <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_GameData.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusNativeFunctions.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusArgs.h">
+      <Filter>papyrus\vm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

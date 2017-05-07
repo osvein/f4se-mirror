@@ -136,11 +136,11 @@ void ScaleformInitHook_Install(GFxMovieView * view)
 class BSScaleformManager;
 
 typedef BSScaleformManager * (* _BSScaleformManager_Ctor)(BSScaleformManager * mem);
-RelocAddr <_BSScaleformManager_Ctor> BSScaleformManager_Ctor(0x0209CDB0);
+RelocAddr <_BSScaleformManager_Ctor> BSScaleformManager_Ctor(0x0209B580);
 _BSScaleformManager_Ctor BSScaleformManager_Ctor_Original = nullptr;
 
 typedef UInt32 (* _BSScaleformTint)(BSGFxShaderFXTarget * value, float * colors, float multiplier);
-RelocAddr <_BSScaleformTint> BSScaleformTint(0x0207F310);
+RelocAddr <_BSScaleformTint> BSScaleformTint(0x0207DAE0);
 _BSScaleformTint BSScaleformTint_Original = nullptr;
 
 BSScaleformManager * BSScaleformManager_Ctor_Hook(BSScaleformManager * mgr)
@@ -197,7 +197,7 @@ void Hooks_Scaleform_Commit()
 
 	// hook creation of each menu
 	{
-		RelocAddr <uintptr_t> ScaleformInitHook_Start(0x0209D450 + 0x188);
+		RelocAddr <uintptr_t> ScaleformInitHook_Start(0x0209BC20 + 0x188);
 
 		struct ScaleformInitHook_Code : Xbyak::CodeGenerator {
 			ScaleformInitHook_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)

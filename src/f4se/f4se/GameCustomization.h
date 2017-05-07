@@ -29,12 +29,59 @@ public:
 			virtual void Unk_03();
 			virtual void Load(void * unk1) = 0; // Loads template from plugin stream
 
+			enum
+			{
+				kSlotForeheadMask = 0,
+				kSlotEyesMask,
+				kSlotNoseMask,
+				kSlotEarsMask,
+				kSlotCheeksMask,
+				kSlotMouthMask,
+				kSlotNeckMask,
+				kSlotLipColor,
+				kSlotCheekColor,
+				kSlotEyeliner,
+				kSlotEyeSocketUpper,
+				kSlotEyeSocketLower,
+				kSlotSkinTone,
+				kSlotPaint,
+				kSlotLaughLines,
+				kSlotCheekColorLower,
+				kSlotNose,
+				kSlotChin,
+				kSlotNeck,
+				kSlotForehead,
+				kSlotDirt,
+				kSlotScar,
+				kSlotFaceDetail,
+				kSlotBrows,
+				kNumSlots
+			};
+
+			enum
+			{
+				kBlendOpDefault,
+				kBlendOpMultiply,
+				kBlendOpOverlay,
+				kBlendOpSoftLight,
+				kBlendOpHardLight,
+			};
+
+			enum
+			{
+				kFlagOnOff			= (1 << 0),
+				kFlagChargenDetail	= (1 << 1),
+				kFlagTakesSkinTone	= (1 << 2)
+			};
+
 			BSFixedString	name;			// 08
 			Condition		* conditions;	// 10
-			UInt32			unk18;			// 18
+			UInt32			slot;			// 18
 			UInt16			templateIndex;	// 1C
-			UInt8			unk1E;			// 1E
+			UInt8			flags;			// 1E
 			UInt8			unk1F;			// 1F
+
+			static Entry * Create(UInt32 size, UInt64 vtbl);
 		};
 
 		// 30
@@ -46,9 +93,11 @@ public:
 			virtual void Unk_03();
 			virtual void Load(void * unk1);
 
-			BSFixedString texture;	// 20
-			UInt32	unk28;		// 28
-			UInt32	unk2C;		// 2C
+			BSFixedString	texture;	// 20
+			UInt32			blendOp;	// 28
+			UInt32			unk2C;		// 2C
+
+			static Mask * Create();
 		};
 
 		// 48
@@ -64,7 +113,7 @@ public:
 			{
 				BGSColorForm	* colorForm;	// 00
 				float			alpha;			// 08
-				UInt32			unk0C;			// 0C
+				UInt32			blendOp;		// 0C
 				UInt16			colorID;		// 10
 				UInt16			unk12;			// 12
 				UInt32			unk14;			// 14
@@ -74,22 +123,26 @@ public:
 			UInt32	unk28;				// 28
 			UInt32	unk2C;				// 2C
 			tArray<ColorData>	colors;	// 30
+
+			static Palette * Create();
 		};
 
 		// 40
-		class TexureSet : public Entry
+		class TextureSet : public Entry
 		{
 		public:
 			virtual void Unk_01();
 			virtual void Unk_02();
 			virtual void Unk_03();
 			virtual void Load(void * unk1);
+			
+			BSFixedString	diffuse;		// 20
+			BSFixedString	normal;			// 28
+			BSFixedString	specular;		// 30
+			UInt32			blendOp;		// 38
+			float			defaultValue;	// 3C
 
-			BSFixedString diffuse;	// 20
-			BSFixedString normal;	// 28
-			BSFixedString specular;	// 30
-			UInt32	unk38;		// 38
-			UInt32	unk3C;		// 3C
+			static TextureSet * Create();
 		};
 	};
 
@@ -306,7 +359,7 @@ public:
 	UInt64					unk520[(0x548-0x520)/8];	// 520
 
 	MEMBER_FN_PREFIX(CharacterCreation);
-	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C5FB90, UInt32 presetIndex); // Loads preset by index onto the actor
+	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C5E1E0, UInt32 presetIndex); // Loads preset by index onto the actor
 };
 
 extern RelocPtr <CharacterCreation*> g_characterCreation;
@@ -320,3 +373,12 @@ extern RelocAddr <_ClearCharacterTints> ClearCharacterTints;
 
 typedef UInt64 (* _CopyCharacterTints)(tArray<BGSCharacterTint::Entry*> * dst, tArray<BGSCharacterTint::Entry*> * src);
 extern RelocAddr <_CopyCharacterTints> CopyCharacterTints;
+
+extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl;
+extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl;
+extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl;
+
+extern const void * RTTI_BGSCharacter_Template_Entry;
+extern const void * RTTI_BGSCharacter_Template_Mask;
+extern const void * RTTI_BGSCharacter_Template_Palette;
+extern const void * RTTI_BGSCharacter_Template_TextureSet;

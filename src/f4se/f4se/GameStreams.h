@@ -34,31 +34,7 @@ public:
 	BSResourceNiBinaryStream(const char * path);
 	virtual ~BSResourceNiBinaryStream();
 
-	static void * operator new(std::size_t size)
-	{
-		return Heap_Allocate(size);
-	}
-	static void * operator new(std::size_t size, const std::nothrow_t &)
-	{
-		return Heap_Allocate(size);
-	}
-	static void * operator new(std::size_t size, void * ptr)
-	{
-		return ptr;
-	}
-
-	static void operator delete(void * ptr)
-	{
-		Heap_Free(ptr);
-	}
-	static void operator delete(void * ptr, const std::nothrow_t &)
-	{
-		Heap_Free(ptr);
-	}
-	static void operator delete(void *, void *)
-	{
-
-	}
+	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
 
 	// stub implementations
 	virtual bool	IsValid(void);
@@ -75,15 +51,15 @@ public:
 	UInt32	unk2C;		// 2C
 
 	MEMBER_FN_PREFIX(BSResourceNiBinaryStream);
-	DEFINE_MEMBER_FN(Construct, BSResourceNiBinaryStream *, 0x00522000, const char * filePath, UInt8 unk1, UInt64 unk2, SInt8 unk3);	// unk1 = 0, unk2 = 0, unk3 = 0
-	DEFINE_MEMBER_FN(ReadLine, UInt32, 0x01B21BD0, char * dst, UInt32 dstLen, UInt32 terminator);
-	DEFINE_MEMBER_FN(Destroy, void, 0x01B21EB0);	// ??_7BSResourceNiBinaryStream@@6B@ first entry
-	DEFINE_MEMBER_FN(IsValid, bool, 0x01B21AB0, void);
-	DEFINE_MEMBER_FN(Seek, void, 0x01B21AC0, SInt64);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x01B21B20, void);
-	DEFINE_MEMBER_FN(Unk_04, SInt64, 0x01B21B30, void * unk1);
-	DEFINE_MEMBER_FN(Read, UInt32, 0x01B21C90, void * buf, UInt64 length);
-	DEFINE_MEMBER_FN(Write, UInt32, 0x01B21D20, void * buf, UInt64 length);
+	DEFINE_MEMBER_FN(Construct, BSResourceNiBinaryStream *, 0x01B1FEE0, const char * filePath, UInt8 unk1, UInt64 unk2, SInt8 unk3);	// unk1 = 0, unk2 = 0, unk3 = 0
+	DEFINE_MEMBER_FN(ReadLine, UInt32, 0x01B203E0, char * dst, UInt32 dstLen, UInt32 terminator);
+	DEFINE_MEMBER_FN(Destroy, void, 0x01B201A0);	// ??_7BSResourceNiBinaryStream@@6B@ first entry
+	DEFINE_MEMBER_FN(IsValid, bool, 0x01B202C0, void);
+	DEFINE_MEMBER_FN(Seek, void, 0x01B202D0, SInt64);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x01B20330, void);
+	DEFINE_MEMBER_FN(Unk_04, SInt64, 0x01B20340, void * unk1);
+	DEFINE_MEMBER_FN(Read, UInt32, 0x01B204A0, void * buf, UInt64 length);
+	DEFINE_MEMBER_FN(Write, UInt32, 0x01B20530, void * buf, UInt64 length);
 
 	UInt32 ReadLine(char * dst, UInt32 dstLen, UInt32 terminator);
 	UInt32 ReadLine_w(wchar_t * dst, UInt32 dstLen, UInt32 terminator);	// length in characters

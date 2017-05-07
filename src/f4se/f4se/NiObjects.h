@@ -178,7 +178,7 @@ public:
 	UInt32			unk11C;				// 11C
 
 	MEMBER_FN_PREFIX(NiAVObject);
-	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C21200, BSFixedString * name, bool unk1, bool unk2);
+	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C1FA10, BSFixedString * name, bool unk1, bool unk2);
 };
 STATIC_ASSERT(offsetof(NiAVObject, m_reference) == 0x110);
 STATIC_ASSERT(sizeof(NiAVObject) == 0x120);

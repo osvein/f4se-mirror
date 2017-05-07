@@ -10,7 +10,7 @@ StringCache::Ref::Ref(const char * buf)
 	CALL_MEMBER_FN(this, ctor)(buf);
 }
 
-StringCache::Ref::Ref(const wchar_t * buf)
+StringCache::RefW::RefW(const wchar_t * buf)
 {
-	CALL_MEMBER_FN(this, wctor)(buf);
+	CALL_MEMBER_FN(this, ctor)(buf);
 }

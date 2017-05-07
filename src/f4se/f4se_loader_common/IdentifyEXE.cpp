@@ -208,7 +208,7 @@ bool IdentifyEXE(const char * procName, bool isEditor, std::string * dllSuffix, 
 
 	bool result = false;
 
-	const UInt64 kCurVersion = 0x0001000500CD0000;	// 1.5.205.0
+	const UInt64 kCurVersion = 0x0001000500D20000;	// 1.5.210.0
 
 	if(version < kCurVersion)
 	{
@@ -241,7 +241,7 @@ bool IdentifyEXE(const char * procName, bool isEditor, std::string * dllSuffix, 
 		{
 		case kProcType_Steam:
 		case kProcType_Normal:
-			*dllSuffix = "1_5_205";
+			*dllSuffix = "1_5_210";
 
 			result = true;
 

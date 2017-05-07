@@ -50,7 +50,7 @@
     <ClCompile Include="Hooks_Papyrus.cpp" />
     <ClCompile Include="Hooks_SaveLoad.cpp" />
     <ClCompile Include="Hooks_Scaleform.cpp" />
-    <ClCompile Include="Hooks_Threads.cpp" />
+    <ClCompile Include="Hooks_GameData.cpp" />
     <ClCompile Include="NiExtraData.cpp" />
     <ClCompile Include="NiMaterials.cpp" />
     <ClCompile Include="NiNodes.cpp" />
@@ -60,7 +60,9 @@
     <ClCompile Include="NiTextures.cpp" />
     <ClCompile Include="NiTypes.cpp" />
     <ClCompile Include="ObScript.cpp" />
+    <ClCompile Include="PapyrusArgs.cpp" />
     <ClCompile Include="PapyrusInterfaces.cpp" />
+    <ClCompile Include="PapyrusNativeFunctions.cpp" />
     <ClCompile Include="PapyrusVM.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="ScaleformAPI.cpp" />
@@ -75,6 +77,7 @@
   <ItemGroup>
     <None Include="exports.def" />
     <None Include="GameRTTI.inl" />
+    <None Include="PapyrusNativeFunctionDef.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BSGeometry.h" />
@@ -104,7 +107,7 @@
     <ClInclude Include="Hooks_Papyrus.h" />
     <ClInclude Include="Hooks_SaveLoad.h" />
     <ClInclude Include="Hooks_Scaleform.h" />
-    <ClInclude Include="Hooks_Threads.h" />
+    <ClInclude Include="Hooks_GameData.h" />
     <ClInclude Include="NiExtraData.h" />
     <ClInclude Include="NiMaterials.h" />
     <ClInclude Include="NiNodes.h" />
@@ -114,7 +117,9 @@
     <ClInclude Include="NiTextures.h" />
     <ClInclude Include="NiTypes.h" />
     <ClInclude Include="ObScript.h" />
+    <ClInclude Include="PapyrusArgs.h" />
     <ClInclude Include="PapyrusInterfaces.h" />
+    <ClInclude Include="PapyrusNativeFunctions.h" />
     <ClInclude Include="PapyrusVM.h" />
     <ClInclude Include="PluginAPI.h" />
     <ClInclude Include="PluginManager.h" />
@@ -162,11 +167,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)_1_5_205</TargetName>
+    <TargetName>$(ProjectName)_1_5_210</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)_1_5_205</TargetName>
+    <TargetName>$(ProjectName)_1_5_210</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -174,7 +179,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01050CD0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01050D20;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -199,7 +204,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01050CD0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01050D20;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

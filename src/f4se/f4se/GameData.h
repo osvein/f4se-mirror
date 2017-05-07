@@ -76,7 +76,7 @@ public:
 	UnkFormArray						arrFACT;	// Form Type 14
 	tArray<BGSHeadPart*>				arrHDPT;	// Form Type 15
 	UnkFormArray						arrEYES;	// Form Type 16
-	UnkFormArray						arrRACE;	// Form Type 17
+	tArray<TESRace*>					arrRACE;	// Form Type 17
 	UnkFormArray						arrSOUN;	// Form Type 18
 	UnkFormArray						arrASPC;	// Form Type 19
 	UnkFormArray						arrSKIL;	// Form Type 20
@@ -241,3 +241,4 @@ public:
 STATIC_ASSERT(offsetof(DataHandler, unk17C0) == 0x17C0);
 
 extern RelocPtr <DataHandler*> g_dataHandler;
+extern RelocPtr <bool> g_isGameDataReady;

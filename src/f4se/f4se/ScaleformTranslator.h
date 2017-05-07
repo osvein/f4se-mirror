@@ -20,9 +20,9 @@ class TranslationTableItem
 {
 public:
 	BSFixedString	key;
-	BSFixedString	translation;
+	BSFixedStringW	translation;
 
-	TranslationTableItem(BSFixedString a_key, BSFixedString a_translation)
+	TranslationTableItem(BSFixedString a_key, BSFixedStringW a_translation)
 		: key(a_key), translation(a_translation) {}
 
 	static inline UInt32 GetHash(const BSFixedString * key)

@@ -217,13 +217,13 @@ public:
 	tArray<BGSCharacterTint::Entry*>	* tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00598A50);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005AA240);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005AA350);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005AA3E0);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0058CD00); // npc->actorData.unk08 & 1
-	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x0059F720, BGSHeadPart *, bool bRemoveExtraParts);
-	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005A3CA0, BGSHeadPart *);
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00598810);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005AA000);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005AA110);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005AA1A0);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0058CAC0); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x0059F4E0, BGSHeadPart *, bool bRemoveExtraParts);
+	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005A3A60, BGSHeadPart *);
 
 	void ChangeHeadPart(BGSHeadPart * headPart, bool bRemovePart, bool bRemoveExtraParts);
 	BGSHeadPart * GetHeadPartByType(UInt32 type, bool bOverlays = false);

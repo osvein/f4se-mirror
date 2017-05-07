@@ -1,3 +1,8 @@
+0.1.15
+- support for beta runtime 1.5.210
+- more internal decoding
+- start of papyrus, 1.5.210 came out at a bad time
+
 0.1.14
 - support for beta runtime 1.5.205
 
