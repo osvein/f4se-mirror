@@ -161,6 +161,33 @@
     <ClCompile Include="PapyrusStruct.cpp">
       <Filter>papyrus\vm</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusMath.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusHeadPart.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusActorBase.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Input.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusF4SE.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusActor.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusObjectReference.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusGame.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="BSModelDB.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -204,6 +231,9 @@
     </Filter>
     <Filter Include="papyrus\vm">
       <UniqueIdentifier>{618e2d88-ea94-40ab-a796-2f7d4ab270ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="papyrus\functions">
+      <UniqueIdentifier>{53266a9e-d65a-4ef4-b936-685b8012d3c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -365,6 +395,33 @@
     </ClInclude>
     <ClInclude Include="PapyrusStruct.h">
       <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusMath.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusHeadPart.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusActorBase.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusF4SE.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusActor.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusObjectReference.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusGame.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Input.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="BSModelDB.h">
+      <Filter>netimmerse</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -203,12 +203,12 @@ template <> void UnpackValue <bool>(bool * dst, VMValue * src)
 
 template <> void UnpackValue <BSFixedString>(BSFixedString * dst, VMValue * src)
 {
-	const char	* data = NULL;
+	StringCache::Entry * entry = NULL;
 
 	if(src->type == VMValue::kType_String)
-		data = src->data.str;
-
-	CALL_MEMBER_FN(dst, Set)(data);
+		entry = src->data.str;
+	
+	CALL_MEMBER_FN(dst, Set)(entry ? entry->Get<char>() : "");
 }
 
 template <> void UnpackValue <VMVariable>(VMVariable * dst, VMValue * src)

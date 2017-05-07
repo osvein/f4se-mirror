@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BSGeometry.cpp" />
+    <ClCompile Include="BSModelDB.cpp" />
     <ClCompile Include="BSSkin.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="f4se.cpp" />
@@ -45,6 +46,7 @@
     <ClCompile Include="GameTypes.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
     <ClCompile Include="Hooks_Gameplay.cpp" />
+    <ClCompile Include="Hooks_Input.cpp" />
     <ClCompile Include="Hooks_Memory.cpp" />
     <ClCompile Include="Hooks_ObScript.cpp" />
     <ClCompile Include="Hooks_Papyrus.cpp" />
@@ -60,9 +62,16 @@
     <ClCompile Include="NiTextures.cpp" />
     <ClCompile Include="NiTypes.cpp" />
     <ClCompile Include="ObScript.cpp" />
+    <ClCompile Include="PapyrusActor.cpp" />
+    <ClCompile Include="PapyrusActorBase.cpp" />
     <ClCompile Include="PapyrusArgs.cpp" />
+    <ClCompile Include="PapyrusF4SE.cpp" />
+    <ClCompile Include="PapyrusGame.cpp" />
+    <ClCompile Include="PapyrusHeadPart.cpp" />
     <ClCompile Include="PapyrusInterfaces.cpp" />
+    <ClCompile Include="PapyrusMath.cpp" />
     <ClCompile Include="PapyrusNativeFunctions.cpp" />
+    <ClCompile Include="PapyrusObjectReference.cpp" />
     <ClCompile Include="PapyrusStruct.cpp" />
     <ClCompile Include="PapyrusValue.cpp" />
     <ClCompile Include="PapyrusVM.cpp" />
@@ -86,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BSGeometry.h" />
+    <ClInclude Include="BSModelDB.h" />
     <ClInclude Include="BSSkin.h" />
     <ClInclude Include="GameAPI.h" />
     <ClInclude Include="GameData.h" />
@@ -107,6 +117,7 @@
     <ClInclude Include="GameTypes.h" />
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="Hooks_Gameplay.h" />
+    <ClInclude Include="Hooks_Input.h" />
     <ClInclude Include="Hooks_Memory.h" />
     <ClInclude Include="Hooks_ObScript.h" />
     <ClInclude Include="Hooks_Papyrus.h" />
@@ -122,9 +133,16 @@
     <ClInclude Include="NiTextures.h" />
     <ClInclude Include="NiTypes.h" />
     <ClInclude Include="ObScript.h" />
+    <ClInclude Include="PapyrusActor.h" />
+    <ClInclude Include="PapyrusActorBase.h" />
     <ClInclude Include="PapyrusArgs.h" />
+    <ClInclude Include="PapyrusF4SE.h" />
+    <ClInclude Include="PapyrusGame.h" />
+    <ClInclude Include="PapyrusHeadPart.h" />
     <ClInclude Include="PapyrusInterfaces.h" />
+    <ClInclude Include="PapyrusMath.h" />
     <ClInclude Include="PapyrusNativeFunctions.h" />
+    <ClInclude Include="PapyrusObjectReference.h" />
     <ClInclude Include="PapyrusStruct.h" />
     <ClInclude Include="PapyrusValue.h" />
     <ClInclude Include="PapyrusVM.h" />
@@ -174,11 +192,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)_1_6_3</TargetName>
+    <TargetName>$(ProjectName)_1_6_9</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)_1_6_3</TargetName>
+    <TargetName>$(ProjectName)_1_6_9</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -186,7 +204,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01060030;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01060090;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -211,7 +229,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01060030;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01060090;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

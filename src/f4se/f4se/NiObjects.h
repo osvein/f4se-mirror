@@ -60,7 +60,7 @@ public:
 	virtual void GetAsBhkLimitedHingeConstraint();
 	virtual void GetAsbhkNPCollisionObject();
 	virtual void Unk_1A();
-	virtual void Unk_1B();
+	virtual void Unk_1B(); // LoadBinary
 	virtual void Unk_1C();
 	virtual void Unk_1D();
 	virtual void Unk_1E();
@@ -75,24 +75,19 @@ public:
 	virtual void Unk_27();
 };
 
-// 18
-class NiExtraDataList
-{
-public:
-	NiExtraData	** m_extraData;			// 00
-	UInt32		m_extraDataCapacity;	// 08
-	UInt32		unk0C;
-	UInt32		m_extraDataLength;		// 10
-	UInt32		unk14;
-};
-
 // 28
 class NiObjectNET : public NiObject
 {
 public:
-	BSFixedString	m_name;			// 10
-	void			* unk10;			// 18 - Controller?
-	NiExtraDataList * m_extraDataList;	// 20
+	BSFixedString					m_name;			// 10
+	void							* unk10;		// 18 - Controller?
+	tMutexArray<NiExtraData*>		* m_extraData;	// 20 - must be locked/unlocked when altering/acquiring
+
+	bool HasExtraData(const BSFixedString & name);
+	bool AddExtraData(NiExtraData * extraData);
+
+	MEMBER_FN_PREFIX(NiObjectNET);
+	DEFINE_MEMBER_FN(Internal_AddExtraData, bool, 0x01B2A3C0, NiExtraData * extraData);
 };
 
 // 120
@@ -178,7 +173,7 @@ public:
 	UInt32			unk11C;				// 11C
 
 	MEMBER_FN_PREFIX(NiAVObject);
-	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C21010, BSFixedString * name, bool unk1, bool unk2);
+	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C25DF0, BSFixedString * name, bool unk1, bool unk2);
 };
 STATIC_ASSERT(offsetof(NiAVObject, m_reference) == 0x110);
 STATIC_ASSERT(sizeof(NiAVObject) == 0x120);

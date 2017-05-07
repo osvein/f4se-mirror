@@ -4,7 +4,15 @@
 #include "xbyak/xbyak.h"
 #include "f4se/PapyrusVM.h"
 
-RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013870A0 + 0x461);
+#include "f4se/PapyrusF4SE.h"
+#include "f4se/PapyrusMath.h"
+#include "f4se/PapyrusActor.h"
+#include "f4se/PapyrusActorBase.h"
+#include "f4se/PapyrusHeadPart.h"
+#include "f4se/PapyrusObjectReference.h"
+#include "f4se/PapyrusGame.h"
+
+RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x01387490 + 0x461);
 
 typedef std::list <F4SEPapyrusInterface::RegisterFunctions> PapyrusPluginList;
 static PapyrusPluginList s_pap_plugins;
@@ -26,7 +34,26 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 
 	VirtualMachine * vm = (*vmPtr);
 
-	// F4SE Registrations first
+	// F4SE
+	papyrusF4SE::RegisterFuncs(vm);
+
+	// Math
+	papyrusMath::RegisterFuncs(vm);
+
+	// ObjectReference
+	papyrusObjectReference::RegisterFuncs(vm);
+
+	// ActorBase
+	papyrusActorBase::RegisterFuncs(vm);
+
+	// Actor
+	papyrusActor::RegisterFuncs(vm);
+
+	// HeadPart
+	papyrusHeadPart::RegisterFuncs(vm);
+
+	// Game
+	papyrusGame::RegisterFuncs(vm);
 
 #if 0
 	// Plugins

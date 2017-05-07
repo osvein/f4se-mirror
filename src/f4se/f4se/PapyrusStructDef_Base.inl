@@ -229,7 +229,7 @@ public:
 		{
 			if(typeInfo->m_data.count <= NUM_PARAMS)
 			{
-				if(CreateStruct(dst, &structName, vm))
+				if(CreateStruct(dst, &structName, vm, m_none))
 				{
 					VMValue * values = dst->data.strct->GetStruct();
 
@@ -275,10 +275,11 @@ public:
 
 	void UnpackStruct(VMValue * src)
 	{
+		IComplexType * complexType = src->GetComplexType();
 		BSFixedString structName(T_structName);
 		VMStructTypeInfo * typeInfo = nullptr;
 		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
-		if(vm->GetStructTypeInfo(&structName, &typeInfo))
+		if(vm->GetStructTypeInfo(&structName, &typeInfo) && complexType == typeInfo)
 		{
 			if(typeInfo->m_data.count <= NUM_PARAMS)
 			{
@@ -319,6 +320,10 @@ public:
 			}
 
 			typeInfo->Release();
+		}
+		else
+		{
+			m_empty = true;
 		}
 
 		structName.Release();

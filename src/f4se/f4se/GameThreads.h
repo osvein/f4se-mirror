@@ -1,5 +1,13 @@
 #pragma once
 
+class ITaskDelegate
+{
+public:
+	virtual ~ITaskDelegate() { }
+
+	virtual void Run() = 0;
+};
+
 // 50
 class BSThread
 {

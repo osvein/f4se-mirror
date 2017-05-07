@@ -6,14 +6,17 @@ RelocPtr <CharacterCreation*> g_characterCreation(0x058B5B40);	// array
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+AF
 RelocPtr <UInt32> g_characterIndex(0x058B5B78);
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x0029A840);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x00299830);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x0029FA80);
+// 89B16A159EF66C1743643F2F457380448C4803F0+18
+RelocPtr <BSFaceGenManager*> g_faceGenManager(0x0571E950);
+
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x0029A850);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x00299840);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x0029FA90);
 
 // These are for creating new instances
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02B253E8);
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02B25418);
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02B25448);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02B253D8);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02B25408);
+RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02B25438);
 
 bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 {

@@ -685,6 +685,8 @@ public:
 class ActorValueInfo : public TESForm
 {
 public:
+	enum { kTypeID = kFormType_AVIF };
+
 	TESFullName			fullName;		// 20
 	TESDescription		description;	// 30
 
@@ -1183,5 +1185,7 @@ public:
 class BGSOutfit : public TESForm
 {
 public:
+	enum { kTypeID = kFormType_OTFT };
+
 	tArray<TESForm*>	forms;	// 20
 };

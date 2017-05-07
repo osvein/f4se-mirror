@@ -20,6 +20,34 @@ public:
 	volatile UInt32	uiLock;		// 00
 };
 
+class SimpleLock
+{
+	enum
+	{
+		kFastSpinThreshold = 10000
+	};
+
+	volatile SInt32	threadID;	// 00
+	UInt32			lockCount;	// 04
+
+public:
+	SimpleLock() : threadID(0), lockCount(0) {}
+
+	void Lock(void);
+	void Release(void);
+};
+STATIC_ASSERT(sizeof(SimpleLock) == 0x8);
+
+class SimpleLocker
+{
+public:
+	SimpleLocker(SimpleLock * dataHolder) { m_lock = dataHolder; m_lock->Lock(); }
+	~SimpleLocker() { m_lock->Release(); }
+
+protected:
+	SimpleLock	* m_lock;
+};
+
 // 80808
 class StringCache
 {
@@ -70,9 +98,9 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01AD4D30, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01AD4E60, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
-		DEFINE_MEMBER_FN(Release, void, 0x01AD5FC0);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01AD5120, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01AD5250, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
+		DEFINE_MEMBER_FN(Release, void, 0x01AD63B0);
 
 		Ref();
 		Ref(const char * buf);
@@ -91,7 +119,7 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(RefW);
-		DEFINE_MEMBER_FN(ctor, RefW *, 0x01AD5230, const wchar_t * buf);
+		DEFINE_MEMBER_FN(ctor, RefW *, 0x01AD5620, const wchar_t * buf);
 
 		RefW();
 		RefW(const wchar_t * buf);
@@ -220,9 +248,7 @@ public:
 
 	bool Push(const T & entry)
 	{
-		if(!entries) return false;
- 
-		if(count + 1 > capacity) {
+		if(!entries || count + 1 > capacity) {
 			if(!Grow(nGrow))
 				return false;
 		}
@@ -284,8 +310,12 @@ public:
 
 	bool Grow(UInt32 numEntries)
 	{
-		if(!entries)
-			return false;
+		if(!entries) {
+			entries = (T *)Heap_Allocate(sizeof(T) * numEntries);
+			count = 0;
+			capacity = numEntries;
+			return true;
+		}
  
 		try {
 			UInt32 oldSize = capacity;
@@ -332,6 +362,13 @@ public:
 	}
 
 	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
+};
+
+template<class T>
+class tMutexArray : public tArray<T>
+{
+public:
+	SimpleLock lock;
 };
 
 typedef tArray<UInt64> UnkArray;

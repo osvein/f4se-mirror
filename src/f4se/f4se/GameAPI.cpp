@@ -16,6 +16,9 @@ void Heap_Free(void * ptr)
 // CF40EA3DCB94FC3927A17CCA60198108D4742CA7+68
 RelocPtr <ConsoleManager *> g_console(0x0572F310);
 
+// 1C0F98B1DC3F82F9BD55E938765C22AD25B75571+15
+RelocAddr <UInt32 *> g_consoleHandle(0x059296A0);
+
 void Console_Print(const char * fmt, ...)
 {
 	ConsoleManager * mgr = *g_console;

@@ -58,38 +58,12 @@ public:
 
 	struct GeometryData
 	{
-		UInt64	flags;
+		UInt64	vertexDesc;
 
 		struct VertexData
 		{
-			void * unk00;	// 00
-
-			struct Vertex
-			{
-				typedef UInt16 hfloat;
-				struct HalfVector3
-				{
-					hfloat	x;	// 00
-					hfloat	y;	// 02
-					hfloat	z;	// 04
-				};
-
-				HalfVector3 position;
-				hfloat		bitangent_x;
-				struct UV
-				{
-					hfloat u;
-					hfloat v;
-				} uv;
-				HalfVector3	normal;
-				UInt8		bitangent_y;
-				HalfVector3	tangent;
-				UInt8		bitangent_z;
-				hfloat		boneWeights[4];
-				UInt8		boneIndices[4];
-			};
-
-			Vertex	* vertices;	// 08
+			void	* unk00;	// 00
+			UInt8	* vertexBlock;	// 08
 		};
 
 		struct TriangleData
@@ -102,8 +76,31 @@ public:
 		TriangleData	* triangleData;	// 10
 	};
 
+	enum : UInt64
+	{
+		kFlag_Unk1			= (1ULL << 40),
+		kFlag_Unk2			= (1ULL << 41),
+		kFlag_Unk3			= (1ULL << 42),
+		kFlag_Unk4			= (1ULL << 43),
+		kFlag_Vertex		= (1ULL << 44),
+		kFlag_UVs			= (1ULL << 45),
+		kFlag_Unk5			= (1ULL << 46),
+		kFlag_Normals		= (1ULL << 47),
+		kFlag_Tangents		= (1ULL << 48),
+		kFlag_VertexColors	= (1ULL << 49),
+		kFlag_Skinned		= (1ULL << 50),
+		kFlag_Unk6			= (1ULL << 51),
+		kFlag_MaleEyes		= (1ULL << 52),
+		kFlag_Unk7			= (1ULL << 53),
+		kFlag_FullPrecision	= (1ULL << 54),
+		kFlag_Unk8			= (1ULL << 55),
+	};
+
 	GeometryData	* geometryData;			// 148
-	UInt64	unk150;							// 150
+	UInt64			vertexDesc;				// 150
+
+	UInt16 GetVertexSize() const { return (vertexDesc << 2) & 0x3C; } // 0x3C might be a compiler optimization, (vertexDesc & 0xF) << 2 makes more sense
+
 	UInt8	unk158;							// 158
 	UInt8	unk159;							// 159
 	UInt16	pad15A;							// 15A
@@ -120,6 +117,9 @@ public:
 	UInt16	unk166;	// 166
 	float	unk168;	// 168
 	float	unk16C;	// 16C
+
+	MEMBER_FN_PREFIX(BSTriShape);
+	DEFINE_MEMBER_FN(CreateDynamicTriShape, BSDynamicTriShape*, 0x01CB9C70, NiAVObject * unk1);
 };
 STATIC_ASSERT(sizeof(BSTriShape) == 0x170);
 
@@ -127,14 +127,15 @@ STATIC_ASSERT(sizeof(BSTriShape) == 0x170);
 class BSDynamicTriShape : public BSTriShape
 {
 public:
-	UInt32	unk170;		// 170
-	UInt32	unk174;		// 174
-	UInt32	unk178;		// 178
-	UInt32	unk17C;		// 17C
-	void	* unk180;	// 180
+	UInt32					unk170;			// 170
+	UInt32					unk174;			// 174
+	SimpleLock				lock;			// 178
+	void					* unk180;		// 180 - geometry pointer, must lock/unlock when altering
 	BSGeometrySegmentData	* segmentData;	// 188
-	void	* unk190;	// 190
-	void	* unk198;	// 198
+	void					* unk190;		// 190
+	void					* unk198;		// 198
+
+	UInt16 GetDynamicVertexSize() const { return (vertexDesc >> 2) & 0x3C; }
 };
 STATIC_ASSERT(sizeof(BSDynamicTriShape) == 0x1A0);
 
@@ -148,3 +149,6 @@ public:
 	void	* unk188;	// 188
 };
 STATIC_ASSERT(sizeof(BSSubIndexTriShape) == 0x190);
+
+typedef void (* _ConvertHalfToFloat)(UInt8 * src, NiPoint3 * dest, UInt32 numVertices, UInt32 vertexSize);
+extern RelocAddr <_ConvertHalfToFloat> ConvertHalfToFloat;

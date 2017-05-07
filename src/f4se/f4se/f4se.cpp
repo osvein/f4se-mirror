@@ -12,6 +12,7 @@
 #include "Hooks_Memory.h"
 #include "Hooks_GameData.h"
 #include "Hooks_SaveLoad.h"
+#include "Hooks_Input.h"
 #include "PluginManager.h"
 
 IDebugLog gLog;
@@ -74,6 +75,7 @@ void F4SE_Initialize(void)
 		Hooks_Gameplay_Init();
 		Hooks_GameData_Init();
 		Hooks_SaveLoad_Init();
+		Hooks_Input_Init();
 
 		g_pluginManager.Init();
 
@@ -83,6 +85,7 @@ void F4SE_Initialize(void)
 		Hooks_Gameplay_Commit();
 		Hooks_GameData_Commit();
 		Hooks_SaveLoad_Commit();
+		Hooks_Input_Commit();
 
 		FlushInstructionCache(GetCurrentProcess(), NULL, 0);
 

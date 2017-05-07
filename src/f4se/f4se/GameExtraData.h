@@ -261,12 +261,30 @@ public:
 	PresenceBitfield	* m_presence;	// 18
 };
 
+class ExtraInstanceData : public BSExtraData
+{
+public:
+	void	* unk18;	// 18
+	void	* unk20;	// 20
+};
 
 // 28
 class BGSObjectInstanceExtra : public BSExtraData
 {
 public:
-	void	* unk18;	// 18
+	struct Data
+	{
+		struct Form
+		{
+			UInt32	formId;	// 00
+			UInt32	unk04;	// 04
+		};
+
+		Form	* forms;	// 00
+		UInt32	blockSize;	// 04 - blockSize/sizeof(Form) yields length
+	};
+
+	Data	* data;	// 18
 	SInt16	unk20;		// 20
 	UInt16	unk22;		// 22
 	UInt32	unk24;		// 24

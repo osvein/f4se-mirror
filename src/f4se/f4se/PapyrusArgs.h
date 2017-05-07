@@ -28,15 +28,15 @@ class VMArgList
 {
 public:
 	MEMBER_FN_PREFIX(VMArgList);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x025D3210, VMState * state);
-	DEFINE_MEMBER_FN(Get, VMValue *, 0x025D3270, VMState * state, UInt32 idx, UInt32 offset);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x025D3600, VMState * state);
+	DEFINE_MEMBER_FN(Get, VMValue *, 0x025D3660, VMState * state, UInt32 idx, UInt32 offset);
 };
 
 template <typename T>
 class VMArray
 {
 public:
-	VMArray() : m_arr(nullptr) { }
+	VMArray() : m_arr(nullptr), m_none(false) { }
 	~VMArray() { }
 
 	enum { kTypeID = 0 };
@@ -85,15 +85,15 @@ public:
 	{
 		// Clear out old contents if any
 		dst->SetNone();
-		if(m_data.size() > 0)
+		dst->type = GetTypeID<VMArray<T>>(vm); // Always set the type
+
+		if(m_data.size() > 0 && !m_none)
 		{
-			VMValue::ArrayData * data = NULL;
+			VMValue::ArrayData * data = nullptr;
 			// Request the VM allocate a new array
 			vm->CreateArray(dst, m_data.size(), &data);
-			if(data)
-			{
+			if(data) {
 				// Set the appropriate TypeID and assign the new data array
-				dst->type = GetTypeID<VMArray<T>>(vm);
 				dst->data.arr = data;
 
 				// Copy from vector
@@ -114,7 +114,8 @@ public:
 
 		if (src->type != type || (arrData = src->data.arr, !arrData))
 		{
-			m_arr = NULL;
+			m_none = true;
+			m_arr = nullptr;
 			return;
 		}
 
@@ -128,9 +129,14 @@ public:
 		}
 	}
 
+	// Will make the VM return None instead of a zero sized array
+	void SetNone(bool bNone) { m_none = bNone; }
+	bool IsNone() const { return m_none; }
+
 protected:
 	VMValue::ArrayData			* m_arr;	// Original reference
 	std::vector<VMValue>		m_data;		// Temporary copies
+	bool						m_none;
 };
 
 class VMVariable

@@ -810,18 +810,18 @@ public:
 	// 58
 	struct SlotData
 	{
-		TESForm				* item;			// 00 - not necessarily ARMO
-		TBO_InstanceData	* instanceData;	// 08
-		BGSObjectInstanceExtra * extraData;	// 10
-		TESObjectARMA		* arma;			// 18
-		BGSMaterialSwap		* materialSwap;	// 20
-		BGSTextureSet		* textureSet;	// 28
-		NiNode				* node;			// 30
-		void				* unk38;		// 38
-		IAnimationGraphManagerHolder	* unk40;			// 40
-		UInt64				unk48;			// 48
-		UInt32				unk50;			// 50
-		UInt32				unk54;			// 54
+		TESForm							* item;			// 00
+		TBO_InstanceData				* instanceData;	// 08
+		BGSObjectInstanceExtra			* extraData;	// 10
+		TESForm							* model;		// 18 - ARMA for ARMO and WEAP for WEAP
+		BGSModelMaterialSwap			* modelMatSwap;	// 20
+		BGSTextureSet					* textureSet;	// 28
+		NiAVObject						* node;			// 30
+		void							* unk38;		// 38
+		IAnimationGraphManagerHolder	* unk40;		// 40
+		UInt64							unk48;			// 48
+		UInt32							unk50;			// 50
+		UInt32							unk54;			// 54
 	};
 
 	SlotData	slots[kMaxSlots];
@@ -841,7 +841,13 @@ struct BGSInventoryItem
 		Stack	* next;		// 10
 		ExtraDataList	* extraData;	// 18
 		UInt32	unk20;		// 20
-		UInt16	unk24;		// 24
+
+		enum
+		{
+			kFlagEquipped = 7
+		};
+
+		UInt16	flags;		// 24
 
 #ifdef _DEBUG
 		void Dump();

@@ -218,13 +218,13 @@ public:
 	tArray<BGSCharacterTint::Entry*>	* tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x0059AA40);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005AC290);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005AC3A0);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005AC430);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0058ECF0); // npc->actorData.unk08 & 1
-	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005A1740, BGSHeadPart *, bool bRemoveExtraParts);
-	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005A5CC0, BGSHeadPart *);
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x0059AA50);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005AC2A0);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005AC3B0);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005AC440);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x0058ED00); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005A1750, BGSHeadPart *, bool bRemoveExtraParts);
+	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005A5CD0, BGSHeadPart *);
 
 	void ChangeHeadPart(BGSHeadPart * headPart, bool bRemovePart, bool bRemoveExtraParts);
 	BGSHeadPart * GetHeadPartByType(UInt32 type, bool bOverlays = false);
@@ -245,37 +245,44 @@ public:
 	struct InstanceData : public TBO_InstanceData
 	{
 	public:
-		BGSSoundDescriptorForm * unk10;		// 10 BGSSoundDescriptorForm *
-		UInt64 unk18;						// 18
-		UInt64 unk20;						// 20
-		BGSSoundDescriptorForm *unk28;		// 28 BGSSoundDescriptorForm *
-		BGSSoundDescriptorForm * unk30;		// 30 BGSSoundDescriptorForm *
-		BGSSoundDescriptorForm *unk38;		// 38 BGSSoundDescriptorForm *
-		BGSSoundDescriptorForm* unk40;		// 40 BGSSoundDescriptorForm * 
-		BGSSoundDescriptorForm * unk48;		// 48 BGSSoundDescriptorForm *
-		UInt64 unk50;						// 50
-		BGSImpactDataSet* unk58;			// 58 BGSImpactDataSet*
-		TESLevItem * unk60;					// 60 TESLevItem *
-		TESAmmo* unk68;						// 68 TESAmmo *
-		BGSEquipSlot* unk70;				// 70 BGSEquipSlot*
-		SpellItem* unk78;					// 78 SpellItem*
-		UInt64 unk80;						// 80
-		BGSAimModel *unk88;					// 88 BGSAimModel *
-		BGSZoomData* unk90;					// 90 BGSZoomData*
-		void* unk98;						// 98
-		UInt64 unkA0;						// A0
-		UInt64 unkA8;						// A8
-		UInt64 unkB0;						// B0
-		UInt64 unkB8;						// B8
-		float unkC0[(0xF0-0xC0)/4];			// C0
-		UInt64 unkF0;						// F0
-		UInt64 unkF8;						// F8
-		UInt64 unk100;						// 100
-		UInt32 unk108;						// 108
-		UInt32 unk10C;						// 10C
-		UInt32 unk110;						// 110
-		UInt32 unk114;						// 114
-		UInt64 unk118[(0x138-0x118) / 8];	// 118
+		BGSSoundDescriptorForm		* unk10;					// 10 BGSSoundDescriptorForm *
+		UInt64						unk18;						// 18
+		UInt64						unk20;						// 20
+		BGSSoundDescriptorForm		*unk28;						// 28 BGSSoundDescriptorForm *
+		BGSSoundDescriptorForm		* unk30;					// 30 BGSSoundDescriptorForm *
+		BGSSoundDescriptorForm		* unk38;					// 38 BGSSoundDescriptorForm *
+		BGSSoundDescriptorForm		* unk40;					// 40 BGSSoundDescriptorForm * 
+		BGSSoundDescriptorForm		* unk48;					// 48 BGSSoundDescriptorForm *
+		UInt64						unk50;						// 50
+		BGSImpactDataSet			* unk58;					// 58 BGSImpactDataSet*
+		TESLevItem					* unk60;					// 60 TESLevItem *
+		TESAmmo						* ammo;						// 68 TESAmmo *
+		BGSEquipSlot				* unk70;					// 70 BGSEquipSlot*
+		SpellItem					* unk78;					// 78 SpellItem*
+		UInt64						unk80;						// 80
+		BGSAimModel					* unk88;					// 88 BGSAimModel *
+		BGSZoomData					* unk90;					// 90 BGSZoomData*
+		float						* unk98;					// 98
+		tArray<EnchantmentItem*>	* enchantments;				// A0
+		tArray<BGSMaterialSwap*>	* materialSwaps;			// A8
+
+		struct ValueModifier
+		{
+			ActorValueInfo * avInfo;	// 00
+			UInt32			unk08;		// 08
+		};
+
+		UInt64						unkB0;						// B0
+		tArray<ValueModifier>		* modifiers;				// B8
+		float						unkC0[(0xF0-0xC0)/4];		// C0
+		UInt64						unkF0;						// F0
+		UInt64						unkF8;						// F8
+		UInt64						unk100;						// 100
+		UInt32						unk108;						// 108
+		UInt32						unk10C;						// 10C
+		UInt32						unk110;						// 110
+		UInt32						unk114;						// 114
+		UInt64						unk118[(0x138-0x118) / 8];	// 118
 	};
 
 	// 150
@@ -335,7 +342,7 @@ public:
 		UInt64 unk10;
 		UInt64 unk18;
 		UInt64 unk20;
-		UInt64 unk28;
+		BGSKeywordForm * keyword;
 		UInt64 unk30;
 		UInt64 unk38;
 		UInt32 unk40;

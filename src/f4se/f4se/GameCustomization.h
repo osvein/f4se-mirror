@@ -11,6 +11,8 @@ class BGSColorForm;
 class BGSTextureSet;
 class ActorValueInfo;
 class Condition;
+class NiAVObject;
+class BSTriShape;
 
 class BGSCharacterTint
 {
@@ -359,9 +361,26 @@ public:
 	UInt64					unk520[(0x548-0x520)/8];	// 520
 
 	MEMBER_FN_PREFIX(CharacterCreation);
-	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C63090, UInt32 presetIndex); // Loads preset by index onto the actor
+	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C633E0, UInt32 presetIndex); // Loads preset by index onto the actor
 };
 
+// ??
+class BSFaceGenManager
+{
+public:
+	UInt8	unk00;								// 00
+	UInt8	bDisableCustomFaceGeneration;		// 01
+	UInt16	unk02;								// 02
+	UInt32	numActorsAllowedToMorph;			// 04 numActorsAllowedToMorph
+
+	UInt64		unk08[(0x34A8 - 0x04) >> 3];	// 08
+	NiAVObject	* camera;						// 34A8 - NiCamera (WorldRoot Camera)
+
+	MEMBER_FN_PREFIX(BSFaceGenManager);
+	DEFINE_MEMBER_FN(ApplyDynamicData, void, 0x006620F0, BSTriShape * trishape);
+};
+
+extern RelocPtr <BSFaceGenManager*> g_faceGenManager;
 extern RelocPtr <CharacterCreation*> g_characterCreation;
 extern RelocPtr <UInt32> g_characterIndex;
 
