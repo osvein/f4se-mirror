@@ -16,7 +16,7 @@ void ScaleformInitHook_Install(GFxMovieView * view)
 
 void Hooks_Scaleform_Commit()
 {
-	RelocAddr <uintptr_t> ScaleformInitHook_Start(0x0256C020 + 0x188);
+	RelocAddr <uintptr_t> ScaleformInitHook_Start(0x0256C4E0 + 0x188);
 
 	struct ScaleformInitHook_Code : Xbyak::CodeGenerator {
 		ScaleformInitHook_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)

@@ -4,8 +4,8 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	1
-#define F4SE_VERSION_INTEGER_BETA	2
-#define F4SE_VERSION_VERSTRING		"0, 0, 1, 2"
+#define F4SE_VERSION_INTEGER_BETA	3
+#define F4SE_VERSION_VERSTRING		"0, 0, 1, 3"
 #define F4SE_VERSION_PADDEDSTRING	"0001"
 #define F4SE_VERSION_RELEASEIDX		1
 
@@ -15,6 +15,7 @@
 #define RUNTIME_VERSION_1_1_29	MAKE_EXE_VERSION(1, 1, 29)	// 0x010101D0	initial version released on steam
 #define RUNTIME_VERSION_1_1_30	MAKE_EXE_VERSION(1, 1, 30)	// 0x010101E0	day1 patch to fix xaudio problem
 #define RUNTIME_VERSION_1_2		MAKE_EXE_VERSION(1, 2, 33)	// 0x01020210	beta, removed mini-mod-manager from the launcher
+#define RUNTIME_VERSION_1_2_37	MAKE_EXE_VERSION(1, 2, 37)	// 0x01020250	beta - unclear
 
 #define PACKED_F4SE_VERSION		MAKE_EXE_VERSION(F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA)
 

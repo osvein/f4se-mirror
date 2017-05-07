@@ -1,6 +1,6 @@
 #include "f4se/ScaleformAPI.h"
 
-RelocPtr <ScaleformHeap *> g_scaleformHeap(0x078B9160);
+RelocPtr <ScaleformHeap *> g_scaleformHeap(0x078B5660);
 
 void * ScaleformHeap_Allocate(UInt32 size)
 {
