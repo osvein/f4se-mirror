@@ -1,6 +1,8 @@
 #pragma once
 
 #include "f4se_common/Relocation.h"
+#include "f4se_common/Utilities.h"
+
 #include "f4se/ScaleformState.h"
 
 class GImageInfoBase;
@@ -27,8 +29,6 @@ class BSScaleformManager
 public:
 	virtual ~BSScaleformManager();
 	virtual void Unk_01(void); // Init image loader?
-
-	// ctor - 14256B980
 
 	UInt64					unk08;			// 08 - 0
 	GFxStateBag				* stateBag;		// 10

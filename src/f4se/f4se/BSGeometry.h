@@ -2,6 +2,41 @@
 
 #include "f4se/NiObjects.h"
 
+class NiProperty;
+
+// 40
+class BSGeometrySegmentData : public NiObject
+{
+public:
+	// 68
+	struct SSFData
+	{
+		struct SubData
+		{
+			UInt32	unk00;		// 00
+			UInt32	unk04;		// 04
+			float	unk08[8];	// 08
+		};
+		UInt64	unk00;			// 00
+		BSFixedString ssfFile;	// 08
+		UInt32	sequenceCount;	// 10
+		UInt32	numSubIndexes;	// 14
+		UInt32	* sequence;		// 18
+		SubData	* subIndexData;	// 20
+		UInt64	unk28[(0x68-0x28)/8];
+	};
+
+	SSFData	* ssfData;	// 10
+	UInt32	* segment;	// 18
+	void	* unk20;	// 20
+	UInt32	unk28;	// 28
+	UInt32	unk2C;	// 2C
+	UInt32	unk30;	// 30
+	UInt32	numTriangles;	// 34
+	UInt32	unk38;	// 38
+	UInt32	unk3C;	// 3C
+};
+
 // 160
 class BSGeometry : public NiAVObject
 {
@@ -16,12 +51,13 @@ public:
 	virtual void Unk_40();
 
 	float	unk120[4];			// 120
-	void	* effectState;		// 130
-	void	* shaderProperty;	// 138
+	NiProperty	* effectState;		// 130
+	NiProperty	* shaderProperty;	// 138
 	void	* skinInstance;		// 140
 	void	* unk148;			// 148
 	UInt64	unk150;				// 150
-	UInt16	unk158;				// 158
+	UInt8	unk158;				// 158
+	UInt8	unk159;				// 159
 	UInt16	pad15A;				// 15A
 	UInt32	unk15C;				// 15C
 };
@@ -31,9 +67,11 @@ STATIC_ASSERT(sizeof(BSGeometry) == 0x160);
 class BSTriShape : public BSGeometry
 {
 public:
-	UInt64	unk160;	// 160
+	UInt32	unk160;	// 160
+	UInt16	unk164;	// 164
+	UInt16	unk166;	// 166
 	float	unk168;	// 168
-	float	unk16C;
+	float	unk16C;	// 16C
 };
 STATIC_ASSERT(sizeof(BSTriShape) == 0x170);
 
@@ -41,10 +79,12 @@ STATIC_ASSERT(sizeof(BSTriShape) == 0x170);
 class BSDynamicTriShape : public BSTriShape
 {
 public:
-	void	* unk170;	// 170
-	void	* unk178;	// 178
+	UInt32	unk170;		// 170
+	UInt32	unk174;		// 174
+	UInt32	unk178;		// 178
+	UInt32	unk17C;		// 17C
 	void	* unk180;	// 180
-	void	* unk188;	// 188
+	BSGeometrySegmentData	* segmentData;	// 188
 	void	* unk190;	// 190
 	void	* unk198;	// 198
 };
@@ -54,7 +94,7 @@ STATIC_ASSERT(sizeof(BSDynamicTriShape) == 0x1A0);
 class BSSubIndexTriShape : public BSTriShape
 {
 public:
-	void	* unk170;	// 170
+	BSGeometrySegmentData	* segmentData;	// 170
 	void	* unk178;	// 178
 	void	* unk180;	// 180
 	void	* unk188;	// 188

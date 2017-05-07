@@ -57,11 +57,13 @@ static void HookIAT()
 	___crtGetShowWindowMode * iat = (___crtGetShowWindowMode *)GetIATAddr(GetModuleHandle(NULL), "MSVCR110.dll", "__crtGetShowWindowMode");
 	if(iat)
 	{
-		__crtGetShowWindowMode_Original = *iat;
-		*iat = __crtGetShowWindowMode_Hook;
+		_MESSAGE("found iat at %016I64X", iat);
 
+		__crtGetShowWindowMode_Original = *iat;
 		_MESSAGE("original thunk %016I64X", __crtGetShowWindowMode_Original);
-		_MESSAGE("iat %016I64X", iat);
+
+		SafeWrite64(uintptr_t(iat), (UInt64)__crtGetShowWindowMode_Hook);
+		_MESSAGE("patched iat");
 	}
 	else
 	{

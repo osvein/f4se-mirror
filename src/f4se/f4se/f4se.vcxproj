@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -33,6 +33,8 @@
     <ClCompile Include="GameObjects.cpp" />
     <ClCompile Include="GameReferences.cpp" />
     <ClCompile Include="GameSettings.cpp" />
+    <ClCompile Include="GameStreams.cpp" />
+    <ClCompile Include="GameCustomization.cpp" />
     <ClCompile Include="GameTypes.cpp" />
     <ClCompile Include="Hooks_Gameplay.cpp" />
     <ClCompile Include="Hooks_Memory.cpp" />
@@ -40,8 +42,10 @@
     <ClCompile Include="Hooks_Papyrus.cpp" />
     <ClCompile Include="Hooks_Scaleform.cpp" />
     <ClCompile Include="NiExtraData.cpp" />
+    <ClCompile Include="NiMaterials.cpp" />
     <ClCompile Include="NiNodes.cpp" />
     <ClCompile Include="NiObjects.cpp" />
+    <ClCompile Include="NiProperties.cpp" />
     <ClCompile Include="NiRTTI.cpp" />
     <ClCompile Include="NiTypes.cpp" />
     <ClCompile Include="ObScript.cpp" />
@@ -69,6 +73,8 @@
     <ClInclude Include="GameObjects.h" />
     <ClInclude Include="GameReferences.h" />
     <ClInclude Include="GameSettings.h" />
+    <ClInclude Include="GameStreams.h" />
+    <ClInclude Include="GameCustomization.h" />
     <ClInclude Include="GameTypes.h" />
     <ClInclude Include="Hooks_Gameplay.h" />
     <ClInclude Include="Hooks_Memory.h" />
@@ -76,8 +82,10 @@
     <ClInclude Include="Hooks_Papyrus.h" />
     <ClInclude Include="Hooks_Scaleform.h" />
     <ClInclude Include="NiExtraData.h" />
+    <ClInclude Include="NiMaterials.h" />
     <ClInclude Include="NiNodes.h" />
     <ClInclude Include="NiObjects.h" />
+    <ClInclude Include="NiProperties.h" />
     <ClInclude Include="NiRTTI.h" />
     <ClInclude Include="NiTypes.h" />
     <ClInclude Include="ObScript.h" />
@@ -127,11 +135,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)_1_2_37</TargetName>
+    <TargetName>$(ProjectName)_1_3_45</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)_1_2_37</TargetName>
+    <TargetName>$(ProjectName)_1_3_45</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -139,7 +147,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01020250;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010302D0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -164,7 +172,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x01020250;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010302D0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

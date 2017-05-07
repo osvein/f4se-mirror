@@ -35,6 +35,14 @@ static F4SEMessagingInterface g_F4SEMessagingInterface =
 	PluginManager::Dispatch_Message,
 };
 
+#include "Hooks_Scaleform.h"
+
+static const F4SEScaleformInterface g_F4SEScaleformInterface =
+{
+	F4SEScaleformInterface::kInterfaceVersion,
+	RegisterScaleformPlugin
+};
+
 PluginManager::PluginManager()
 {
 	//
@@ -145,7 +153,7 @@ bool PluginManager::FindPluginDirectory(void)
 {
 	bool	result = false;
 
-	// find the path <runtime directory>/data/skse/
+	// find the path <runtime directory>/data/f4se/
 	std::string	runtimeDirectory = GetRuntimeDirectory();
 
 	if(!runtimeDirectory.empty())
@@ -249,11 +257,11 @@ void PluginManager::InstallPlugins(void)
 }
 
 // SEH-wrapped calls to plugin API functions to avoid bugs from bringing down the core
-const char * PluginManager::SafeCallQueryPlugin(LoadedPlugin * plugin, const F4SEInterface * skse)
+const char * PluginManager::SafeCallQueryPlugin(LoadedPlugin * plugin, const F4SEInterface * f4se)
 {
 	__try
 	{
-		if(!plugin->query(skse, &plugin->info))
+		if(!plugin->query(f4se, &plugin->info))
 		{
 			return "reported as incompatible during query";
 		}
@@ -267,11 +275,11 @@ const char * PluginManager::SafeCallQueryPlugin(LoadedPlugin * plugin, const F4S
 	return NULL;
 }
 
-const char * PluginManager::SafeCallLoadPlugin(LoadedPlugin * plugin, const F4SEInterface * skse)
+const char * PluginManager::SafeCallLoadPlugin(LoadedPlugin * plugin, const F4SEInterface * f4se)
 {
 	__try
 	{
-		if(!plugin->load(skse))
+		if(!plugin->load(f4se))
 		{
 			return "reported as incompatible during load";
 		}

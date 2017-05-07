@@ -1,3 +1,3 @@
 #include "f4se/ScaleformLoader.h"
 
-RelocPtr <BSScaleformManager *> g_scaleformManager(0x06CD5528);
+RelocPtr <BSScaleformManager *> g_scaleformManager(0x05983150);

@@ -10,13 +10,16 @@ public:
 	UInt32			unk04;
 };
 
+// 18
 template <class T>
 class tArray
 {
 public:
-	T* entries;
-	UInt64 capacity;
-	UInt64 count;
+	T* entries;			// 00
+	UInt32 capacity;	// 08
+	UInt32 pad0C;		// 0C
+	UInt32 count;		// 10
+	UInt32 pad14;		// 14
 
 	tArray() : entries(NULL), capacity(0), count(0) { }
 
@@ -43,7 +46,6 @@ public:
 		}
 		return -1;
 	}
-
 };
 
 typedef tArray<UInt64> UnkArray;

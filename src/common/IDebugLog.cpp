@@ -76,7 +76,7 @@ void IDebugLog::OpenRelative(int folderID, const char * relPath)
  *	@param message the message
  *	@param source the source of the message, or NULL to use the previous source
  */
-void IDebugLog::Message(const char * message, const char * source)
+void IDebugLog::Message(const char * message, const char * source, bool newLine)
 {
 	if(source)
 		SetSource(source);
@@ -93,7 +93,9 @@ void IDebugLog::Message(const char * message, const char * source)
 	}
 
 	PrintText(message);
-	NewLine();
+
+	if(newLine)
+		NewLine();
 }
 
 /**
@@ -137,6 +139,21 @@ void IDebugLog::Log(LogLevel level, const char * fmt, va_list args)
 	
 	if(print)
 		printf("%s\n", formatBuf);
+}
+
+void IDebugLog::LogNNL(LogLevel level, const char * fmt, va_list args)
+{
+	bool	log = (level <= logLevel);
+	bool	print = (level <= printLevel);
+
+	if(log || print)
+		vsprintf_s(formatBuf, sizeof(formatBuf), fmt, args);
+
+	if(log)
+		Message(formatBuf, NULL, false);
+	
+	if(print)
+		printf("%s", formatBuf);
 }
 
 /**

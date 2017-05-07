@@ -69,6 +69,11 @@ public:
 		return reinterpret_cast <T>(m_offset);
 	}
 
+	uintptr_t GetUIntPtr() const
+	{
+		return reinterpret_cast <uintptr_t>(m_offset);
+	}
+
 private:
 	// apparently you can't reinterpret_cast from a type to the same type
 	// that's kind of stupid and makes it impossible to use this for uintptr_ts if I use the same type

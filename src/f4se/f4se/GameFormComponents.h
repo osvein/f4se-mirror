@@ -1,6 +1,7 @@
 #pragma once
 
 #include "f4se/GameTypes.h"
+#include "f4se/NiObjects.h"
 
 class BGSEquipSlot;
 class EnchantmentItem;
@@ -17,6 +18,10 @@ class TESLevItem;
 class TESAmmo;
 class BGSAimModel;
 class BGSZoomData;
+class BGSBodyPartData;
+class BGSTextureSet;
+class BGSMaterialSwap;
+class BGSTerminal;
 
 // 10
 class TBO_InstanceData : public BSIntrusiveRefCounted
@@ -158,33 +163,6 @@ public:
 	virtual ~BGSSoundTagComponent();
 };
 
-class BGSMod
-{
-public:
-	class Container
-	{
-	public:
-
-	};
-
-	class Template
-	{
-	public:
-		// 20
-		class Items : public BaseFormComponent
-		{
-		public:
-			virtual ~Items();
-
-			virtual void	Unk_07(void);
-			virtual void	Unk_08(void);
-
-			void	* unk08;	// 08
-			void	* unk10;	// 10
-			void	* unk18;	// 18
-		};
-	};
-};
 
 // 68
 class TESActorBaseData : public BaseFormComponent
@@ -250,7 +228,7 @@ public:
 	void	* unk08;	// 08
 };
 
-// 20
+// 30
 class TESModel : public BaseFormComponent
 {
 public:
@@ -258,7 +236,7 @@ public:
 	virtual void			SetModelName(const char * name);
 	virtual UInt32			Unk_07(void);
 
-	void*				name;	// 08 StringCache::Ref
+	BSFixedString		name;	// 08 StringCache::Ref
 
 	UInt32				unk0C;	// 0C
 	UInt32				unk10;	// 10
@@ -266,6 +244,32 @@ public:
 	UInt8				unk16;	// 16
 	UInt8				unk17;	// 17
 	UInt32				unk18;	// 18
+	void				* unk20;	// 20
+	UInt32				unk28;		// 28
+	UInt8				unk2C;		// 2C
+	UInt8				unk2D;		// 2D
+	UInt16				unk2E;		// 2E
+};
+
+// 30
+class BGSBehaviorGraphModel : public TESModel
+{
+public:
+	virtual ~BGSBehaviorGraphModel();
+};
+
+// 30
+class BGSTextureModel : public TESModel
+{
+public:
+	virtual ~BGSTextureModel();
+};
+
+// 30
+class TESModelTri : public TESModel
+{
+public:
+	virtual ~TESModelTri();
 };
 
 // 40
@@ -275,15 +279,12 @@ public:
 	virtual void			Unk_08(void);
 	virtual void			Unk_09(void);
 
-	void	* unk20;	// 20
-	UInt32	unk28;		// 28
-	UInt8	unk2C;		// 2C
-	UInt8	unk2D;		// 2D
-	UInt16	unk2E;		// 2E
-	void	* unk30;	// 30
-	UInt32	unk34;		// 34
-	UInt32	unk38;		// 38
+	BGSMaterialSwap	* materialSwap;	// 30
+	float	unk38;		// 34
+	UInt32	pad3C;		// 38
 };
+STATIC_ASSERT(sizeof(BGSModelMaterialSwap) == 0x40);
+
 
 // 10
 class TESTexture : public BaseFormComponent
@@ -293,7 +294,7 @@ public:
 	virtual void			Unk_08(void); 	//virtual void			GetNormalMapName(BSString * out);	// might have const char * retn type
 	virtual void			Unk_09(void);	//virtual const char *	GetSearchDir(void);	
 
-	void*	str;	// 08 StringCache::Ref
+	BSFixedString	str;	// 08 StringCache::Ref
 };
 
 // 08
@@ -459,5 +460,249 @@ public:
 class BGSNativeTerminalForm : public BaseFormComponent
 {
 public:
-	void	* unk08;	// 08
+	BGSTerminal	* terminal;	// 08
+};
+
+// 10
+class BGSBipedObjectForm : public BaseFormComponent
+{
+public:
+	// applicable to DefaultRace
+	enum
+	{
+		kPart_Head =		1 << 0,
+		kPart_Hair =		1 << 1,
+		kPart_Body =		1 << 2,
+		kPart_Hands =		1 << 3,
+		kPart_Forearms =	1 << 4,
+		kPart_Amulet =		1 << 5,
+		kPart_Ring =		1 << 6,
+		kPart_Feet =		1 << 7,
+		kPart_Calves =		1 << 8,
+		kPart_Shield =		1 << 9,
+		kPart_Unnamed10 =	1 << 10,
+		kPart_LongHair =	1 << 11,
+		kPart_Circlet =		1 << 12,
+		kPart_Ears =		1 << 13,
+		kPart_Unnamed14 =	1 << 14,
+		kPart_Unnamed15 =	1 << 15,
+		kPart_Unnamed16 =	1 << 16,
+		kPart_Unnamed17 =	1 << 17,
+		kPart_Unnamed18 =	1 << 18,
+		kPart_Unnamed19 =	1 << 19,
+		kPart_Unnamed20 =	1 << 20,
+		kPart_Unnamed21 =	1 << 21,
+		kPart_Unnamed22 =	1 << 22,
+		kPart_Unnamed23 =	1 << 23,
+		kPart_Unnamed24 =	1 << 24,
+		kPart_Unnamed25 =	1 << 25,
+		kPart_Unnamed26 =	1 << 26,
+		kPart_Unnamed27 =	1 << 27,
+		kPart_Unnamed28 =	1 << 28,
+		kPart_Unnamed29 =	1 << 29,
+		kPart_Unnamed30 =	1 << 30,
+		kPart_FX01 =		1 << 31,
+	};
+
+	enum
+	{
+		kWeight_Light =	0,
+		kWeight_Heavy,
+		kWeight_None,
+	};
+
+	struct Data
+	{
+		UInt32	parts;			// 00 - init'd to 0
+		UInt32	weightClass;	// 04 - init'd to 2 (none)
+	};
+
+	Data	data;	// 08
+};
+
+// 10
+class BSTextureSet : public NiObject
+{
+public:
+	virtual void Unk_28();
+	virtual void Unk_29();
+	virtual void Unk_2A();
+	virtual void Unk_2B();
+};
+
+// 08
+class BSISoundDescriptor
+{
+public:
+	virtual ~BSISoundDescriptor();
+
+	virtual void	Unk_01(void) = 0;
+	virtual void	Unk_02(void) = 0;
+	virtual void	Unk_03(void) = 0;
+	virtual void	Unk_04(void) = 0;
+
+	//	void	** _vtbl;	// 00
+};
+
+// 08
+class BGSSoundDescriptor : public BSISoundDescriptor
+{
+public:
+	virtual void	Unk_01(void);
+	virtual void	Unk_02(void);
+	virtual void	Unk_03(void);
+	virtual void	Unk_04(void);
+
+	//	void	** _vtbl;	// 00
+};
+
+// 08
+class TESWeightForm : public BaseFormComponent
+{
+public:
+	float	weight;	// 04
+	UInt32	padding;
+};
+
+// 08
+class BGSCraftingUseSound : public BaseFormComponent
+{
+public:
+	UInt64	unk04;	// 04
+};
+
+class BGSMenuDisplayObject : BaseFormComponent
+{
+public:
+	UInt64	unk04;
+};
+
+class TESValueForm : public BaseFormComponent
+{
+public:
+	UInt64 unk04;	// 04
+};
+
+// 108
+class TESBipedModelForm : public BaseFormComponent
+{
+public:
+	UInt64 unk[(0x108-0x8)/8];
+};
+STATIC_ASSERT(sizeof(TESBipedModelForm) == 0x108);
+
+// 18
+class MagicTarget
+{
+public:
+	virtual ~MagicTarget();
+
+	virtual void	Unk_01(void);
+	virtual void	Unk_02(void);
+	virtual void	Unk_03(void);
+	virtual void	Unk_04(void);
+	virtual void	Unk_05(void);
+	virtual void	Unk_06(void);
+	virtual void	Unk_07(void);
+	virtual void	Unk_08(void);
+	virtual void	Unk_09(void);
+	virtual void	Unk_0A(void);
+	virtual void	Unk_0B(void);
+	virtual void	Unk_0C(void);
+
+	void * unk08;	// 08
+	void * unk10;	// 10
+};
+
+// 08
+class IMovementInterface
+{
+public:
+	virtual ~IMovementInterface();
+};
+
+// 08
+class IMovementState : public IMovementInterface
+{
+public:
+	virtual void	Unk_01() = 0;
+	virtual void	Unk_02() = 0;
+	virtual void	Unk_03() = 0;
+	virtual void	Unk_04() = 0;
+	virtual void	Unk_05() = 0;
+	virtual void	Unk_06() = 0;
+	virtual void	Unk_07() = 0;
+	virtual void	Unk_08() = 0;
+	virtual void	Unk_09() = 0;
+	virtual void	Unk_0A() = 0;
+	virtual void	Unk_0B() = 0;
+	virtual void	Unk_0C() = 0;
+	virtual void	Unk_0D() = 0;
+	virtual void	Unk_0E() = 0;
+	virtual void	Unk_0F() = 0;
+	virtual void	Unk_10() = 0;
+	virtual void	Unk_11() = 0;
+	virtual void	Unk_12() = 0;
+	virtual void	Unk_13() = 0;
+	virtual void	Unk_14() = 0;
+	virtual void	Unk_15() = 0;
+	virtual void	Unk_16() = 0;
+	virtual void	Unk_17() = 0;
+	virtual void	Unk_18() = 0;
+	virtual void	Unk_19() = 0;
+	virtual void	Unk_1A() = 0;
+	virtual void	Unk_1B() = 0;
+	virtual void	Unk_1C() = 0;
+	virtual void	Unk_1D() = 0;
+	virtual void	Unk_1E() = 0;
+	virtual void	Unk_1F() = 0;
+	virtual void	Unk_20() = 0;
+};
+
+// 10
+class ActorState : public IMovementState
+{
+public:
+	virtual void	Unk_01();
+	virtual void	Unk_02();
+	virtual void	Unk_03();
+	virtual void	Unk_04();
+	virtual void	Unk_05();
+	virtual void	Unk_06();
+	virtual void	Unk_07();
+	virtual void	Unk_08();
+	virtual void	Unk_09();
+	virtual void	Unk_0A();
+	virtual void	Unk_0B();
+	virtual void	Unk_0C();
+	virtual void	Unk_0D();
+	virtual void	Unk_0E();
+	virtual void	Unk_0F();
+	virtual void	Unk_10();
+	virtual void	Unk_11();
+	virtual void	Unk_12();
+	virtual void	Unk_13();
+	virtual void	Unk_14();
+	virtual void	Unk_15();
+	virtual void	Unk_16();
+	virtual void	Unk_17();
+	virtual void	Unk_18();
+	virtual void	Unk_19();
+	virtual void	Unk_1A();
+	virtual void	Unk_1B();
+	virtual void	Unk_1C();
+	virtual void	Unk_1D();
+	virtual void	Unk_1E();
+	virtual void	Unk_1F();
+	virtual void	Unk_20();
+
+	void * unk08;	// 08
+};
+
+// 08
+class IPostAnimationChannelUpdateFunctor
+{
+	virtual ~IPostAnimationChannelUpdateFunctor();
+
+	virtual void	Unk_01();
 };

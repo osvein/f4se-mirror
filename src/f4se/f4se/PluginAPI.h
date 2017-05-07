@@ -2,6 +2,9 @@
 
 typedef UInt32	PluginHandle;	// treat this as an opaque type
 
+class GFxMovieView;
+class GFxValue;
+
 enum
 {
 	kPluginHandle_Invalid = 0xFFFFFFFF
@@ -11,6 +14,7 @@ enum
 {
 	kInterface_Invalid = 0,
 	kInterface_Messaging,
+	kInterface_Scaleform,
 	kInterface_Max,
 };
 
@@ -88,7 +92,7 @@ struct F4SEMessagingInterface
 								//data: bool, true if game successfully loaded, false otherwise
 								// plugins may register as listeners during the first callback while deferring dispatches until the next
 		kMessage_SaveGame,
-		kMessage_DeleteGame,	// sent right before deleting the .skse cosave and the .ess save.
+		kMessage_DeleteGame,	// sent right before deleting the .f4se cosave and the .ess save.
 								// dataLen: length of file path, data: char* file path of .ess savegame file
 		kMessage_InputLoaded,	// sent right after game input is loaded, right before the main menu initializes
 		kMessage_NewGame,		// sent after a new game is created, before the game has loaded (Sends CharGen TESQuest pointer)
@@ -112,6 +116,27 @@ struct F4SEMessagingInterface
 	void	* (* GetEventDispatcher)(UInt32 dispatcherId);
 };
 
+struct F4SEScaleformInterface
+{
+	enum
+	{
+		kInterfaceVersion = 1
+	};
+
+	UInt32	interfaceVersion;
+
+	// This callback will be called once for every new menu that is created.
+	// Create your objects relative to the 'root' GFxValue parameter.
+	typedef bool (* RegisterCallback)(GFxMovieView * view, GFxValue * value);
+
+	// Register your plugin's scaleform API creation callback here.
+	// The "name" parameter will be used to create an object with the path:
+	// "f4se.plugins.name" that will be passed to the callback.
+	// Make sure that the memory it points to is valid from the point the callback
+	// is registered until the game exits.
+	bool	(* Register)(const char * name, RegisterCallback callback);
+};
+
 struct PluginInfo
 {
 	enum
@@ -124,16 +149,16 @@ struct PluginInfo
 	UInt32			version;
 };
 
-typedef bool (* _F4SEPlugin_Query)(const F4SEInterface * skse, PluginInfo * info);
-typedef bool (* _F4SEPlugin_Load)(const F4SEInterface * skse);
+typedef bool (* _F4SEPlugin_Query)(const F4SEInterface * f4se, PluginInfo * info);
+typedef bool (* _F4SEPlugin_Load)(const F4SEInterface * f4se);
 
 /**** plugin API docs **********************************************************
  *	
  *	The base API is pretty simple. Create a project based on the
- *	skse_plugin_example project included with the F4SE source code, then define
+ *	f4se_plugin_example project included with the F4SE source code, then define
  *	and export these functions:
  *	
- *	bool F4SEPlugin_Query(const F4SEInterface * skse, PluginInfo * info)
+ *	bool F4SEPlugin_Query(const F4SEInterface * f4se, PluginInfo * info)
  *	
  *	This primary purposes of this function are to fill out the PluginInfo
  *	structure, and to perform basic version checks based on the info in the
@@ -158,7 +183,7 @@ typedef bool (* _F4SEPlugin_Load)(const F4SEInterface * skse);
  *	- version is only used by the plugin query API, and will be returned to
  *	  scripts requesting the current version of your plugin
  *	
- *	bool F4SEPlugin_Load(const F4SEInterface * skse)
+ *	bool F4SEPlugin_Load(const F4SEInterface * f4se)
  *	
  *	In this function, use the interfaces above to register your commands, patch
  *	memory, generally do whatever you need to for integration with the runtime.

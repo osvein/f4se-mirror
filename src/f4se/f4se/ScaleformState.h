@@ -17,8 +17,7 @@ public:
 		kInterface_ZlibSupport =	0x1D,
 	};
 
-	UInt32	interfaceType;	// 10
-	UInt32	pad14;			// 14
+	UInt64	interfaceType;	// 10
 
 	// redirect new/delete to the scaleform heap
 	static void * operator new(std::size_t size)
@@ -82,11 +81,23 @@ public:
 	virtual bool    IsVerboseActionErrors() const   { return true; }
 };
 
-class SKSEGFxLogger : public GFxState, public GFxLogBase
+class GFxLogState : public GFxState
+{
+public:
+	GFxLogState() { }
+	virtual ~GFxLogState () { }
+
+	virtual void Unk_01(void);
+
+	GFxLogBase	* logBase;	// 18
+	void		* logger;	// 20
+};
+
+class F4SEGFxLogger : public GRefCountBase
 {
 public: 
-	SKSEGFxLogger() : GFxState() { interfaceType = kInterface_Log; }
-	virtual ~SKSEGFxLogger () { }
+	F4SEGFxLogger() { }
+	virtual ~F4SEGFxLogger () { }
 
 	enum
 	{
@@ -112,5 +123,5 @@ public:
 		Log_Action                  = Log_Channel_Action | 0
 	};
 
-	virtual void    LogMessageVarg(UInt32 messageType, const char* pfmt, va_list argList);
+	virtual void LogMessageVarg(UInt32 messageType, const char* fmt, va_list args);
 };

@@ -2,6 +2,7 @@
 
 #include "f4se/GameForms.h"
 #include "f4se/GameEvents.h"
+#include "f4se/GameCustomization.h"
 #include "f4se/NiObjects.h"
 
 class BSActiveGraphIfInactiveEvent;
@@ -160,6 +161,8 @@ public:
 	virtual void	Unk_C2();
 	virtual void	Unk_C3();
 
+	enum { kTypeID = kFormType_REFR };
+	
 	// parents
 	BSHandleRefObject							handleRefObject;		// 20
 	BSTEventSink <BSActiveGraphIfInactiveEvent>	activeGraphIfInactive;	// 30
@@ -194,3 +197,153 @@ public:
 STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);
 STATIC_ASSERT(sizeof(TESObjectREFR) == 0x110);
+
+// 430
+class Actor : public TESObjectREFR
+{
+public:
+	virtual void	Unk_C4();
+	virtual void	Unk_C5();
+	virtual void	Unk_C6();
+	virtual void	Unk_C7();
+	virtual void	Unk_C8();
+	virtual void	Unk_C9();
+	virtual void	Unk_CA();
+	virtual void	Unk_CB();
+	virtual void	Unk_CC();
+	virtual void	Unk_CD();
+	virtual void	Unk_CE();
+	virtual void	Unk_CF();
+	virtual void	Unk_D0();
+	virtual void	Unk_D1();
+	virtual void	Unk_D2();
+	virtual void	Unk_D3();
+	virtual void	Unk_D4();
+	virtual void	Unk_D5();
+	virtual void	Unk_D6();
+	virtual void	Unk_D7();
+	virtual void	Unk_D8();
+	virtual void	Unk_D9();
+	virtual void	Unk_DA();
+	virtual void	Unk_DB();
+	virtual void	Unk_DC();
+	virtual void	Unk_DD();
+	virtual void	Unk_DE();
+	virtual void	Unk_DF();
+	virtual void	Unk_E0();
+	virtual void	Unk_E1();
+	virtual void	Unk_E2();
+	virtual void	Unk_E3();
+	virtual void	Unk_E4();
+	virtual void	Unk_E5();
+	virtual void	Unk_E6();
+	virtual void	Unk_E7();
+	virtual void	Unk_E8();
+	virtual void	Unk_E9();
+	virtual void	Unk_EA();
+	virtual void	Unk_EB();
+	virtual void	Unk_EC();
+	virtual void	Unk_ED();
+	virtual void	Unk_EE();
+	virtual void	Unk_EF();
+	virtual void	Unk_F0();
+	virtual void	Unk_F1();
+	virtual void	Unk_F2();
+	virtual void	Unk_F3();
+	virtual void	Unk_F4();
+	virtual void	Unk_F5();
+	virtual void	Unk_F6();
+	virtual void	Unk_F7();
+	virtual void	Unk_F8();
+	virtual void	Unk_F9();
+	virtual void	Unk_FA();
+	virtual void	Unk_FB();
+	virtual void	Unk_FC();
+	virtual void	Unk_FD();
+	virtual void	Unk_FE();
+	virtual void	Unk_FF();
+	virtual void	Unk_100();
+	virtual void	Unk_101();
+	virtual void	Unk_102();
+	virtual void	Unk_103();
+	virtual void	Unk_104();
+	virtual void	Unk_105();
+	virtual void	Unk_106();
+	virtual void	Unk_107();
+	virtual void	Unk_108();
+	virtual void	Unk_109();
+	virtual void	Unk_10A();
+	virtual void	Unk_10B();
+	virtual void	Unk_10C();
+	virtual void	Unk_10D();
+	virtual void	Unk_10E();
+	virtual void	Unk_10F();
+	virtual void	Unk_110();
+	virtual void	Unk_111();
+	virtual void	Unk_112();
+	virtual void	Unk_113();
+	virtual void	Unk_114();
+	virtual void	Unk_115();
+	virtual void	Unk_116();
+	virtual void	Unk_117();
+	virtual void	Unk_118();
+	virtual void	Unk_119();
+	virtual void	Unk_11A();
+	virtual void	Unk_11B();
+	virtual void	Unk_11C();
+	virtual void	Unk_11D();
+	virtual void	Unk_11E();
+	virtual void	Unk_11F();
+	virtual void	Unk_120();
+	virtual void	Unk_121();
+	virtual void	Unk_122();
+	virtual void	Unk_123();
+	virtual void	Unk_124();
+	virtual void	Unk_125();
+	virtual void	Unk_126();
+	virtual void	Unk_127();
+	virtual void	Unk_128();
+	virtual void	Unk_129();
+	virtual void	Unk_12A();
+	virtual void	Unk_12B();
+	virtual void	Unk_12C();
+	virtual void	Unk_12D();
+	virtual void	Unk_12E();
+	virtual void	Unk_12F();
+	virtual void	Unk_130();
+
+	enum { kTypeID = kFormType_ACHR };
+
+	MagicTarget	magicTarget;	// 110
+	ActorState	actorState;		// 128
+	BSTEventSink<BSMovementDataChangedEvent>	movementDataChanged;	// 138
+	BSTEventSink<BSTransformDeltaEvent>			transformDelta;			// 140
+	BSTEventSink<BSSubGraphActivationUpdate>	subGraphActivation;		// 148
+	BSTEventSink<bhkCharacterMoveFinishEvent>	characterMoveFinished;	// 150
+	BSTEventSink<bhkNonSupportContactEvent>		nonSupportContact;		// 158
+	BSTEventSink<bhkCharacterStateChangeEvent>	characterStateChanged;	// 160
+
+	UInt64	unk168[(0x430-0x168)/8];	// 168
+};
+
+// D90
+class PlayerCharacter : public Actor
+{
+public:
+	enum { kTypeID = kFormType_ACHR };
+
+	virtual void	Unk_131();
+	virtual void	Unk_132();
+	virtual void	Unk_133();
+	virtual void	Unk_134();
+
+	BSTEventSink<MenuOpenCloseEvent>	menuOpenClose;		// 430
+	BSTEventSink<MenuModeChangeEvent>	menuModeChange;		// 438
+	BSTEventSink<UserEventEnabledEvent>	userEventEnabled;	// 440
+	BSTEventSink<TESHitEvent>			hitEvent;			// 448
+	BSTEventSink<PerkEntryUpdatedEvent::PerkValueEvents>	perkValueEvents;	// 450
+
+	UInt64	unk458[(0xC88-0x458)/8];	// 458
+	tArray<BGSCharacterTint::Entry*> * tints;
+	UInt64	unkC90[(0xD90-0xC90)/8];	// C90
+};

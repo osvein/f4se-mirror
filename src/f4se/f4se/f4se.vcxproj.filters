@@ -98,6 +98,18 @@
     <ClCompile Include="Hooks_Memory.cpp">
       <Filter>hooks</Filter>
     </ClCompile>
+    <ClCompile Include="GameStreams.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="NiProperties.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCustomization.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="NiMaterials.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -218,6 +230,18 @@
     </ClInclude>
     <ClInclude Include="Hooks_Memory.h">
       <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStreams.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="NiProperties.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCustomization.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="NiMaterials.h">
+      <Filter>netimmerse</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

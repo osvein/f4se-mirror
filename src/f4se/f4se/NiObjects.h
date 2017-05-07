@@ -1,5 +1,6 @@
 #pragma once
 
+#include "f4se/GameTypes.h"
 #include "f4se/NiTypes.h"
 
 class NiRTTI;
@@ -10,6 +11,8 @@ class TESObjectREFR;
 class NiGeometry;
 class BSGeometry;
 class BSTriShape;
+class BSDynamicTriShape;
+class BSSubIndexTriShape;
 
 // 10
 class NiRefObject
@@ -32,18 +35,18 @@ public:
 class NiObject : public NiRefObject
 {
 public:
-	virtual NiRTTI			* GetRTTI(void);
-	virtual NiNode			* GetAsNiNode(void);
-	virtual NiSwitchNode	* GetAsNiSwitchNode(void);
+	virtual NiRTTI				* GetRTTI(void);
+	virtual NiNode				* GetAsNiNode(void);
+	virtual NiSwitchNode		* GetAsNiSwitchNode(void);
 	virtual void Unk_05();
 	virtual void Unk_06();
-	virtual BSGeometry		* GetAsBSGeometry(void);
-	virtual void Unk_08();
+	virtual void Unk_07();
+	virtual BSGeometry			* GetAsBSGeometry(void);
 	virtual void Unk_09();
-	virtual BSTriShape		* GetAsBSTriShape(void);
-	virtual void Unk_0B();
+	virtual BSTriShape			* GetAsBSTriShape(void);
+	virtual BSDynamicTriShape	* GetAsBSDynamicTriShape(void);
 	virtual void Unk_0C();
-	virtual NiGeometry		* GetAsNiGeometry(void);
+	virtual BSSubIndexTriShape	* GetAsBSSubIndexTriShape(void);
 	virtual void Unk_0E();
 	virtual void Unk_0F();
 	virtual void Unk_10();
@@ -87,7 +90,7 @@ public:
 class NiObjectNET : public NiObject
 {
 public:
-	void			* m_name;			// 10
+	BSFixedString	m_name;			// 10
 	void			* unk10;			// 18 - Controller?
 	NiExtraDataList * m_extraDataList;	// 20
 };

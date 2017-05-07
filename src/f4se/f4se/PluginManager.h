@@ -43,8 +43,8 @@ private:
 	bool	FindPluginDirectory(void);
 	void	InstallPlugins(void);
 
-	const char *	SafeCallQueryPlugin(LoadedPlugin * plugin, const F4SEInterface * skse);
-	const char *	SafeCallLoadPlugin(LoadedPlugin * plugin, const F4SEInterface * skse);
+	const char *	SafeCallQueryPlugin(LoadedPlugin * plugin, const F4SEInterface * f4se);
+	const char *	SafeCallLoadPlugin(LoadedPlugin * plugin, const F4SEInterface * f4se);
 
 	const char *	CheckPluginCompatibility(LoadedPlugin * plugin);
 

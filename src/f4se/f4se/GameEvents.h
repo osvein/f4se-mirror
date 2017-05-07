@@ -28,3 +28,61 @@ struct MenuOpenCloseEvent
 {
 
 };
+
+struct MenuModeChangeEvent
+{
+
+};
+
+struct UserEventEnabledEvent
+{
+
+};
+
+struct TESHitEvent
+{
+
+};
+
+struct PerkEntryUpdatedEvent
+{
+	struct PerkValueEvents
+	{
+
+	};
+};
+
+struct ApplyColorUpdateEvent
+{
+
+};
+
+struct BSMovementDataChangedEvent
+{
+
+};
+
+struct BSTransformDeltaEvent
+{
+
+};
+
+struct BSSubGraphActivationUpdate
+{
+
+};
+
+struct bhkCharacterMoveFinishEvent
+{
+
+};
+
+struct bhkNonSupportContactEvent
+{
+
+};
+
+struct bhkCharacterStateChangeEvent
+{
+
+};

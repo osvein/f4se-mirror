@@ -1,3 +1,10 @@
+0.1.4:
+- support for beta runtime 1.3.45
+- enable logging from scaleform. add bEnableGFXLog=1 to the [Interface] section of your f4se.ini. create it if it doesn't exist.
+- hook global scaleform tint functions to allow interface mods to selectively modify tint colors/intensities
+- initial scaleform native plugin API
+- more internal class decoding
+
 0.1.3:
 - support for beta runtime 1.2.37
 

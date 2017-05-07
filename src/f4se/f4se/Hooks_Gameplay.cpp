@@ -7,10 +7,10 @@
 #include "common/IFileStream.h"
 #include "xbyak/xbyak.h"
 
-RelocAddr <char *> g_gameVersion(0x03798DEC);
+RelocAddr <char *> g_gameVersion(0x02C99D58);
 
-RelocAddr <uintptr_t> kHook_ShowVersion_Offset(0x00E57C30 + 0x53 + 3);
-RelocAddr <uintptr_t> kHook_ShowVersion_OffsetBase(0x00E57C30 + 0x5A);
+RelocAddr <uintptr_t> kHook_ShowVersion_Offset(0x00B1CEB0 + 0x53 + 3);
+RelocAddr <uintptr_t> kHook_ShowVersion_OffsetBase(0x00B1CEB0 + 0x5A);
 
 static char s_patchedGameVersion[256];
 
@@ -34,8 +34,8 @@ static void CommitVersionHook()
 
 static char * s_customControlMap = nullptr;
 
-RelocAddr <uintptr_t> kHook_CustomControlMap_Offset(0x01F9D500);
-RelocAddr <void *> kHook_CustomControlMap_Return(0x01F9D500 + 5);
+RelocAddr <uintptr_t> kHook_CustomControlMap_Offset(0x01A64D30);
+RelocAddr <void *> kHook_CustomControlMap_Return(0x01A64D30 + 5);
 
 static void InitControlMap()
 {

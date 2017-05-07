@@ -1,9 +1,25 @@
 #pragma once
 
-#include "f4se/GameFormComponents.h"
 #include "f4se_common/Relocation.h"
+#include "f4se/GameFormComponents.h"
+#include "f4se/GameCustomization.h"
 
 class TESForm;
+class TESNPC;
+class BGSColorForm;
+class BGSHeadPart;
+class BSFile;
+
+class ActorValueInfo;
+class TESEffectShader;
+class BGSProjectile;
+class BGSPerk;
+class BGSExplosion;
+class BGSArtObject;
+class TESImageSpaceModifier;
+class TESObjectLIGH;
+class BGSEncounterZone;
+class BGSMusicType;
 
 typedef TESForm* (* _LookupFormByID)(UInt32 id);
 extern RelocAddr <_LookupFormByID> LookupFormByID;
@@ -68,7 +84,7 @@ extern RelocAddr <_LookupFormByID> LookupFormByID;
 	HAZD	52	BGSHazard
 	BNDS	53
 	SLGM	54	TESSoulGem
-	TERM	55
+	TERM	55	BGSTerminal
 	LVLI	56	TESLevItem
 	WTHR	57	TESWeather
 	CLMT	58	TESClimate
@@ -157,8 +173,8 @@ extern RelocAddr <_LookupFormByID> LookupFormByID;
 	AMDL	141
 	LAYR	142
 	COBJ	143
-	OMOD	144
-	MSWP	145
+	OMOD	144 BGSMod::Attachment::Mod
+	MSWP	145 BGSMaterialSwap
 	ZOOM	146
 	INNR	147
 	KSSM	148
@@ -174,7 +190,168 @@ extern RelocAddr <_LookupFormByID> LookupFormByID;
 	OVIS	158
 */
 
-
+enum FormType
+{
+	kFormType_NONE = 0,
+	kFormType_TES4,
+	kFormType_GRUP,
+	kFormType_GMST,
+	kFormType_KYWD,
+	kFormType_LCRT,
+	kFormType_AACT,
+	kFormType_TRNS,
+	kFormType_CMPO,
+	kFormType_TXST,
+	kFormType_MICN,
+	kFormType_GLOB,
+	kFormType_DMGT,
+	kFormType_CLAS,
+	kFormType_FACT,
+	kFormType_HDPT,
+	kFormType_EYES,
+	kFormType_RACE,
+	kFormType_SOUN,
+	kFormType_ASPC,
+	kFormType_SKIL,
+	kFormType_MGEF,
+	kFormType_SCPT,
+	kFormType_LTEX,
+	kFormType_ENCH,
+	kFormType_SPEL,
+	kFormType_SCRL,
+	kFormType_ACTI,
+	kFormType_TACT,
+	kFormType_ARMO,
+	kFormType_BOOK,
+	kFormType_CONT,
+	kFormType_DOOR,
+	kFormType_INGR,
+	kFormType_LIGH,
+	kFormType_MISC,
+	kFormType_STAT,
+	kFormType_SCOL,
+	kFormType_MSTT,
+	kFormType_GRAS,
+	kFormType_TREE,
+	kFormType_FLOR,
+	kFormType_FURN,
+	kFormType_WEAP,
+	kFormType_AMMO,
+	kFormType_NPC_,
+	kFormType_LVLN,
+	kFormType_KEYM,
+	kFormType_ALCH,
+	kFormType_IDLM,
+	kFormType_NOTE,
+	kFormType_PROJ,
+	kFormType_HAZD,
+	kFormType_BNDS,
+	kFormType_SLGM,
+	kFormType_TERM,
+	kFormType_LVLI,
+	kFormType_WTHR,
+	kFormType_CLMT,
+	kFormType_SPGD,
+	kFormType_RFCT,
+	kFormType_REGN,
+	kFormType_NAVI,
+	kFormType_CELL,
+	kFormType_REFR,
+	kFormType_ACHR,
+	kFormType_PMIS,
+	kFormType_PARW,
+	kFormType_PGRE,
+	kFormType_PBEA,
+	kFormType_PFLA,
+	kFormType_PCON,
+	kFormType_PBAR,
+	kFormType_PHZD,
+	kFormType_WRLD,
+	kFormType_LAND,
+	kFormType_NAVM,
+	kFormType_TLOD,
+	kFormType_DIAL,
+	kFormType_INFO,
+	kFormType_QUST,
+	kFormType_IDLE,
+	kFormType_PACK,
+	kFormType_CSTY,
+	kFormType_LSCR,
+	kFormType_LVSP,
+	kFormType_ANIO,
+	kFormType_WATR,
+	kFormType_EFSH,
+	kFormType_TOFT,
+	kFormType_EXPL,
+	kFormType_DEBR,
+	kFormType_IMGS,
+	kFormType_IMAD,
+	kFormType_FLST,
+	kFormType_PERK,
+	kFormType_BPTD,
+	kFormType_ADDN,
+	kFormType_AVIF,
+	kFormType_CAMS,
+	kFormType_CPTH,
+	kFormType_VTYP,
+	kFormType_MATT,
+	kFormType_IPCT,
+	kFormType_IPDS,
+	kFormType_ARMA,
+	kFormType_ECZN,
+	kFormType_LCTN,
+	kFormType_MESG,
+	kFormType_RGDL,
+	kFormType_DOBJ,
+	kFormType_DFOB,
+	kFormType_LGTM,
+	kFormType_MUSC,
+	kFormType_FSTP,
+	kFormType_FSTS,
+	kFormType_SMBN,
+	kFormType_SMQN,
+	kFormType_SMEN,
+	kFormType_DLBR,
+	kFormType_MUST,
+	kFormType_DLVW,
+	kFormType_WOOP,
+	kFormType_SHOU,
+	kFormType_EQUP,
+	kFormType_RELA,
+	kFormType_SCEN,
+	kFormType_ASTP,
+	kFormType_OTFT,
+	kFormType_ARTO,
+	kFormType_MATO,
+	kFormType_MOVT,
+	kFormType_SNDR,
+	kFormType_DUAL,
+	kFormType_SNCT,
+	kFormType_SOPM,
+	kFormType_COLL,
+	kFormType_CLFM,
+	kFormType_REVB,
+	kFormType_PKIN,
+	kFormType_RFGP,
+	kFormType_AMDL,
+	kFormType_LAYR,
+	kFormType_COBJ,
+	kFormType_OMOD,
+	kFormType_MSWP,
+	kFormType_ZOOM,
+	kFormType_INNR,
+	kFormType_KSSM,
+	kFormType_AECH,
+	kFormType_SCCO,
+	kFormType_AORU,
+	kFormType_SCSN,
+	kFormType_STAG,
+	kFormType_NOCM,
+	kFormType_LENS,
+	kFormType_LSPR,
+	kFormType_GDRY,
+	kFormType_OVIS
+};
 
 // 20
 class TESForm : public BaseFormComponent
@@ -188,7 +365,7 @@ public:
 	virtual void	Unk_0A();
 	virtual void	Unk_0B();
 	virtual void	Unk_0C();
-	virtual void	Unk_0D();
+	virtual bool	MarkChanged(UInt64 changed);
 	virtual void	Unk_0E();
 	virtual void	Unk_0F();
 	virtual void	Unk_10();
@@ -248,7 +425,22 @@ public:
 	virtual void	Unk_46();
 	virtual void	Unk_47();
 
-	void	* unk08;	// 08
+	struct Data
+	{
+		struct Entry
+		{
+			UInt64	unk00[0x50/8];
+			BSFile	* file;	// 50
+			UInt64	unk58[(0x330-0x58)/8];
+			UInt32	unk330;	// 330
+			UInt32	unk334; // 334 (unk334 & 1) == 1 // Load external head?
+			// ...
+		};
+		Entry ** entries;
+		UInt64	size;
+	};
+
+	Data	* unk08;	// 08
 	UInt32	flags;		// 10
 	UInt32	formID;		// 14
 	UInt16	unk18;		// 18
@@ -282,12 +474,26 @@ STATIC_ASSERT(sizeof(BGSInstanceNamingRules) == 0x118);
 class BGSKeyword : public TESForm
 {
 public:
+	enum { kTypeID = kFormType_KYWD };
+
 	BSFixedString	keyword;	// 020
+};
+
+// 30
+class BGSSoundDescriptorForm : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_SNDR };
+
+	BGSSoundDescriptor	soundDescriptor;	// 20
+	UInt64	unk28;							// 28
 };
 
 class BGSAction : public BGSKeyword
 {
 public:
+	enum { kTypeID = kFormType_AACT };
+
 	UInt64			unk28; // maybe index or id?
 //Actions dump 1.1.30:
 // unk28					Keyword
@@ -465,4 +671,377 @@ public:
 //170 ActionInitializeGraphToBaseState
 //171      ActionFurnitureNoLongerFull
 //172               ActionLegsCritical
+};
+
+// 80
+class BGSMaterialType : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_MATT };
+
+	UInt64	unk20[(0x80-0x20)/8];	// 20
+};
+
+// 38
+class BGSColorForm : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_CLFM };
+
+	TESFullName			fullName;		// 20
+	union
+	{
+		struct
+		{
+			UInt8 r;
+			UInt8 g;
+			UInt8 b;
+			UInt8 unknown;
+		} channels;
+		UInt32	rgb;
+	} color;
+
+	enum Flags
+	{
+		kFlags_Playable = 1,
+		kFlags_HairColor = 2
+	};
+	UInt32				flags;			// 30
+};
+
+// 6B0
+class TESRace : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_RACE };
+
+	TESFullName			fullName;		// 20
+	TESDescription		description;	// 30
+	TESSpellList		spellList;		// 48
+	BGSSkinForm			skinForm;		// 58
+	BGSBipedObjectForm	bipedObjects;	// 68
+	BGSKeywordForm		keywordForm;	// 78
+	BGSAttackDataForm	attackDataForm;	// 98
+	BGSPropertySheet	propertySheet;	// A8
+	BGSPreloadable		preloadable;	// B8
+
+	TESModel			models[2];		 // C0
+	TESModel			unk120[2];		 // 120
+	UInt64				unk170[(0x288-0x180)/8]; // 180
+	BGSTextureModel		textureModel[2]; // 288
+	BGSBehaviorGraphModel behaviorGraph[2]; // 2E8
+	BSFixedString		unk348[2]; // 348
+	BSFixedString		unk358[2]; // 358
+	BGSVoiceType		* voiceType[2];	// 368
+	BGSBodyPartData		* bodyPartData;	// 378
+	BGSSoundTagComponent	unk380;	// 380
+	BSFixedString		editorId; // 388
+	BGSMaterialType		* materialType;	// 390
+	void				* unk398;		// 398
+	BGSTextureSet		* textureSets[2];	// 3A0
+	BGSSoundDescriptorForm * soundDescriptors[2]; // 3B0
+	BSFixedString		bipedObjectNames[0x20]; // 3C0
+
+	// 48+
+	struct CharGenData
+	{
+		tArray<CharacterCreation::TintData*>	* tintData;			// 00
+		tArray<BGSTextureSet*>	* textureSets;		// 08
+		BGSTextureSet			* defaultTexture;	// 10
+		tArray<TESNPC*>			* presets;			// 18
+		tArray<BGSColorForm*>	* colors;			// 20
+		BGSColorForm			* defaultColor;		// 28
+		tArray<BGSHeadPart*>	* headParts;		// 30
+		tArray<CharacterCreation::RegionData*>	* regions;			// 38
+		tArray<UInt64>			* unk40;			// 40
+	};
+
+	UInt64				unk4C0[(0x680-0x4C0)/8];	// 4C0
+	CharGenData			* chargenData[2];			// 680
+	void				* unk690[2];				// 690
+	TESTexture			unk6A0;						// 6A0
+};
+
+STATIC_ASSERT(offsetof(TESRace, chargenData) == 0x680);
+STATIC_ASSERT(sizeof(TESRace) == 0x6B0);
+
+// 48
+class BGSListForm : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_FLST };
+
+	tArray<TESForm*>	forms;		// 20
+	UInt64				unk38;		// 38
+	UInt64				unk40;		// 40
+};
+STATIC_ASSERT(sizeof(BGSListForm) == 0x48);
+
+// 178
+class BGSHeadPart : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_HDPT };
+
+	TESFullName				fullName;		// 20
+	BGSModelMaterialSwap	materialSwap;	// 30
+
+	UInt64					unk70;			// 70
+	UInt64					unk78;			// 78
+	UInt64					unk80;			// 80
+	void					* unk88;		// 88
+	UInt64					unk90;			// 90
+	TESModel				unk98;			// 98
+	TESModelTri				morphs[3];		// C8
+	UInt64					unk158;			// 158
+	BGSListForm				* validRaces;	// 160
+	void					* unk168;		// 168
+	BSFixedString			partName;		// 170
+};
+
+// 1B0
+class EffectSetting : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_MGEF };
+
+	TESFullName				fullName;		// 20
+	BGSMenuDisplayObject	menuObject;		// 30
+	BGSKeywordForm			keywordForm;	// 40
+	UInt64					unk060[2]; // 60
+	UInt32					unk070; // 70
+	float					unk074;
+	TESForm*				unk078;	// primary object? (SpellItem, TESObjectLIGH, BGSDamageType, BGSHazard)
+	UInt64					unk080;
+	ActorValueInfo*			actorValInfo88; // 088
+	UInt8					unk090;
+	UInt8					pad092[3];
+	TESObjectLIGH*			light98;
+	float					unkA0;
+	UInt32					padA4;
+	TESEffectShader*		effectShaderA8;
+	UInt64					unkB0;
+	UInt64					unkB8;
+	float					unkC0;
+	float					unkC4;
+	float					unkC8;
+	float					unkCC;
+	UInt32					unk0D0; 
+	UInt32					pad0D4;
+	ActorValueInfo*			actorValInfoD8;
+	BGSProjectile*			projectileE0;
+	BGSExplosion*			explosionE8;
+	UInt32					unkF0; // init to 3 cast type?
+	UInt32					unkF4; // init to 5 delivery type?
+	ActorValueInfo*			actorValInfoF8;
+	UInt64					unk100;
+	BGSArtObject*			art108;
+	BGSImpactDataSet*		impact110;
+	UInt32					unk118;
+	UInt32					pad11C;
+	UInt64					unk120;
+	float					unk128; // initialized to  3F800000 dual casting scale?
+	UInt32					pad12C;
+	UInt64					unk130[4];
+	TESImageSpaceModifier*	spaceModifier150; // 150
+	BGSPerk*				perk158;
+	UInt64					unk160;	// initialized to 1		
+	UInt64					unk168[3];
+	UInt64					unk180;
+	UInt32					unk188;
+	UInt32					unk18C;
+	UInt64					unk190;
+	void*					unk198;	// pointer to something
+	UInt64					unk1A0;
+	void*					unk1A8;
+};
+STATIC_ASSERT(offsetof(EffectSetting, unk160) == 0x160);
+STATIC_ASSERT(sizeof(EffectSetting) == 0x1B0);
+
+// 50
+// MSWP
+class BGSMaterialSwap : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_MSWP };
+							// 20
+	UInt32					unk20;
+	UInt32					unk24;
+	UInt32					unk28;
+	UInt32					unk2C;	// strange - written to in ctor as UInt64 as 0, but can't line up that way
+	UInt32					unk30;
+	UInt32					unk34;
+	UInt64					unk38; // init to a char[5]  (aNQ_10), 'Ì¡¥´'
+	UInt64					unk40;
+	UInt64					unk48;
+};
+STATIC_ASSERT(offsetof(BGSMaterialSwap, unk38) == 0x38);
+STATIC_ASSERT(sizeof(BGSMaterialSwap) == 0x50);
+
+class BGSMod
+{
+public:
+	class Container
+	{
+	public:
+
+	};
+
+	class Template
+	{
+	public:
+		// 20
+		class Items : public BaseFormComponent
+		{
+		public:
+			virtual ~Items();
+
+			virtual void	Unk_07(void);
+			virtual void	Unk_08(void);
+
+			void	* unk08;	// 08
+			void	* unk10;	// 10
+			void	* unk18;	// 18
+		};
+	};
+
+	class Attachment {
+	public:
+		// C8
+		class Mod : public TESForm
+		{
+		public:
+			enum { kTypeID = kFormType_OMOD };
+
+			TESFullName									fullName;	// 20
+			TESDescription								description; // 30
+			BGSModelMaterialSwap						materialSwap; // 48
+			BGSMod::Container							modContainer; // 88
+			//BSTDataBuffer<2, BSDataBufferHeapAllocator> dataBuffer;
+			UInt64										unk90;			// 90
+			BGSAttachParentArray						unk98;			// 98
+			UInt64										unkB0;			// B0
+			UInt64										unkB8;			// B8
+			UInt64										unkC0;			// C0
+		};
+	};
+};
+STATIC_ASSERT(offsetof(BGSMod::Attachment::Mod, modContainer) == 0x88);
+STATIC_ASSERT(sizeof(BGSMod::Attachment::Mod) == 0xC8);
+
+// 48
+class BGSTransform : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_TRNS };
+
+	float				matrix[9];
+	UInt32				pad44;
+};
+STATIC_ASSERT(offsetof(BGSTransform, pad44) == 0x44);
+STATIC_ASSERT(sizeof(BGSTransform) == 0x48);
+
+class BGSOpenCloseForm
+{
+public:
+	//	void	** _vtbl;	// 00
+};
+
+class TESMagicTargetForm
+{
+public:
+};
+
+class TESMagicCasterForm
+{
+public:
+};
+
+
+class BGSLocationRefType : public BGSKeyword
+{
+public:
+	enum { kTypeID = kFormType_LCRT };
+};
+
+
+// 140
+class BGSLocation : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_LCTN };
+
+	TESFullName				fullName;		// 020
+	BGSKeywordForm			keywordForm;	// 030
+
+	BGSLocation*			location50;		// 050
+	UInt64					unk58;
+	BGSMusicType*			music60;		// 060 
+	BGSEncounterZone*		encounterZone68;// 068 
+	UInt32					unk70;
+	float					unk74;
+	float					unk78;	// init to 1.0
+	UInt32					unk7C;
+
+	struct arr80Data {
+		BGSLocationRefType*	refType0;
+		UInt64	unk8;
+		UInt64	unk10;
+	};
+	tArray<arr80Data>	arr80;
+	//UInt64					unk80;	// maybe tArray<>
+	//UInt32					unk88;
+	//UInt32					unk8C;
+	//UInt64					unk90;
+	UnkArray				arr98;
+	//UInt64					unk98;
+	//UInt32					unkA0;
+	//UInt32					unkA4;
+	//UInt32					unkA8;
+	//UInt32					unkAC;
+	UInt64					unkB0;
+	UInt64					unkB8;
+	UInt32					unkC0;
+	UInt32					unkC4;
+	UInt32					unkC8;
+	UInt32					unkCC;
+	UInt64					unkD0;
+	UInt32					unkD8;
+	float					unkDC;
+	UInt32					unkE0;
+	UInt32					unkE4;
+	UInt64					unkE8;
+	UInt64					unkF0;
+	UInt32					unkF8;
+	float					unkFC;
+	UInt32					unk100;
+	UInt32					unk104;
+	UInt32					unk108;
+	float					unk10C;
+	UInt64					unk110;
+	UInt32					unk118;
+	float					unk11C;
+	UInt32					unk120;
+	UInt32					unk124;
+	UInt32					unk128;
+	UInt32					unk12C;
+	UInt32					unk130;
+	UInt32					unk134;
+	UInt32					unk138;
+	UInt32					unk13C;
+};
+STATIC_ASSERT(offsetof(BGSLocation, unkFC) == 0xFC);
+STATIC_ASSERT(sizeof(BGSLocation) == 0x140);
+
+// 48
+class BGSEncounterZone : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_ECZN };
+
+	UInt64					unk20;		// 20
+	BGSLocation*			location;	// 28
+	UInt64					unk30;		// 30
+	UInt64					unk38;		// 38
+	UInt64					unk40;		// 40
 };

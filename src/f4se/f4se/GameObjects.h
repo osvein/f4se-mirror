@@ -1,12 +1,20 @@
 #pragma once
 
+#include "f4se_common/Utilities.h"
+
 #include "f4se/GameFormComponents.h"
 #include "f4se/GameForms.h"
 #include "f4se/GameEvents.h"
+#include "f4se/GameCustomization.h"
 
 class TESClass;
 class TESCombatStyle;
+class TESFaction;
 class BGSOutfit;
+class BGSHeadPart;
+class BGSColorForm;
+class BGSFootstepSet;
+class SpellItem;
 
 // 20+
 class TESObject : public TESForm
@@ -101,6 +109,8 @@ STATIC_ASSERT(sizeof(TESActorBase) == 0x1B0);
 class TESNPC : public TESActorBase
 {
 public:
+	enum { kTypeID = kFormType_NPC_ };
+
 	// parents
 	TESRaceForm					race;					// 1B0
 	BGSOverridePackCollection	overridePackCollection;	// 1C0
@@ -109,17 +119,23 @@ public:
 	BSTEventSink<MenuOpenCloseEvent>	menuOpenCloseEvent;		// 210
 	BGSAttachParentArray		attachParentArray;		// 220
 
+	struct HeadData
+	{
+		BGSColorForm	* hairColor;	// 00
+		void			* unk08;		// 08
+	};
+
 	UInt32						unk238;					// 238
 	UInt16						unk23C;					// 23C
 	UInt8						unk23E;					// 23E
 	UInt8						pad23F;					// 23F
 	TESClass					* npcClass;				// 240
-	void						* unk248;				// 248
+	HeadData					* headData;				// 248
 	UInt64						unk250;					// 250
 	TESCombatStyle				* combatStyle;			// 258
 	UInt64						unk260;					// 260
 	UInt64						unk268;					// 268
-	UInt64						unk270;					// 270
+	TESNPC						* templateNPC;			// 270
 	float						unk278;					// 278
 	float						unk27C;					// 27C
 	float						unk280;					// 280
@@ -133,15 +149,26 @@ public:
 	BGSOutfit					* outfit;				// 2B0
 	UInt64						unk2B8;					// 2B8
 	UInt64						unk2C0;					// 2C0
-	UInt64						unk2C8;					// 2C8
-	void						* unk2D0;				// 2D0
-	UInt64						unk2D8;					// 2D8
+	TESFaction					* unk2C8;				// 2C8
+	BGSHeadPart					** headParts;			// 2D0
+	void						* unk2D8;				// 2D8
 	void						* unk2E0;				// 2E0
-	UInt32						unk2E8;					// 2E8
+	UInt8						numHeadParts;			// 2E8
+	UInt8						unk2E9;					// 2E9
+	UInt8						unk2EA;					// 2EA
+	UInt8						unk2EB;					// 2EB
 	float						unk2EC;					// 2EC
 	UInt64						unk2F0;					// 2F0
 	void						* unk2F8;				// 2F8
-	void						* unk300;				// 300
+	tArray<BGSCharacterTint::Entry*> * tints;			// 300
+
+	MEMBER_FN_PREFIX(TESNPC);
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00580EC0);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005923F0);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x00592500);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x00592590);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x00574FA0); // npc->actorData.unk08 & 1
+	
 };
 STATIC_ASSERT(offsetof(TESNPC, npcClass) == 0x240);
 STATIC_ASSERT(offsetof(TESNPC, combatStyle) == 0x258);
@@ -152,24 +179,26 @@ STATIC_ASSERT(sizeof(TESNPC) == 0x308);
 class TESObjectWEAP : public TESBoundObject
 {
 public:
+	enum { kTypeID = kFormType_WEAP };
+
 	// 138
 	struct InstanceData : public TBO_InstanceData
 	{
 	public:
-		UInt64 unk10;						// 10
+		BGSSoundDescriptorForm * unk10;		// 10 BGSSoundDescriptorForm *
 		UInt64 unk18;						// 18
 		UInt64 unk20;						// 20
 		BGSSoundDescriptorForm *unk28;		// 28 BGSSoundDescriptorForm *
-		UInt64 unk30;						// 30
+		BGSSoundDescriptorForm * unk30;		// 30 BGSSoundDescriptorForm *
 		BGSSoundDescriptorForm *unk38;		// 38 BGSSoundDescriptorForm *
 		BGSSoundDescriptorForm* unk40;		// 40 BGSSoundDescriptorForm * 
-		UInt64 unk48;						// 48
+		BGSSoundDescriptorForm * unk48;		// 48 BGSSoundDescriptorForm *
 		UInt64 unk50;						// 50
 		BGSImpactDataSet* unk58;			// 58 BGSImpactDataSet*
 		TESLevItem * unk60;					// 60 TESLevItem *
 		TESAmmo* unk68;						// 68 TESAmmo *
 		BGSEquipSlot* unk70;				// 70 BGSEquipSlot*
-		UInt64 unk78;						// 78
+		SpellItem* unk78;					// 78 SpellItem*
 		UInt64 unk80;						// 80
 		BGSAimModel *unk88;					// 88 BGSAimModel *
 		BGSZoomData* unk90;					// 90 BGSZoomData*
@@ -178,17 +207,24 @@ public:
 		UInt64 unkA8;						// A8
 		UInt64 unkB0;						// B0
 		UInt64 unkB8;						// B8
-		float unkC0[(0xF0-0xC0)/4];		// C0
-		UInt64 unkF0[(0x138 - 0xF0) / 8];	// 10
+		float unkC0[(0xF0-0xC0)/4];			// C0
+		UInt64 unkF0;						// F0
+		UInt64 unkF8;						// F8
+		UInt64 unk100;						// 100
+		UInt32 unk108;						// 108
+		UInt32 unk10C;						// 10C
+		UInt32 unk110;						// 110
+		UInt32 unk114;						// 114
+		UInt64 unk118[(0x138-0x118) / 8];	// 118
 	};
 
 	// 150
 	struct Data : public InstanceData
 	{
 	public:
-		UInt64	unk138;	// 138
+		BGSModelMaterialSwap*	swap138;	// 138
 		UInt64	unk140;	// 140
-		UInt64	unk148;	// 148
+		BGSMod::Attachment::Mod*	unk148;	// 148
 	};
 
 	TESFullName					fullName;			// 068
@@ -209,6 +245,314 @@ public:
 };
 STATIC_ASSERT(offsetof(TESObjectWEAP, previewTransform) == 0x50);
 STATIC_ASSERT(offsetof(TESObjectWEAP, destructible) == 0x0E0);
-STATIC_ASSERT(offsetof(TESObjectWEAP::InstanceData, unk30) == 0x030);
+STATIC_ASSERT(offsetof(TESObjectWEAP::InstanceData, unk114) == 0x114);
 STATIC_ASSERT(sizeof(TESObjectWEAP::InstanceData) == 0x138);
 STATIC_ASSERT(sizeof(TESObjectWEAP) == 0x300);
+
+
+// 2E0
+class TESObjectARMO : public TESBoundObject
+{
+public:
+	enum { kTypeID = kFormType_ARMO };
+
+	TESFullName					fullName;		// 068
+	TESRaceForm					raceForm;		// 078
+	TESEnchantableForm			enchantable;	// 088
+	BGSDestructibleObjectForm	destructible;	// 0A0
+	BGSPickupPutdownSounds		pickupPutdown;	// 0B0
+	TESBipedModelForm			bipedModel;		// 0C8
+	BGSEquipType				equipType;		// 1D0
+	BGSBipedObjectForm			bipedObject;	// 1E0
+	BGSBlockBashData			blockBash;		// 1F0
+	BGSKeywordForm				keywordForm;	// 208
+	TESDescription				description;	// 228
+	BGSInstanceNamingRulesForm	namingRules;	// 240
+	// 58
+	struct InstanceData : public TBO_InstanceData
+	{
+	public:
+		UInt64 unk10;
+		UInt64 unk18;
+		UInt64 unk20;
+		UInt64 unk28;
+		UInt64 unk30;
+		UInt64 unk38;
+		UInt32 unk40;
+		UInt32 pad44;
+		float unk48; // init to 0x7f7fffff
+		UInt64 unk50;
+	};
+	InstanceData				instanceData;	// 250 - 2A8 ( 592 - 680)
+	UInt64						unk2A8;
+	UInt32						unk2B0;
+	UInt32						pad2B4;
+	UInt32						unk2B8;
+	UInt32						pad2BC;
+	UInt64						unk2C0;
+	BGSAttachParentArray		parentArray; // 2C8
+
+};
+STATIC_ASSERT(sizeof(TESObjectARMO::InstanceData) == 0x58);
+STATIC_ASSERT(offsetof(TESObjectARMO, parentArray) == 0x2C8);
+STATIC_ASSERT(sizeof(TESObjectARMO) == 0x2E0);
+
+// 228
+class TESObjectARMA : public TESObject
+{
+public:
+	enum { kTypeID = kFormType_ARMA };
+
+	TESRaceForm					raceForm;		// 20
+	BGSBipedObjectForm			bipedObject;	// 30
+	UInt64						unk040;			// 40
+	UInt64						unk048;			// 48
+	BGSModelMaterialSwap		swap50[2];		// 50
+	BGSModelMaterialSwap		swapD0[2];		// D0
+	BGSModelMaterialSwap		swap150[2];		// 150
+	BGSTextureSet*				unk1D0;			// 1D0 
+	BGSTextureSet*				unk1D8;			// 1D8 
+	BGSListForm*				unk1E0;			// 1E0 
+	UInt64						unk1E8;
+	void*						unk1F0;
+	UInt32						unk1F8;
+	UInt32						pad1FC;
+	UInt32						unk200;
+	UInt32						pad204;
+	BGSFootstepSet*				footstepSet208; // 208
+	BGSArtObject*				art210;			// 210
+	void*						unk218;
+	void*						unk220;
+
+	// Constructs a node name from the specified armor and actor
+	bool GetNodeName(char * dest, TESNPC * refr, TESObjectARMO * armor);
+};
+STATIC_ASSERT(offsetof(TESObjectARMA, unk220) == 0x220);
+STATIC_ASSERT(sizeof(TESObjectARMA) == 0x228);
+
+
+// 350
+class BGSTextureSet : public TESBoundObject
+{
+public:
+	enum { kTypeID = kFormType_TXST };
+
+	BSTextureSet textureSet; // 68
+
+	UInt64		 unk78[(0x350-0x78)/8]; // 78
+};
+STATIC_ASSERT(sizeof(BGSTextureSet) == 0x350);
+
+
+class MagicItem : public TESBoundObject
+{
+public:
+	TESFullName		name;			// 68
+	BGSKeywordForm	keywordForm;	// 78
+	UnkArray		effectItemsProbably; // 98
+	UInt64			unk0B0[4];		// B0
+};
+STATIC_ASSERT(offsetof(MagicItem, unk0B0) == 0x0B0);
+STATIC_ASSERT(sizeof(MagicItem) == 0x0D0);
+
+
+
+// 1E0
+class AlchemyItem : public MagicItem
+{
+public:
+	enum { kTypeID = kFormType_ALCH };
+
+	BGSModelMaterialSwap	materialSwap; // 0D0
+	TESIcon					icon;			// 110
+	BGSMessageIcon			msgIcon;		// 120
+	TESWeightForm			weightForm;		// 138
+	BGSEquipType			equipType;		// 148
+	BGSDestructibleObjectForm destructible;	// 158
+	BGSPickupPutdownSounds	pickupPutdown;	// 168
+	BGSCraftingUseSound		craftingSounds;	// 180
+	TESDescription			description;	// 190
+	UInt32					unk1A8;			// 1A8
+	UInt32					unk1AC;			// 1AC
+	UInt64					unk1B0[4];		// 1B0
+	TESIcon					icon1D0;		// 1D0
+};
+STATIC_ASSERT(offsetof(AlchemyItem, icon1D0) == 0x1D0);
+STATIC_ASSERT(sizeof(AlchemyItem) == 0x1E0);
+
+// 100
+class EnchantmentItem : public MagicItem
+{
+public:
+	enum { kTypeID = kFormType_ENCH };
+
+	UInt64					unk0D0[6];
+};
+STATIC_ASSERT(offsetof(EnchantmentItem, unk0D0) == 0x0D0);
+STATIC_ASSERT(sizeof(EnchantmentItem) == 0x100);
+
+
+class SpellItem : public MagicItem
+{
+public:
+	enum { kTypeID = kFormType_SPEL };
+
+	BGSEquipType				equipType;		// 0D0
+	BGSMenuDisplayObject		displayObject;	// 0E0
+	TESDescription				description;	// 0F0
+	UInt64						unk108[5];		// 108
+};
+STATIC_ASSERT(offsetof(SpellItem, description) == 0x0F0);
+STATIC_ASSERT(offsetof(SpellItem, unk108) == 0x108);
+STATIC_ASSERT(sizeof(SpellItem) == 0x130);
+
+// Seemingly unused in the game. No entries in the DataHandler
+// 1B8
+class ScrollItem : public SpellItem
+{
+public:
+	enum { kTypeID = kFormType_SCRL };
+
+	BGSModelMaterialSwap		materialSwap;	// 130
+	BGSDestructibleObjectForm	destructible;
+	BGSPickupPutdownSounds		pickupPutdown;
+	TESWeightForm				weight;
+	TESValueForm				value;
+};
+
+// 188 - only one it seems (Copper Pipe)
+class IngredientItem : public MagicItem
+{
+public:
+	enum { kTypeID = kFormType_INGR };
+
+	BGSModelMaterialSwap		materialSwap;	// 0D0
+	TESIcon						icon;			// 110
+	TESWeightForm				weight;			// 120
+	BGSEquipType				equipType;		// 130
+	BGSDestructibleObjectForm	destructible;	// 140
+	BGSPickupPutdownSounds		pickupPutdown;	// 150
+	TESValueForm				value;			// 168
+	UInt64						unk178;			// 178
+	UInt64						unk180;			// 180
+};
+STATIC_ASSERT(offsetof(IngredientItem, unk180) == 0x180);
+STATIC_ASSERT(sizeof(IngredientItem) == 0x188);
+
+
+// 170
+class TESObjectCONT : public TESBoundAnimObject
+{
+public:
+	enum { kTypeID = kFormType_CONT };
+
+	TESContainer				container;			// 68
+	TESFullName					fullName;			// 80
+	BGSModelMaterialSwap		materialSwap;		// 90
+	TESWeightForm				weightForm;			// D0
+//	TESMagicCasterForm			magicCaster;
+//	TESMagicTargetForm			magicTarget;
+	BGSDestructibleObjectForm	destructible;		// E0
+	BGSOpenCloseForm			openClose;			// F0
+	BGSKeywordForm				keywordForm;		// F8
+	BGSForcedLocRefType			forcedLockRefType;	// 118
+	BGSPropertySheet			propertySheet;		// 128
+	BGSNativeTerminalForm		nativeTerminal;		// 138
+	UInt8						unk148;
+	UInt8						unk149;
+	UInt8						pad14A[2];
+	BGSSoundDescriptorForm*		sound150;
+	BGSSoundDescriptorForm*		sound158;
+	BGSSoundDescriptorForm*		sound160;
+	UInt64						unk168;
+};
+STATIC_ASSERT(offsetof(TESObjectCONT, pad14A) == 0x14A);
+STATIC_ASSERT(sizeof(TESObjectCONT) == 0x170);
+
+
+// 140
+class TESObjectACTI : public TESBoundAnimObject
+{
+public:
+	enum { kTypeID = kFormType_ACTI };
+
+	TESFullName					fullName;			// 68
+	BGSModelMaterialSwap		materialSwap;		// 78
+	// TESMagicTargetForm		magicTarget;
+	BGSDestructibleObjectForm	destructible;		// B8
+	BGSOpenCloseForm			openClose;			// C8
+	BGSKeywordForm				keywordForm;		// D0
+	BGSPropertySheet			propertySheet;		// F0
+	BGSForcedLocRefType			forcedLocRefType;	// 100
+	BGSNativeTerminalForm		nativeTerminalForm;	// 110
+	UInt64						unk120;				// 120
+	UInt64						unk128;				// 128
+	UInt64						unk130;
+	UInt8						unk138;
+	UInt8						pad13C[3];		
+};
+STATIC_ASSERT(sizeof(TESObjectACTI) == 0x140);
+
+// 1A0
+class TESFurniture : public TESObjectACTI
+{
+public:
+	enum { kTypeID = kFormType_FURN };
+
+//	BGSNavmeshableObject		navMeshableObject;
+	UInt64						unk140;				// 140
+
+	struct Data {
+		UInt32 unk00;
+		UInt32 unk04;
+	};
+
+	tArray<Data>				arr148;
+	//UInt64						unk148;
+	//UInt32						unk150;
+	//UInt32						unk154;
+	//UInt32						unk158;
+	//UInt32						unk15C;
+	BGSAttachParentArray		unk160;
+	UInt8						unk178;
+	float						unk17C;
+	UInt64						unk180;
+
+	struct Data2
+	{
+		UInt64 unk00[4];
+	};
+
+	tArray<Data2>				arr188; // struct { UInt64 data[4]; }
+	//void*						unk188;
+	//UInt32						unk190;
+	//UInt32						unk194;
+	//UInt32						unk198;
+	//UInt32						unk19C;
+};
+STATIC_ASSERT(offsetof(TESFurniture, arr188) == 0x188);
+STATIC_ASSERT(sizeof(TESFurniture) == 0x1A0);
+
+// 1E0
+class BGSTerminal : public TESFurniture
+{
+public:
+	enum { kTypeID = kFormType_TERM };
+
+	UnkArray					arr1A0;
+	//void*						unk1A0;	/// 1A0
+	//UInt32						unk1A8;
+	//UInt32						unk1AC;
+	//UInt32						unk1B0;
+	//UInt32						unk1B4;
+	UnkArray					arr1B8;
+	//void*						unk1B8;
+	//UInt32						unk1C0;
+	//UInt32						unk1C4;
+	//UInt32						unk1C8;
+	//UInt32						unk1CC;
+	void*						unk1D0;
+	void*						unk1D8;
+};
+STATIC_ASSERT(offsetof(BGSTerminal, arr1B8) == 0x1B8);
+STATIC_ASSERT(sizeof(BGSTerminal) == 0x1E0);
