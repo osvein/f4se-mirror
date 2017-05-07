@@ -1,8 +1,8 @@
 #include "f4se/GameSettings.h"
 
-RelocPtr <INISettingCollection *> g_iniSettings(0x05B89CE0);
-RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x05A58FB8);
-RelocPtr <RegSettingCollection *> g_regSettings(0x05F8D1D0);
+RelocPtr <INISettingCollection *> g_iniSettings(0x05BA5D60);
+RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x05A75038);
+RelocPtr <RegSettingCollection *> g_regSettings(0x05FA9250);
 
 UInt32 Setting::GetType(void) const
 {

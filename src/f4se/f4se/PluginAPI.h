@@ -91,7 +91,8 @@ struct F4SEMessagingInterface
 								//plugin state.
 								//data: bool, true if game successfully loaded, false otherwise
 								// plugins may register as listeners during the first callback while deferring dispatches until the next
-		kMessage_SaveGame,
+		kMessage_PreSaveGame,	// right before the game is saved
+		kMessage_PostSaveGame,	// right after the game is saved
 		kMessage_DeleteGame,	// sent right before deleting the .f4se cosave and the .ess save.
 								// dataLen: length of file path, data: char* file path of .ess savegame file
 		kMessage_InputLoaded,	// sent right after game input is loaded, right before the main menu initializes

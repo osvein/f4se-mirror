@@ -180,7 +180,20 @@ public:
 	virtual void	Unk_08(void);
 	virtual void	Unk_09(void);
 
-	UInt64			unk08;			// 08
+	enum
+	{
+		kFlagFemale = 0x01,
+		kFlagEssential = 0x02,
+		kFlagIsPreset = 0x04,
+		kFlagRespawn = 0x08,
+		kFlagAutoCalcStats = 0x10,
+		kFlagUnique = 0x20,
+		kFlagDoesntAffectStealthMeter = 0x40,
+		kFlagPCLevelMult = 0x80,
+		kFlagProtected = 0x800
+	};
+
+	UInt64			flags;			// 08
 	UInt64			unk10;			// 10
 	UInt64			unk18;			// 18
 	UInt64			unk20;			// 20

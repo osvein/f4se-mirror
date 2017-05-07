@@ -1,3 +1,8 @@
+0.1.10:
+- support for beta runtime 1.5.147
+- DataLoaded, PreSaveGame/PostSaveGame/PreLoadGame/PostLoadGame plugin messages
+- more internal class decoding
+
 0.1.9:
 - support for beta runtime 1.5.141
 - more internal class/global/etc decoding

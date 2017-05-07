@@ -10,6 +10,8 @@
 #include "Hooks_Scaleform.h"
 #include "Hooks_Gameplay.h"
 #include "Hooks_Memory.h"
+#include "Hooks_Threads.h"
+#include "Hooks_SaveLoad.h"
 #include "PluginManager.h"
 
 IDebugLog gLog;
@@ -70,7 +72,8 @@ void F4SE_Initialize(void)
 		Hooks_Papyrus_Init();
 		Hooks_Scaleform_Init();
 		Hooks_Gameplay_Init();
-//		Hooks_Memory_Init();
+		Hooks_Threads_Init();
+		Hooks_SaveLoad_Init();
 
 		g_pluginManager.Init();
 
@@ -78,7 +81,8 @@ void F4SE_Initialize(void)
 		Hooks_Papyrus_Commit();
 		Hooks_Scaleform_Commit();
 		Hooks_Gameplay_Commit();
-//		Hooks_Memory_Commit();
+		Hooks_Threads_Commit();
+		Hooks_SaveLoad_Commit();
 
 		FlushInstructionCache(GetCurrentProcess(), NULL, 0);
 

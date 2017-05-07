@@ -63,10 +63,10 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01ACACF0, const char * buf);
-		DEFINE_MEMBER_FN(wctor, Ref *, 0x01ACBBC0, const wchar_t * buf);
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01ACAE20, const char * buf);
-		DEFINE_MEMBER_FN(Release, void, 0x01ACBF80);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01AD5540, const char * buf);
+		DEFINE_MEMBER_FN(wctor, Ref *, 0x01AD6410, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01AD5670, const char * buf);
+		DEFINE_MEMBER_FN(Release, void, 0x01AD67D0);
 
 		Ref() :data(NULL) { }
 		Ref(const char * buf);
@@ -943,6 +943,9 @@ public:
 	void ForEach(T& functor)
 	{
 		if (!m_entries)
+			return;
+
+		if(m_size == m_freeCount) // The whole thing is free
 			return;
 
 		_Entry * cur	= m_entries;

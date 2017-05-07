@@ -4,7 +4,6 @@
 #include "f4se_common/Relocation.h"
 #include "f4se/GameTypes.h"
 
-
 class InputEvent
 {
 public:
@@ -16,7 +15,6 @@ public:
 };
 STATIC_ASSERT(sizeof(InputEvent) == 0x28);
 
-
 class IDEvent : public InputEvent
 {
 public:
@@ -24,7 +22,6 @@ public:
 };
 STATIC_ASSERT(offsetof(IDEvent, controlID) == 0x28);
 STATIC_ASSERT(sizeof(IDEvent) == 0x030);
-
 
 // 40
 class ButtonEvent : public IDEvent
@@ -204,7 +201,7 @@ class InputManager
 public:
 	enum
 	{
-		kContextCount = (0xF8/8)
+		kContextCount = (0xF0/8)
 	};
 
 	enum
@@ -247,5 +244,8 @@ public:
 	UInt32			GetMappedKey(BSFixedString name, UInt32 deviceType, UInt32 contextIdx);
 	BSFixedString	GetMappedControl(UInt32 buttonID, UInt32 deviceType, UInt32 contextIdx);
 };
+STATIC_ASSERT(offsetof(InputManager, unkF8) == 0xF8);
+STATIC_ASSERT(offsetof(InputManager, unk110) == 0x110);
+STATIC_ASSERT(offsetof(InputManager, allowTextInput) == 0x138);
 
 extern RelocPtr <InputManager*> g_inputMgr;

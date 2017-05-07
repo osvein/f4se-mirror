@@ -87,7 +87,9 @@ void BranchTrampoline::Destroy()
 
 void * BranchTrampoline::StartAlloc()
 {
+	ASSERT(m_base);
 	ASSERT(!m_curAlloc);
+
 	m_curAlloc = ((UInt8 *)m_base) + m_allocated;
 
 	return m_curAlloc;
@@ -95,6 +97,7 @@ void * BranchTrampoline::StartAlloc()
 
 void BranchTrampoline::EndAlloc(const void * end)
 {
+	ASSERT(m_base);
 	ASSERT(m_curAlloc);
 
 	size_t len = uintptr_t(end) - uintptr_t(m_curAlloc);
@@ -106,7 +109,9 @@ void BranchTrampoline::EndAlloc(const void * end)
 
 void * BranchTrampoline::Allocate(size_t size)
 {
-	void * result;
+	ASSERT(m_base);
+
+	void * result = nullptr;
 
 	if(size <= Remain())
 	{

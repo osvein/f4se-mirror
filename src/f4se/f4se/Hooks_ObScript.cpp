@@ -24,6 +24,8 @@ void Hooks_ObScript_Init()
 
 bool GetF4SEVersion_Execute(void * paramInfo, void * scriptData, TESObjectREFR * thisObj, void * containingObj, void * scriptObj, void * locals, double * result, void * opcodeOffsetPtr)
 {
+	_MESSAGE("GetF4SEVersion_Execute");
+
 	Console_Print("F4SE version: %d.%d.%d, release idx %d, runtime %08X",
 		F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA,
 		F4SE_VERSION_RELEASEIDX, RUNTIME_VERSION);

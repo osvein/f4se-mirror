@@ -60,11 +60,17 @@ public:
 	BSTEventSink<ChargenCharacterUpdateEvent> eventSink; // E0
 	UInt64	unkE8;	// E8
 	void	* unkF0; // F0 - LooksInputRepeatHandler
+	UInt64 unkF8[(0x150-0xF8)/8];
+	UInt32	nextBoneID;			// 150
+	UInt32	currentBoneID;		// 154
+	UInt64	unk158[(0x218-0x158)/8];
+
 
 	MEMBER_FN_PREFIX(LooksMenu);
-	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B112E0); // This function updates all the internals from the current character
+	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B14C40); // This function updates all the internals from the current character
 																 // It's followed by a call to onCommitCharacterPresetChange
 };
+STATIC_ASSERT(offsetof(LooksMenu, nextBoneID) == 0x150);
 
 // 00C
 class MenuTableItem
@@ -82,7 +88,7 @@ public:
 	static inline UInt32 GetHash(BSFixedString * key)
 	{
 		UInt32 hash;
-		CalculateCRC32_64(&hash, (UInt64)key->data->Get<char>(), 0);
+		CalculateCRC32_64(&hash, (UInt64)key->data, 0);
 		return hash;
 	}
 
@@ -114,8 +120,8 @@ public:
 
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x01FC8FC0, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x01FC7450, BSFixedString * name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x01FD33F0, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x01FD1880, BSFixedString * name);
 
 	UInt64	unk08[(0x190-0x08)/8];	// 458
 	tArray<IMenu*>	menuStack;		// 190

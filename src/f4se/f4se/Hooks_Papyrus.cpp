@@ -17,7 +17,7 @@ void RegisterPapyrusFunctions_Hook(VMClassRegistry ** registryPtr)
 
 void Hooks_Papyrus_Commit()
 {
-	RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x01381490 + 0x459);
+	RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013892F0 + 0x459);
 
 	struct RegisterPapyrusFunctions_Code : Xbyak::CodeGenerator {
 		RegisterPapyrusFunctions_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)
