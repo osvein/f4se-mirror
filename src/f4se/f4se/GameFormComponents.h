@@ -724,6 +724,59 @@ class IPostAnimationChannelUpdateFunctor
 	virtual void	Unk_01();
 };
 
+// 38
+class Condition
+{
+public:
+	enum ComparisonFlags {
+		kComparisonFlag_And = 0x00,
+		kComparisonFlag_Or = 0x01,
+		kComparisonFlag_Equal = 0x00,
+		kComparisonFlag_UseAliases = 0x02,
+		kComparisonFlag_Global = 0x04,
+		kComparisonFlag_UsePackData = 0x08,
+		kComparisonFlag_SwapTarget = 0x10,
+		kComparisonFlag_NotEqual = 0x20,
+		kComparisonFlag_Greater = 0x40,
+		kComparisonFlag_GreaterEqual = 0x60,
+		kComparisonFlag_Less = 0x80,
+		kComparisonFlag_LessEqual = 0xA0
+	};
+	enum ReferenceTypes {
+		kReferenceType_Subject = 0,
+		kReferenceType_Target,
+		kReferenceType_Reference,
+		kReferenceType_CombatTarget,
+		kReferenceType_LinkedRef,
+		kReferenceType_Alias,
+		kReferenceType_PackageData,
+		kReferenceType_EventData
+	};
+
+	union Param
+	{
+		float	f32;
+		UInt32	u32;
+		SInt32	s32;
+		TESForm	* form;
+	};
+
+	Condition	* next;					// 00
+	float		compareValue;			// 08
+	UInt32		unk0C;					// 0C
+	UInt32		unk10;					// 10
+	UInt32		unk14;					// 14 - FFFFFFFF
+	UInt16		functionId;				// 18
+	UInt8		unk1A;					// 1A
+	UInt8		unk1B;					// 1B
+	UInt32		unk1C;					// 1C
+	Param		param1;					// 20
+	Param		param2;					// 28
+	UInt8		comparisonType;			// 30
+	UInt8		referenceType;			// 31
+	UInt8		unk32[6];				// 32
+};
+
 // ??
 struct IMovementPlayerControlsFilter : public IMovementInterface
 {

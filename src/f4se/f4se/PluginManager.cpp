@@ -125,7 +125,9 @@ void * PluginManager::QueryInterface(UInt32 id)
 	case kInterface_Messaging:
 		result = (void *)&g_F4SEMessagingInterface;
 		break;
-
+	case kInterface_Scaleform:
+		result = (void *)&g_F4SEScaleformInterface;
+		break;
 	default:
 		_WARNING("unknown QueryInterface %08X", id);
 		break;

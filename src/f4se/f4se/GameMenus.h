@@ -6,6 +6,7 @@
 #include "f4se/GameTypes.h"
 #include "f4se/GameUtilities.h"
 #include "f4se/ScaleformCallbacks.h"
+#include "f4se/ScaleformValue.h"
 
 // 68
 class IMenu : public SWFToCodeFunctionHandler
@@ -27,20 +28,17 @@ public:
 	virtual void	Unk_0E(void);
 	virtual void	Unk_0F(void);
 
-	void	* inputUser;	// 10	BSInputEventUser
-	UInt32	unk18;			// 18
-	UInt32	unk1C;			// 1C
-	void	* unk20;		// 20
-	UInt32	unk28;			// 28
-	UInt32	unk2C;			// 2C
-	void	* unk30;		// 30
-	UInt64	unk38;			// 38
-	GFxMovieView	* movie;	// 40
-	BSFixedString	unk48;		// 48
-	BSFixedString	menuName;	// 50
-	UInt64	unk58;			// 58
-	UInt64	unk60;			// 60
+	void			* inputUser;	// 10	BSInputEventUser
+	UInt32			unk18;			// 18
+	UInt32			unk1C;			// 1C
+	GFxValue		stage;			// 20
+	GFxMovieView	* movie;		// 40
+	BSFixedString	unk48;			// 48
+	BSFixedString	menuName;		// 50
+	UInt64			unk58;			// 58
+	UInt64			unk60;			// 60
 };
+STATIC_ASSERT(offsetof(IMenu, movie) == 0x40);
 
 // E0
 class GameMenuBase : public IMenu
@@ -55,6 +53,19 @@ public:
 	UInt64 unk68[(0xE0-0x68)/8];
 };
 
+// 218
+class LooksMenu : public GameMenuBase
+{
+public:
+	BSTEventSink<ChargenCharacterUpdateEvent> eventSink; // E0
+	UInt64	unkE8;	// E8
+	void	* unkF0; // F0 - LooksInputRepeatHandler
+
+	MEMBER_FN_PREFIX(LooksMenu);
+	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B112E0); // This function updates all the internals from the current character
+																 // It's followed by a call to onCommitCharacterPresetChange
+};
+
 // 00C
 class MenuTableItem
 {
@@ -66,18 +77,18 @@ public:
 
 	bool operator==(const MenuTableItem & rhs) const	{ return name == rhs.name; }
 	bool operator==(const BSFixedString a_name) const	{ return name == a_name; }
-	operator UInt64() const								{ return (UInt64)name->Get<char>(); }
+	operator UInt64() const								{ return (UInt64)name.data->Get<char>(); }
 
 	static inline UInt32 GetHash(BSFixedString * key)
 	{
 		UInt32 hash;
-		CalculateCRC32_64(&hash, (UInt64)(*key)->Get<char>(), 0);
+		CalculateCRC32_64(&hash, (UInt64)key->data->Get<char>(), 0);
 		return hash;
 	}
 
 	void Dump(void)
 	{
-		_MESSAGE("\t\tname: %s", name->Get<char>());
+		_MESSAGE("\t\tname: %s", name.data->Get<char>());
 		_MESSAGE("\t\tinstance: %08X", menuInstance);
 	}
 };
@@ -103,8 +114,8 @@ public:
 
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x01FA3180, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x01FA1610, BSFixedString * name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x01FC8FC0, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x01FC7450, BSFixedString * name);
 
 	UInt64	unk08[(0x190-0x08)/8];	// 458
 	tArray<IMenu*>	menuStack;		// 190

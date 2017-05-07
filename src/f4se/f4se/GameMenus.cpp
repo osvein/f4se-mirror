@@ -1,6 +1,6 @@
 #include "f4se/GameMenus.h"
 
-RelocPtr <UI*> g_ui(0x05685378);
+RelocPtr <UI*> g_ui(0x056E3F98);
 
 bool UI::IsMenuOpen(BSFixedString * menuName)
 {
@@ -9,7 +9,7 @@ bool UI::IsMenuOpen(BSFixedString * menuName)
 
 IMenu * UI::GetMenu(BSFixedString * menuName)
 {
-	if (!menuName || !(*menuName)->Get<char>())
+	if (!menuName || !menuName->data->Get<char>())
 		return NULL;
 
 	MenuTableItem * item = menuTable.Find(menuName);

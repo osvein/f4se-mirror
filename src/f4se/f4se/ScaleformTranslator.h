@@ -28,14 +28,14 @@ public:
 	static inline UInt32 GetHash(const BSFixedString * key)
 	{
 		UInt32 hash;
-		CalculateCRC32_64(&hash, (UInt64)(*key)->Get<wchar_t>(), 0);
+		CalculateCRC32_64(&hash, (UInt64)key->data->Get<char>(), 0);
 		return hash;
 	}
 
 	void Dump(void)
 	{
-		_MESSAGE("\t\tkey: %S ", key->Get<wchar_t>());
-		_MESSAGE("\t\ttranslation: %S", translation->Get<wchar_t>());
+		_MESSAGE("\t\tkey: %S ", key.data ? key.data->Get<char>() : "");
+		_MESSAGE("\t\ttranslation: %S", translation.data ? translation.data->Get<wchar_t>() : L"");
 	}
 };
 

@@ -75,7 +75,7 @@ public:
 	UnkFormArray						arrDMGT;	// Form Type 12
 	UnkFormArray						arrCLAS;	// Form Type 13
 	UnkFormArray						arrFACT;	// Form Type 14
-	UnkFormArray						arrHDPT;	// Form Type 15
+	tArray<BGSHeadPart*>				arrHDPT;	// Form Type 15
 	UnkFormArray						arrEYES;	// Form Type 16
 	UnkFormArray						arrRACE;	// Form Type 17
 	UnkFormArray						arrSOUN;	// Form Type 18

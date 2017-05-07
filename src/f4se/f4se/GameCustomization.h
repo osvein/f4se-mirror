@@ -1,6 +1,7 @@
 #pragma once
 
 #include "f4se_common/Relocation.h"
+#include "f4se_common/Utilities.h"
 #include "f4se/GameTypes.h"
 
 class Actor;
@@ -9,6 +10,7 @@ class BGSHeadPart;
 class BGSColorForm;
 class BGSTextureSet;
 class ActorValueInfo;
+class Condition;
 
 class BGSCharacterTint
 {
@@ -28,7 +30,7 @@ public:
 			virtual void Load(void * unk1) = 0; // Loads template from plugin stream
 
 			BSFixedString	name;			// 08
-			void			* unk10;		// 10
+			Condition		* conditions;	// 10
 			UInt32			unk18;			// 18
 			UInt16			templateIndex;	// 1C
 			UInt8			unk1E;			// 1E
@@ -97,12 +99,12 @@ public:
 	public:
 		virtual ~Entry();
 
-		virtual void Unk_01(void);
-		virtual void Unk_02(void);
+		virtual bool IsEqual(Entry * rhs);
+		virtual void Copy(Entry * rhs);
 		virtual void Unk_03(void);
 		virtual void Unk_04(void);
 		virtual UInt32 GetType(void) = 0;
-		virtual void Unk_06(void);
+		virtual void Unk_06(void) { };
 
 		enum
 		{
@@ -124,12 +126,10 @@ public:
 	public:
 		virtual ~MaskEntry();
 
-		virtual void Unk_01(void);
-		virtual void Unk_02(void);
 		virtual void Unk_03(void);
 		virtual void Unk_04(void);
-		virtual UInt32 GetType(void);	// 0
-		virtual void Unk_06(void);
+		virtual UInt32 GetType(void) { return kTypeMask; };	// 0
+		virtual void Unk_06(void) { };
 	};
 
 	// 20
@@ -138,11 +138,11 @@ public:
 	public:
 		virtual ~PaletteEntry();
 
-		virtual void Unk_01(void);
-		virtual void Unk_02(void);
+		virtual bool IsEqual(Entry * rhs);
+		virtual void Copy(Entry * rhs);
 		virtual void Unk_03(void);
 		virtual void Unk_04(void);
-		virtual UInt32 GetType(void);	// 1
+		virtual UInt32 GetType(void) { return kTypePalette; };	// 1
 		virtual void Unk_06(void);
 
 		SInt32	color;		// 18
@@ -156,12 +156,10 @@ public:
 	public:
 		virtual ~TextureSetEntry();
 
-		virtual void Unk_01(void);
-		virtual void Unk_02(void);
 		virtual void Unk_03(void);
 		virtual void Unk_04(void);
-		virtual UInt32 GetType(void);	// 2
-		virtual void Unk_06(void);
+		virtual UInt32 GetType(void) { return kTypeTexture; };	// 2
+		virtual void Unk_06(void) { };
 	};
 
 };
@@ -232,7 +230,7 @@ public:
 
 			void Dump(void)
 			{
-				_MESSAGE("\t\tkey: %16lX bone: %s unk08: %16lX unk10: %16lX", key, bone ? bone->Get<char>() : "", unk08, unk10);
+				_MESSAGE("\t\tkey: %16lX bone: %s unk08: %16lX unk10: %16lX", key, bone.data ? bone.data->Get<char>() : "", unk08, unk10);
 				if(values)
 				{
 					for(UInt32 i = 0; i < 4; i++)
@@ -244,7 +242,8 @@ public:
 		UInt64					unk70;			// 70
 		UInt64					unk78;			// 78
 		UInt64					unk80;			// 80
-		UInt64					index;			// 88 - FMRI
+		UInt32					index;			// 88 - FMRI
+		UInt32					unk8C;			// 8C
 	};
 
 	struct Data1
@@ -297,13 +296,27 @@ public:
 	tArray<TintData*> tints;										// 358
 	tArray<tArray<BGSCharacterTint::Template::Entry*>*>	details;	// 370
 
-	// ...
+	UInt64					unk388[(0x510-0x388)/8];	// 388
+	UInt32					presetIndex;				// 510
+	UInt16					unk514;						// 514
+	UInt8					unk516;						// 516 - weight change?
+	UInt8					unk517;						// 517 - face dirty?
+	UInt8					dirty;						// 518
+	UInt8					unk519[3];					// 519
+	UInt64					unk520[(0x548-0x520)/8];	// 520
+
+	MEMBER_FN_PREFIX(CharacterCreation);
+	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C30F30, UInt32 presetIndex); // Loads preset by index onto the actor
 };
 
 extern RelocPtr <CharacterCreation*> g_characterCreation;
+extern RelocPtr <UInt32> g_characterIndex;
 
-// Texture updating notes
-// UInt64 unk2;
-// call 140017224(player, &unk2);
-// node = player->GetRootNode()
-// call 14006CEF4(*146CC4360, actorBase, node, (UInt8)1, (UInt8)0, func_140045241, func_1400A7FC7, unk2, staticTextureIndexedArray);
+typedef BGSCharacterTint::Entry* (* _CreateCharacterTintEntry)(UInt32 id);
+extern RelocAddr <_CreateCharacterTintEntry> CreateCharacterTintEntry; // ID is (templateIndex << 16 | type)
+
+typedef UInt64 (* _ClearCharacterTints)(tArray<BGSCharacterTint::Entry*> * src);
+extern RelocAddr <_ClearCharacterTints> ClearCharacterTints;
+
+typedef UInt64 (* _CopyCharacterTints)(tArray<BGSCharacterTint::Entry*> * dst, tArray<BGSCharacterTint::Entry*> * src);
+extern RelocAddr <_CopyCharacterTints> CopyCharacterTints;

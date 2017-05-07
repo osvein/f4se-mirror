@@ -9,6 +9,7 @@ class InputEvent
 {
 public:
 	virtual ~InputEvent();
+
 	UInt64 unk08[2];
 	InputEvent* next;
 	UInt64 unk20;
@@ -185,15 +186,66 @@ class BSPCVirtualKeyboardDevice : public BSVirtualKeyboardDevice
 };
 STATIC_ASSERT(sizeof(BSPCVirtualKeyboardDevice) == 0x70);
 
-
-class InputManager
+class InputDeviceManager // Probably the dispatcher
 {
 public:
-	UInt64						unk00;
+	UInt64						unk00;					// 000
 	BSPCKeyboardDevice*			keyboardDevice;			// 008
 	BSPCMouseDevice*			mouseDevice;			// 010
 	BSPCGamepadDeviceHandler*	gamepadHandler018;		// 018
 	BSPCGamepadDeviceHandler*	gamepadHandler020;		// 020
 	BSPCVirtualKeyboardDevice*	virtualKeyboardDevice;	// 028
 };
+extern RelocPtr <InputDeviceManager*> g_inputDeviceMgr;
+
+// 13C
+class InputManager
+{
+public:
+	enum
+	{
+		kContextCount = (0xF8/8)
+	};
+
+	enum
+	{
+		kDeviceType_Keyboard = 0,
+		kDeviceType_Mouse,
+		kDeviceType_Gamepad
+	};
+
+	struct InputContext
+	{
+		// 18
+		struct Mapping
+		{
+			BSFixedString	name;		// 00
+			UInt32			buttonID;	// 08
+			UInt32			sortIndex;	// 0C
+			UInt32			unk10;		// 10
+			UInt32			unk14;		// 14
+		};
+
+		tArray<Mapping>	keyboardMap;
+		tArray<Mapping>	mouseMap;
+		tArray<Mapping>	gamepadMap;
+	};
+
+	void		* unk00;					// 000
+	InputContext * context[kContextCount];	// 008
+	tArray<UInt32>	unkF8;					// 0F8
+	tArray<InputContext::Mapping>	unk110;	// 110
+	UInt64			unk128;					// 128
+	UInt64			unk130;					// 130
+	UInt8			allowTextInput;			// 138
+	UInt8			unk139;					// 139
+	UInt8			unk13A;					// 13A
+	UInt8			unk13B;					// 13B
+	UInt32			unk13C;					// 13C
+
+	UInt8			AllowTextInput(bool allow);
+	UInt32			GetMappedKey(BSFixedString name, UInt32 deviceType, UInt32 contextIdx);
+	BSFixedString	GetMappedControl(UInt32 buttonID, UInt32 deviceType, UInt32 contextIdx);
+};
+
 extern RelocPtr <InputManager*> g_inputMgr;

@@ -327,9 +327,31 @@ public:
 	BSTEventSink<bhkNonSupportContactEvent>		nonSupportContact;		// 158
 	BSTEventSink<bhkCharacterStateChangeEvent>	characterStateChanged;	// 160
 
-	UInt64	unk168[(0x428-0x168)/8];	// 168
+	UInt64	unk168[(0x300-0x168)/8];	// 168
+	struct Data300
+	{
+		void * unk00;	// 00
+
+		struct Data08
+		{
+			UInt64	unk00[0x496/8];		// 000
+			enum
+			{
+				kDirtyHeadParts	= 0x04,
+				kDirtyGender	= 0x20
+			};
+			UInt16	unk496;				// 496 - somekind of dirty flag?
+		};
+
+		Data08 * unk08;	// 08
+	};
+	Data300 * unk300;					// 300
+	UInt64	unk308[(0x428-0x308)/8];
 	ActorEquipData	* equipData;		// 428
 	UInt64	unk430[(0x490-0x430)/8];	// 430
+
+	MEMBER_FN_PREFIX(Actor);
+	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D2C660, bool bDoFaceGen, UInt32 unk2, bool unk3, UInt32 unk4); // 0, 0, 1, 0
 };
 
 // E00
@@ -356,5 +378,7 @@ public:
 	tArray<BGSCharacterTint::Entry*> * tints;	// CF0
 	UInt64	unkC90[(0xD90-0xCF8)/8];	// CF8
 };
+
+extern RelocPtr <PlayerCharacter*> g_player;
 
 STATIC_ASSERT(offsetof(PlayerCharacter, menuOpenClose) == 0x490);

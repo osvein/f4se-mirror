@@ -1,5 +1,10 @@
+0.1.9:
+- support for beta runtime 1.5.141
+- more internal class/global/etc decoding
+- exposed scaleform registration interface
+
 0.1.8:
-- support for untime 1.4.132
+- support for runtime 1.4.132
 - more internal class decoding
 
 0.1.7:

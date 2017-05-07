@@ -3,6 +3,7 @@
 #include "f4se_common/Relocation.h"
 #include "f4se/GameFormComponents.h"
 #include "f4se/GameCustomization.h"
+#include "f4se/GameUtilities.h"
 
 class TESForm;
 class TESNPC;
@@ -781,13 +782,50 @@ public:
 		BSFixedString	bone;		// 00
 		float			* value;	// 08
 
-		static inline UInt32 GetHash(const BSFixedString * key);
+		bool operator==(const BSFixedString a_key) const	{ return bone.data == a_key.data; }
+		static inline UInt32 GetHash(const BSFixedString * key)
+		{
+			UInt32 hash;
+			CalculateCRC32_64(&hash, (UInt64)key->data->Get<char>(), 0);
+			return hash;
+		}
 
 		void Dump(void)
 		{
-			_MESSAGE("\t\tkey: %s", bone->Get<char>());
+			_MESSAGE("\t\tkey: %s", bone.data ? bone.data->Get<char>() : "");
 			for(UInt32 i = 0; i < T; i++)
 				_MESSAGE("\t\tdata: %f", value[i]);
+		}
+	};
+
+	struct MorphSlider
+	{
+		UInt32	key;		// 00
+		UInt32	pad04;		// 04
+
+		struct Morphs
+		{
+			BSFixedString lower;	// 00
+			BSFixedString upper;	// 08
+		};
+		Morphs * morphs;	// 08
+
+		bool operator==(const UInt32 a_key) const	{ return key == a_key; }
+		static inline UInt32 GetHash(const UInt32 * key)
+		{
+			UInt32 hash;
+			CalculateCRC32_32(&hash, *key, 0);
+			return hash;
+		}
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\tkey: %08X", key);
+			if(morphs)
+			{
+				_MESSAGE("\t\tLower: %s", morphs->lower.data->Get<char>());
+				_MESSAGE("\t\tUpper: %s", morphs->upper.data->Get<char>());
+			}
 		}
 	};
 
@@ -797,7 +835,9 @@ public:
 		tHashSet<BoneScale<4>, BSFixedString>	weightMap2;	// value array length 4
 	};
 
-	UInt64				unk4C0[(0x698-0x4D8)/8];	// 4D8
+	UInt64				unk4C0[(0x648-0x4D8)/8];	// 4D8 - 654, 670, 660 table?
+	tHashSet<MorphSlider, UInt32> morphSliders;		// 648
+	UInt64				unk678[(0x698-0x678)/8];	// 678
 	CharGenData			* chargenData[2];			// 698
 	BoneScaleMap		* boneScaleMap[2];			// 6A8
 	TESTexture			unk6B8;						// 6B8
@@ -827,17 +867,44 @@ public:
 	TESFullName				fullName;		// 20
 	BGSModelMaterialSwap	materialSwap;	// 30
 
-	UInt64					unk70;			// 70
-	UInt64					unk78;			// 78
-	UInt64					unk80;			// 80
-	void					* unk88;		// 88
-	UInt64					unk90;			// 90
-	TESModel				unk98;			// 98
+	enum 
+	{
+		kFlagPlayable	= 1 << 0,
+		kFlagMale		= 1 << 1,
+		kFlagFemale		= 1 << 2,
+		kFlagExtraPart	= 1 << 3,
+		kFlagSolidTint	= 1 << 4,
+		kFlagUnk1		= 1 << 5 // only appears on Head Rear types
+	};
+	UInt32					partFlags;		// 70
+
+	
+
+	enum {
+		kTypeMisc = 0,
+		kTypeFace,
+		kTypeEyes,
+		kTypeHair,
+		kTypeFacialHair,
+		kTypeScar,
+		kTypeBrows,
+		kType7,
+		kType8,
+		kTypeHeadRear,
+		kNumTypes
+	};
+	UInt32					type;			// 74
+
+	tArray<BGSHeadPart*>	extraParts;		// 78
+	BGSTextureSet			* textureSet;	// 90
+	TESModel				model;			// 98
 	TESModelTri				morphs[3];		// C8
 	UInt64					unk158;			// 158
 	BGSListForm				* validRaces;	// 160
-	void					* unk168;		// 168
+	void					* unk168;		// 168 - Condition most likely
 	BSFixedString			partName;		// 170
+
+	bool IsExtraPart() { return (partFlags & kFlagExtraPart) == kFlagExtraPart; }
 };
 
 // 1B0

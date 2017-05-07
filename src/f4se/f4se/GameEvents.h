@@ -86,3 +86,8 @@ struct bhkCharacterStateChangeEvent
 {
 
 };
+
+struct ChargenCharacterUpdateEvent
+{
+
+};

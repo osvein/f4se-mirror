@@ -30,6 +30,31 @@
 #define DEFINE_MEMBER_FN(functionName, retnType, address, ...)	\
 	DEFINE_MEMBER_FN_LONG(_MEMBER_FN_BASE_TYPE, functionName, retnType, address, __VA_ARGS__)
 
+#define DEFINE_STATIC_HEAP(staticAllocate, staticFree)						\
+	static void * operator new(std::size_t size)							\
+	{																		\
+		return staticAllocate(size);										\
+	}																		\
+	static void * operator new(std::size_t size, const std::nothrow_t &)	\
+	{																		\
+		return staticAllocate(size);										\
+	}																		\
+	static void * operator new(std::size_t size, void * ptr)				\
+	{																		\
+		return ptr;															\
+	}																		\
+	static void operator delete(void * ptr)									\
+	{																		\
+		staticFree(ptr);													\
+	}																		\
+	static void operator delete(void * ptr, const std::nothrow_t &)			\
+	{																		\
+		staticFree(ptr);													\
+	}																		\
+	static void operator delete(void *, void *)								\
+	{																		\
+	}
+
 #define CALL_MEMBER_FN(obj, fn)	\
 	((*(obj)).*(*((obj)->_##fn##_GetPtr())))
 

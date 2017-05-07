@@ -1,5 +1,8 @@
 #pragma once
 
+#include "f4se_common/Utilities.h"
+#include "f4se/GameAPI.h"
+
 class TESForm;
 
 // 08
@@ -55,6 +58,29 @@ public:
 		}
 	};
 
+	struct Ref
+	{
+		Entry	* data;
+
+		MEMBER_FN_PREFIX(Ref);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01ACACF0, const char * buf);
+		DEFINE_MEMBER_FN(wctor, Ref *, 0x01ACBBC0, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01ACAE20, const char * buf);
+		DEFINE_MEMBER_FN(Release, void, 0x01ACBF80);
+
+		Ref() :data(NULL) { }
+		Ref(const char * buf);
+		Ref(const wchar_t * buf);
+
+		inline void Release()
+		{
+			CALL_MEMBER_FN(this, Release)();
+		}
+
+		bool operator==(const Ref& lhs) const { return data == lhs.data; }
+		bool operator<(const Ref& lhs) const { return data < lhs.data; }
+	};
+
 	// 10
 	struct Lock
 	{
@@ -68,7 +94,7 @@ public:
 	UInt8	isInit;			// 80800
 };
 
-typedef StringCache::Entry *	BSFixedString;
+typedef StringCache::Ref	BSFixedString;
 
 // 10
 class BSString
@@ -107,6 +133,28 @@ public:
 		return entries[index];
 	}
 
+	void Clear()
+	{
+		Heap_Free(entries);
+		entries = NULL;
+		capacity = 0;
+		count = 0;
+	}
+
+	bool Allocate(UInt32 numEntries)
+	{
+		entries = (T *)Heap_Allocate(sizeof(T) * numEntries);
+		if(!entries) return false;
+
+		for(UInt32 i = 0; i < numEntries; i++)
+			new (&entries[i]) T;
+
+		capacity = numEntries;
+		count = numEntries;
+
+		return true;
+	}
+
 	bool GetNthItem(UInt64 index, T& pT) const
 	{
 		if (index < count) {
@@ -125,6 +173,8 @@ public:
 		}
 		return -1;
 	}
+
+	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
 };
 
 typedef tArray<UInt64> UnkArray;
@@ -134,6 +184,11 @@ typedef tArray<TESForm*> UnkFormArray;
 template <class T>
 class tList
 {
+	enum {
+		eListCount = -3,
+		eListEnd = -2,
+		eListInvalid = -1,		
+	};
 	struct _Node
 	{
 		
@@ -773,7 +828,7 @@ class tHashSet
 		UInt32 newSize = oldSize ? 2*oldSize : 8;
 
 		_Entry * oldEntries = m_entries;
-		_Entry * newEntries = (_Entry*)FormHeap_Allocate(newSize * sizeof(_Entry));
+		_Entry * newEntries = (_Entry*)Heap_Allocate(newSize * sizeof(_Entry));
 		ASSERT(newEntries);
 		
 		m_entries = newEntries;
@@ -791,7 +846,7 @@ class tHashSet
 			for (UInt32 i = 0; i < oldSize; i++, p++)
 				if (p->next)
 					CopyEntry(p);
-			FormHeap_Free(oldEntries);
+			Heap_Free(oldEntries);
 		}
 	}
 
@@ -931,6 +986,8 @@ public:
 			}
 		}
 	}
+
+	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
 };
 
 template <typename Key, typename Item>
