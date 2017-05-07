@@ -21,9 +21,11 @@ class TESImageSpaceModifier;
 class TESObjectLIGH;
 class BGSEncounterZone;
 class BGSMusicType;
+class IFormFactory;
 
 typedef TESForm* (* _LookupFormByID)(UInt32 id);
 extern RelocAddr <_LookupFormByID> LookupFormByID;
+extern RelocPtr <IFormFactory*> g_formFactoryList;
 
 /**** form types ***************************************************************
 *	
@@ -358,7 +360,17 @@ enum FormType
 	kFormType_LENS,
 	kFormType_LSPR,
 	kFormType_GDRY,
-	kFormType_OVIS
+	kFormType_OVIS,
+	kFormType_Max,
+
+	// These are special types for Papyrus
+	kFormType_Alias,
+	kFormType_ReferenceAlias,
+	kFormType_LocationAlias,
+	kFormType_ActiveMagicEffect,
+	kFormType_InputEnableLayer,
+	kFormType_RefCollectionAlias,
+	kFormType_ScriptObject = -1,
 };
 
 // 20
@@ -417,8 +429,8 @@ public:
 	virtual void	Unk_36();
 	virtual void	Unk_37();
 	virtual void	Unk_38();
+	virtual void	Unk_39();
 	virtual const char *	GetEditorID(); // Only returns string for things that actually store the EDID ingame
-	virtual void	Unk_3A();
 	virtual void	Unk_3B();
 	virtual void	Unk_3C();
 	virtual void	Unk_3D();
@@ -454,7 +466,7 @@ public:
 	UInt16	unk18;		// 18
 	UInt8	formType;	// 1A
 	UInt8	unk1B;		// 1B
-	UInt8	pad1C[4];	// 1C
+	UInt32	pad1C;		// 1C
 };
 
 // 118
@@ -725,14 +737,30 @@ public:
 			UInt8 unknown;
 		} channels;
 		UInt32	rgb;
-	} color;
+		float	remappingIndex;
+	} color;							// 30
+	UInt32		unk34;					// 34
 
+	struct Data
+	{
+		Data		* next;				// 00
+		float		unk08;				// 08
+		float		unk0C;				// 0C
+		float		unk10;				// 10
+		SInt32		unk14;				// 14 - 0xFFFFFFFF
+		UInt32		unk18;				// 18 
+		UInt32		unk1C;				// 1C
+	};
+
+	Data				* unk38;		// 38
 	enum Flags
 	{
 		kFlags_Playable = 1,
-		kFlags_HairColor = 2
+		kFlags_RemappableIndex = 2,
+		kFlags_ExtendedLUT = 4
 	};
-	UInt32				flags;			// 30
+	UInt32				flags;			// 40
+	UInt32				unk44;			// 44
 };
 
 // 6C8
@@ -768,22 +796,6 @@ public:
 	BGSTextureSet		* textureSets[2];	// 3B8
 	BGSSoundDescriptorForm * soundDescriptors[2]; // 3C8
 	BSFixedString		bipedObjectNames[0x20]; // 3D8
-
-	// 48+
-	struct CharGenData
-	{
-		tArray<CharacterCreation::TintData*>		* tintData;			// 00
-		tArray<BGSTextureSet*>						* textureSets;		// 08
-		BGSTextureSet								* defaultTexture;	// 10
-		tArray<TESNPC*>								* presets;			// 18
-		tArray<BGSColorForm*>						* colors;			// 20
-		BGSColorForm								* defaultColor;		// 28
-		tArray<BGSHeadPart*>						* headParts;		// 30
-		tArray<CharacterCreation::MorphGroup*>		* morphGroups;		// 38
-		tArray<CharacterCreation::FaceMorphRegion*>	* faceMorphs;		// 40
-
-		BGSCharacterTint::Template::Entry * GetTemplateByIndex(UInt16 index);
-	};
 
 	// 10
 	template<int T>
@@ -845,12 +857,12 @@ public:
 		tHashSet<BoneScale<4>, BSFixedString>	weightMap2;	// value array length 4
 	};
 
-	UInt64				unk4C0[(0x648-0x4D8)/8];	// 4D8 - 654, 670, 660 table?
-	tHashSet<MorphSlider, UInt32> morphSliders;		// 648
-	UInt64				unk678[(0x698-0x678)/8];	// 678
-	CharGenData			* chargenData[2];			// 698
-	BoneScaleMap		* boneScaleMap[2];			// 6A8
-	TESTexture			unk6B8;						// 6B8
+	UInt64								unk4C0[(0x648-0x4D8)/8];	// 4D8 - 654, 670, 660 table?
+	tHashSet<MorphSlider, UInt32>		morphSliders;				// 648
+	UInt64								unk678[(0x698-0x678)/8];	// 678
+	CharacterCreation::CharGenData		* chargenData[2];			// 698
+	BoneScaleMap						* boneScaleMap[2];			// 6A8
+	TESTexture							unk6B8;						// 6B8
 };
 
 STATIC_ASSERT(offsetof(TESRace, chargenData) == 0x698);
@@ -1189,3 +1201,36 @@ public:
 
 	tArray<TESForm*>	forms;	// 20
 };
+
+// 08
+class IFormFactory
+{
+public:
+	virtual ~IFormFactory();
+
+	virtual TESForm *		Create(void) = 0;
+	virtual const char *	GetName(void) = 0;
+	virtual UInt32			GetTypeID(void) = 0;
+
+	virtual UInt32			Unk_04(void);	// return 0
+	virtual UInt32			Unk_05(void);	// return 0x7E
+	virtual UInt32			Unk_06(void);	// return 9
+	virtual UInt32			Unk_07(void);	// return 0
+
+	static IFormFactory *	GetFactoryForType(UInt32 type)
+	{
+		if(type > kFormType_Max)
+			return nullptr;
+
+		IFormFactory ** factoryList = g_formFactoryList;
+		return factoryList[type];
+	}
+};
+
+// 10
+class ConcreteFormFactory : public IFormFactory
+{
+public:
+	const char	* name;		// 08
+};
+

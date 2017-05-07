@@ -14,9 +14,13 @@ RelocPtr <TESNPC*> g_customizationDummy1(0x05880E78);	// Either Nora or Nate's d
 // E5618E306F15B8DF84D22F68B984045D0DD91165+32
 RelocPtr <TESNPC*> g_customizationDummy2(0x05880E40);	// Either Nora or Nate's dummy actors
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A3790);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A2780);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002A8A00);
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A37A0);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A2790);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002A8A10);
+
+// For manipulating the tint lists, their signatures aren't quite right yet
+RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A2930);
+RelocAddr <_MergeTintTextures> MergeTintTextures(0x006873B0);
 
 // These are for creating new instances
 
@@ -78,4 +82,38 @@ BGSCharacterTint::Template::Palette * BGSCharacterTint::Template::Palette::Creat
 BGSCharacterTint::Template::TextureSet * BGSCharacterTint::Template::TextureSet::Create()
 {
 	return (BGSCharacterTint::Template::TextureSet *)BGSCharacterTint::Template::Entry::Create(sizeof(BGSCharacterTint::Template::TextureSet), s_BGSCharacterTint_Template_TextureSetVtbl.GetUIntPtr());
+}
+
+BGSCharacterTint::Template::Palette::ColorData * BGSCharacterTint::Template::Palette::GetColorDataByID(UInt16 colorID)
+{
+	for(UInt32 i = 0; i < colors.count; i++) {
+		if(colors[i].colorID == colorID) {
+			return &colors[i];
+		}
+	}
+
+	return nullptr;
+}
+
+BGSCharacterTint::Template::Entry * CharacterCreation::CharGenData::GetTemplateByIndex(UInt16 index)
+{
+	if(!tintData)
+		return nullptr;
+
+	for(UInt32 i = 0; i < tintData->count; i++)
+	{
+		CharacterCreation::TintData * data;
+		tintData->GetNthItem(i, data);
+
+		for(UInt32 k = 0; k < data->entry.count; k++)
+		{
+			BGSCharacterTint::Template::Entry* entry;
+			data->entry.GetNthItem(k, entry);
+
+			if(entry->templateIndex == index)
+				return entry;
+		}
+	}
+
+	return nullptr;
 }

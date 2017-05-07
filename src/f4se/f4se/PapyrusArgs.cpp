@@ -35,6 +35,11 @@ template <> void PackValue <VMVariable>(VMValue * dst, VMVariable * src, Virtual
 	src->PackVariable(dst);
 }
 
+template <> void PackValue <VMObject>(VMValue * dst, VMObject * src, VirtualMachine * vm)
+{
+	src->PackObject(dst);
+}
+
 void BindID(VMIdentifier ** identifier, void * srcData, VirtualMachine * vm, IObjectHandlePolicy * handlePolicy, UInt32 typeID)
 {
 	UInt32	unk = 0;
@@ -79,7 +84,7 @@ void PackHandle(VMValue * dst, void * src, UInt32 typeID, VirtualMachine * vm)
 	VMIdentifier	* identifier = NULL;
 
 	// find existing identifier
-	if(!vm->GetObjectIdentifier(handle, typeInfo->m_typeName, 0, &identifier, 0))	// Still broken right now, something wrong with this signature
+	if(!vm->GetObjectIdentifier(handle, typeInfo->m_typeName, 0, &identifier, 0))
 	{
 		if(vm->CreateObjectIdentifier(&typeInfo->m_typeName, &identifier))
 		{
@@ -214,6 +219,11 @@ template <> void UnpackValue <VMVariable>(VMVariable * dst, VMValue * src)
 	dst->UnpackVariable(src);
 }
 
+template <> void UnpackValue <VMObject>(VMObject * dst, VMValue * src)
+{
+	dst->UnpackObject(src);
+}
+
 template <> void UnpackValue <VMArray<UInt32>>(VMArray<UInt32> * dst, VMValue * src)
 {
 	UnpackArray(dst, src, VMValue::kType_IntArray);
@@ -242,6 +252,26 @@ template <> void UnpackValue <VMArray<BSFixedString>>(VMArray<BSFixedString> * d
 template <> void UnpackValue <VMArray<VMVariable>>(VMArray<VMVariable> * dst, VMValue * src)
 {
 	UnpackArray(dst, src, VMValue::kType_VariableArray);
+}
+
+template <> void UnpackValue <VMArray<VMObject>>(VMArray<VMObject> * dst, VMValue * src)
+{
+	UnpackArray(dst, src, GetTypeID<VMArray<VMObject>>((*g_gameVM)->m_virtualMachine));
+}
+
+template <> void UnpackValue(VMObject ** dst, VMValue * src)
+{
+	if(src->IsIdentifier() && src->data.id)
+	{
+		*dst = new VMObject;
+		UnpackValue((*dst), src);
+	}
+}
+
+template <> void DestroyValue(VMObject ** dst)
+{
+	if(*dst)
+		delete (*dst);
 }
 
 void * UnpackHandle(VMValue * src, UInt32 typeID)
@@ -273,6 +303,16 @@ template <> UInt64 GetTypeID <VMArray<float>>(VirtualMachine * vm)			{ return VM
 template <> UInt64 GetTypeID <VMArray<bool>>(VirtualMachine * vm)			{ return VMValue::kType_BoolArray; }
 template <> UInt64 GetTypeID <VMArray<BSFixedString>>(VirtualMachine * vm)	{ return VMValue::kType_StringArray; }
 template <> UInt64 GetTypeID <VMArray<VMVariable>>(VirtualMachine * vm)		{ return VMValue::kType_VariableArray; }
+
+template <> UInt64 GetTypeID <VMObject>(VirtualMachine * vm)
+{
+	return GetTypeIDFromFormTypeID(VMObject::kTypeID, vm);
+}
+
+template <> UInt64 GetTypeID <VMArray<VMObject>>(VirtualMachine * vm)
+{
+	return GetTypeIDFromFormTypeID(VMObject::kTypeID, vm) | VMValue::kType_Identifier;
+}
 
 UInt64 GetTypeIDFromFormTypeID(UInt32 formTypeID, VirtualMachine * vm)
 {

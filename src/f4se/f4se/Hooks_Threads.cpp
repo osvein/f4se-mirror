@@ -11,7 +11,7 @@ ICriticalSection		s_taskQueueLock;
 std::queue<ITaskDelegate*>	s_tasks;
 
 typedef bool (* _MessageQueueProcessTask)(void * messageQueue, float timeout, UInt32 unk1);
-RelocAddr <_MessageQueueProcessTask> MessageQueueProcessTask(0x00D3A300);
+RelocAddr <_MessageQueueProcessTask> MessageQueueProcessTask(0x00D3A310);
 _MessageQueueProcessTask MessageQueueProcessTask_Original = nullptr;
 
 bool MessageQueueProcessTask_Hook(void * messageQueue, float timeout, UInt32 unk1)

@@ -105,6 +105,9 @@ public:
 	float					fBackLightPower;				// B4
 	float					fLookupScale;					// B8
 	BSNonReentrantSpinLock	LoadTextureSetLock;				// BC
+
+	MEMBER_FN_PREFIX(BSLightingShaderMaterialBase);
+	DEFINE_MEMBER_FN(Copy, void, 0x0273C6F0, const BSLightingShaderMaterialBase * src);
 };
 
 // D0
@@ -230,3 +233,6 @@ public:
 	float	unkC8;	// C8
 	float	unkCC;	// CC
 };
+
+typedef BSShaderMaterial * (* _CreateShaderMaterialByType)(UInt32 type);
+extern RelocAddr <_CreateShaderMaterialByType> CreateShaderMaterialByType;

@@ -28,8 +28,8 @@ class VMArgList
 {
 public:
 	MEMBER_FN_PREFIX(VMArgList);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x0261AB10, VMState * state);
-	DEFINE_MEMBER_FN(Get, VMValue *, 0x0261AB70, VMState * state, UInt32 idx, UInt32 offset);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x0261AB20, VMState * state);
+	DEFINE_MEMBER_FN(Get, VMValue *, 0x0261AB80, VMState * state, UInt32 idx, UInt32 offset);
 };
 
 template <typename T>
@@ -198,6 +198,58 @@ protected:
 	VMValue			m_value;	// Copied data
 };
 
+class VMObject
+{
+public:
+	enum { kTypeID = -1 };
+
+	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free);
+
+	template<typename T>
+	void Set(T * src)
+	{
+		PackValue(&m_value, src, (*g_gameVM)->m_virtualMachine);
+	}
+
+	template<typename T>
+	bool Get(T * dst)
+	{
+		if(Is<T>())
+		{
+			UnpackValue(dst, &m_value);
+			return true;
+		}
+
+		return false;
+	}
+
+	template<typename T>
+	bool Is()
+	{
+		if(m_value.IsIdentifier() && m_value.data.id) {
+			UInt64	handle = m_value.data.id->GetHandle();
+
+			typedef std::remove_pointer <T>::type	BaseType;
+			return (*g_objectHandlePolicy)->IsType(BaseType::kTypeID, handle);
+		}
+
+		return false;
+	}
+
+	void PackObject(VMValue * dst)
+	{
+		*dst = m_value;
+	}
+
+	void UnpackObject(VMValue * value)
+	{
+		m_value = *value;
+	}
+
+protected:
+	VMValue		m_value;
+};
+
 template <typename T>
 void UnpackValue(VMArray<T> * dst, VMValue * src)
 {
@@ -226,6 +278,7 @@ template <> void PackValue <float>(VMValue * dst, float * src, VirtualMachine * 
 template <> void PackValue <bool>(VMValue * dst, bool * src, VirtualMachine * vm);
 template <> void PackValue <BSFixedString>(VMValue * dst, BSFixedString * src, VirtualMachine * vm);
 template <> void PackValue <VMVariable>(VMValue * dst, VMVariable * src, VirtualMachine * vm);
+template <> void PackValue <VMObject>(VMValue * dst, VMObject * src, VirtualMachine * vm);
 
 void PackHandle(VMValue * dst, void * src, UInt32 typeID, VirtualMachine * registry);
 
@@ -248,6 +301,7 @@ template <> void UnpackValue <VMArray<SInt32>>(VMArray<SInt32> * dst, VMValue * 
 template <> void UnpackValue <VMArray<bool>>(VMArray<bool> * dst, VMValue * src);
 template <> void UnpackValue <VMArray<BSFixedString>>(VMArray<BSFixedString> * dst, VMValue * src);
 template <> void UnpackValue <VMArray<VMVariable>>(VMArray<VMVariable> * dst, VMValue * src);
+template <> void UnpackValue <VMArray<VMObject>>(VMArray<VMObject> * dst, VMValue * src);
 
 void * UnpackHandle(VMValue * src, UInt32 typeID);
 
@@ -256,6 +310,15 @@ void UnpackValue(T ** dst, VMValue * src)
 {
 	*dst = (T *)UnpackHandle(src, T::kTypeID);
 }
+
+template <typename T>
+void DestroyValue(T ** dst)
+{
+	// Dummy implementation, used by VMObject to destroy the temp pointer
+}
+
+template <> void UnpackValue(VMObject ** dst, VMValue * src);
+template <> void DestroyValue(VMObject ** dst);
 
 template <typename T>
 void UnpackArray(VMArray<T> * dst, VMValue * src, const UInt64 type)
@@ -274,6 +337,7 @@ template <> UInt64 GetTypeID <float>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <bool>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <BSFixedString>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMVariable>(VirtualMachine * vm);
+template <> UInt64 GetTypeID <VMObject>(VirtualMachine * vm);
 
 template <> UInt64 GetTypeID <VMArray<UInt32>>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMArray<SInt32>>(VirtualMachine * vm);
@@ -282,6 +346,20 @@ template <> UInt64 GetTypeID <VMArray<float>>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMArray<bool>>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMArray<BSFixedString>>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMArray<VMVariable>>(VirtualMachine * vm);
+template <> UInt64 GetTypeID <VMArray<VMObject>>(VirtualMachine * vm);
+
+template <typename T>
+struct IsObjectType
+{
+	static const bool value = false;
+};
+
+template<>
+struct IsObjectType<VMObject>
+{
+	static const bool value = true;
+};
+
 
 template<typename T>
 struct IsArrayType

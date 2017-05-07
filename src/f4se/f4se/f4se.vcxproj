@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BSGeometry.cpp" />
+    <ClCompile Include="BSGraphics.cpp" />
     <ClCompile Include="BSModelDB.cpp" />
     <ClCompile Include="BSSkin.cpp" />
     <ClCompile Include="GameData.cpp" />
@@ -68,6 +69,7 @@
     <ClCompile Include="PapyrusActor.cpp" />
     <ClCompile Include="PapyrusActorBase.cpp" />
     <ClCompile Include="PapyrusArgs.cpp" />
+    <ClCompile Include="PapyrusEvents.cpp" />
     <ClCompile Include="PapyrusF4SE.cpp" />
     <ClCompile Include="PapyrusGame.cpp" />
     <ClCompile Include="PapyrusHeadPart.cpp" />
@@ -99,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BSGeometry.h" />
+    <ClInclude Include="BSGraphics.h" />
     <ClInclude Include="BSModelDB.h" />
     <ClInclude Include="BSSkin.h" />
     <ClInclude Include="GameAPI.h" />
@@ -143,6 +146,7 @@
     <ClInclude Include="PapyrusActor.h" />
     <ClInclude Include="PapyrusActorBase.h" />
     <ClInclude Include="PapyrusArgs.h" />
+    <ClInclude Include="PapyrusEvents.h" />
     <ClInclude Include="PapyrusF4SE.h" />
     <ClInclude Include="PapyrusGame.h" />
     <ClInclude Include="PapyrusHeadPart.h" />
@@ -200,11 +204,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)_1_7_12</TargetName>
+    <TargetName>$(ProjectName)_1_7_15</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)_1_7_12</TargetName>
+    <TargetName>$(ProjectName)_1_7_15</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -212,7 +216,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010700C0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010700F0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -237,7 +241,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010700C0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010700F0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

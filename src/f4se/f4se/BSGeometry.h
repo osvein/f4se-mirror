@@ -119,7 +119,7 @@ public:
 	float	unk16C;	// 16C
 
 	MEMBER_FN_PREFIX(BSTriShape);
-	DEFINE_MEMBER_FN(CreateDynamicTriShape, BSDynamicTriShape*, 0x01CFBCA0, NiAVObject * unk1);
+	DEFINE_MEMBER_FN(CreateDynamicTriShape, BSDynamicTriShape*, 0x01CFBCB0, NiAVObject * unk1);
 };
 STATIC_ASSERT(sizeof(BSTriShape) == 0x170);
 

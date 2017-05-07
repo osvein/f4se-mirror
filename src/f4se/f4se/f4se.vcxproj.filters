@@ -200,6 +200,12 @@
     <ClCompile Include="Hooks_Threads.cpp">
       <Filter>hooks</Filter>
     </ClCompile>
+    <ClCompile Include="BSGraphics.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusEvents.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -446,6 +452,12 @@
     </ClInclude>
     <ClInclude Include="Hooks_Threads.h">
       <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="BSGraphics.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusEvents.h">
+      <Filter>papyrus\vm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

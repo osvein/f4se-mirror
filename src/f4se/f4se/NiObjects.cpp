@@ -25,8 +25,8 @@ NiExtraData * NiObjectNET::GetExtraData(const BSFixedString & name)
 	SimpleLocker locker(&m_extraData->lock);
 	for(UInt32 i = 0; i < m_extraData->count; i++)
 	{
-		NiExtraData * data = m_extraData->entries[i];
-		if(data->m_name == name)
+		NiPointer<NiExtraData> data = m_extraData->entries[i];
+		if(data && data->m_name == name)
 			return data;
 	}
 

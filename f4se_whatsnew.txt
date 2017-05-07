@@ -1,3 +1,8 @@
+0.2.5
+- support for runtime 1.7.15
+- fixed papyrus complex parameter type setup
+- internal papyrus function calls
+
 0.2.4
 - support for runtime 1.7.12
 

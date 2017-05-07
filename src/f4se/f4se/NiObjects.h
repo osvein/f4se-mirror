@@ -88,7 +88,7 @@ public:
 	bool HasExtraData(const BSFixedString & name) { return GetExtraData(name) != nullptr; }
 
 	MEMBER_FN_PREFIX(NiObjectNET);
-	DEFINE_MEMBER_FN(Internal_AddExtraData, bool, 0x01B6AE40, NiExtraData * extraData);
+	DEFINE_MEMBER_FN(Internal_AddExtraData, bool, 0x01B6AE50, NiExtraData * extraData);
 };
 
 // 120
@@ -174,7 +174,7 @@ public:
 	UInt32			unk11C;				// 11C
 
 	MEMBER_FN_PREFIX(NiAVObject);
-	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C73580, BSFixedString * name, bool unk1, bool unk2);
+	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C73590, BSFixedString * name, bool unk1, bool unk2);
 };
 STATIC_ASSERT(offsetof(NiAVObject, m_reference) == 0x110);
 STATIC_ASSERT(sizeof(NiAVObject) == 0x120);

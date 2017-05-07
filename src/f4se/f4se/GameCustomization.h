@@ -127,6 +127,7 @@ public:
 			tArray<ColorData>	colors;	// 30
 
 			static Palette * Create();
+			ColorData * GetColorDataByID(UInt16 colorID);
 		};
 
 		// 40
@@ -301,6 +302,22 @@ public:
 		UInt32					unk8C;			// 8C
 	};
 
+	// 48+
+	struct CharGenData
+	{
+		tArray<TintData*>			* tintData;			// 00
+		tArray<BGSTextureSet*>		* textureSets;		// 08
+		BGSTextureSet				* defaultTexture;	// 10
+		tArray<TESNPC*>				* presets;			// 18
+		tArray<BGSColorForm*>		* colors;			// 20
+		BGSColorForm				* defaultColor;		// 28
+		tArray<BGSHeadPart*>		* headParts;		// 30
+		tArray<MorphGroup*>			* morphGroups;		// 38
+		tArray<FaceMorphRegion*>	* faceMorphs;		// 40
+
+		BGSCharacterTint::Template::Entry * GetTemplateByIndex(UInt16 index);
+	};
+
 	struct Data1
 	{
 		tArray<TESNPC*>			presets;	// 00
@@ -361,7 +378,7 @@ public:
 	UInt64					unk520[(0x548-0x520)/8];	// 520
 
 	MEMBER_FN_PREFIX(CharacterCreation);
-	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C8F4D0, UInt32 presetIndex); // Loads preset by index onto the actor
+	DEFINE_MEMBER_FN(LoadPreset, void, 0x00C8F4E0, UInt32 presetIndex); // Loads preset by index onto the actor
 };
 
 // ??
@@ -373,12 +390,19 @@ public:
 	UInt16	unk02;								// 02
 	UInt32	numActorsAllowedToMorph;			// 04 numActorsAllowedToMorph
 
-	UInt64		unk08[(0x34A8 - 0x04) >> 3];	// 08
-	NiAVObject	* camera;						// 34A8 - NiCamera (WorldRoot Camera)
+	UInt64		unk08[(0x3230 - 0x08) >> 3];		// 08
+	void		* unk3230;							// 3230
+	UInt64		unk3238[(0x3478 - 0x3238) >> 3];	// 3238
+	void		* unk3478;							// 3478
+	UInt64		unk3480[(0x34A8 - 0x3480) >> 3];	// 3238
+	NiAVObject	* camera;							// 34A8 - NiCamera (WorldRoot Camera)
 
 	MEMBER_FN_PREFIX(BSFaceGenManager);
-	DEFINE_MEMBER_FN(ApplyDynamicData, void, 0x00676630, BSTriShape * trishape);
+	DEFINE_MEMBER_FN(ApplyDynamicData, void, 0x00676640, BSTriShape * trishape);
 };
+STATIC_ASSERT(offsetof(BSFaceGenManager, unk3230) == 0x3230);
+STATIC_ASSERT(offsetof(BSFaceGenManager, unk3478) == 0x3478);
+STATIC_ASSERT(offsetof(BSFaceGenManager, camera) == 0x34A8);
 
 extern RelocPtr <BSFaceGenManager*> g_faceGenManager;
 extern RelocPtr <CharacterCreation*> g_characterCreation;
@@ -395,6 +419,14 @@ extern RelocAddr <_ClearCharacterTints> ClearCharacterTints;
 
 typedef UInt64 (* _CopyCharacterTints)(tArray<BGSCharacterTint::Entry*> * dst, tArray<BGSCharacterTint::Entry*> * src);
 extern RelocAddr <_CopyCharacterTints> CopyCharacterTints;
+
+// Signature might not be correct
+typedef void (* _FillTintTemplates)(tArray<BGSCharacterTint::Entry*> dst, CharacterCreation::CharGenData * src);
+extern RelocAddr <_FillTintTemplates> FillTintTemplates;
+
+// Signature might not be correct
+typedef void (* _MergeTintTextures)(TESNPC * npc, tArray<BGSCharacterTint::Entry*> * dst, void * unk3478, void * unk3230, UInt32 unk1, UInt8 unk2);
+extern RelocAddr <_MergeTintTextures> MergeTintTextures;
 
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl;
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl;

@@ -196,7 +196,7 @@ public:
 	UnkFormArray						arrSNCT;	// Form Type 134
 	UnkFormArray						arrSOPM;	// Form Type 135
 	UnkFormArray						arrCOLL;	// Form Type 136
-	UnkFormArray						arrCLFM;	// Form Type 137
+	tArray<BGSColorForm*>				arrCLFM;	// Form Type 137
 	UnkFormArray						arrREVB;	// Form Type 138
 	UnkFormArray						arrPKIN;	// Form Type 139
 	UnkFormArray						arrRFGP;	// Form Type 140

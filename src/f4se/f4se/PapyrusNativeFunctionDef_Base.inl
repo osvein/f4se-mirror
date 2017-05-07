@@ -135,34 +135,34 @@ public:
 	void InitParams(VirtualMachine * vm)
 	{
 #if NUM_PARAMS >= 1
-		m_params.data[0].type = GetTypeID <T_Arg0>(vm);
+		m_params.data[0].type64 = GetTypeID <T_Arg0>(vm);
 #endif
 #if NUM_PARAMS >= 2
-		m_params.data[1].type = GetTypeID <T_Arg1>(vm);
+		m_params.data[1].type64 = GetTypeID <T_Arg1>(vm);
 #endif
 #if NUM_PARAMS >= 3
-		m_params.data[2].type = GetTypeID <T_Arg2>(vm);
+		m_params.data[2].type64 = GetTypeID <T_Arg2>(vm);
 #endif
 #if NUM_PARAMS >= 4
-		m_params.data[3].type = GetTypeID <T_Arg3>(vm);
+		m_params.data[3].type64 = GetTypeID <T_Arg3>(vm);
 #endif
 #if NUM_PARAMS >= 5
-		m_params.data[4].type = GetTypeID <T_Arg4>(vm);
+		m_params.data[4].type64 = GetTypeID <T_Arg4>(vm);
 #endif
 #if NUM_PARAMS >= 6
-		m_params.data[5].type = GetTypeID <T_Arg5>(vm);
+		m_params.data[5].type64 = GetTypeID <T_Arg5>(vm);
 #endif
 #if NUM_PARAMS >= 7
-		m_params.data[6].type = GetTypeID <T_Arg6>(vm);
+		m_params.data[6].type64 = GetTypeID <T_Arg6>(vm);
 #endif
 #if NUM_PARAMS >= 8
-		m_params.data[7].type = GetTypeID <T_Arg7>(vm);
+		m_params.data[7].type64 = GetTypeID <T_Arg7>(vm);
 #endif
 #if NUM_PARAMS >= 9
-		m_params.data[8].type = GetTypeID <T_Arg8>(vm);
+		m_params.data[8].type64 = GetTypeID <T_Arg8>(vm);
 #endif
 #if NUM_PARAMS >= 10
-		m_params.data[9].type = GetTypeID <T_Arg9>(vm);
+		m_params.data[9].type64 = GetTypeID <T_Arg9>(vm);
 #endif
 
 #if VOID_SPEC
@@ -273,7 +273,10 @@ public:
 #else
 		PackValue(resultValue, &result, vm);
 #endif
-
+		if (! IsStaticType <T_Base>::value)
+		{
+			DestroyValue(&base);
+		}
 		return true;
 	}
 

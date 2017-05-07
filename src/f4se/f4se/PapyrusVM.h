@@ -34,7 +34,7 @@ public:
 	virtual void	RegisterForm(UInt32 typeID, const char * papyrusClassName);
 	virtual void	Unk_08();
 	virtual bool	GetObjectTypeInfo(UInt32 formType, VMObjectTypeInfo ** outTypeInfo);	// Must release outTypeInfo explicitly
-	virtual void	Unk_0A();
+	virtual bool	GetObjectTypeInfoByName(BSFixedString * name, VMObjectTypeInfo ** outTypeInfo); // Must release outTypeInfo explicitly
 	virtual void	Unk_0B();
 	virtual bool	Unk_0C(BSFixedString * typeName0, UInt32 * unk);
 	virtual void	Unk_0D();
@@ -120,9 +120,31 @@ public:
 			_MESSAGE("\t\tinstance: %08X", typeInfo);
 		}
 	};
-	tHashSet<ComplexTypeInfoItem, BSFixedString> m_objectTypes;	// 168
-	tHashSet<ComplexTypeInfoItem, BSFixedString> m_structTypes;	// 198
-	// 1F0 - Another hash set, don't know what this data is
+	class FormTypeName
+	{
+	public:
+		UInt32				typeId;			// 00
+		BSFixedString		name;			// 08
+
+		bool operator==(const FormTypeName & rhs) const	{ return typeId == rhs.typeId; }
+		operator UInt32() const	{ return typeId; }
+
+		static inline UInt32 GetHash(UInt32 * key)
+		{
+			UInt32 hash;
+			CalculateCRC32_32(&hash, (UInt32)*key, 0);
+			return hash;
+		}
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\ttypeId: %d", typeId);
+			_MESSAGE("\t\tname: %s", name.c_str());
+		}
+	};
+	tHashSet<ComplexTypeInfoItem, BSFixedString> m_objectTypes;		// 168
+	tHashSet<ComplexTypeInfoItem, BSFixedString> m_structTypes;		// 198
+	tHashSet<FormTypeName, UInt32> m_typeNames;	// 1F0
 };
 STATIC_ASSERT(offsetof(VirtualMachine, m_objectTypes) == 0x168);
 STATIC_ASSERT(offsetof(VirtualMachine, m_structTypes) == 0x198);

@@ -3,20 +3,22 @@
 #include "f4se/NiObjects.h"
 #include "f4se/GameTypes.h"
 
+class BSRenderData;
+
 // 48
 class NiTexture : public NiObject
 {
 public:
-	BSFixedString	name;			// 10
-	UInt32			unk18;			// 18
-	UInt32			unk1C;			// 1C
-	NiTexture		* prevTexture;	// 20
-	NiTexture		* nextTexture;	// 28
-	UInt64			unk30;			// 30
-	void			* unk38;		// 38
-	UInt16			unk40;			// 40
-	UInt16			unk42;			// 42
-	UInt32			unk44;			// 44
+	BSFixedString	name;				// 10
+	UInt32			unk18;				// 18
+	UInt32			unk1C;				// 1C
+	NiTexture		* prevTexture;		// 20
+	NiTexture		* nextTexture;		// 28
+	UInt64			unk30;				// 30
+	BSRenderData	* rendererData;		// 38
+	UInt16			unk40;				// 40
+	UInt16			unk42;				// 42
+	UInt32			unk44;				// 44
 };
 
 // 10
@@ -37,5 +39,8 @@ public:
 	void * unk10[(0x60 - 0x10) >> 3];	// 10
 
 	MEMBER_FN_PREFIX(BSShaderTextureSet);
-	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C0F70);
+	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C0F80);
 };
+
+typedef NiTexture * (* _CreateTexture)(const BSFixedString & name, UInt8 unk1); // unk1 is true on diffuses?
+extern RelocAddr <_CreateTexture> CreateTexture;

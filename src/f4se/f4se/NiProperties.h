@@ -43,7 +43,7 @@ class BSShaderProperty : public NiShadeProperty
 public:
 	float	unk28;	// 28
 	float	unk2C;	// 2C
-	UInt64	unk30;	// 30
+	UInt64	flags;	// 30
 	UInt64	unk38;	// 38
 	UInt64	unk40;	// 40
 	NiNode	* root;	// 48
@@ -51,6 +51,12 @@ public:
 	BSShaderMaterial	* shaderMaterial;	// 58
 	UInt32	unk60;	// 60
 	float	unk64;	// 64
+
+	enum : UInt64
+	{
+		kShaderFlag_GrayscaleToPalette	= 0x0000080000000ULL,
+		kShaderFlags_Hair				= 0x0400000000000ULL
+	};
 };
 
 // E8
@@ -89,8 +95,10 @@ public:
 	UInt32	unkE4;		// E4
 
 	MEMBER_FN_PREFIX(BSLightingShaderProperty);
-	DEFINE_MEMBER_FN(MakeValidForRendering, void, 0x026E3720, BSGeometry * geometry); // previously InvalidateShader
+	DEFINE_MEMBER_FN(MakeValidForRendering, void, 0x026E3730, BSGeometry * geometry); // previously InvalidateShader
 	DEFINE_MEMBER_FN(ApplyMaterial, bool, 0x00053690); // Calls BSShaderProperty::SetMaterial
-	DEFINE_MEMBER_FN(LoadTextureSet, void, 0x026E3DB0, UInt32 unk1); // unk1 usually 0, called after material Releases textures (previously InvalidateTextures)
+	DEFINE_MEMBER_FN(SetMaterial, bool, 0x026D3120, BSShaderMaterial * material, bool unk1);
+	DEFINE_MEMBER_FN(SetFlag, void, 0x026D2FA0, UInt8 flags, bool enabled); // sets or unsets particular flags
+	DEFINE_MEMBER_FN(LoadTextureSet, void, 0x026E3DC0, UInt32 unk1); // unk1 usually 0, called after material Releases textures (previously InvalidateTextures)
 };
 STATIC_ASSERT(sizeof(BSLightingShaderProperty) == 0xE8);
