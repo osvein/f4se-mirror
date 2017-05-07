@@ -1,6 +1,6 @@
 #include "f4se/GameStreams.h"
 
-RelocAddr <_CreateFileStream> CreateFileStream(0x00533220);
+RelocAddr <_CreateFileStream> CreateFileStream(0x005333D0);
 
 BSResourceNiBinaryStream::BSResourceNiBinaryStream()
 {
@@ -29,7 +29,7 @@ void BSResourceNiBinaryStream::Seek(SInt64 delta)
 
 UInt64 BSResourceNiBinaryStream::GetOffset(void)
 {
-	return CALL_MEMBER_FN(this, GetOffset)();
+	return offset;
 }
 
 SInt64 BSResourceNiBinaryStream::Unk_04(void * unk1)

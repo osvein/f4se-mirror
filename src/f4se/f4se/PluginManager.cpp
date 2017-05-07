@@ -55,7 +55,7 @@ static const F4SEPapyrusInterface g_F4SEPapyrusInterface =
 
 static const F4SESerializationInterface	g_F4SESerializationInterface =
 {
-	F4SESerializationInterface::kVersion,
+	F4SESerializationInterface::kInterfaceVersion,
 
 	Serialization::SetUniqueID,
 
@@ -72,6 +72,15 @@ static const F4SESerializationInterface	g_F4SESerializationInterface =
 	Serialization::ReadRecordData,
 	Serialization::ResolveHandle,
 	Serialization::ResolveFormId
+};
+
+#include "Hooks_Threads.h"
+
+static const F4SETaskInterface	g_F4SETaskInterface =
+{
+	F4SETaskInterface::kInterfaceVersion,
+
+	TaskInterface::AddTask
 };
 
 
@@ -167,6 +176,9 @@ void * PluginManager::QueryInterface(UInt32 id)
 #endif
 	case kInterface_Serialization:
 		result = (void *)&g_F4SESerializationInterface;
+		break;
+	case kInterface_Task:
+		result = (void *)&g_F4SETaskInterface;
 		break;
 	default:
 		_WARNING("unknown QueryInterface %08X", id);

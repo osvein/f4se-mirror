@@ -4,6 +4,7 @@ typedef UInt32	PluginHandle;	// treat this as an opaque type
 
 class GFxMovieView;
 class GFxValue;
+class ITaskDelegate;
 
 enum
 {
@@ -17,6 +18,7 @@ enum
 	kInterface_Scaleform,
 	kInterface_Papyrus,
 	kInterface_Serialization,
+	kInterface_Task,
 	kInterface_Max,
 };
 
@@ -138,7 +140,7 @@ struct F4SESerializationInterface
 {
 	enum
 	{
-		kVersion = 1,
+		kInterfaceVersion = 1,
 	};
 	
 	typedef void (* EventCallback)(const F4SESerializationInterface * intfc);
@@ -175,6 +177,17 @@ struct F4SEPapyrusInterface
 
 	typedef bool (* RegisterFunctions)(VirtualMachine * vm);
 	bool	(* Register)(RegisterFunctions callback);
+};
+
+struct F4SETaskInterface
+{
+	enum
+	{
+		kInterfaceVersion = 1
+	};
+	UInt32	interfaceVersion;
+
+	void	(* AddTask)(ITaskDelegate * task);
 };
 
 struct PluginInfo

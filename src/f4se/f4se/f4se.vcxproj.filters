@@ -197,6 +197,9 @@
     <ClCompile Include="Hooks_Debug.cpp">
       <Filter>hooks</Filter>
     </ClCompile>
+    <ClCompile Include="Hooks_Threads.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -439,6 +442,9 @@
       <Filter>internal</Filter>
     </ClInclude>
     <ClInclude Include="Hooks_Debug.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Threads.h">
       <Filter>hooks</Filter>
     </ClInclude>
   </ItemGroup>

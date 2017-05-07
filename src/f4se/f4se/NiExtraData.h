@@ -44,7 +44,7 @@ public:
 protected:
 	// Fills the vertex data from the original object's vertex data in NiPoint3 layout
 	MEMBER_FN_PREFIX(BSFaceGenBaseMorphExtraData);
-	DEFINE_MEMBER_FN(ctor, BSFaceGenBaseMorphExtraData*, 0x00681A50, BSTriShape * shape);
+	DEFINE_MEMBER_FN(ctor, BSFaceGenBaseMorphExtraData*, 0x00681C00, BSTriShape * shape);
 };
 
 extern RelocAddr<uintptr_t> s_BSFaceGenBaseMorphExtraDataVtbl;

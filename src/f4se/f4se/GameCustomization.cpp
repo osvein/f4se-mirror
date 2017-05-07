@@ -2,12 +2,17 @@
 #include "f4se/GameAPI.h"
 
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+B5
-RelocPtr <CharacterCreation*> g_characterCreation(0x0590C4E0);	// array
+RelocPtr <CharacterCreation*> g_characterCreation(0x0590D4E0);	// array
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+AF
-RelocPtr <UInt32> g_characterIndex(0x0590C4B8);
+RelocPtr <UInt32> g_characterIndex(0x0590D4B8);
 
 // 89B16A159EF66C1743643F2F457380448C4803F0+18
-RelocPtr <BSFaceGenManager*> g_faceGenManager(0x05775200);
+RelocPtr <BSFaceGenManager*> g_faceGenManager(0x05776200);
+
+// E5618E306F15B8DF84D22F68B984045D0DD91165+29
+RelocPtr <TESNPC*> g_customizationDummy1(0x05880E78);	// Either Nora or Nate's dummy actors
+// E5618E306F15B8DF84D22F68B984045D0DD91165+32
+RelocPtr <TESNPC*> g_customizationDummy2(0x05880E40);	// Either Nora or Nate's dummy actors
 
 RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A3790);
 RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A2780);

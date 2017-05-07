@@ -14,6 +14,7 @@
 #include "Hooks_SaveLoad.h"
 #include "Hooks_Input.h"
 #include "Hooks_Debug.h"
+#include "Hooks_Threads.h"
 #include "PluginManager.h"
 #include "InternalSerialization.h"
 
@@ -79,6 +80,7 @@ void F4SE_Initialize(void)
 		Hooks_GameData_Init();
 		Hooks_SaveLoad_Init();
 		Hooks_Input_Init();
+		Hooks_Threads_Init();
 
 		g_pluginManager.Init();
 
@@ -90,6 +92,7 @@ void F4SE_Initialize(void)
 		Hooks_GameData_Commit();
 		Hooks_SaveLoad_Commit();
 		Hooks_Input_Commit();
+		Hooks_Threads_Commit();
 
 		Init_CoreSerialization_Callbacks();
 

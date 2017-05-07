@@ -63,3 +63,4 @@ extern const F4SESerializationInterface	g_F4SESerializationInterface;
 extern const F4SEPapyrusInterface		g_F4SEPapyrusInterface;
 extern const F4SEScaleformInterface		g_F4SEScaleformInterface;
 extern const F4SEMessagingInterface		g_F4SEMessagingInterface;
+extern const F4SETaskInterface			g_F4SETaskInterface;

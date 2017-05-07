@@ -41,7 +41,8 @@ public:
 		virtual void Process(ModelData * modelData, const char * modelName, NiAVObject ** root, UInt32 * typeOut) override { CALL_MEMBER_FN(this, Impl_Process)(modelData, modelName, root, typeOut); }
 
 		MEMBER_FN_PREFIX(TESProcessor);
-		DEFINE_MEMBER_FN(dtor, void, 0x01C607B0);
+		// ??_7BSModelProcessor@BSModelDB@@6B@
+		DEFINE_MEMBER_FN(dtor, void, 0x01C61140);
 		DEFINE_MEMBER_FN(Impl_Process, void, 0x00136780, ModelData * modelData, const char * modelName, NiAVObject ** root, UInt32 * typeOut);
 	};
 };

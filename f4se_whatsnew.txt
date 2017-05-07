@@ -1,3 +1,6 @@
+0.2.3
+- support for runtime 1.7.10
+
 0.2.2
 - fixed a crash on savegame load
 
