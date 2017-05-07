@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ResourceCompile Include="..\f4se_common\f4se_version.rc" />
@@ -137,6 +137,9 @@
     <ClCompile Include="Hooks_SaveLoad.cpp">
       <Filter>hooks</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusVM.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -162,6 +165,12 @@
     </Filter>
     <Filter Include="scaleform">
       <UniqueIdentifier>{bb1e4e23-e1ba-4913-a905-60ff75e60297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="papyrus">
+      <UniqueIdentifier>{bf19db67-c2c6-4319-9992-f13bbe743fdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="papyrus\vm">
+      <UniqueIdentifier>{618e2d88-ea94-40ab-a796-2f7d4ab270ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +308,9 @@
     </ClInclude>
     <ClInclude Include="Hooks_SaveLoad.h">
       <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusVM.h">
+      <Filter>papyrus\vm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

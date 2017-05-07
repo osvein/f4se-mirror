@@ -1,6 +1,6 @@
 #include "f4se/GameMenus.h"
 
-RelocPtr <UI*> g_ui(0x05719F58);
+RelocPtr <UI*> g_ui(0x0571AF58);
 
 bool UI::IsMenuOpen(BSFixedString * menuName)
 {

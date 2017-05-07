@@ -1,8 +1,8 @@
 #include "f4se/GameInput.h"
 
-RelocPtr <InputEventTable*> g_inputEventTable(0x05993540);
-RelocPtr <InputDeviceManager*> g_inputDeviceMgr(0x05993148);
-RelocPtr <InputManager*> g_inputMgr(0x0590DDD0);
+RelocPtr <InputEventTable*> g_inputEventTable(0x05994540);
+RelocPtr <InputDeviceManager*> g_inputDeviceMgr(0x05994148);
+RelocPtr <InputManager*> g_inputMgr(0x0590EDD0);
 
 UInt8 InputManager::AllowTextInput(bool allow)
 {

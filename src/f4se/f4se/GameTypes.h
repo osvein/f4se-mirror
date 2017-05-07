@@ -63,10 +63,10 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01ADE200, const char * buf);
-		DEFINE_MEMBER_FN(wctor, Ref *, 0x01ADF0D0, const wchar_t * buf);
-		DEFINE_MEMBER_FN(Set, Ref *, 0x001ADE330, const char * buf);
-		DEFINE_MEMBER_FN(Release, void, 0x01ADF490);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01ADE600, const char * buf);
+		DEFINE_MEMBER_FN(wctor, Ref *, 0x01ADF4D0, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01ADE730, const char * buf);
+		DEFINE_MEMBER_FN(Release, void, 0x01ADF890);
 
 		Ref() :data(NULL) { }
 		Ref(const char * buf);
