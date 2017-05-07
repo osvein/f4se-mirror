@@ -1,6 +1,6 @@
 #include "f4se/GameData.h"
 
-RelocPtr <DataHandler*> g_dataHandler(0x0570B670);
+RelocPtr <DataHandler*> g_dataHandler(0x05718770);
 
 class LoadedModFinder
 {

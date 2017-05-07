@@ -4,8 +4,8 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	1
-#define F4SE_VERSION_INTEGER_BETA	11
-#define F4SE_VERSION_VERSTRING		"0, 0, 1, 11"
+#define F4SE_VERSION_INTEGER_BETA	12
+#define F4SE_VERSION_VERSTRING		"0, 0, 1, 12"
 #define F4SE_VERSION_PADDEDSTRING	"0001"
 #define F4SE_VERSION_RELEASEIDX		1
 
@@ -25,6 +25,7 @@
 #define RUNTIME_VERSION_1_5_141	MAKE_EXE_VERSION(1, 5, 141)	// 0x010508D0	beta - survival mode improvements
 #define RUNTIME_VERSION_1_5_147	MAKE_EXE_VERSION(1, 5, 147)	// 0x01050930	beta - survival mode improvements
 #define RUNTIME_VERSION_1_5_151	MAKE_EXE_VERSION(1, 5, 151)	// 0x01050970	beta - survival mode improvements
+#define RUNTIME_VERSION_1_5_154	MAKE_EXE_VERSION(1, 5, 154)	// 0x010509A0	beta - public editor beta
 
 #define PACKED_F4SE_VERSION		MAKE_EXE_VERSION(F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA)
 

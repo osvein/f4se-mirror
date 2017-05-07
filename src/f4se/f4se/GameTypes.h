@@ -63,10 +63,10 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01AD5540, const char * buf);
-		DEFINE_MEMBER_FN(wctor, Ref *, 0x01ADE310, const wchar_t * buf);
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01ADD570, const char * buf);
-		DEFINE_MEMBER_FN(Release, void, 0x01ADE6D0);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01ADE200, const char * buf);
+		DEFINE_MEMBER_FN(wctor, Ref *, 0x01ADF0D0, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x001ADE330, const char * buf);
+		DEFINE_MEMBER_FN(Release, void, 0x01ADF490);
 
 		Ref() :data(NULL) { }
 		Ref(const char * buf);
@@ -670,12 +670,12 @@ class tHashSet
 
 	_Entry * GetEntry(UInt32 hash) const
 	{
-		return (_Entry*) (((UInt32) m_entries) + sizeof(_Entry) * (hash & (m_size - 1)));
+		return (_Entry*) (((uintptr_t) m_entries) + sizeof(_Entry) * (hash & (m_size - 1)));
 	}
 
 	_Entry * GetEntryAt(UInt32 index) const
 	{
-		return (_Entry*) (((UInt32) m_entries) + sizeof(_Entry) * index);
+		return (_Entry*) (((uintptr_t) m_entries) + sizeof(_Entry) * index);
 	}
 
 	_Entry * NextFreeEntry(void)
