@@ -1,7 +1,7 @@
 #include "f4se/GameForms.h"
 #include "f4se/GameUtilities.h"
 
-RelocAddr <_LookupFormByID> LookupFormByID(0x0014A500);
+RelocAddr <_LookupFormByID> LookupFormByID(0x0014C530);
 
 BGSCharacterTint::Template::Entry * TESRace::CharGenData::GetTemplateByIndex(UInt16 index)
 {

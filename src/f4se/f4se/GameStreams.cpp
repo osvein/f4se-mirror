@@ -1,6 +1,6 @@
 #include "f4se/GameStreams.h"
 
-RelocAddr <_CreateFileStream> CreateFileStream(0x0051D5A0);
+RelocAddr <_CreateFileStream> CreateFileStream(0x005219A0);
 
 BSResourceNiBinaryStream::BSResourceNiBinaryStream()
 {

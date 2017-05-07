@@ -13,6 +13,7 @@
 IDebugLog gLog;
 
 static void PrintModuleInfo(UInt32 procID);
+static void PrintProcessInfo();
 
 int main(int argc, char ** argv)
 {
@@ -312,6 +313,7 @@ int main(int argc, char ** argv)
 			Sleep(1000 * 3);	// wait 3 seconds
 
 			PrintModuleInfo(procInfo.dwProcessId);
+			PrintProcessInfo();
 		}
 
 		if(g_options.m_waitForClose)
@@ -352,5 +354,36 @@ static void PrintModuleInfo(UInt32 procID)
 	else
 	{
 		_ERROR("PrintModuleInfo: CreateToolhelp32Snapshot failed (%d)", GetLastError());
+	}
+}
+
+static void PrintProcessInfo()
+{
+	HANDLE	snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if(snap != INVALID_HANDLE_VALUE)
+	{
+		PROCESSENTRY32	proc;
+
+		proc.dwSize = sizeof(PROCESSENTRY32);
+		
+		if(Process32First(snap, &proc))
+		{
+			do
+			{
+				_MESSAGE("%s", proc.szExeFile);
+				proc.dwSize = sizeof(PROCESSENTRY32);
+			}
+			while (Process32Next(snap, &proc));
+		}
+		else
+		{
+			_ERROR("PrintProcessInfo: Process32First failed (%d)", GetLastError());
+		}
+
+		CloseHandle(snap);
+	}
+	else
+	{
+		_ERROR("PrintProcessInfo: CreateToolhelp32Snapshot failed (%d)", GetLastError());
 	}
 }

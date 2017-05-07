@@ -6,7 +6,7 @@
 #include "f4se/PluginManager.h"
 
 typedef UInt64 (* _InitGameDataThread_Run_Original)(InitGameDataThread * thread);
-RelocAddr <_InitGameDataThread_Run_Original> InitGameDataThread_Run_Original(0x00CFAA60);
+RelocAddr <_InitGameDataThread_Run_Original> InitGameDataThread_Run_Original(0x00D03500);
 
 UInt64 InitGameDataRun_Hook(InitGameDataThread * thread)
 {
@@ -22,7 +22,7 @@ void Hooks_Threads_Init()
 
 void Hooks_Threads_Commit()
 {
-	RelocAddr <uintptr_t> InitGameDataThread_Run(0x02BE3068 + 8); // InitGameDataThread vtable func1
+	RelocAddr <uintptr_t> InitGameDataThread_Run(0x02BEE4C8 + 8); // InitGameDataThread vtable func1
 
 	SafeWrite64(InitGameDataThread_Run.GetUIntPtr(), (UInt64)InitGameDataRun_Hook);
 }
