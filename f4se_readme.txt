@@ -9,11 +9,11 @@ Compatibility:
 
 F4SE will support the latest version of Fallout available on Steam, and _only_ this version. When a new version is released, we'll update as soon as possible: please be patient. Don't email asking when the update will be ready; we already know the new version is out. The editor does not currently need modification, however when available a custom set of .pex/psc files must be installed.
 
-This version is compatible with runtime 1.3.45. You can ignore any part of the version number after those components; they're not relevant for compatibility purposes.
+This version is compatible with runtime 1.3.47. You can ignore any part of the version number after those components; they're not relevant for compatibility purposes.
 
 [ Installation ]
 
-1. Copy f4se_1_3_45.dll, f4se_loader.exe, and f4se_steam_loader.dll to your Fallout installation folder. This is usually C:\Program Files (x86)\Steam\SteamApps\common\Fallout 4\, but if you have installed to a custom Steam library then you will need to find this folder yourself.
+1. Copy f4se_1_3_47.dll, f4se_loader.exe, and f4se_steam_loader.dll to your Fallout installation folder. This is usually C:\Program Files (x86)\Steam\SteamApps\common\Fallout 4\, but if you have installed to a custom Steam library then you will need to find this folder yourself.
 
 2. Launch the game by running the copy of f4se_loader.exe that you placed in the Fallout installation folder.
 

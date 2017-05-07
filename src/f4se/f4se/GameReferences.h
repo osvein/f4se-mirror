@@ -344,6 +344,6 @@ public:
 	BSTEventSink<PerkEntryUpdatedEvent::PerkValueEvents>	perkValueEvents;	// 450
 
 	UInt64	unk458[(0xC88-0x458)/8];	// 458
-	tArray<BGSCharacterTint::Entry*> * tints;
+	tArray<BGSCharacterTint::Entry*> * tints;	// C88
 	UInt64	unkC90[(0xD90-0xC90)/8];	// C90
 };

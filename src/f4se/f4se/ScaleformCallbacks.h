@@ -70,3 +70,11 @@ class BSGFxFunctionHandler : public GFxFunctionHandler
 public:
 	virtual ~BSGFxFunctionHandler();
 };
+
+class SWFToCodeFunctionHandler : public BSGFxFunctionHandler
+{
+public:
+	virtual ~SWFToCodeFunctionHandler();
+
+	virtual void Unk_02(void);
+};

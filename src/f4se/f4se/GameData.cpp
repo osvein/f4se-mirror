@@ -1,3 +1,3 @@
 #include "f4se/GameData.h"
 
-RelocPtr <DataHandler*> g_dataHandler(0x05973750);
+RelocPtr <DataHandler*> g_dataHandler(0x05974750);

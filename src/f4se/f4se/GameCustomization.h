@@ -10,8 +10,6 @@ class BGSColorForm;
 class BGSTextureSet;
 class ActorValueInfo;
 
-// 146FC3190 -> 9238D200
-
 class BGSCharacterTint
 {
 public:
@@ -27,7 +25,7 @@ public:
 			virtual void Unk_01();
 			virtual void Unk_02();
 			virtual void Unk_03();
-			virtual void Unk_04() = 0;
+			virtual void Load(void * unk1) = 0; // Loads template from plugin stream
 
 			BSFixedString	name;		// 08
 			void			* unk10;	// 10
@@ -44,7 +42,7 @@ public:
 			virtual void Unk_01();
 			virtual void Unk_02();
 			virtual void Unk_03();
-			virtual void Unk_04();
+			virtual void Load(void * unk1);
 
 			void	* unk20;	// 20
 			UInt32	unk28;		// 28
@@ -58,7 +56,7 @@ public:
 			virtual void Unk_01();
 			virtual void Unk_02();
 			virtual void Unk_03();
-			virtual void Unk_04();
+			virtual void Load(void * unk1);
 
 			struct ColorData
 			{
@@ -83,12 +81,13 @@ public:
 			virtual void Unk_01();
 			virtual void Unk_02();
 			virtual void Unk_03();
-			virtual void Unk_04();
+			virtual void Load(void * unk1);
 
 			BSFixedString texturePath;	// 20
-			void	* unk28;	// 28
-			void	* unk30;	// 30
-			UInt64	unk38;		// 38
+			BSFixedString unk28;	// 28
+			BSFixedString unk30;	// 30
+			UInt32	unk38;		// 38
+			UInt32	unk3C;		// 3C
 		};
 	};
 
@@ -102,7 +101,7 @@ public:
 		virtual void Unk_02(void);
 		virtual void Unk_03(void);
 		virtual void Unk_04(void);
-		virtual void Unk_05(void) = 0;
+		virtual UInt32 GetType(void) = 0;
 		virtual void Unk_06(void);
 
 		Template * templateEntry;	// 08
@@ -122,7 +121,7 @@ public:
 		virtual void Unk_02(void);
 		virtual void Unk_03(void);
 		virtual void Unk_04(void);
-		virtual void Unk_05(void);
+		virtual UInt32 GetType(void);	// 0
 		virtual void Unk_06(void);
 	};
 
@@ -136,7 +135,7 @@ public:
 		virtual void Unk_02(void);
 		virtual void Unk_03(void);
 		virtual void Unk_04(void);
-		virtual void Unk_05(void);
+		virtual UInt32 GetType(void);	// 1
 		virtual void Unk_06(void);
 
 		SInt32	unk18;	// 18
@@ -154,7 +153,7 @@ public:
 		virtual void Unk_02(void);
 		virtual void Unk_03(void);
 		virtual void Unk_04(void);
-		virtual void Unk_05(void);
+		virtual UInt32 GetType(void);	// 2
 		virtual void Unk_06(void);
 	};
 

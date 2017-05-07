@@ -163,11 +163,11 @@ public:
 	tArray<BGSCharacterTint::Entry*> * tints;			// 300
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00580EC0);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005923F0);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x00592500);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x00592590);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x00574FA0); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x00580ED0);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x00592400);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x00592510);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005925A0);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x00574FB0); // npc->actorData.unk08 & 1
 	
 };
 STATIC_ASSERT(offsetof(TESNPC, npcClass) == 0x240);
