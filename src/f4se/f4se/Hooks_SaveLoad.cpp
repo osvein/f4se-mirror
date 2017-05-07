@@ -15,7 +15,7 @@ typedef void (* _SaveGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UIn
 RelocAddr <_SaveGame> SaveGame(0x00CC0AC0);
 _SaveGame SaveGame_Original = nullptr;
 
-typedef bool (* _LoadGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1);
+typedef bool (* _LoadGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1, void * unk2);
 RelocAddr <_LoadGame> LoadGame(0x00CC0FC0);
 _LoadGame LoadGame_Original = nullptr;
 
@@ -36,7 +36,7 @@ void SaveGame_Hook(BGSSaveLoadGame * saveLoadMgr, const char * saveName, UInt8 u
 	Serialization::SetSaveName(NULL);
 }
 
-bool LoadGame_Hook(BGSSaveLoadGame * saveLoadMgr, const char * saveName, UInt8 unk1)
+bool LoadGame_Hook(BGSSaveLoadGame * saveLoadMgr, const char * saveName, UInt8 unk1, void * unk2)
 {
 #ifdef _DEBUG
 	_MESSAGE("Executing BGSSaveLoadGame::LoadGame_Hook. saveName: %s", saveName);
@@ -44,7 +44,7 @@ bool LoadGame_Hook(BGSSaveLoadGame * saveLoadMgr, const char * saveName, UInt8 u
 
 	Serialization::SetSaveName(saveName);
 	PluginManager::Dispatch_Message(0, F4SEMessagingInterface::kMessage_PreLoadGame, (void*)saveName, strlen(saveName), NULL);
-	bool result = LoadGame_Original(saveLoadMgr, saveName, unk1);
+	bool result = LoadGame_Original(saveLoadMgr, saveName, unk1, unk2);
 	PluginManager::Dispatch_Message(0, F4SEMessagingInterface::kMessage_PostLoadGame, (void*)result, 1, NULL);
 	Serialization::SetSaveName(NULL);
 	return result;
