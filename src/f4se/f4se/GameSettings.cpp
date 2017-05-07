@@ -4,7 +4,7 @@
 // 5B1FD95B3A1729A1781BED06D47E1A47EB6D89F2+91
 RelocPtr <INISettingCollection *> g_iniSettings(0x05D76B98);
 // 239A2F4B85F2D36A7E4E77D681108A197210AE0B+1C3
-RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x05A00958);
+RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x05A01958);
 // ??_7RegSettingCollection@@6B@
 RelocPtr <RegSettingCollection *> g_regSettings(0x05F37430);
 

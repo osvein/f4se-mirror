@@ -8,11 +8,11 @@
 #include "f4se/PluginManager.h"
 
 typedef UInt64 (* _InitGameDataThread_Run_Original)(InitGameDataThread * thread);
-RelocAddr <_InitGameDataThread_Run_Original> InitGameDataThread_Run_Original(0x00D358B0);
+RelocAddr <_InitGameDataThread_Run_Original> InitGameDataThread_Run_Original(0x00D358E0);
 
 typedef void (* _GameDataReady_Original)(bool isReady);
 // writes to g_isGameDataReady
-RelocAddr <_GameDataReady_Original> GameDataReady_Original(0x0082D210);
+RelocAddr <_GameDataReady_Original> GameDataReady_Original(0x0082D240);
 
 UInt64 InitGameDataRun_Hook(InitGameDataThread * thread)
 {

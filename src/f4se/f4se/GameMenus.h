@@ -67,7 +67,7 @@ public:
 
 
 	MEMBER_FN_PREFIX(LooksMenu);
-	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B3EB40); // This function updates all the internals from the current character
+	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B3EB70); // This function updates all the internals from the current character
 																 // It's followed by a call to onCommitCharacterPresetChange
 };
 STATIC_ASSERT(offsetof(LooksMenu, nextBoneID) == 0x150);
@@ -120,8 +120,8 @@ public:
 
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02017750, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02015BC0, BSFixedString * name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02017780, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02015BF0, BSFixedString * name);
 
 	UInt64	unk08[(0x190-0x08)/8];	// 458
 	tArray<IMenu*>	menuStack;		// 190

@@ -1,3 +1,3 @@
 #include "f4se/BSGeometry.h"
 
-RelocAddr <_ConvertHalfToFloat> ConvertHalfToFloat(0x00691D80);
+RelocAddr <_ConvertHalfToFloat> ConvertHalfToFloat(0x00691DB0);
