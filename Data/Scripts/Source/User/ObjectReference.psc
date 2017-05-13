@@ -1167,6 +1167,37 @@ int Property Motion_Keyframed = 2 AutoReadOnly
 
 
 
-; F4SE additions built 2017-02-07 05:37:32.528000 UTC
+; F4SE additions built 2017-05-10 00:55:06.671000 UTC
 ; Returns all the mods for this reference
 ObjectMod[] Function GetAllMods() native
+
+; If this object is a BendableSpline it will link to the two ObjectReferences it is connect to, otherwise it will link to other BendableSplines
+ObjectReference[] Function GetConnectedObjects() native
+
+; Attachs a BendableSpline to two other references
+; Restrictions:
+;	- akRef must not be None
+;	- akRef must not be the same as the caller (i.e. no wire to itself)
+;	- Spline must be a BendableSpline (None will use FormID 0001D971)
+;	- Calling object must be linked to a Workshop (Uses keyword 00054BA6)
+;	- Calling object must not be another BendableSpline (i.e. no wire to wire)
+; Returns the newly created wire ref (The wire ref is disabled)
+ObjectReference Function AttachWire(ObjectReference akRef, Form spline = None) native
+
+; Convenience function to AttachWire to both create the wire and enable it
+ObjectReference Function CreateWire(ObjectReference akRef, Form spline = None)
+	ObjectReference wireRef = self.AttachWire(akRef, spline)
+	If wireRef
+		wireRef.EnableNoWait()
+	Endif
+	return wireRef
+EndFunction
+
+; Scraps this object reference and disconnects any wires if necessary
+; This function is debug only as it is not ready for release, it scraps
+; but it has problems unpowering connected objects, also doesn't give
+; the materials back yet
+Function Scrap() native DebugOnly
+
+; Returns the display name of this reference
+string Function GetDisplayName() native

@@ -2,6 +2,8 @@
 
 #include "f4se_common/Relocation.h"
 #include "f4se_common/Utilities.h"
+
+#include "f4se/GameUtilities.h"
 #include "f4se/GameTypes.h"
 
 class Actor;
@@ -302,6 +304,24 @@ public:
 		UInt32					unk8C;			// 8C
 	};
 
+	// 10
+	struct MorphIntensity
+	{
+		TESNPC *	npc;			// 00
+		float		morphIntensity;	// 08
+
+		operator TESNPC*() const					{ return npc; }
+
+		static inline UInt32 GetHash(TESNPC ** key)
+		{
+			UInt32 hash;
+			CalculateCRC32_64(&hash, (UInt64)*key, 0);
+			return hash;
+		}
+
+		void Dump(void);
+	};
+
 	// 48+
 	struct CharGenData
 	{
@@ -437,3 +457,5 @@ extern RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures;
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl;
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl;
 extern RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl;
+
+extern RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensityMap;

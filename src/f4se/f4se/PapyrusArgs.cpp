@@ -1,5 +1,8 @@
 #include "PapyrusArgs.h"
 
+#include "f4se/GameReferences.h"
+#include "f4se/GameExtraData.h"
+
 template <> void PackValue <void>(VMValue * dst, void * src, VirtualMachine * vm)
 {
 	dst->SetNone();
@@ -63,6 +66,54 @@ void BindID(VMIdentifier ** identifier, void * srcData, VirtualMachine * vm, IOb
 		typeInfo->Release();
 }
 
+bool GetIdentifier(VMValue * dst, UInt64 handle, VMObjectTypeInfo * typeInfo, VirtualMachine * vm)
+{
+	dst->SetNone();
+
+	if(!typeInfo) return false;
+
+	IObjectHandlePolicy	* handlePolicy = vm->GetHandlePolicy();
+	VMIdentifier	* identifier = NULL;
+
+	// find existing identifier
+	if(vm->GetObjectIdentifier(handle, typeInfo->m_typeName, 0, &identifier, 0))
+	{
+		// copy the identifier out
+		if(identifier)
+		{
+			VMValue	tempValue;
+			tempValue.SetComplexType(typeInfo);
+			CALL_MEMBER_FN(dst, Set)(&tempValue);
+			dst->SetIdentifier(&identifier);
+		}
+
+		// release our reference
+		if(identifier)
+		{
+			if(!identifier->DecrementLock())
+			{
+				identifier->Destroy();
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool GetIdentifier(VMValue * dst, UInt64 handle, const BSFixedString * typeName, VirtualMachine * vm)
+{
+	VMObjectTypeInfo	* typeInfo = nullptr;
+
+	// get class info
+	if(vm->GetObjectTypeInfoByName(typeName, &typeInfo))
+		if(typeInfo)
+			typeInfo->Release();
+
+	return GetIdentifier(dst, handle, typeInfo, vm);
+}
+
 void PackHandle(VMValue * dst, void * src, UInt32 typeID, VirtualMachine * vm)
 {
 	dst->SetNone();
@@ -118,7 +169,7 @@ void PackHandle(VMValue * dst, void * src, UInt32 typeID, VirtualMachine * vm)
 
 template <> void UnpackValue <float>(float * dst, VMValue * src)
 {
-	switch(src->type)
+	switch(src->type.value)
 	{
 	case VMValue::kType_Int:
 		*dst = src->data.i;
@@ -140,7 +191,7 @@ template <> void UnpackValue <float>(float * dst, VMValue * src)
 
 template <> void UnpackValue <UInt32>(UInt32 * dst, VMValue * src)
 {
-	switch(src->type)
+	switch(src->type.value)
 	{
 	case VMValue::kType_Int:
 		*dst = src->data.u;
@@ -162,7 +213,7 @@ template <> void UnpackValue <UInt32>(UInt32 * dst, VMValue * src)
 
 template <> void UnpackValue <SInt32>(SInt32 * dst, VMValue * src)
 {
-	switch(src->type)
+	switch(src->type.value)
 	{
 	case VMValue::kType_Int:
 		*dst = src->data.u;
@@ -184,7 +235,7 @@ template <> void UnpackValue <SInt32>(SInt32 * dst, VMValue * src)
 
 template <> void UnpackValue <bool>(bool * dst, VMValue * src)
 {
-	switch(src->type)
+	switch(src->type.value)
 	{
 	case VMValue::kType_Int:
 		*dst = src->data.u != 0;
@@ -208,7 +259,7 @@ template <> void UnpackValue <BSFixedString>(BSFixedString * dst, VMValue * src)
 {
 	StringCache::Entry * entry = NULL;
 
-	if(src->type == VMValue::kType_String)
+	if(src->type.value == VMValue::kType_String)
 		entry = src->data.str;
 	
 	CALL_MEMBER_FN(dst, Set)(entry ? entry->Get<char>() : "");
@@ -220,6 +271,11 @@ template <> void UnpackValue <VMVariable>(VMVariable * dst, VMValue * src)
 }
 
 template <> void UnpackValue <VMObject>(VMObject * dst, VMValue * src)
+{
+	dst->UnpackObject(src);
+}
+
+template <> void UnpackValue <VMRefOrInventoryObj>(VMRefOrInventoryObj * dst, VMValue * src)
 {
 	dst->UnpackObject(src);
 }
@@ -257,6 +313,11 @@ template <> void UnpackValue <VMArray<VMVariable>>(VMArray<VMVariable> * dst, VM
 template <> void UnpackValue <VMArray<VMObject>>(VMArray<VMObject> * dst, VMValue * src)
 {
 	UnpackArray(dst, src, GetTypeID<VMArray<VMObject>>((*g_gameVM)->m_virtualMachine));
+}
+
+template <> void UnpackValue <VMArray<VMRefOrInventoryObj>>(VMArray<VMRefOrInventoryObj> * dst, VMValue * src)
+{
+	UnpackArray(dst, src, GetTypeID<VMArray<VMRefOrInventoryObj>>((*g_gameVM)->m_virtualMachine));
 }
 
 template <> void UnpackValue(VMObject ** dst, VMValue * src)
@@ -314,6 +375,16 @@ template <> UInt64 GetTypeID <VMArray<VMObject>>(VirtualMachine * vm)
 	return GetTypeIDFromFormTypeID(VMObject::kTypeID, vm) | VMValue::kType_Identifier;
 }
 
+template <> UInt64 GetTypeID <VMRefOrInventoryObj>(VirtualMachine * vm)
+{
+	return GetTypeIDFromFormTypeID(VMRefOrInventoryObj::kTypeID, vm);
+}
+
+template <> UInt64 GetTypeID <VMArray<VMRefOrInventoryObj>>(VirtualMachine * vm)
+{
+	return GetTypeIDFromFormTypeID(VMRefOrInventoryObj::kTypeID, vm) | VMValue::kType_Identifier;
+}
+
 UInt64 GetTypeIDFromFormTypeID(UInt32 formTypeID, VirtualMachine * vm)
 {
 	UInt64 result = 0;
@@ -339,4 +410,53 @@ UInt64 GetTypeIDFromStructName(const char * name, VirtualMachine * vm)
 	}
 
 	return result;
+}
+
+TESObjectREFR * VMRefOrInventoryObj::GetObjectReference()
+{
+	return m_refData.refr;
+}
+
+bool VMRefOrInventoryObj::GetExtraData(TESForm ** baseForm, ExtraDataList ** extraData)
+{
+	TESObjectREFR * refr = m_refData.refr;
+	if(refr) {
+		*baseForm = refr->baseForm;
+		*extraData = refr->extraDataList;
+		return true;
+	}
+
+	TESObjectREFR * owner = m_refData.owner;
+	if(!owner)
+		return false;
+
+	BGSInventoryList * inventoryList = owner->inventoryList;
+	if(inventoryList)
+		return false;
+
+	for(UInt32 i = 0; i < inventoryList->items.count; i++)
+	{
+		BGSInventoryItem item;
+		inventoryList->items.GetNthItem(i, item);
+		if(!item.stack)
+			continue;
+
+		*baseForm = item.form;
+
+		item.stack->Visit([&](BGSInventoryItem::Stack * stack)
+		{
+			ExtraDataList * stackDataList = stack->extraData;
+			if(stackDataList) {
+				ExtraUniqueID * extraUID = static_cast<ExtraUniqueID*>(stackDataList->GetByType(kExtraData_UniqueID));
+				if(extraUID && extraUID->uniqueId == m_refData.uniqueId) {
+					*extraData = stackDataList;
+					return false;
+				}
+			}
+
+			return true;
+		});
+	}
+
+	return (*baseForm) != nullptr;
 }

@@ -14,9 +14,12 @@
     <ProjectGuid>{B13F31AC-C86C-47FF-B900-EDA1F6EC6C84}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>f4se_steam_loader</RootNamespace>
-    <SccProjectName>Perforce Project</SccProjectName>
-    <SccLocalPath>..\..</SccLocalPath>
-    <SccProvider>MSSCCI:Perforce SCM</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

@@ -8,6 +8,8 @@ RelocPtr <INIPrefSettingCollection*> g_iniPrefSettings(0x05AE7258);
 // ??_7RegSettingCollection@@6B@
 RelocPtr <RegSettingCollection *> g_regSettings(0x0601CD40);
 
+RelocPtr <GameSettingCollection *> g_gameSettings(0x0586CA10);
+
 UInt32 Setting::GetType(void) const
 {
 	if(!name || !name[0]) return kType_Unknown;
@@ -35,6 +37,15 @@ Setting * GetINISetting(const char * name)
 	if(!setting)
 		setting = (*g_iniPrefSettings)->Get(name);
 
+	return setting;
+}
+
+Setting * GetGameSetting(const char * name)
+{
+	Setting * setting = nullptr;
+	Setting ** setting2 = &setting;
+	BSAutoFixedString searchName(name);
+	(*g_gameSettings)->Get(&searchName, &setting2);
 	return setting;
 }
 

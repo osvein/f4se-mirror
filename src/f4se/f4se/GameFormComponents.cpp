@@ -1,5 +1,7 @@
 #include "f4se/GameFormComponents.h"
 
+RelocAddr <_EvaluationConditions> EvaluationConditions(0x00728CF0);
+
 #ifdef _DEBUG
 #include "f4se/GameExtraData.h"
 

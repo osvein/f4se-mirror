@@ -2,6 +2,11 @@
 
 #include "f4se/GameTypes.h"
 
+class BGSMaterialSwap;
+class BGSMessage;
+class TESQuest;
+class TESWaterForm;
+
 enum ExtraDataType
 {
 	kExtraData_Havok			= 0x1,
@@ -233,6 +238,8 @@ public:
 	UInt8	type;		// 12
 	UInt8	unk13;		// 13
 	UInt32	unk14;		// 14
+
+	static BSExtraData* Create(UInt32 size, UInt64 vtbl);
 };
 
 // 20?
@@ -246,11 +253,11 @@ public:
 		UInt8	bits[0x1B];
 	};
 
-	bool HasType(UInt32 type) const;
+	bool HasType(UInt32 type);
 	void MarkType(UInt32 type, bool bCleared);
 	bool Remove(UInt8 type, BSExtraData* toRemove);
 	bool Add(UInt8 type, BSExtraData* toAdd);
-	BSExtraData* GetByType(UInt32 type) const;
+	BSExtraData* GetByType(UInt32 type);
 
 #ifdef _DEBUG
 	void Dump();
@@ -259,6 +266,7 @@ public:
 	BSExtraData			* m_data;		// 08
 	void				* unk10;		// 10
 	PresenceBitfield	* m_presence;	// 18
+	SimpleLock			m_lock;			// 20
 };
 
 class ExtraInstanceData : public BSExtraData
@@ -288,4 +296,80 @@ public:
 	SInt16	unk20;		// 20
 	UInt16	unk22;		// 22
 	UInt32	unk24;		// 24
+};
+
+// 30
+class ExtraPowerLinks : public BSExtraData
+{
+public:
+	tArray<UInt64> connections; // 18 - The Reference formids that this is power-linked to (item A wired to item B, the wire receives formids to A and B, and A and B receive formids to the wire)
+
+	static ExtraPowerLinks* Create();
+};
+
+// 30
+class ExtraBendableSplineParams : public BSExtraData
+{
+public:
+	float	unk18;		// 18
+	float	thickness;	// 1C
+	float	xOffset;	// 20
+	float	yOffset;	// 24
+	float	zOffset;	// 28
+	float	unk2C;		// 2C
+};
+
+// 58
+class ExtraWorkshopData
+{
+public:
+	UInt64	unk18[(0x58 - 0x18) >> 3];
+};
+
+// 20
+class ExtraMaterialSwap : public BSExtraData
+{
+public:
+	BGSMaterialSwap * materialSwap;
+};
+
+
+// 48
+class ExtraTextDisplayData : public BSExtraData {
+public:
+	ExtraTextDisplayData();
+	virtual ~ExtraTextDisplayData();
+
+	// 10
+	struct TextReplaceEntries
+	{
+		BSFixedString	token;
+		TESForm*		value;
+	};
+
+	BSFixedString    name;		// 18
+	BGSMessage*     message;	// 20
+	TESQuest*     quest;		// 28
+	UInt32      type;			// 30 - 1 for refs with ref alias set name, -2 for names set by user
+	UInt32      unk34;			// 34 - some terminals 1, actors 0. terminal sometimes also 0.. maybe HasTextReplaceData?
+	tArray<TextReplaceEntries> * textReplaceData; // 38
+	UInt16      nameLength;		// 40
+	UInt16      unk42;			// 42
+	UInt32      unk44;			// 44
+};
+
+// 20
+class ExtraUniqueID : public BSExtraData
+{
+public:
+	UInt16	uniqueId;	// 18
+	UInt16	unk1A;		// 1A
+	UInt16	formOwner;	// 1C
+};
+
+// 20
+class ExtraCellWaterType : public BSExtraData
+{
+public:
+	TESWaterForm * waterForm;	// 18
 };

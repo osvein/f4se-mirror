@@ -9,6 +9,8 @@ RelocPtr <BSRenderManager> g_renderManager(0x06161880);
 // FA43F2F87927D8F20B17E756782BC91BB6BD04C2+3B
 RelocPtr <BSRenderTargetManager> g_renderTargetManager(0x037DF8D0);
 
+RelocPtr <BSShaderResourceManager> g_shaderResourceManager(0x05B89E88);
+
 // 84E19996C30AD51CE0D4AEF3E6ED8FFFF4AE4BD7+18
 RelocPtr <ID3D11Device*>			g_D3D11Device(0x0601CF08);
 

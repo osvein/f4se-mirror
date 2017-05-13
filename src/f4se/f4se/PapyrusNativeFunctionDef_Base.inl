@@ -85,12 +85,19 @@ class CLASS_NAME
 public:
 
 	typedef
-#if VOID_SPEC
+#if LATENT_SPEC
+		bool
+#elif VOID_SPEC
 		void
 #else
 		T_Result
 #endif
-		(* CallbackType)(T_Base * base
+		(* CallbackType)(
+#if LATENT_SPEC
+		VirtualMachine * vm, UInt32 stackId, T_Base * base
+#else
+		T_Base * base
+#endif
 #if NUM_PARAMS >= 1
 		, T_Arg0 arg0
 #endif
@@ -165,6 +172,10 @@ public:
 		m_params.data[9].type64 = GetTypeID <T_Arg9>(vm);
 #endif
 
+#if LATENT_SPEC
+		m_isLatent = true;
+#endif
+
 #if VOID_SPEC
 		m_retnType = GetTypeID <void>(vm);
 #else
@@ -231,10 +242,17 @@ public:
 #endif
 
 
-#if !VOID_SPEC
+#if LATENT_SPEC
+		bool		result =
+#elif !VOID_SPEC
 		T_Result	result =
 #endif
-			((CallbackType)m_callback)(base
+			((CallbackType)m_callback)(
+#if LATENT_SPEC
+			vm, stackId, base
+#else
+			base
+#endif
 #if NUM_PARAMS >= 1
 			, arg0
 #endif
@@ -268,7 +286,9 @@ public:
 		);
 
 		// pack the result
-#if VOID_SPEC
+#if LATENT_SPEC
+		resultValue->SetBool(result);
+#elif VOID_SPEC
 		resultValue->SetNone();
 #else
 		PackValue(resultValue, &result, vm);

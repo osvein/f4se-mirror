@@ -1,5 +1,6 @@
 #pragma once
 
+#include "f4se/GameForms.h"
 #include "f4se/GameTypes.h"
 #include "f4se/PapyrusVM.h"
 #include "f4se_common/Utilities.h"
@@ -38,6 +39,27 @@ class VMArray
 public:
 	VMArray() : m_arr(nullptr), m_none(false) { }
 	~VMArray() { }
+
+	VMArray(std::vector<T> & vec)
+	{
+		for(auto & v : vec)
+		{
+			Push(&v);
+		}
+	}
+
+	VMArray<T> & operator=(std::vector<T> & vec)
+	{
+		m_data.clear();
+		if(m_arr)
+			m_arr->arr.Clear();
+
+		for(auto & v : vec)
+		{
+			Push(&v);
+		}
+		return *this;
+	}
 
 	enum { kTypeID = 0 };
 
@@ -85,7 +107,7 @@ public:
 	{
 		// Clear out old contents if any
 		dst->SetNone();
-		dst->type = GetTypeID<VMArray<T>>(vm); // Always set the type
+		dst->type.value = GetTypeID<VMArray<T>>(vm); // Always set the type
 
 		if(m_data.size() > 0 && !m_none)
 		{
@@ -112,7 +134,7 @@ public:
 	{
 		VMValue::ArrayData * arrData;
 
-		if (src->type != type || (arrData = src->data.arr, !arrData))
+		if (src->type.value != type || (arrData = src->data.arr, !arrData))
 		{
 			m_none = true;
 			m_arr = nullptr;
@@ -178,7 +200,7 @@ public:
 	template<typename T>
 	bool Is()
 	{
-		return m_value.type == GetTypeID<T>((*g_gameVM)->m_virtualMachine);
+		return m_value.type.value == GetTypeID<T>((*g_gameVM)->m_virtualMachine);
 	}
 
 	void PackVariable(VMValue * dst)
@@ -191,6 +213,12 @@ public:
 	{
 		m_var = value->data.var;
 		m_value = *m_var;
+	}
+
+	// Provides direct access to the VM data, advanced use only
+	VMValue & GetValue()
+	{
+		return m_value;
 	}
 
 protected:
@@ -245,6 +273,20 @@ public:
 		return (*g_objectHandlePolicy)->GetInvalidHandle();
 	}
 
+	BSFixedString GetObjectType()
+	{
+		if(m_value.IsIdentifier() && m_value.data.id && m_value.data.id->m_typeInfo) {
+			VMIdentifier * id = m_value.data.id;
+			if(id) {
+				IComplexType * type = m_value.data.id->m_typeInfo;
+				if(type)
+					return type->m_typeName;
+			}
+		}
+
+		return BSFixedString("ScriptObject");
+	}
+
 	void PackObject(VMValue * dst)
 	{
 		*dst = m_value;
@@ -257,6 +299,26 @@ public:
 
 protected:
 	VMValue		m_value;
+};
+
+class VMRefOrInventoryObj
+{
+public:
+	enum { kTypeID = kFormType_REFR };
+
+	TESObjectREFR * GetObjectReference();
+	bool GetExtraData(TESForm ** baseForm, ExtraDataList ** extraData);
+
+	void UnpackObject(VMValue * value)
+	{
+		if(value->IsIdentifier()) {
+			UInt64	handle = value->data.id->GetHandle();
+			GetRefFromHandle(&m_refData, handle);
+		}
+	}
+
+protected:
+	VMRefHandle m_refData;
 };
 
 template <typename T>
@@ -290,6 +352,9 @@ template <> void PackValue <VMVariable>(VMValue * dst, VMVariable * src, Virtual
 template <> void PackValue <VMObject>(VMValue * dst, VMObject * src, VirtualMachine * vm);
 
 void PackHandle(VMValue * dst, void * src, UInt32 typeID, VirtualMachine * registry);
+
+bool GetIdentifier(VMValue * dst, UInt64 handle, VMObjectTypeInfo * typeInfo, VirtualMachine * vm);
+bool GetIdentifier(VMValue * dst, UInt64 handle, const BSFixedString * typeName, VirtualMachine * vm);
 
 template <typename T>
 void PackValue(VMValue * dst, T ** src, VirtualMachine * vm)
@@ -347,6 +412,7 @@ template <> UInt64 GetTypeID <bool>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <BSFixedString>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMVariable>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMObject>(VirtualMachine * vm);
+template <> UInt64 GetTypeID <VMRefOrInventoryObj>(VirtualMachine * vm);
 
 template <> UInt64 GetTypeID <VMArray<UInt32>>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMArray<SInt32>>(VirtualMachine * vm);
@@ -356,6 +422,7 @@ template <> UInt64 GetTypeID <VMArray<bool>>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMArray<BSFixedString>>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMArray<VMVariable>>(VirtualMachine * vm);
 template <> UInt64 GetTypeID <VMArray<VMObject>>(VirtualMachine * vm);
+template <> UInt64 GetTypeID <VMArray<VMRefOrInventoryObj>>(VirtualMachine * vm);
 
 template <typename T>
 struct IsObjectType

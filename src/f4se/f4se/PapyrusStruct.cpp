@@ -7,7 +7,7 @@ bool CreateStruct(VMValue * dst, BSFixedString * structName, VirtualMachine * vm
 	VMValue::StructData * structData = nullptr;
 	VMStructTypeInfo * typeInfo = nullptr;
 	if(vm->GetStructTypeInfo(structName, &typeInfo)) {
-		dst->type = (UInt64)typeInfo; // Always set the type info if its valid
+		dst->type.id = typeInfo; // Always set the type info if its valid
 		if(!bNone) {
 			vm->CreateStruct(structName, &structData);
 			if(structData) {

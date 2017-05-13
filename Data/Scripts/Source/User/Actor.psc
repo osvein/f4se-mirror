@@ -1101,7 +1101,7 @@ bool Function CanMoveVertical() native debugOnly
 ; Check to see if the actor can strafe side to side.
 bool Function CanStrafe() native debugOnly
 
-; F4SE additions built 2017-02-07 05:37:32.528000 UTC
+; F4SE additions built 2017-05-10 00:55:06.671000 UTC
 struct WornItem
 	Form item ; Can be ARMO or WEAP
 	Form model ; Can be ARMA or WEAP depending on item
@@ -1117,3 +1117,15 @@ WornItem Function GetWornItem(int slotIndex, bool firstPerson = false) native
 ; Returns all the mods for the item at the particular index
 ; returns None if there is no item at this index
 ObjectMod[] Function GetWornItemMods(int slotIndex) native
+
+InstanceData:Owner Function GetInstanceOwner(int slotIndex)
+	InstanceData:Owner inst = new InstanceData:Owner
+	inst.owner = self
+	inst.slotIndex = slotIndex
+	return inst
+EndFunction
+
+
+; Updates the entire actor from the ground-up
+; Using zero flag is very expensive, to update only the body use flags=0xC
+Function QueueUpdate(bool bDoEquipment = false, int flags = 0) native

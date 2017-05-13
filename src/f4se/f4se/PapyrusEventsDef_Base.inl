@@ -37,11 +37,9 @@ template<
 >
 void EVENT_NAME(
 #if EVENT_OBJECT
-	UInt64 handle
-#else
-	const BSFixedString & className
+	UInt64 handle,
 #endif
-	, const BSFixedString & eventName
+	const BSFixedString & className, const BSFixedString & eventName
 #if NUM_PARAMS >= 1
 	, T_arg1 & t1
 #endif
@@ -74,14 +72,11 @@ void EVENT_NAME(
 #endif
 )
 {
+	VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
 #if EVENT_OBJECT
-	void * object = GetObjectFromHandle(handle, VMObject::kTypeID);
-	if(object) {
-		// Build the receiving VMValue from the handle
-		VMValue receiver;
-		PackHandle(&receiver, object, VMObject::kTypeID, (*g_gameVM)->m_virtualMachine);
+	VMValue receiver;
+	if(GetIdentifier(&receiver, handle, &className, vm)) {		
 #endif
-
 		// Build the VM arguments for the CallFunctionNoWait
 		VMArray<VMVariable> arguments;
 #if NUM_PARAMS >= 1
@@ -136,18 +131,18 @@ void EVENT_NAME(
 #endif
 		// Pack the VMArray
 		VMValue args;
-		PackValue(&args, &arguments, (*g_gameVM)->m_virtualMachine);
+		PackValue(&args, &arguments, vm);
 
 		// This should eventually replaced by an actual call to the Event Queue (VM+0x158), this is a workaround for now
 #if EVENT_OBJECT
 		if(receiver.IsIdentifier()) {
 			VMIdentifier * identifier = receiver.data.id;
 			if(identifier) {
-				CallFunctionNoWait_Internal((*g_gameVM)->m_virtualMachine, 0, identifier, &eventName, &args);
+				CallFunctionNoWait_Internal(vm, 0, identifier, &eventName, &args);
 			}
 		}
 #else
-		CallGlobalFunctionNoWait_Internal((*g_gameVM)->m_virtualMachine, 0, 0, &className, &eventName, &args);
+		CallGlobalFunctionNoWait_Internal(vm, 0, 0, &className, &eventName, &args);
 #endif
 #if EVENT_OBJECT
 	}

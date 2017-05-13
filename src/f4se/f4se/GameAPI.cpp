@@ -32,3 +32,10 @@ void Console_Print(const char * fmt, ...)
 		va_end(args);
 	}
 }
+
+LONGLONG GetPerfCounter(void)
+{
+	LARGE_INTEGER li;
+	QueryPerformanceCounter(&li);
+	return li.QuadPart;
+}

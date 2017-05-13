@@ -3,7 +3,10 @@
 #include "f4se_common/Relocation.h"
 #include "f4se_common/Utilities.h"
 
+#include "f4se/BSGeometry.h"
 #include "f4se/NiTextures.h"
+
+class BSGeometryData;
 
 // ??
 class BSRenderManager
@@ -11,13 +14,28 @@ class BSRenderManager
 public:
 	UInt64				unk2588[0x2590 >> 3];	// 2588
 	CRITICAL_SECTION	m_textureLock;			// 2590
+
+	MEMBER_FN_PREFIX(BSRenderManager);
+	DEFINE_MEMBER_FN(CreateBSGeometryData, BSGeometryData*, 0x01CE3870, UInt32 * blockSize, UInt8 * vertexData, UInt64 vertexDesc, BSGeometryData::TriangleData * triData); // Creates a block with a vertex copy in the resource pool with a reference to the supplied triblock (partial deep copy)
 };
 STATIC_ASSERT(offsetof(BSRenderManager, m_textureLock) == 0x2590);
 
 class BSShaderResourceManager
 {
 public:
-	// 5A98408
+	virtual ~BSShaderResourceManager();
+
+	virtual void Unk_01();
+	virtual void Unk_02();
+	virtual void Unk_03();
+	virtual void Unk_04();
+	virtual void Unk_05();
+	virtual void Unk_06();
+	virtual void Unk_07();
+	virtual void IncGeometryRef(BSGeometryData * geomData);
+	virtual void DefGeometryRef(BSGeometryData * geomData); // Will auto-destroy the block when it reaches zero
+	//... 
+
 	// Unk_21(BSRenderData * rendererData); // Release texture?
 };
 
@@ -59,5 +77,6 @@ struct ID3D11Device;
 extern RelocPtr <BSRenderer*>			g_renderer;
 extern RelocPtr <BSRenderManager>		g_renderManager;
 extern RelocPtr <BSRenderTargetManager> g_renderTargetManager;
+extern RelocPtr <BSShaderResourceManager> g_shaderResourceManager;
 extern RelocPtr <ID3D11Device*>			g_D3D11Device;
 extern RelocPtr <ID3D11DeviceContext*>  g_D3D11DeviceContext;

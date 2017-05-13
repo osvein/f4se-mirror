@@ -2,6 +2,7 @@
 
 #include "f4se_common/Utilities.h"
 #include "f4se/GameTypes.h"
+#include "f4se/GameUtilities.h"
 
 #include "f4se/PapyrusInterfaces.h"
 
@@ -39,7 +40,32 @@ public:
 		UInt64	unk20;		// 20
 	};
 	tArray<StructData>	m_data;		// 20
-	UInt64				unk38[(0x70 - 0x38) >> 3];
+
+	class MemberItem
+	{
+	public:
+		BSFixedString		name;			// 00
+		UInt32				index;			// 08
+
+		bool operator==(const MemberItem & rhs) const	{ return name == rhs.name; }
+		bool operator==(const BSFixedString a_name) const	{ return name == a_name; }
+		operator UInt64() const								{ return (UInt64)name.data->Get<char>(); }
+
+		static inline UInt32 GetHash(BSFixedString * key)
+		{
+			UInt32 hash;
+			CalculateCRC32_64(&hash, (UInt64)key->data, 0);
+			return hash;
+		}
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\tname: %s", name.data->Get<char>());
+			_MESSAGE("\t\tinstance: %08X", index);
+		}
+	};
+
+	tHashSet<MemberItem, BSFixedString> m_members;
 };
 
 // 30
@@ -80,14 +106,14 @@ public:
 class VMValue
 {
 public:
-	VMValue() : type(kType_None) { data.p = nullptr; }
+	VMValue() { type.value = kType_None; data.p = nullptr; }
 	~VMValue() { CALL_MEMBER_FN(this, Destroy)(); }
 
 	VMValue(const VMValue & other)
 	{
 		if(&other != this)
 		{
-			type = kType_None;
+			type.value = kType_None;
 			data.p = nullptr;
 			CALL_MEMBER_FN(this, Set)(&other);
 		}
@@ -112,14 +138,19 @@ public:
 		kType_Variable		= 6,	// Points to a VMValue
 		kType_Struct		= 7,	// Number not actually used by VMValue
 
-		kType_ArrayBegin	= 11,
-		kType_StringArray	= 12,
-		kType_IntArray		= 13,
-		kType_FloatArray	= 14,
-		kType_BoolArray		= 15,
-		kType_VariableArray	= 16,
-		kType_StructArray	= 17,	// Number not actually used by VMValue
-		kType_ArrayEnd		= 18
+		kType_ArrayOffset		= 10,
+
+		kType_IdentifierArray	= 11,
+		kType_StringArray		= 12,
+		kType_IntArray			= 13,
+		kType_FloatArray		= 14,
+		kType_BoolArray			= 15,
+		kType_VariableArray		= 16,
+		kType_StructArray		= 17,	// Number not actually used by VMValue
+		kType_ArrayEnd			= 18,
+
+		kType_IntegralStart		= kType_StringArray,
+		kType_IntegralEnd		= kType_VariableArray,
 	};
 
 	struct ArrayData
@@ -149,7 +180,11 @@ public:
 		VMValue * GetStruct() { return (VMValue *)&m_value[0]; }
 	};
 
-	UInt64	type;	// Can be number or IComplexType or IComplexType | 1 (array)
+	union // Can be number or IComplexType or IComplexType | 1 (array)
+	{
+		UInt64			value;
+		IComplexType	* id;
+	} type;
 	
 	union
 	{
@@ -163,14 +198,15 @@ public:
 		VMValue				* var;
 		VMIdentifier		* id;
 		StringCache::Entry	* str;
-		BSFixedString *	GetStr(void)	{ return (BSFixedString *)(&str); }
+		BSFixedString *	GetStr(void)		{ return (BSFixedString *)(&str); }
+		BSFixedString *	GetStr(void) const	{ return (BSFixedString *)(&str); }
 	} data;	
 
 	void	SetNone(void)
 	{
 		CALL_MEMBER_FN(this, Destroy)();
 
-		type = kType_None;
+		type.value = kType_None;
 		data.u = 0;
 	}
 
@@ -178,7 +214,7 @@ public:
 	{
 		CALL_MEMBER_FN(this, Destroy)();
 
-		type = kType_Int;
+		type.value = kType_Int;
 		data.i = i;
 	}
 
@@ -186,7 +222,7 @@ public:
 	{
 		CALL_MEMBER_FN(this, Destroy)();
 
-		type = kType_Float;
+		type.value = kType_Float;
 		data.f = f;
 	}
 
@@ -194,7 +230,7 @@ public:
 	{
 		CALL_MEMBER_FN(this, Destroy)();
 
-		type = kType_Bool;
+		type.value = kType_Bool;
 		data.b = b;
 	}
 
@@ -203,7 +239,7 @@ public:
 	{
 		CALL_MEMBER_FN(this, Destroy)();
 
-		type = kType_String;
+		type.value = kType_String;
 		CALL_MEMBER_FN(data.GetStr(), Set)(str);
 	}
 
@@ -211,7 +247,7 @@ public:
 	{
 		CALL_MEMBER_FN(this, Destroy)();
 
-		type = kType_Variable;
+		type.value = kType_Variable;
 		data.var = value;
 	}
 
@@ -219,7 +255,7 @@ public:
 	{
 		CALL_MEMBER_FN(this, Destroy)();
 
-		type = (UInt64)typeInfo;
+		type.id = typeInfo;
 		data.p = nullptr;
 	}
 
@@ -237,29 +273,29 @@ public:
 		}
 	}
 
-	bool	IsIntegralType()
+	bool	IsIntegralType() const
 	{
-		return type >= kType_String && type <= kType_Variable;
+		return type.value >= kType_String && type.value <= kType_Variable;
 	}
 
-	bool	IsIntegralArrayType()
+	bool	IsIntegralArrayType() const
 	{
-		return type > kType_ArrayBegin && type < kType_ArrayEnd;
+		return type.value >= kType_IntegralStart && type.value <= kType_IntegralEnd;
 	}
 
-	bool	IsComplexArrayType()
+	bool	IsComplexArrayType() const
 	{
-		return (IsComplexType() && (type & 0x01LL));
+		return (IsComplexType() && (type.value & 0x01LL));
 	}
 
-	bool	IsArrayType()
+	bool	IsArrayType() const
 	{
 		return IsIntegralArrayType() || IsComplexArrayType();
 	}
 
-	bool	IsComplexType()
+	bool	IsComplexType() const
 	{
-		return type >= kType_ArrayEnd;
+		return type.value >= kType_ArrayEnd;
 	}
 
 	bool	IsIdentifier()
@@ -270,7 +306,26 @@ public:
 
 	IComplexType * GetComplexType()
 	{
-		return IsComplexType() ? reinterpret_cast<IComplexType *>(type & ~0x01LL) : nullptr;
+		return IsComplexType() ? reinterpret_cast<IComplexType *>(type.value & ~0x01LL) : nullptr;
+	}
+
+	IComplexType * GetComplexType() const
+	{
+		return IsComplexType() ? reinterpret_cast<IComplexType *>(type.value & ~0x01LL) : nullptr;
+	}
+
+	UInt8 GetTypeEnum() const // Returns the sanitized number
+	{
+		IComplexType * typeInfo = GetComplexType();
+		if(typeInfo)
+		{
+			UInt32 typeId = typeInfo->GetType();
+			if(IsArrayType())
+				typeId += kType_ArrayOffset;
+			return typeId;
+		}
+
+		return type.value;
 	}
 
 	MEMBER_FN_PREFIX(VMValue);

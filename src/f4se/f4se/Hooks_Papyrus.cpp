@@ -5,6 +5,7 @@
 #include "f4se/PapyrusVM.h"
 
 #include "f4se/PapyrusF4SE.h"
+#include "f4se/PapyrusForm.h"
 #include "f4se/PapyrusMath.h"
 #include "f4se/PapyrusActor.h"
 #include "f4se/PapyrusActorBase.h"
@@ -12,12 +13,23 @@
 #include "f4se/PapyrusObjectReference.h"
 #include "f4se/PapyrusGame.h"
 #include "f4se/PapyrusScriptObject.h"
+#include "f4se/PapyrusDelayFunctors.h"
+#include "f4se/PapyrusUtility.h"
+#include "f4se/PapyrusUI.h"
+#include "f4se/PapyrusEquipSlot.h"
+#include "f4se/PapyrusWeapon.h"
+#include "f4se/PapyrusObjectMod.h"
+#include "f4se/PapyrusInstanceData.h"
+#include "f4se/PapyrusWaterType.h"
+#include "f4se/PapyrusCell.h"
+#include "f4se/PapyrusPerk.h"
 
 #include "f4se/Serialization.h"
 
 #include "xbyak/xbyak.h"
 
 RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013C8FB0 + 0x461);
+RelocAddr <uintptr_t> DelayFunctorQueue_Start(0x0135A0B0 + 0x6A);
 
 typedef bool (* _SaveRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, void * saveStorageWrapper);
 RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x01456EC0);
@@ -54,11 +66,20 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 	// ScriptObject
 	papyrusScriptObject::RegisterFuncs(vm);
 
+	// EquipSlot
+	papyrusEquipSlot::RegisterFuncs(vm);
+
+	// WaterType
+	papyrusWaterType::RegisterFuncs(vm);
+
 	// F4SE
 	papyrusF4SE::RegisterFuncs(vm);
 
 	// Math
 	papyrusMath::RegisterFuncs(vm);
+
+	// Form
+	papyrusForm::RegisterFuncs(vm);
 
 	// ObjectReference
 	papyrusObjectReference::RegisterFuncs(vm);
@@ -74,6 +95,27 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 
 	// Game
 	papyrusGame::RegisterFuncs(vm);
+
+	// Utility
+	papyrusUtility::RegisterFuncs(vm);
+
+	// UI
+	papyrusUI::RegisterFuncs(vm);
+
+	// Weapon
+	papyrusWeapon::RegisterFuncs(vm);
+
+	// ObjectMod
+	papyrusObjectMod::RegisterFuncs(vm);
+
+	// InstanceData
+	papyrusInstanceData::RegisterFuncs(vm);
+
+	// Cell
+	papyrusCell::RegisterFuncs(vm);
+
+	// Perk
+	papyrusPerk::RegisterFuncs(vm);
 
 	// Plugins
 	for(PapyrusPluginList::iterator iter = s_pap_plugins.begin(); iter != s_pap_plugins.end(); ++iter)
@@ -100,6 +142,19 @@ void RevertGlobalData_Hook(void * vm)
 {
 	RevertGlobalData_Original(vm);
 	Serialization::HandleRevertGlobalData();
+}
+
+LONGLONG DelayFunctorQueue_Hook(float budget)
+{
+	F4SEDelayFunctorManagerInstance().OnPreTick();
+
+	LARGE_INTEGER startTime;
+	QueryPerformanceCounter(&startTime);
+
+	// Sharing budget with papyrus queue
+	F4SEDelayFunctorManagerInstance().OnTick(startTime.QuadPart, budget);
+
+	return startTime.QuadPart;
 }
 
 void Hooks_Papyrus_Commit()
@@ -197,5 +252,32 @@ void Hooks_Papyrus_Commit()
 		RevertGlobalData_Original = (_RevertGlobalData)codeBuf;
 
 		g_branchTrampoline.Write6Branch(RevertGlobalData.GetUIntPtr(), (uintptr_t)RevertGlobalData_Hook);
+	}
+
+	// hook ProcessVMTick
+	{
+		struct DelayFunctorQueue_Code : Xbyak::CodeGenerator {
+			DelayFunctorQueue_Code(void * buf, uintptr_t funcAddr) : Xbyak::CodeGenerator(4096, buf)
+			{
+				Xbyak::Label funcLabel;
+				Xbyak::Label retnLabel;
+
+				movss(xmm0, ptr[rsp + 0x98 + 0x28]);
+				call(ptr [rip + funcLabel]);
+				jmp(ptr [rip + retnLabel]);
+
+				L(funcLabel);
+				dq(funcAddr);
+
+				L(retnLabel);
+				dq(DelayFunctorQueue_Start.GetUIntPtr() + 0x5);
+			}
+		};
+
+		void * codeBuf = g_localTrampoline.StartAlloc();
+		DelayFunctorQueue_Code code(codeBuf, (uintptr_t)DelayFunctorQueue_Hook);
+		g_localTrampoline.EndAlloc(code.getCurr());
+
+		g_branchTrampoline.Write5Branch(DelayFunctorQueue_Start.GetUIntPtr(), uintptr_t(code.getCode()));
 	}
 }

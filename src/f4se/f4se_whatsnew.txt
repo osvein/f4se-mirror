@@ -1,3 +1,88 @@
+0.3.1
+- Fixed script unique event registration
+- Added template serialization of VM for Latent functions
+- Added object serialization interface
+- Added Scaleform to Papyrus Adapters
+- Added Scaleform functions:
+    -AllowTextInput
+    -SendExternalEvent
+    -CallFunctionNoWait
+- Added UI Functions:
+    -Set/Get/Invoke
+- Added ScriptObject Functions:
+    -Un/RegisterForExternalEvent
+    -Un/RegisterForCameraState
+- Added ObjectReference Functions:
+    -GetConnectedObjects
+    -AttachWire (Creates a disabled wire)
+    -CreateWire (non-native to Create and enable)
+    -GetDisplayName
+- Added Utility Functions:
+    -VarToVarArray
+    -VarArrayToVar
+- Added Actor Functions:
+    -QueueUpdate
+    -GetInstanceOwner
+- Added ActorBase Functions:
+    -Get/SetBodyWeight
+- Added Form functions:
+    -Set/GetName
+    -Set/GetWeight
+    -SetGoldValue
+    -GetKeywords
+    -HasWorldModel
+    -Set/GetWorldModelPath
+    -Set/GetIconPath
+    -Set/GetMessageIconPath
+    -Set/GetEnchantment
+    -Set/GetEnchantmentValue
+    -Set/GetEquipType
+    -GetDescription
+- Added Weapon functions:
+    -Set/GetEmbeddedMod
+    -GetInstanceOwner
+- Added new InstanceData global class functions:
+    -Set/GetAttackDamage
+    -Set/GetDamageTypes
+    -Set/GetAmmoCapacity
+    -Set/GetAccuracyBonus
+    -Set/GetActionPointCost
+    -Set/GetAttackDelay
+    -Set/GetOutOfRangeMultiplier
+    -Set/GetReloadSpeed
+    -Set/GetReach
+    -Set/GetMinRange
+    -Set/GetMaxRange
+    -Set/GetSpeed
+    -Set/GetStagger
+    -Set/GetMeleeSpeed
+    -Set/GetSkill
+    -Set/GetResist
+    -Set/GetCritMultiplier
+    -Set/GetCritChargeBonus
+    -Set/GetProjectileOverride
+    -Set/GetNumProjectiles
+    -Set/GetSightedTransition
+- Added ObjectMod functions:
+    -GetPropertyModifiers
+    -Set/GetMaxRank
+    -Set/GetPriority
+    -GetLooseMod
+- Added Cell functions:
+    -GetWaterType
+- Added WaterType functions:
+    -Set/GetConsumeSpell
+    -Set/GetContactSpell
+- Added Perk functions:
+    -IsPlayable
+    -IsHidden
+    -GetLevel
+    -GetNumRanks
+    -GetNextPerk
+    -GetSWFPath
+    -IsEligible
+- Added Scaleform Translation Injection via Interface/Translations/ModName_en.txt
+
 0.3.0
 - support for runtime 1.9.4
 - input event hook

@@ -134,14 +134,14 @@ public:
         {
         public:
             virtual ~ArrayVisitor() {}
-            virtual void Visit(UInt32 idx, const GFxValue * val) = 0;
+            virtual void Visit(UInt32 idx, GFxValue * val) = 0;
         };
 		class ObjVisitor
 		{
 		public:
 			virtual ~ObjVisitor() { }
 			virtual bool ShowDisplayMembers(void) { return false; }
-			virtual void Visit(const char * unk1, const GFxValue * value) = 0;
+			virtual void Visit(const char * member, GFxValue * value) = 0;
 		};
 
 		void * unk1;

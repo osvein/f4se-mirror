@@ -8,7 +8,7 @@
 #include "f4se/ScaleformCallbacks.h"
 #include "f4se/ScaleformValue.h"
 
-// 68
+// 70
 class IMenu : public SWFToCodeFunctionHandler
 {
 public:
@@ -36,7 +36,9 @@ public:
 	BSFixedString	unk48;			// 48
 	BSFixedString	menuName;		// 50
 	UInt64			unk58;			// 58
-	UInt64			unk60;			// 60
+	UInt64			unk60;			// 60	init'd as DWord then Byte
+	UInt32			unk68;			// 68	init'd in IMenu::IMenu
+	UInt32			pad6C;			// 6C
 };
 STATIC_ASSERT(offsetof(IMenu, movie) == 0x40);
 
@@ -50,7 +52,6 @@ public:
 	virtual void	Unk_11(void);
 	virtual void	Unk_12(void);
 
-	UInt64							unk68;							// 68
 	tArray<BSGFxDisplayObject*>		subcomponents;					// 70
 	BSGFxShaderFXTarget				* shaderTarget;					// 88
 	UInt64							unk90[(0xE0 - 0x90)>>3];		// 90

@@ -1,5 +1,6 @@
 #include "f4se/GameCustomization.h"
 #include "f4se/GameAPI.h"
+#include "f4se/GameObjects.h"
 
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+B5
 RelocPtr <CharacterCreation*> g_characterCreation(0x059F2DE0);	// array
@@ -22,6 +23,8 @@ RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002A8B10);
 RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A2A30);
 RelocAddr <_MergeTintTextures> MergeTintTextures(0x00687920);
 RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00687710);
+
+RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensityMap(0x036A6328);
 
 // These are for creating new instances
 
@@ -117,4 +120,10 @@ BGSCharacterTint::Template::Entry * CharacterCreation::CharGenData::GetTemplateB
 	}
 
 	return nullptr;
+}
+
+void CharacterCreation::MorphIntensity::Dump(void)
+{
+	_MESSAGE("\t\tFormID: %08X", npc->formID);
+	_MESSAGE("\t\tintensity: %f", morphIntensity);
 }

@@ -5,11 +5,18 @@
 
 #include "f4se_common/f4se_version.h"
 
+#include "Translation.h"
+
 #include "ScaleformMovie.h"
 #include "ScaleformValue.h"
 #include "ScaleformCallbacks.h"
 #include "ScaleformState.h"
 #include "ScaleformLoader.h"
+#include "ScaleformTranslator.h"
+
+#include "PapyrusEvents.h"
+#include "PapyrusScaleformAdapter.h"
+#include "GameInput.h"
 
 class BSScaleformManager;
 
@@ -66,7 +73,7 @@ class F4SEScaleform_VisitMembers : public GFxValue::ObjectInterface::ObjVisitor
 {
 public:
 	F4SEScaleform_VisitMembers(GFxMovieRoot * root, GFxValue * result) : m_root(root), m_result(result) { }
-	virtual void Visit(const char * member, const GFxValue * value)
+	virtual void Visit(const char * member, GFxValue * value) override
 	{
 		GFxValue str;
 		m_root->CreateString(&str, member);
@@ -91,6 +98,100 @@ public:
 	}
 };
 
+class F4SEScaleform_AllowTextInput : public GFxFunctionHandler
+{
+public:
+	virtual void Invoke(Args * args)
+	{
+		ASSERT(args->numArgs >= 1);
+		ASSERT(args->args[0].GetType() == GFxValue::kType_Bool);
+
+		(*g_inputMgr)->AllowTextInput(args->args[0].GetBool());
+	}
+};
+
+class F4SEScaleform_SendExternalEvent : public GFxFunctionHandler
+{
+public:
+	virtual void Invoke(Args * args)
+	{
+		ASSERT(args->numArgs >= 1);
+		ASSERT(args->args[0].GetType() == GFxValue::kType_String);
+
+		BSFixedString eventName(args->args[0].GetString());
+		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+
+		g_externalEventRegs.ForEach(
+			eventName, 
+			[&args, &vm](const EventRegistration<ExternalEventParameters> & reg)
+			{
+				VMValue receiver;
+				if(GetIdentifier(&receiver, reg.handle, &reg.scriptName, vm)) {
+					VMValue packedArgs;
+					UInt32 length = args->numArgs - 1;
+					VMValue::ArrayData * arrayData = nullptr;
+
+					vm->CreateArray(&packedArgs, length, &arrayData);
+
+					packedArgs.type.value = VMValue::kType_VariableArray;
+					for(UInt32 i = 0; i < length; i++)
+					{
+						VMValue * var = new VMValue;
+						PlatformAdapter::ConvertScaleformValue(var, &args->args[i + 1], vm);
+						arrayData->arr.entries[i].SetVariable(var);
+					}
+
+					if(receiver.IsIdentifier()) {
+						VMIdentifier * identifier = receiver.data.id;
+						if(identifier) {
+							CallFunctionNoWait_Internal(vm, 0, identifier, &reg.params.callbackName, &packedArgs);
+						}
+					}
+				}
+			}
+		);
+	}
+};
+
+class F4SEScaleform_CallFunctionNoWait : public GFxFunctionHandler
+{
+public:
+	virtual void Invoke(Args * args)
+	{
+		ASSERT(args->numArgs >= 2);
+		ASSERT(args->args[0].GetType() == GFxValue::kType_Object);
+		ASSERT(args->args[1].GetType() == GFxValue::kType_String);
+
+		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+		VMValue receiver;
+		PlatformAdapter::ConvertScaleformValue(&receiver, &args->args[0], vm);
+		BSFixedString functionName(args->args[1].GetString());
+
+		args->result->SetBool(false);
+		if(receiver.IsIdentifier())
+		{
+			VMValue packedArgs;
+			UInt32 length = args->numArgs - 2;
+			VMValue::ArrayData * arrayData = nullptr;
+			vm->CreateArray(&packedArgs, length, &arrayData);
+
+			packedArgs.type.value = VMValue::kType_VariableArray;
+			for(UInt32 i = 0; i < length; i++)
+			{
+				VMValue * var = new VMValue;
+				PlatformAdapter::ConvertScaleformValue(var, &args->args[i + 2], vm);
+				arrayData->arr.entries[i].SetVariable(var);
+			}
+
+			VMIdentifier * identifier = receiver.data.id;
+			if(identifier) {
+				CallFunctionNoWait_Internal(vm, 0, identifier, &functionName, &packedArgs);
+				args->result->SetBool(true);
+			}
+		}
+	}
+};
+
 
 void ScaleformInitHook_Install(GFxMovieView * view)
 {
@@ -108,6 +209,9 @@ void ScaleformInitHook_Install(GFxMovieView * view)
 	movieRoot->CreateObject(&f4se);
 
 	RegisterFunction<F4SEScaleform_GetMembers>(&f4se, movieRoot, "GetMembers");
+	RegisterFunction<F4SEScaleform_AllowTextInput>(&f4se, movieRoot, "AllowTextInput");
+	RegisterFunction<F4SEScaleform_SendExternalEvent>(&f4se, movieRoot, "SendExternalEvent");
+	RegisterFunction<F4SEScaleform_CallFunctionNoWait>(&f4se, movieRoot, "CallFunctionNoWait");
 	
 	GFxValue	version;
 	movieRoot->CreateObject(&version);
@@ -147,6 +251,11 @@ void ScaleformInitHook_Install(GFxMovieView * view)
 BSScaleformManager * BSScaleformManager_Ctor_Hook(BSScaleformManager * mgr)
 {
 	BSScaleformManager * result = BSScaleformManager_Ctor_Original(mgr);
+
+	BSScaleformTranslator * translator = (BSScaleformTranslator*)result->stateBag->GetStateAddRef(GFxState::kInterface_Translator);
+	if(translator) {
+		Translation::ImportTranslationFiles(translator);
+	}
 
 	if(g_logScaleform)
 	{

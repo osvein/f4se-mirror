@@ -113,6 +113,22 @@ struct TESDeathEvent
 	TESObjectREFR	* source;	// 00
 };
 
+struct TESObjectLoadedEvent
+{
+	UInt32	formId;
+	UInt8	loaded; // 01 - loaded, 00 - unloaded
+};
+
+struct TESLoadGameEvent
+{
+
+};
+
+struct TESInitScriptEvent
+{
+	TESObjectREFR * reference;
+};
+
 // 08
 template <typename EventT>
 class BSTEventDispatcher
@@ -172,3 +188,15 @@ DECLARE_EVENT_DISPATCHER(TESCombatEvent, 0x0043FF30) // 0x0043FF30 GetInstance
 
 // A548D71D41C7C2E9D21B25E06730FB911FC31F47+118 (struct+C8)
 DECLARE_EVENT_DISPATCHER(TESDeathEvent, 0x00440390)
+
+DECLARE_EVENT_DISPATCHER(TESObjectLoadedEvent, 0x00441010)
+
+DECLARE_EVENT_DISPATCHER(TESLoadGameEvent, 0x00440CF0)
+
+DECLARE_EVENT_DISPATCHER(TESInitScriptEvent, 0x00440BB0)
+
+// TESFormIDRemapEvent
+// 04409D0
+
+// TESFormDeleteEvent
+// 0440930

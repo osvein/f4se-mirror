@@ -25,10 +25,13 @@ public:
 	TranslationTableItem(BSFixedString a_key, BSFixedStringW a_translation)
 		: key(a_key), translation(a_translation) {}
 
-	static inline UInt32 GetHash(const BSFixedString * key)
+	bool operator==(const BSFixedString & a_name) const	{ return key == a_name; }
+	operator BSFixedString() const								{ return key; }
+
+	static inline UInt32 GetHash(BSFixedString * key)
 	{
 		UInt32 hash;
-		CalculateCRC32_64(&hash, (UInt64)key->data->Get<char>(), 0);
+		CalculateCRC32_64(&hash, (UInt64)key->data, 0);
 		return hash;
 	}
 
@@ -48,3 +51,9 @@ public:
 	UInt64 unk18[(0x20 - 0x18) / 8];	// 18
 	TranslationTable	translations;	// 20
 };
+
+typedef void (__cdecl * _CreateEmptyString)(BSFixedString * pOut);
+extern RelocAddr<_CreateEmptyString> CreateEmptyString;
+
+typedef void (__cdecl * _SetWideString)(BSFixedString * pOut, wchar_t * bufIn);
+extern RelocAddr<_SetWideString> SetWideString;

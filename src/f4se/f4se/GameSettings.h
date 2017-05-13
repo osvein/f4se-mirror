@@ -1,6 +1,7 @@
 #pragma once
 
 #include "f4se_common/Utilities.h"
+#include "f4se/GameTypes.h"
 
 // 18
 class Setting
@@ -57,6 +58,37 @@ public:
 	void	* unk110;		// 110
 };
 
+
+// 130
+class SettingCollectionMap : public SettingCollection
+{
+public:
+	virtual ~SettingCollectionMap();
+
+	class CollectionMap
+	{
+	public:
+		MEMBER_FN_PREFIX(CollectionMap);
+		DEFINE_MEMBER_FN(GetSetting, void, 0x0001E290, BSFixedString * name, Setting *** setting);
+	};
+
+	void	* unk118;	// 118
+	void	* unk120;	// 120
+	CollectionMap * collectionMap;	// 128
+
+	void Get(BSFixedString * name, Setting *** setting)
+	{
+		CALL_MEMBER_FN(collectionMap, GetSetting)(name, setting);
+	}
+};
+
+// 130
+class GameSettingCollection : public SettingCollectionMap
+{
+public:
+	virtual ~GameSettingCollection();
+};
+
 // 128
 class SettingCollectionList : public SettingCollection
 {
@@ -100,5 +132,7 @@ public:
 extern RelocPtr <INISettingCollection *> g_iniSettings;
 extern RelocPtr <INIPrefSettingCollection *> g_iniPrefSettings;
 extern RelocPtr <RegSettingCollection*> g_regSettings;
+extern RelocPtr <GameSettingCollection*> g_gameSettings;
 
 extern Setting * GetINISetting(const char * name);
+extern Setting * GetGameSetting(const char * name);

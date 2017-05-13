@@ -7,38 +7,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common_vc11", "..\common\co
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "f4se", "f4se\f4se.vcxproj", "{A236F69D-8FF9-4491-AC5F-45BF49448BBE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "f4se_common", "f4se_common\f4se_common.vcxproj", "{F1447A44-F26A-4680-8E20-2D9186766E51}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "f4se_common", "f4se_common\f4se_common.vcxproj", "{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "f4se_steam_loader", "f4se_steam_loader\f4se_steam_loader.vcxproj", "{B13F31AC-C86C-47FF-B900-EDA1F6EC6C84}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "f4se_loader_common", "f4se_loader_common\f4se_loader_common.vcxproj", "{BE858737-949E-48CF-ADF9-079389049B57}"
 EndProject
 Global
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 7
-		SccProjectName0 = Perforce\u0020Project
-		SccLocalPath0 = ..
-		SccProvider0 = MSSCCI:Perforce\u0020SCM
-		SccProjectFilePathRelativizedFromConnection0 = f4se\\
-		SccProjectUniqueName1 = ..\\common\\common_vc11.vcxproj
-		SccLocalPath1 = ..
-		SccProjectFilePathRelativizedFromConnection1 = common\\
-		SccProjectUniqueName2 = f4se\\f4se.vcxproj
-		SccLocalPath2 = ..
-		SccProjectFilePathRelativizedFromConnection2 = f4se\\f4se\\
-		SccProjectUniqueName3 = f4se_loader\\f4se_loader.vcxproj
-		SccLocalPath3 = ..
-		SccProjectFilePathRelativizedFromConnection3 = f4se\\f4se_loader\\
-		SccProjectUniqueName4 = f4se_steam_loader\\f4se_steam_loader.vcxproj
-		SccLocalPath4 = ..
-		SccProjectFilePathRelativizedFromConnection4 = f4se\\f4se_steam_loader\\
-		SccProjectUniqueName5 = f4se_loader_common\\f4se_loader_common.vcxproj
-		SccLocalPath5 = ..
-		SccProjectFilePathRelativizedFromConnection5 = f4se\\f4se_loader_common\\
-		SccProjectUniqueName6 = f4se_common\\f4se_common.vcxproj
-		SccLocalPath6 = ..
-		SccProjectFilePathRelativizedFromConnection6 = f4se\\f4se_common\\
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
@@ -56,10 +31,10 @@ Global
 		{A236F69D-8FF9-4491-AC5F-45BF49448BBE}.Debug|x64.Build.0 = Debug|x64
 		{A236F69D-8FF9-4491-AC5F-45BF49448BBE}.Release|x64.ActiveCfg = Release|x64
 		{A236F69D-8FF9-4491-AC5F-45BF49448BBE}.Release|x64.Build.0 = Release|x64
-		{F1447A44-F26A-4680-8E20-2D9186766E51}.Debug|x64.ActiveCfg = Debug|x64
-		{F1447A44-F26A-4680-8E20-2D9186766E51}.Debug|x64.Build.0 = Debug|x64
-		{F1447A44-F26A-4680-8E20-2D9186766E51}.Release|x64.ActiveCfg = Release|x64
-		{F1447A44-F26A-4680-8E20-2D9186766E51}.Release|x64.Build.0 = Release|x64
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Debug|x64.ActiveCfg = Debug|x64
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Debug|x64.Build.0 = Debug|x64
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Release|x64.ActiveCfg = Release|x64
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Release|x64.Build.0 = Release|x64
 		{B13F31AC-C86C-47FF-B900-EDA1F6EC6C84}.Debug|x64.ActiveCfg = Debug|x64
 		{B13F31AC-C86C-47FF-B900-EDA1F6EC6C84}.Debug|x64.Build.0 = Debug|x64
 		{B13F31AC-C86C-47FF-B900-EDA1F6EC6C84}.Release|x64.ActiveCfg = Release|x64

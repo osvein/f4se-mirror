@@ -59,19 +59,40 @@ void CallFunctionNoWait(T * sender, const BSFixedString & eventName, VMArray<VMV
 	}
 }
 
+enum InternalEventVersion
+{
+	kVersion1,
+	kVersion2,
+	kCurrentVersion = kVersion2
+};
+
 template <typename D>
 class EventRegistration
 {
 public:
+	
 
-	UInt64	handle;
-	D		params;
+	UInt64			handle;
+	BSFixedString	scriptName;
+	D				params;
 
-	bool operator<(const EventRegistration & rhs) const	{ return handle < rhs.handle; }
+	bool operator<(const EventRegistration & rhs) const
+	{
+		if (handle != rhs.handle)
+		{
+			return handle < rhs.handle;
+		}
+		else
+		{
+			return scriptName < rhs.scriptName;
+		}
+	}
 
 	bool Save(const F4SESerializationInterface * intfc, UInt32 version) const
 	{
 		if (! intfc->WriteRecordData(&handle, sizeof(handle)))
+			return false;
+		if (!Serialization::WriteData(intfc, &scriptName))
 			return false;
 		if (! params.Save(intfc, version))
 			return false;
@@ -82,6 +103,12 @@ public:
 	{
 		if (! intfc->ReadRecordData(&handle, sizeof(handle)))
 			return false;
+		if(version >= InternalEventVersion::kVersion2) {
+			if (!Serialization::ReadData(intfc, &scriptName))
+				return false;
+		} else {
+			scriptName = "ScriptObject"; // Older versions will use ScriptObject by default
+		}
 		if (! params.Load(intfc, version))
 			return false;
 		return true;
@@ -102,6 +129,27 @@ public:
 	void Dump(void) {}
 };
 
+class ExternalEventParameters
+{
+public:
+	BSFixedString callbackName;
+
+	bool Save(const F4SESerializationInterface * intfc, UInt32 version) const
+	{
+		return Serialization::WriteData<BSFixedString>(intfc, &callbackName);
+	}
+
+	bool Load(const F4SESerializationInterface * intfc, UInt32 version)
+	{
+		return Serialization::ReadData<BSFixedString>(intfc, &callbackName);
+	}
+
+	void Dump(void)
+	{
+		_MESSAGE("> callbackName:\t%s", callbackName);
+	}
+};
+
 template <typename K, typename D = NullParameters>
 class RegistrationMapHolder : public SafeDataHolder<std::map<K,std::set<EventRegistration<D>>>>
 {
@@ -110,13 +158,14 @@ class RegistrationMapHolder : public SafeDataHolder<std::map<K,std::set<EventReg
 
 public:
 
-	void Register(K & key, UInt64 handle, D * params = NULL)
+	void Register(K & key, UInt64 handle, BSFixedString scriptName, D * params = NULL)
 	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
+		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+		IObjectHandlePolicy	* policy = vm->GetHandlePolicy();
 
 		EventRegistration<D> reg;
 		reg.handle = handle;
+		reg.scriptName = scriptName;
 		if (params)
 			reg.params = *params;
 
@@ -127,37 +176,15 @@ public:
 
 		Release();
 	}
-
-	template <typename T>
-	void Register(K & key, UInt32 type, T * classType, D * params = NULL)
+	
+	void Unregister(K & key, UInt64 handle, BSFixedString scriptName)
 	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
-
-		EventRegistration<D> reg;
-		reg.handle = policy->Create(type, (void *)classType);
-		if (params)
-			reg.params = *params;
-
-#ifdef _DEBUG
-		_MESSAGE("Executed PapyrusEvents::Register - %016llX", reg.handle);
-#endif
-
-		Lock();
-
-		if (m_data[key].insert(reg).second)
-			policy->AddRef(reg.handle);
-
-		Release();
-	}
-
-	void Unregister(K & key, UInt64 handle)
-	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
+		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+		IObjectHandlePolicy	* policy = vm->GetHandlePolicy();
 
 		EventRegistration<D> reg;
 		reg.handle = handle;
+		reg.scriptName = scriptName;
 
 		Lock();
 
@@ -167,30 +194,14 @@ public:
 		Release();
 	}
 
-	template <typename T>
-	void Unregister(K & key, UInt32 type, T * classType)
+	void UnregisterAll(UInt64 handle, BSFixedString scriptName)
 	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
-
-		EventRegistration<D> reg;
-		reg.handle = policy->Create(type, (void *)classType);
-
-		Lock();
-
-		if (m_data[key].erase(reg))
-			policy->Release(reg.handle);
-
-		Release();
-	}
-
-	void UnregisterAll(UInt64 handle)
-	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
+		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+		IObjectHandlePolicy	* policy = vm->GetHandlePolicy();
 
 		EventRegistration<D> reg;
 		reg.handle = handle;
+		reg.scriptName = scriptName;
 
 		Lock();
 
@@ -200,25 +211,7 @@ public:
 
 		Release();
 	}
-
-	template <typename T>
-	void UnregisterAll(UInt32 type, T * classType)
-	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
-
-		EventRegistration<D> reg;
-		reg.handle = policy->Create(type, (void *)classType);
-
-		Lock();
-
-		for (RegMap::iterator iter = m_data.begin(); iter != m_data.end(); ++iter)
-			if (iter->second.erase(reg))
-				policy->Release(reg.handle);
-
-		Release();
-	}
-
+	
 	template <typename F>
 	void ForEach(K & key, F & functor)
 	{
@@ -300,15 +293,24 @@ public:
 					for (UInt32 i = 0; i< numRegs; i++)
 					{
 						EventRegistration<D> reg;
-						if (reg.Load(intfc, version))
+						if (reg.Load(intfc, curVersion))
 						{
-							VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-							IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
+							VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+							IObjectHandlePolicy	* policy = vm->GetHandlePolicy();
 
 							UInt64 newHandle = 0;
 
 							// Skip if handle is no longer valid.
 							if (! intfc->ResolveHandle(reg.handle, &newHandle))
+								continue;
+
+							VMObjectTypeInfo * typeInfo = nullptr;
+							if(vm->GetObjectTypeInfoByName(&reg.scriptName, &typeInfo))
+								if(typeInfo)
+									typeInfo->Release();
+
+							// No valid type for script, skip
+							if(!typeInfo)
 								continue;
 
 							reg.handle = newHandle;
@@ -354,13 +356,14 @@ class RegistrationSetHolder : public SafeDataHolder<std::set<EventRegistration<D
 
 public:
 
-	void Register(UInt64 handle, D * params = NULL)
+	void Register(UInt64 handle, BSFixedString scriptName, D * params = NULL)
 	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
+		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+		IObjectHandlePolicy	* policy = vm->GetHandlePolicy();
 
 		EventRegistration<D> reg;
 		reg.handle = handle;
+		reg.scriptName = scriptName;
 		if (params)
 			reg.params = *params;
 
@@ -372,54 +375,19 @@ public:
 		Release();
 	}
 
-	template <typename T>
-	void Register(UInt32 type, T * classType, D * params = NULL)
+	void Unregister(UInt64 handle, BSFixedString scriptName)
 	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
-
-		EventRegistration<D> reg;
-		reg.handle = policy->Create(type, (void *)classType);
-		if (params)
-			reg.params = *params;
-
-		Lock();
-
-		if (m_data.insert(reg).second)
-			policy->AddRef(reg.handle);
-
-		Release();
-	}
-
-	void Unregister(UInt64 handle)
-	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
+		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+		IObjectHandlePolicy	* policy = vm->GetHandlePolicy();
 
 		EventRegistration<D> reg;
 		reg.handle = handle;
+		reg.scriptName = scriptName;
 
 		Lock();
 
 		if (m_data.erase(reg))
 			policy->Release(handle);
-
-		Release();
-	}
-
-	template <typename T>
-	void Unregister(UInt32 type, T * classType)
-	{
-		VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-		IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
-
-		EventRegistration<D> reg;
-		reg.handle = policy->Create(type, (void *)classType);
-
-		Lock();
-
-		if (m_data.erase(reg))
-			policy->Release(reg.handle);
 
 		Release();
 	}
@@ -442,7 +410,7 @@ public:
 		Release();
 	}
 
-	bool Save(F4SESerializationInterface * intfc, UInt32 type, UInt32 version)
+	bool Save(const F4SESerializationInterface * intfc, UInt32 type, UInt32 version)
 	{
 		intfc->OpenRecord(type, version);
 
@@ -462,7 +430,7 @@ public:
 		return true;
 	}
 
-	bool Load(F4SESerializationInterface* intfc, UInt32 version)
+	bool Load(const F4SESerializationInterface* intfc, UInt32 version)
 	{
 		// Reg count
 		UInt32 numRegs = 0;
@@ -472,18 +440,27 @@ public:
 			return false;
 		}
 
-		for (UInt32 i = 0; i < numRegs; i++)
+		for (UInt32 i=0; i<numRegs; i++)
 		{
 			EventRegistration<D> reg;
 			if (reg.Load(intfc, version))
 			{
-				VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
-				IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
+				VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+				IObjectHandlePolicy	* policy = vm->GetHandlePolicy();
 
 				UInt64 newHandle = 0;
 
 				// Skip if handle is no longer valid.
 				if (! intfc->ResolveHandle(reg.handle, &newHandle))
+					continue;
+
+				VMObjectTypeInfo * typeInfo = nullptr;
+				if(vm->GetObjectTypeInfoByName(&reg.scriptName, &typeInfo))
+					if(typeInfo)
+						typeInfo->Release();
+
+				// No valid type for script, skip
+				if(!typeInfo)
 					continue;
 
 				reg.handle = newHandle;
@@ -507,9 +484,10 @@ public:
 	}
 };
 
-extern RegistrationMapHolder<UInt32>							g_inputKeyEventRegs;
-extern RegistrationMapHolder<BSFixedString>						g_inputControlEventRegs;
-
+extern RegistrationMapHolder<UInt32>									g_inputKeyEventRegs;
+extern RegistrationMapHolder<BSFixedString>								g_inputControlEventRegs;
+extern RegistrationMapHolder<BSFixedString, ExternalEventParameters>	g_externalEventRegs;
+extern RegistrationSetHolder<NullParameters>							g_cameraEventRegs;
 
 #define NUM_PARAMS 1
 #include "PapyrusEventsDef.inl"

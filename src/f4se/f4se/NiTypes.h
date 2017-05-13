@@ -215,8 +215,8 @@ public:
 
 //	void	** _vtbl;			// 00
 	T		* m_data;			// 08
-	UInt16	m_arrayBufLen;		// 0C - max elements storable in m_data
-	UInt16	m_emptyRunStart;	// 0E - index of beginning of empty slot run
-	UInt16	m_size;				// 10 - number of filled slots
-	UInt16	m_growSize;			// 12 - number of slots to grow m_data by
+	UInt16	m_arrayBufLen;		// 10 - max elements storable in m_data
+	UInt16	m_emptyRunStart;	// 12 - index of beginning of empty slot run
+	UInt16	m_size;				// 14 - number of filled slots
+	UInt16	m_growSize;			// 16 - number of slots to grow m_data by
 };

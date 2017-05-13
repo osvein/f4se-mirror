@@ -17,6 +17,8 @@ class BGSHeadPart;
 class BGSColorForm;
 class BGSFootstepSet;
 class SpellItem;
+class TESObjectMISC;
+class BGSDamageType;
 
 // 20+
 class TESObject : public TESForm
@@ -241,6 +243,26 @@ STATIC_ASSERT(offsetof(TESNPC, outfit) == 0x2B0);
 STATIC_ASSERT(offsetof(TESNPC, tints) == 0x300);
 STATIC_ASSERT(sizeof(TESNPC) == 0x308);
 
+// 1B0
+class TESAmmo : public TESBoundObject
+{
+public:
+	enum { kTypeID = kFormType_AMMO };
+
+	TESFullName					fullName;			// 068
+	BGSModelMaterialSwap		materialSwap;		// 078	BGSModelMaterialSwap
+	TESIcon						icon;				// 0B8
+	BGSMessageIcon				messageIcon;		// 0C8
+	TESValueForm				value;				// 0E0
+	BGSDestructibleObjectForm	destructible;		// 0F0
+	BGSPickupPutdownSounds		pickupSounds;		// 100
+	TESDescription				description;		// 118
+	BGSKeywordForm				keywordForm;		// 130
+	TESWeightForm				weight;				// 150
+
+	UInt64		unk160[(0x1B0 - 0x160)/8];			// 160
+};
+
 // 300
 class TESObjectWEAP : public TESBoundObject
 {
@@ -263,32 +285,100 @@ public:
 		BGSImpactDataSet			* unk58;					// 58 BGSImpactDataSet*
 		TESLevItem					* unk60;					// 60 TESLevItem *
 		TESAmmo						* ammo;						// 68 TESAmmo *
-		BGSEquipSlot				* unk70;					// 70 BGSEquipSlot*
+		BGSEquipSlot				* equipSlot;				// 70 BGSEquipSlot*
 		SpellItem					* unk78;					// 78 SpellItem*
 		UInt64						unk80;						// 80
-		BGSAimModel					* unk88;					// 88 BGSAimModel *
-		BGSZoomData					* unk90;					// 90 BGSZoomData*
-		float						* unk98;					// 98
+		BGSAimModel					* aimModel;					// 88 BGSAimModel *
+		BGSZoomData					* zoomData;					// 90 BGSZoomData*
+
+		struct FiringData
+		{
+			BGSProjectile	* projectileOverride;	// 00
+			float			unk00;					// 08
+			float			leftMotorStrength;		// 0C
+			float			rightMotorStrength;		// 10
+			float			duration;				// 14
+			float			unk18;					// 18
+			float			unk1C;					// 1C
+			float			sightedTransition;		// 20
+			UInt32			period;					// 24
+			UInt32			unk28;					// 28
+			UInt32			numProjectiles;			// 2C
+		};
+
+		FiringData					* firingData;				// 98
 		tArray<EnchantmentItem*>	* enchantments;				// A0
 		tArray<BGSMaterialSwap*>	* materialSwaps;			// A8
+
+		struct DamageTypes
+		{
+			BGSDamageType	* damageType;	// 00
+			UInt64			value;			// 08
+		};
+
+		tArray<DamageTypes>			* damageTypes;				// B0
 
 		struct ValueModifier
 		{
 			ActorValueInfo * avInfo;	// 00
 			UInt32			unk08;		// 08
 		};
-
-		UInt64						unkB0;						// B0
 		tArray<ValueModifier>		* modifiers;				// B8
-		float						unkC0[(0xF0-0xC0)/4];		// C0
-		UInt64						unkF0;						// F0
-		UInt64						unkF8;						// F8
-		UInt64						unk100;						// 100
-		UInt32						unk108;						// 108
-		UInt32						unk10C;						// 10C
-		UInt32						unk110;						// 110
+
+		float						unkC0;						// C0
+		float						reloadSpeed;				// C4
+		float						speed;						// C8
+		float						reach;						// CC
+		float						minRange;					// D0
+		float						maxRange;					// D4
+		float						attackDelay;				// D8
+		float						unkD8;						// DC
+		float						outOfRangeMultiplier;		// E0
+		float						secondary;					// E4
+		float						critChargeBonus;			// E8
+		float						weight;						// EC
+		float						unkEC;						// F0
+		float						actionCost;					// F4
+		float						fullPowerSeconds;			// F8
+		float						minPowerShot;				// FC
+		UInt32						unk100;						// 100
+		float						critDamageMult;				// 104
+		UInt32						stagger;					// 108
+		UInt32						value;						// 10C
+
+		enum WeaponFlags
+		{
+			kFlag_IgnoresNormalResist	= 0x0000002,
+			kFlag_MinorCrime			= 0x0000004,
+			kFlag_ChargingReload		= 0x0000008,
+			kFlag_HideBackpack			= 0x0000010,
+			kFlag_NonHostile			= 0x0000040,
+			kFlag_NPCsUseAmmo			= 0x0000200,
+			kFlag_RepeatableSingleFire	= 0x0000800,
+			kFlag_HasScope				= 0x0001000,
+			kFlag_HoldInputToPower		= 0x0002000,
+			kFlag_Automatic				= 0x0004000,
+			kFlag_CantDrop				= 0x0008000,
+			kFlag_ChargingAttack		= 0x0010000,
+			kFlag_NotUsedInNormalCombat	= 0x0020000,
+			kFlag_BoundWeapon			= 0x0040000,
+			kFlag_SecondaryWeapon		= 0x0200000,
+			kFlag_BoltAction			= 0x0400000,
+			kFlag_NoJamAfterReload		= 0x0800000,
+			kFlag_DisableShells			= 0x1000000,
+		};
+
+		UInt32						flags;						// 110
 		UInt32						unk114;						// 114
-		UInt64						unk118[(0x138-0x118) / 8];	// 118
+		UInt32						unk118;						// 118
+		UInt32						unk11C;						// 11C
+		ActorValueInfo				* skill;					// 120
+		ActorValueInfo				* damageResist;				// 128
+		UInt16						ammoCapacity;				// 130
+		UInt16						baseDamage;					// 132
+		UInt16						unk134;						// 134
+		UInt8						accuracyBonus;				// 136
+		UInt8						unk137;						// 137
 	};
 
 	// 150
@@ -297,7 +387,7 @@ public:
 	public:
 		BGSModelMaterialSwap*	swap138;	// 138
 		UInt64	unk140;	// 140
-		BGSMod::Attachment::Mod*	unk148;	// 148
+		BGSMod::Attachment::Mod*	embeddedMod;	// 148
 	};
 
 	TESFullName					fullName;			// 068
@@ -432,8 +522,6 @@ public:
 };
 STATIC_ASSERT(offsetof(MagicItem, unk0B0) == 0x0B0);
 STATIC_ASSERT(sizeof(MagicItem) == 0x0D0);
-
-
 
 // 1E0
 class AlchemyItem : public MagicItem
@@ -634,3 +722,73 @@ public:
 };
 STATIC_ASSERT(offsetof(BGSTerminal, arr1B8) == 0x1B8);
 STATIC_ASSERT(sizeof(BGSTerminal) == 0x1E0);
+
+
+// 90
+class BGSBendableSpline : public TESBoundObject
+{
+public:
+	enum { kTypeID = kFormType_BNDS };
+
+	UInt64 unk68[(0x90 - 0x68) >> 3];
+};
+STATIC_ASSERT(sizeof(BGSBendableSpline) == 0x90);
+
+// A8
+class BGSComponent : public TESBoundObject
+{
+public:
+	enum { kTypeID = kFormType_CMPO };
+
+	// parents
+	TESFullName					fullName;			// 68
+	TESValueForm				value;				// 78
+	BGSCraftingUseSound			craftingSounds;		// 88
+
+	TESObjectMISC	* scrapItem;	// 98
+	TESGlobal		* scrapScalar;	// A0
+};
+STATIC_ASSERT(sizeof(BGSComponent) == 0xA8);
+
+// 168
+class TESObjectMISC : public TESBoundObject
+{
+public:
+	enum { kTypeID = kFormType_MISC };
+
+	// parents
+	TESFullName					fullName;			// 68
+	BGSModelMaterialSwap		materialSwap;		// 78
+	TESIcon						icon;				// B8
+	TESValueForm				value;				// C8
+	TESWeightForm				weight;				// D8
+	BGSDestructibleObjectForm	destructible;		// E8
+	BGSMessageIcon				messageIcon;		// F8
+	BGSPickupPutdownSounds		pickupPutdown;		// 110
+	BGSKeywordForm				keywordForm;		// 128
+	BGSFeaturedItemMessage		featuredMessage;	// 148
+
+	struct Component
+	{
+		BGSComponent	* component;
+		UInt64			count;
+	};
+
+	tArray<Component>	* components;	// 158
+	UInt64	unk160;	// 160
+};
+STATIC_ASSERT(sizeof(TESObjectMISC) == 0x168);
+
+// 188
+class BGSProjectile : public TESBoundObject
+{
+public:
+	enum { kTypeID = kFormType_PROJ };
+
+	TESFullName					fullName;			// 68
+	TESModel					model;				// 78
+	BGSPreloadable				preloadable;		// A8
+	BGSDestructibleObjectForm	destructible;		// B0
+
+	UInt64 unkC0[(0x188 - 0xC0) >> 3];
+};

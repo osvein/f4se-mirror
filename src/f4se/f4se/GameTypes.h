@@ -99,35 +99,27 @@ public:
 
 		MEMBER_FN_PREFIX(Ref);
 		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B19A50, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
+		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B1A870, const wchar_t * buf);
+
 		DEFINE_MEMBER_FN(Set, Ref *, 0x01B19B80, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
+		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B1C0D0, const wchar_t * buf);
+
 		DEFINE_MEMBER_FN(Release, void, 0x01B1ACE0);
 
 		Ref();
 		Ref(const char * buf);
+		Ref(const wchar_t * buf);
 		
-		void Release() { CALL_MEMBER_FN(this, Release)(); }
+		void Release();
 
+		bool operator==(const char * lhs) const;
 		bool operator==(const Ref& lhs) const { return data == lhs.data; }
 		bool operator<(const Ref& lhs) const { return data < lhs.data; }
 
 		const char * c_str() const { return operator const char *(); }
 		operator const char *() const { return data->Get<char>(); }
-	};
 
-	struct RefW
-	{
-		Entry	* data;
-
-		MEMBER_FN_PREFIX(RefW);
-		DEFINE_MEMBER_FN(ctor, RefW *, 0x01B19F50, const wchar_t * buf);
-
-		RefW();
-		RefW(const wchar_t * buf);
-
-		bool operator==(const Ref& lhs) const { return data == lhs.data; }
-		bool operator<(const Ref& lhs) const { return data < lhs.data; }
-
-		const wchar_t * c_str() { return operator const wchar_t *(); }
+		const wchar_t * wc_str() { return operator const wchar_t *(); }
 		operator const wchar_t *() { return data->Get<wchar_t>(); }
 	};
 
@@ -145,7 +137,7 @@ public:
 };
 
 typedef StringCache::Ref BSFixedString;
-typedef StringCache::RefW BSFixedStringW;
+typedef StringCache::Ref BSFixedStringW;
 
 class BSAutoFixedString : public BSFixedString
 {
@@ -164,7 +156,15 @@ class BSString
 {
 public:
 	BSString() :m_data(NULL), m_dataLen(0), m_bufLen(0) { }
-	~BSString();
+	~BSString()
+	{
+		if(m_data) {
+			Heap_Free(m_data);
+			m_data = nullptr;
+			m_dataLen = 0;
+			m_bufLen = 0;
+		}
+	};
 
 	const char *	Get(void);
 
@@ -859,7 +859,7 @@ class tHashSet
 		void	Dump(void)
 		{
 			item.Dump();
-			_MESSAGE("\t\tnext: %08X", next);
+			_MESSAGE("\t\tnext: %016I64X", next);
 		}
 	};
 

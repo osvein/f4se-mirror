@@ -11,18 +11,19 @@
 #include "f4se/GameObjects.h"
 #include "f4se/GameExtraData.h"
 	
-DECLARE_STRUCT(WornItem, "Actor", 5, TESForm*, TESForm*, BSFixedString, BGSMaterialSwap*, BGSTextureSet*)
+DECLARE_STRUCT(WornItem, "Actor")
 
 namespace papyrusActor
 {
 	WornItem GetWornItem(Actor* actor, UInt32 slotIndex, bool bFirstPerson)
 	{
 		WornItem result;
-		result.Set<0, TESForm*>(nullptr);
-		result.Set<1, TESForm*>(nullptr);
-		result.Set<2, BSFixedString>("");
-		result.Set<3, TESForm*>(nullptr);
-		result.Set<4, BGSTextureSet*>(nullptr);
+		result.Set<TESForm*>("item", nullptr);
+		result.Set<TESForm*>("model", nullptr);
+		result.Set<BSFixedString>("modelName", "");
+		result.Set<TESForm*>("materialSwap", nullptr);
+		result.Set<BGSTextureSet*>("texture", nullptr);
+
 		if(slotIndex >= ActorEquipData::kMaxSlots) {
 			result.SetNone(true);
 			return result;
@@ -35,13 +36,13 @@ namespace papyrusActor
 
 		if(equipData) {
 			auto materialSwap = equipData->slots[slotIndex].modelMatSwap;
-			result.Set<0, TESForm*>(equipData->slots[slotIndex].item);
-			result.Set<1, TESForm*>(equipData->slots[slotIndex].model);
+			result.Set<TESForm*>("item", equipData->slots[slotIndex].item);
+			result.Set<TESForm*>("model", equipData->slots[slotIndex].model);
 			if(materialSwap) {
-				result.Set<2, BSFixedString>(materialSwap->GetModelName());
-				result.Set<3, TESForm*>(materialSwap->materialSwap);
+				result.Set<BSFixedString>("modelName", materialSwap->GetModelName());
+				result.Set<TESForm*>("materialSwap", materialSwap->materialSwap);
 			}
-			result.Set<4, BGSTextureSet*>(equipData->slots[slotIndex].textureSet);
+			result.Set<BGSTextureSet*>("texture", equipData->slots[slotIndex].textureSet);
 		}
 
 		return result;
@@ -84,6 +85,13 @@ namespace papyrusActor
 
 		return result;
 	}
+
+	void QueueUpdate(Actor * actor, bool bDoEquipment, UInt32 flags)
+	{
+		if(actor) {
+			CALL_MEMBER_FN(actor, QueueUpdate)(bDoEquipment, 0, true, flags);
+		}
+	}
 }
 
 void papyrusActor::RegisterFuncs(VirtualMachine* vm)
@@ -94,5 +102,6 @@ void papyrusActor::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new NativeFunction1<Actor, VMArray<BGSMod::Attachment::Mod*>, UInt32>("GetWornItemMods", "Actor", papyrusActor::GetWornItemMods, vm));
 
-	vm->SetFunctionFlags("Actor", "GetWornItem", IFunction::kFunctionFlag_NoWait);
+	vm->RegisterFunction(
+		new NativeFunction2<Actor, void, bool, UInt32>("QueueUpdate", "Actor", papyrusActor::QueueUpdate, vm));
 }

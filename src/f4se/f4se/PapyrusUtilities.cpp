@@ -1,7 +1,7 @@
 #include "f4se/PapyrusUtilities.h"
 #include "f4se/PapyrusVM.h"
 
-UInt64 GetHandleFromObject(void * src, UInt32 typeID)
+UInt64 PapyrusVM::GetHandleFromObject(void * src, UInt32 typeID)
 {
 	VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
 	IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();
@@ -9,7 +9,7 @@ UInt64 GetHandleFromObject(void * src, UInt32 typeID)
 	return policy->Create(typeID, (void*)src);
 }
 
-void * GetObjectFromHandle(UInt64 handle, UInt32 typeID)
+void * PapyrusVM::GetObjectFromHandle(UInt64 handle, UInt32 typeID)
 {
 	VirtualMachine		* registry =	(*g_gameVM)->m_virtualMachine;
 	IObjectHandlePolicy	* policy =		registry->GetHandlePolicy();

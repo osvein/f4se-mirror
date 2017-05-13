@@ -10,7 +10,7 @@ class TESNPC;
 class BGSColorForm;
 class BGSHeadPart;
 class BSFile;
-
+class TESGlobal;
 class ActorValueInfo;
 class TESEffectShader;
 class BGSProjectile;
@@ -22,6 +22,11 @@ class TESObjectLIGH;
 class BGSEncounterZone;
 class BGSMusicType;
 class IFormFactory;
+class TESObjectMISC;
+class TESImageSpace;
+class SpellItem;
+class TESObjectLAND;
+class TESWorldSpace;
 
 typedef TESForm* (* _LookupFormByID)(UInt32 id);
 extern RelocAddr <_LookupFormByID> LookupFormByID;
@@ -874,9 +879,10 @@ class BGSListForm : public TESForm
 public:
 	enum { kTypeID = kFormType_FLST };
 
-	tArray<TESForm*>	forms;		// 20
-	UInt64				unk38;		// 38
-	UInt64				unk40;		// 40
+	tArray<TESForm*>	forms;			// 20
+	UInt64				unk38;			// 38
+	UInt32				scriptAdded;	// 40 - Amount on the end of the tArray that is script-added
+	UInt32				unk44;			// 44
 };
 STATIC_ASSERT(sizeof(BGSListForm) == 0x48);
 
@@ -1013,6 +1019,221 @@ public:
 	{
 	public:
 
+		// Used by Papyrus code to verify internal type
+		// i.e. can't assign an Armor property to a Weapon OMOD
+		enum
+		{
+			kWeaponTarget_Offset	= 0x000,
+			kArmorTarget_Offset		= 0x100,
+			kActorTarget_Offset		= 0x200
+		};
+
+		// Used by Papyrus to specify the particular operator
+		enum
+		{
+			kOperator_Set = 0,
+			kOperator_Add = 1,
+			kOperator_Mult_Add = 2,
+			kOperator_And = 3,
+			kOperator_Or = 4,
+			kOperator_Rem = 5
+		};
+
+		enum WeaponFormProperty
+		{
+			kWeaponTarget_bAlternateRumble = 22,
+			kWeaponTarget_bAutomatic = 25,
+			kWeaponTarget_bBoltAction = 81,
+			kWeaponTarget_bCantDrop = 26,
+			kWeaponTarget_bChargingAttack = 93,
+			kWeaponTarget_bChargingReload = 18,
+			kWeaponTarget_bDisableShells = 92,
+			kWeaponTarget_bEffectOnDeath = 21,
+			kWeaponTarget_bFixedRange = 20,
+			kWeaponTarget_bHasScope = 48,
+			kWeaponTarget_bHoldInputToPower = 85,
+			kWeaponTarget_bIgnoreResist = 24,
+			kWeaponTarget_bMinorCrime = 19,
+			kWeaponTarget_bNonHostile = 23,
+			kWeaponTarget_bNonPlayable = 27,
+			kWeaponTarget_bNPCsUseAmmo = 17,
+			kWeaponTarget_bPlayerOnly = 16,
+			kWeaponTarget_bRepeatableSingleFire = 86,
+			kWeaponTarget_ehHitBehavior = 9,
+			kWeaponTarget_elSoundLevel = 59,
+			kWeaponTarget_eoZoomDataOverlay = 68,
+			kWeaponTarget_esStaggerValue = 82,
+			kWeaponTarget_ewType = 15,
+			kWeaponTarget_cAccuracyBonus = 78,
+			kWeaponTarget_fAimModelBaseStability = 66,
+			kWeaponTarget_fAimModelConeDecreasePerSec = 36,
+			kWeaponTarget_fAimModelConeIncreasePerShot = 35,
+			kWeaponTarget_fAimModelConeIronSightsMultiplier = 47,
+			kWeaponTarget_fAimModelConeSneakMultiplier = 38,
+			kWeaponTarget_fAimModelMaxConeDegrees = 34,
+			kWeaponTarget_fAimModelMinConeDegrees = 33,
+			kWeaponTarget_fAimModelRecoilArgDeg = 45,
+			kWeaponTarget_fAimModelRecoilArgRotateDeg = 46,
+			kWeaponTarget_fAimModelRecoilDiminishSightsMult = 40,
+			kWeaponTarget_fAimModelRecoilDiminishSpringForce = 39,
+			kWeaponTarget_fAimModelRecoilHipMult = 43,
+			kWeaponTarget_fAimModelRecoilMaxDegPerShot = 41,
+			kWeaponTarget_fAimModelRecoilMinDegPerShot = 42,
+			kWeaponTarget_fAttackActionPointCost = 79,
+			kWeaponTarget_fAttackDelaySec = 4,
+			kWeaponTarget_fColorRemappingIndex = 88,
+			kWeaponTarget_fCriticalChargeBonus = 8,
+			kWeaponTarget_fCriticalDamageMult = 90,
+			kWeaponTarget_fFireSeconds = 50,
+			kWeaponTarget_fFullPowerSeconds = 84,
+			kWeaponTarget_fMaxRange = 3,
+			kWeaponTarget_fMinPowerPerShot = 87,
+			kWeaponTarget_fMinRange = 2,
+			kWeaponTarget_fOutOfRangeDamageMult = 6,
+			kWeaponTarget_fReach = 1,
+			kWeaponTarget_fReloadSpeed = 76,
+			kWeaponTarget_fSecondaryDamage = 7,
+			kWeaponTarget_fSightedTransitionSeconds = 83,
+			kWeaponTarget_fSoundLevelMult = 74,
+			kWeaponTarget_fSpeed = 0,
+			kWeaponTarget_fUnused = 5,
+			kWeaponTarget_fWeight = 30,
+			kWeaponTarget_fZoomDataCameraOffsetX = 70,
+			kWeaponTarget_fZoomDataCameraOffsetY = 71,
+			kWeaponTarget_fZoomDataCameraOffsetZ = 72,
+			kWeaponTarget_iAmmoCapacity = 12,
+			kWeaponTarget_iAttackDamage = 28,
+			kWeaponTarget_iRank = 10,
+			kWeaponTarget_iValue = 29,
+			kWeaponTarget_paAimModel = 32,
+			kWeaponTarget_peEnchantments = 65,
+			kWeaponTarget_pgZoomDataImageSpace = 69,
+			kWeaponTarget_piBashImpactDataSet = 63,
+			kWeaponTarget_piImpactDataSet = 60,
+			kWeaponTarget_pkKeywords = 31,
+			kWeaponTarget_plCritEffect = 62,
+			kWeaponTarget_pmBlockMaterial = 64,
+			kWeaponTarget_pnNPCAmmoList = 75,
+			kWeaponTarget_poAmmo = 61,
+			kWeaponTarget_ppOverrideProjectile = 80,
+			kWeaponTarget_psAttackFailSound = 55,
+			kWeaponTarget_psAttackLoop = 54,
+			kWeaponTarget_psAttackSound = 52,
+			kWeaponTarget_psAttackSound2D = 53,
+			kWeaponTarget_psEquipSound = 57,
+			kWeaponTarget_psFastEquipSound = 91,
+			kWeaponTarget_psIdleSound = 56,
+			kWeaponTarget_psUnEquipSound = 58,
+			kWeaponTarget_ptEquipSlot = 73,
+			kWeaponTarget_pwMaterialSwaps = 89,
+			kWeaponTarget_pzZoomData = 67,
+			kWeaponTarget_uAimModelConeDecreaseDelayMs = 37,
+			kWeaponTarget_uAimModelRecoilShotsForRunaway = 44,
+			kWeaponTarget_uNumProjectiles = 51,
+			kWeaponTarget_vaActorValues = 94,
+			kWeaponTarget_vdDamageTypeValues = 77
+		};
+
+		enum ArmorFormProperty
+		{
+			kArmorTarget_ebBodyPart = 8,
+			kArmorTarget_fColorRemappingIndex = 12,
+			kArmorTarget_fWeight = 4,
+			kArmorTarget_iAddonIndex = 7,
+			kArmorTarget_iHealth = 11,
+			kArmorTarget_iRating = 6,
+			kArmorTarget_iValue = 5,
+			kArmorTarget_peEnchantments = 0,
+			kArmorTarget_piBashImpactDataSet = 1,
+			kArmorTarget_pkKeywords = 3,
+			kArmorTarget_pmBlockMaterial = 2,
+			kArmorTarget_pwMaterialSwaps = 13,
+			kArmorTarget_vaActorValues = 10,
+			kArmorTarget_vdDamageTypeValues = 9
+		};
+
+		enum NPCFormProperty
+		{
+			kActorTarget_fColorRemappingIndex = 4,
+			kActorTarget_iXPOffset = 2,
+			kActorTarget_peEnchantments = 3,
+			kActorTarget_piForcedInventory = 1,
+			kActorTarget_pkKeywords = 0,
+			kActorTarget_pwMaterialSwaps = 5
+		};
+
+		// 10
+		struct Data
+		{
+			union
+			{
+				struct 
+				{
+					float	v1;
+					float	v2;
+				} f;
+
+				struct 
+				{
+					UInt32	v1;
+					UInt32	v2;
+				} i;
+
+				struct 
+				{
+					UInt32	formId;
+					float	v2;
+				} ff;
+
+				struct 
+				{
+					UInt32	formId;
+					UInt32	v2;
+				} fi;
+
+				TESForm * form;
+			} value;		// 00
+
+			UInt8	target;	// 08 - ArmorFormProperty/NPCFormProperty/WeaponFormProperty
+
+			enum
+			{
+				kOpFlag_Mod = 0x02,
+				kOpFlag_Mul = 0x08,
+				kOpFlag_Add = 0x10,
+				kOpFlag_Set = 0x20,
+				kOpFlag_Dual = 0x40,
+				kOpFlag_Form = 0x80,
+
+				kOpFlag_Set_Bool = 0,
+				kOpFlag_Or_Bool = (kOpFlag_Add | kOpFlag_Dual),
+				kOpFlag_And_Bool = (kOpFlag_Mul | kOpFlag_Dual),
+
+				kOpFlag_Set_Enum = (kOpFlag_Set | kOpFlag_Form),
+
+				kOpFlag_Set_Int = kOpFlag_Dual,
+				kOpFlag_Add_Int = kOpFlag_Add,
+				kOpFlag_Mul_Add_Int = (kOpFlag_Mul | kOpFlag_Set), // Same as Float version
+
+				kOpFlag_Set_Form = kOpFlag_Form,
+				kOpFlag_Add_Form = (kOpFlag_Add | kOpFlag_Form),
+				kOpFlag_Rem_Form = (kOpFlag_Mul | kOpFlag_Form),
+
+				kOpFlag_Set_Float = kOpFlag_Set,
+				kOpFlag_Add_Float = (kOpFlag_Add | kOpFlag_Set),
+				kOpFlag_Mul_Add_Float = (kOpFlag_Mul | kOpFlag_Set),
+				
+				kOpFlag_Set_Form_Float = (kOpFlag_Dual | kOpFlag_Form),
+				kOpFlag_Add_Form_Float = (kOpFlag_Add | kOpFlag_Dual | kOpFlag_Form),
+				kOpFlag_Mul_Add_Form_Float = (kOpFlag_Mul | kOpFlag_Dual | kOpFlag_Form)
+			};
+
+			UInt8	op;		// 09
+			UInt16	unk0A;	// 0A
+			UInt32	unk0C;	// 0C
+		};
+		Data	* data;		// 00
+		UInt32	dataSize;	// 08 - dataSize/sizeof(Data) = count
 	};
 
 	class Template
@@ -1064,12 +1285,26 @@ public:
 			TESDescription								description; // 30
 			BGSModelMaterialSwap						materialSwap; // 48
 			BGSMod::Container							modContainer; // 88
-			//BSTDataBuffer<2, BSDataBufferHeapAllocator> dataBuffer;
-			UInt64										unk90;			// 90
 			BGSAttachParentArray						unk98;			// 98
 			UInt64										unkB0;			// B0
 			UInt64										unkB8;			// B8
-			UInt64										unkC0;			// C0
+			UInt16										unkC0;			// C0
+
+			enum
+			{
+				kTargetType_None = 0,
+				kTargetType_Armor = 0x1D,
+				kTargetType_Furniture = 0x2A,
+				kTargetType_Weapon = 0x2B,
+				kTargetType_Actor = 0x2D
+			};
+
+			UInt8										targetType;		// C2
+			UInt8										maxRank;		// C3
+			UInt8										scaledOffset;	// C4
+			UInt8										priority;		// C5
+			UInt8										unkC6;			// C6
+			UInt8										unkC7;			// C7
 		};
 	};
 };
@@ -1189,12 +1424,45 @@ public:
 	// parents
 	TESFullName				fullName;		// 20
 
-	// Only care about the objects in the cell right now
-	UInt64	unk30[(0x70 - 0x30) >> 3];		// 30
-	tArray<TESObjectREFR*> objectList;		// 70
-	UInt64	unk88[(0xF0 - 0x88) >> 3];		// 88
+	UInt64					unk30;				// 30
+	UInt64					unk38;				// 38
+
+	enum
+	{
+		kFlag_IsInterior = 1,
+		kFlag_HasWater = 2		// Water is implied for Exteriors, this bit is set when it has an override
+	};
+
+	UInt16					flags;				// 40
+	UInt16					unk42;				// 42
+	UInt32					unk44;				// 44
+	ExtraDataList			* extraDataList;	// 48
+
+	struct MaxHeightData
+	{
+		UInt32	unk00;				// 00
+		UInt32	unk04;				// 04
+		UInt8	* maxHeightBlock;	// 08
+	};
+
+	MaxHeightData			* unk50;			// 50
+	TESObjectLAND			* land;				// 58
+	SInt32					unk60;				// 60
+	float					unk64;				// 64
+	tArray<void*>			* navMeshes;		// 68
+	tArray<TESObjectREFR*>	objectList;			// 70
+	UInt64					unk88;				// 88
+	tHashSet<void*, void*>	unk90;				// 90
+	void					* unkC0;			// C0
+	TESWorldSpace			* worldSpace;		// C8
+	UInt64					unkD0;				// D0
+	UInt64					unkD8;				// D8
+	UInt64					unkE0;				// E0
+	UInt32					preVisCell;			// E8 - FormID
+	UInt32					unkEC;				// EC
 };
 STATIC_ASSERT(offsetof(TESObjectCELL, objectList) == 0x70);
+STATIC_ASSERT(offsetof(TESObjectCELL, worldSpace) == 0xC8);
 STATIC_ASSERT(sizeof(TESObjectCELL) == 0xF0);
 
 // 48
@@ -1217,6 +1485,162 @@ public:
 	enum { kTypeID = kFormType_OTFT };
 
 	tArray<TESForm*>	forms;	// 20
+};
+
+// 30
+class BGSDamageType : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_DMGT };
+
+	UInt64	unk20;
+	UInt64	unk28;
+};
+
+// 48
+class BGSEquipSlot : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_EQUP };
+
+	tArray<BGSEquipSlot*>	parentSlots;	// 20
+	UInt64		unk38;
+	UInt64		unk40;
+};
+
+// 228
+class TESWaterForm : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_WATR };
+
+	// parents
+	TESFullName				fullName;		// 20
+
+	UInt64	unk30[(0x68 - 0x30) >> 3];		// 30
+
+	TESTexture	layer1Noise;				// 68
+	TESTexture	layer2Noise;				// 78
+	TESTexture	layer3Noise;				// 88
+
+	UInt32		opacity;					// 98
+	UInt32		unk9C;						// 9C
+	BGSMaterialType	* material;				// A0
+	BGSSoundDescriptorForm	* openSound;	// A8
+
+	// C8
+	struct VisualData
+	{
+		float	depthAmount;			// 00
+		union Color
+		{
+			UInt32 bgr;
+			struct
+			{
+				UInt8	red;
+				UInt8	green;
+				UInt8	blue;
+				UInt8	unused;
+			} color;
+		};
+		Color	shallowColor;			// 04
+		Color	deepColor;				// 08
+		float	shallowColorRange;		// 0C
+		float	deepColorRange;			// 10
+		float	shallowAlpha;			// 14
+		float	deepAlpha;				// 18
+		float	alphaShallowRange;		// 1C
+		float	alphaDeepRange;			// 20
+		Color	underwaterColor;		// 24
+		float	underwaterFogAmount;	// 28
+		float	underwaterNearFog;		// 2C
+		float	underwaterFarFog;		// 30
+		float	normalMagnitude;		// 34
+		float	shadowNormalFalloff;	// 38
+		float	deepNormalFalloff;		// 3C
+		float	reflectivityAmount;		// 40
+		float	fresnelAmount;			// 44
+		float	surfaceEffectFalloff;	// 48
+		float	displacementForce;		// 4C
+		float	displacementVelocity;	// 50
+		float	displacementFalloff;	// 54
+		float	displacementDampener;	// 58
+		float	displacementStartingSize;	// 5C
+		Color	reflectionColor;		// 60
+		float	sunSpecularPower;		// 64
+		float	sunSpecularMagnitude;	// 68
+		float	sunSparklePower;		// 6C
+		float	sunSparkleMagnitude;	// 70
+		float	interiorSpecularRadius;	// 74
+		float	interiorSpecularBrightness;	// 78
+		float	interiorSpecularPower;	// 7C
+		float	layer1WindDirection;	// 80
+		float	layer2WindDirection;	// 84
+		float	layer3WindDirection;	// 88
+		float	layer1WindSpeed;	// 8C
+		float	layer2WindSpeed;	// 90
+		float	layer3WindSpeed;	// 94
+		float	layer1AmplitudeScale;	// 98
+		float	layer2AmplitudeScale;	// 9C
+		float	layer3AmplitudeScale;	// A0
+		float	layer1UVScale;	// A4
+		float	layer2UVScale;	// A8
+		float	layer3UVScale;	// AC
+		float	layer1NoiseFalloff;	// B0
+		float	layer2NoiseFalloff;	// B4
+		float	layer3NoiseFalloff;	// B8
+		float	siltAmount;			// BC
+		Color	siltLightColor;		// C0
+		Color	siltDarkColor;		// C4
+	};
+	VisualData	visualData;					// B0
+	UInt64		unk178;		// 178
+	UInt64		unk180;		// 180
+	UInt64		unk188;		// 188
+	UInt64		unk190;		// 190
+	UInt64		unk198;		// 198
+	UInt32		unk1A0;		// 1A0 - 9
+	UInt32		unk1A4;		// 1A4 - 9
+	UInt32		unk1A8;		// 1A8 - 4
+	float		unk1AC;		// 1AC
+	float		unk1B0;		// 1B0
+	float		unk1B4;		// 1B4
+	float		unk1B8;		// 1B8
+	float		unk1BC;		// 1BC
+	SpellItem	* consumeSpell;	// 1C0
+	SpellItem	* contactSpell;	// 1C8
+	UInt64	unk1D0[(0x208 - 0x1D0) >> 3];		// 30
+	TESImageSpace	* imageSpace;	// 208
+	float	linearVelocityX;	// 210
+	float	linearVelocityY;	// 214
+	float	linearVelocityZ;	// 218
+	float	angularVelocityX;	// 21C
+	float	angularVelocityY;	// 220
+	float	angularVelocityZ;	// 224
+};
+
+// 98
+class BGSPerk : public TESForm
+{
+public:
+	// parents
+	TESFullName				fullName;		// 20
+	TESDescription			description;	// 30
+	TESIcon					icon;			// 48
+
+	UInt8					unk58;			// 58
+	UInt8					perkLevel;		// 59
+	UInt8					numRanks;		// 5A
+	UInt8					playable;		// 5B
+	UInt8					hidden;			// 5C
+	UInt8					unk5D;			// 5D
+	UInt8					unk5E;			// 5E
+	UInt8					unk5F;			// 5F
+	Condition				* condition;	// 60
+	tArray<BGSPerkEntry*>	perkEntries;	// 68
+	BGSPerk					* nextPerk;		// 80
+	BGSSoundDescriptorForm	* sound;		// 88
+	BSFixedString			swfPath;		// 90
 };
 
 // 08
@@ -1250,3 +1674,20 @@ class ConcreteFormFactory : public IFormFactory
 public:
 	const char	* name;		// 08
 };
+
+struct ObjectModMiscPair
+{
+	BGSMod::Attachment::Mod	* key;
+	TESObjectMISC			* miscObject;
+
+	operator BGSMod::Attachment::Mod*() const					{ return key; }
+
+	static inline UInt32 GetHash(BGSMod::Attachment::Mod ** key)
+	{
+		UInt32 hash;
+		CalculateCRC32_64(&hash, (UInt64)*key, 0);
+		return hash;
+	}
+};
+
+extern RelocPtr <tHashSet<ObjectModMiscPair, BGSMod::Attachment::Mod*>> g_modAttachmentMap;

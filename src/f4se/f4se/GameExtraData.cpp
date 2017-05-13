@@ -1,5 +1,7 @@
 #include "f4se/GameExtraData.h"
 
+RelocAddr<uintptr_t> s_ExtraPowerLinksVtbl(0x02BFCDE0);
+
 bool ExtraDataList::PresenceBitfield::HasType(UInt32 type) const
 {
 	UInt32 index = (type >> 3);
@@ -7,8 +9,9 @@ bool ExtraDataList::PresenceBitfield::HasType(UInt32 type) const
 	return (bits[index] & bitMask) != 0;
 }
 
-bool ExtraDataList::HasType(UInt32 type) const
+bool ExtraDataList::HasType(UInt32 type)
 {
+	SimpleLocker locker(&m_lock);
 	return (m_presence) ? m_presence->HasType(type) : false;
 }
 
@@ -28,6 +31,7 @@ bool ExtraDataList::Remove(UInt8 type, BSExtraData* toRemove)
 {
 	if (!toRemove) return false;
 
+	SimpleLocker locker(&m_lock);
 	if (HasType(type)) {
 		bool bRemoved = false;
 		if (m_data == toRemove) {
@@ -55,6 +59,7 @@ bool ExtraDataList::Add(UInt8 type, BSExtraData* toAdd)
 {
 	if (!toAdd || HasType(type)) return false;
 
+	SimpleLocker locker(&m_lock);
 	BSExtraData* next = m_data;
 	m_data = toAdd;
 	toAdd->next = next;
@@ -62,11 +67,12 @@ bool ExtraDataList::Add(UInt8 type, BSExtraData* toAdd)
 	return true;
 }
 
-BSExtraData* ExtraDataList::GetByType(UInt32 type) const
+BSExtraData* ExtraDataList::GetByType(UInt32 type)
 {
 	if (!HasType(type))
 		return NULL;
 
+	SimpleLocker locker(&m_lock);
 	for(BSExtraData * traverse = m_data; traverse; traverse = traverse->next) {
 		if(traverse->type == type)
 			return traverse;
@@ -82,8 +88,31 @@ void ExtraDataList::Dump()
 	for(BSExtraData * traverse = m_data; traverse; traverse = traverse->next)
 	{
 		gLog.Indent();
-		_MESSAGE("%s", GetObjectClassName(traverse));
+		_MESSAGE("%016I64X %s", traverse, GetObjectClassName(traverse));
 		gLog.Outdent();
 	}
 }
 #endif
+
+BSExtraData* BSExtraData::Create(UInt32 size, UInt64 vtbl)
+{
+	void* memory = Heap_Allocate(size);
+	memset(memory, 0, size);
+	((UInt64*)memory)[0] = vtbl;
+	BSExtraData* xData = (BSExtraData*)memory;
+	xData->unk10 = 0;
+	xData->unk13 = 0;
+	xData->unk14 = 0;
+	xData->next = NULL;
+	return xData;
+}
+
+ExtraPowerLinks* ExtraPowerLinks::Create()
+{
+	ExtraPowerLinks* pPowerLinks = (ExtraPowerLinks*)BSExtraData::Create(sizeof(ExtraPowerLinks), s_ExtraPowerLinksVtbl.GetUIntPtr());
+	pPowerLinks->type = kExtraData_PowerLinks;
+	pPowerLinks->connections.entries = NULL;
+	pPowerLinks->connections.count = 0;
+	pPowerLinks->connections.capacity = 0;
+	return pPowerLinks;
+}

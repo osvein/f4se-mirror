@@ -9,10 +9,10 @@ public:
 	virtual void	AttachChild(NiAVObject * obj, bool firstAvail);
 	virtual void	DetachChild(UInt32 unk1, NiAVObject * obj);
 	virtual void	Unk_3B(void);
-	virtual void	RemoveChild(NiAVObject * obj);
-	virtual void	Unk_3D(void);
+	virtual void	RemoveChild(NiAVObject * obj, NiAVObject ** out);
+	virtual void	Remove(NiAVObject * obj);
+	virtual void	RemoveChildAt(UInt32 i, NiAVObject ** out);
 	virtual void	RemoveAt(UInt32 i);
-	virtual void	Unk_3F(void);
 	virtual void	ReplaceChild(UInt32 index, NiAVObject * obj, NiAVObject ** replaced);
 	virtual void	ReplaceAt(UInt32 index, NiAVObject * obj);
 	virtual void	Unk_42(void);

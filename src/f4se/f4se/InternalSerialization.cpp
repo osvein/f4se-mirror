@@ -9,6 +9,8 @@
 #include "f4se/InternalSerialization.h"
 #include "f4se/Serialization.h"
 #include "f4se/PapyrusEvents.h"
+#include "f4se/PapyrusObjects.h"
+#include "f4se/PapyrusDelayFunctors.h"
 
 // Internal
 
@@ -65,17 +67,36 @@ void Core_RevertCallback(const F4SESerializationInterface * intfc)
 {
 	g_inputKeyEventRegs.Clear();
 	g_inputControlEventRegs.Clear();
+	g_externalEventRegs.Clear();
+	g_cameraEventRegs.Clear();
+
+	F4SEDelayFunctorManagerInstance().OnRevert();
+	F4SEObjectStorageInstance().ClearAndRelease();
 }
 
 void Core_SaveCallback(const F4SESerializationInterface * intfc)
 {
+	using namespace Serialization;
+
 	SaveModList(intfc);
 
 	_MESSAGE("Saving key input event registrations...");
-	g_inputKeyEventRegs.Save(intfc, 'KEYR', 1);
+	g_inputKeyEventRegs.Save(intfc, 'KEYR', InternalEventVersion::kCurrentVersion);
 
 	_MESSAGE("Saving control input event registrations...");
-	g_inputControlEventRegs.Save(intfc, 'CTLR', 1);
+	g_inputControlEventRegs.Save(intfc, 'CTLR', InternalEventVersion::kCurrentVersion);
+
+	_MESSAGE("Saving external event registrations...");
+	g_externalEventRegs.Save(intfc, 'EXEV', InternalEventVersion::kCurrentVersion);
+
+	_MESSAGE("Saving camera event registrations...");
+	g_cameraEventRegs.Save(intfc, 'CAMR', InternalEventVersion::kCurrentVersion);
+
+	_MESSAGE("Saving SKSEPersistentObjectStorage data...");
+	SaveClassHelper(intfc, 'OBMG', F4SEObjectStorageInstance());
+
+	_MESSAGE("Saving SKSEDelayFunctorManager data...");
+	SaveClassHelper(intfc, 'DFMG', F4SEDelayFunctorManagerInstance());
 }
 
 void Core_LoadCallback(const F4SESerializationInterface * intfc)
@@ -94,13 +115,37 @@ void Core_LoadCallback(const F4SESerializationInterface * intfc)
 			// Key input events
 		case 'KEYR':
 			_MESSAGE("Loading key input event registrations...");
-			g_inputKeyEventRegs.Load(intfc, 1);
+			g_inputKeyEventRegs.Load(intfc, InternalEventVersion::kCurrentVersion);
 			break;
 
 			// Control input events
 		case 'CTLR':
 			_MESSAGE("Loading control input event registrations...");
-			g_inputControlEventRegs.Load(intfc, 1);
+			g_inputControlEventRegs.Load(intfc, InternalEventVersion::kCurrentVersion);
+			break;
+
+			// External events
+		case 'EXEV':
+			_MESSAGE("Loading external event registrations...");
+			g_externalEventRegs.Load(intfc, InternalEventVersion::kCurrentVersion);
+			break;
+
+			// Camera events
+		case 'CAMR':
+			_MESSAGE("Loading camera event registrations...");
+			g_cameraEventRegs.Load(intfc, InternalEventVersion::kCurrentVersion);
+			break;
+
+			// SKSEPersistentObjectStorage
+		case 'OBMG':
+			_MESSAGE("Loading F4SEPersistentObjectStorage data...");
+			F4SEObjectStorageInstance().Load(intfc, version);
+			break;
+
+			// SKSEDelayFunctorManager
+		case 'DFMG':
+			_MESSAGE("Loading F4SEDelayFunctorManager data...");
+			F4SEDelayFunctorManagerInstance().Load(intfc, version);
 			break;
 
 		default:

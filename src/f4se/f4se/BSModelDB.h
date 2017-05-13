@@ -47,4 +47,4 @@ public:
 	};
 };
 
-extern RelocPtr <BSModelDB::TESProcessor*> g_TESProcessor;
+extern RelocPtr <BSModelDB::BSModelProcessor*> g_TESProcessor;

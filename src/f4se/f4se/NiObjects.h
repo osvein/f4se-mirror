@@ -101,14 +101,17 @@ public:
 
 	struct NiUpdateData
 	{
-		float	fTime;				// 00
-		UInt32	RenderUseDepth;		// 04
-		UInt32	bParentsChecked;	// 08
-		UInt32	unk0C;				// 0C
-		void	* pCamera;			// 10
-		UInt32	Flags;				// 18
-		UInt32	RenderObjects;		// 1C
-		UInt32	FadeNodeDepth;		// 20
+		NiUpdateData() : unk00(nullptr), pCamera(nullptr), flags(0), unk14(0), unk18(0), unk20(0), unk28(0), unk30(0), unk38(0) { }
+
+		void	* unk00;			// 00
+		void	* pCamera;			// 08
+		UInt32	flags;				// 10
+		UInt32	unk14;				// 14
+		UInt64	unk18;				// 18
+		UInt64	unk20;				// 20
+		UInt64	unk28;				// 28
+		UInt64	unk30;				// 30
+		UInt64	unk38;				// 38
 	};
 
 	virtual void UpdateControllers();

@@ -23,6 +23,16 @@ public:
 };
 extern RelocAddr<uintptr_t> s_NiStringExtraDataVtbl;
 
+// 28
+class NiBinaryExtraData : public NiExtraData
+{
+public:
+	UInt8 * binaryData;	// 18
+	UInt32	size;		// 20
+
+	static NiBinaryExtraData* Create(const BSFixedString & name, UInt32 size);
+};
+
 // 20 (DynPosData)
 class BSDynPosData : public NiExtraData
 {

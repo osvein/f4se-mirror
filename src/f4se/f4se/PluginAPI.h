@@ -6,6 +6,10 @@ class GFxMovieView;
 class GFxValue;
 class ITaskDelegate;
 
+class F4SEDelayFunctorManager;
+class F4SEObjectRegistry;
+class F4SEPersistentObjectStorage;
+
 enum
 {
 	kPluginHandle_Invalid = 0xFFFFFFFF
@@ -19,6 +23,7 @@ enum
 	kInterface_Papyrus,
 	kInterface_Serialization,
 	kInterface_Task,
+	kInterface_Object,
 	kInterface_Max,
 };
 
@@ -188,6 +193,20 @@ struct F4SETaskInterface
 	UInt32	interfaceVersion;
 
 	void	(* AddTask)(ITaskDelegate * task);
+};
+
+struct F4SEObjectInterface
+{
+	enum
+	{
+		kInterfaceVersion = 1
+	};
+
+	UInt32	interfaceVersion;
+
+	F4SEDelayFunctorManager & (* GetDelayFunctorManager)();
+	F4SEObjectRegistry & (* GetObjectRegistry)();
+	F4SEPersistentObjectStorage & (* GetPersistentObjectStorage)();
 };
 
 struct PluginInfo

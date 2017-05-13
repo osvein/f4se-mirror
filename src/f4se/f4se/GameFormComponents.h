@@ -28,6 +28,11 @@ class TESObjectARMA;
 class IAnimationGraphManagerHolder;
 class ExtraDataList;
 class ActorValueInfo;
+class Condition;
+class TESObjectREFR;
+
+typedef bool (* _EvaluationConditions)(Condition * condition, TESObjectREFR * ref1, TESObjectREFR * ref2);
+extern RelocAddr <_EvaluationConditions> EvaluationConditions; // Evaluates whole condition LinkedList
 
 // 10
 class TBO_InstanceData : public BSIntrusiveRefCounted
@@ -326,7 +331,7 @@ public:
 	BSFixedString	str;	// 08 StringCache::Ref
 };
 
-// 08
+// 10
 class TESIcon : public TESTexture
 {
 public:
@@ -412,6 +417,9 @@ class TESDescription : public BaseFormComponent
 public:
 	void	* unk08;	// 08
 	void	* unk10;	// 10
+
+	MEMBER_FN_PREFIX(TESDescription);
+	DEFINE_MEMBER_FN(Get, void, 0x0014E470, BSString * out, TESForm * parent);
 };
 
 // 10
@@ -610,7 +618,8 @@ public:
 class TESValueForm : public BaseFormComponent
 {
 public:
-	UInt64 unk08;	// 08
+	UInt32	value;	// 08
+	UInt32	unk0C;	// 0C
 };
 
 // 108
@@ -620,6 +629,13 @@ public:
 	UInt64 unk[(0x108-0x8)/8];
 };
 STATIC_ASSERT(sizeof(TESBipedModelForm) == 0x108);
+
+// 10
+class BGSFeaturedItemMessage : public BaseFormComponent
+{
+public:
+	UInt64	unk08;	// 08
+};
 
 // 18
 class MagicTarget
@@ -741,20 +757,24 @@ class IPostAnimationChannelUpdateFunctor
 class Condition
 {
 public:
-	enum ComparisonFlags {
-		kComparisonFlag_And = 0x00,
-		kComparisonFlag_Or = 0x01,
-		kComparisonFlag_Equal = 0x00,
-		kComparisonFlag_UseAliases = 0x02,
-		kComparisonFlag_Global = 0x04,
-		kComparisonFlag_UsePackData = 0x08,
-		kComparisonFlag_SwapTarget = 0x10,
-		kComparisonFlag_NotEqual = 0x20,
-		kComparisonFlag_Greater = 0x40,
-		kComparisonFlag_GreaterEqual = 0x60,
-		kComparisonFlag_Less = 0x80,
-		kComparisonFlag_LessEqual = 0xA0
+	enum CompareFlags {
+		kCompareFlag_And = 0x00,
+		kCompareFlag_Or = 0x01,
+		kCompareFlag_Equal = 0x00,
+		kCompareFlag_UseAliases = 0x02,
+		kCompareFlag_Global = 0x04,
+		kCompareFlag_UsePackData = 0x08,
+		kCompareFlag_SwapTarget = 0x10,
 	};
+
+	enum CompareOperators {
+		kCompareOp_NotEqual = 0,
+		kCompareOp_Greater,
+		kCompareOp_GreaterEqual,
+		kCompareOp_Less,
+		kCompareOp_LessEqual
+	};
+
 	enum ReferenceTypes {
 		kReferenceType_Subject = 0,
 		kReferenceType_Target,
@@ -774,6 +794,13 @@ public:
 		TESForm	* form;
 	};
 
+	enum Functions
+	{
+		kFunction_GetSex = 70,
+		kFunction_GetBaseValue = 277,
+		kFunction_GetPermanentValue = 494
+	};
+
 	Condition	* next;					// 00
 	float		compareValue;			// 08
 	UInt32		unk0C;					// 0C
@@ -785,10 +812,39 @@ public:
 	UInt32		unk1C;					// 1C
 	Param		param1;					// 20
 	Param		param2;					// 28
-	UInt8		comparisonType;			// 30
-	UInt8		referenceType;			// 31
-	UInt8		unk32[6];				// 32
+
+	struct CompareType
+	{
+		unsigned char flags : 5;
+		unsigned char op : 3;
+	};
+
+	CompareType		comparisonType;			// 30
+	UInt8			referenceType;			// 31
+	UInt8			unk32[6];				// 32
+
+	// 78
+	class Evaluator
+	{
+	public:
+		Evaluator(TESForm * a1, TESForm * a2)
+		{
+			CALL_MEMBER_FN(this, ctor)(a1, a2, 0);
+		}
+
+		TESForm * a1;	// 00
+		TESForm * a2;	// 08
+		UInt64	unk10[(0x78 - 0x08) >> 3];
+
+		MEMBER_FN_PREFIX(Evaluator);
+		DEFINE_MEMBER_FN(ctor, void, 0x007284E0, TESForm * a1, TESForm * a2, UInt64 unk1); // a1 might be player or subject, not sure yet
+	};
+
+	MEMBER_FN_PREFIX(Condition);
+	DEFINE_MEMBER_FN(Evaluate, bool, 0x0072A2A0, Evaluator * eval); // Evaluates only a single condition
 };
+STATIC_ASSERT(offsetof(Condition, referenceType) == 0x31);
+STATIC_ASSERT(sizeof(Condition) == 0x38);
 
 // ??
 struct IMovementPlayerControlsFilter : public IMovementInterface
@@ -837,6 +893,26 @@ public:
 	SlotData	slots[kMaxSlots];
 };
 
+// 08
+class EquippedItemData : public NiRefObject
+{
+public:
+	virtual ~EquippedItemData();
+};
+
+// 38
+class EquippedWeaponData : public EquippedItemData
+{
+public:
+	virtual ~EquippedWeaponData();
+
+	TESAmmo		* ammo;		// 10
+	UInt64		unk18;		// 18
+	void		* unk20;	// 20
+	UInt64		unk28;		// 28
+	NiAVObject	* object;	// 30
+};
+
 // 10
 struct BGSInventoryItem
 {
@@ -862,6 +938,13 @@ struct BGSInventoryItem
 #ifdef _DEBUG
 		void Dump();
 #endif
+		template<typename T>
+		bool Visit(T & f)
+		{
+			if(f(this) && next)
+				return next->Visit(f);
+			return true; // Continue
+		}
 	};
 
 #ifdef _DEBUG
@@ -879,4 +962,13 @@ public:
 	tArray<BSTEventSink<BGSInventoryListEvent::Event>> eventSinks;	// 08
 	UInt64	unk20[(0x58-0x20)/8];
 	tArray<BGSInventoryItem> items;
+};
+
+// 08
+class BGSPerkEntry
+{
+public:
+	virtual ~BGSPerkEntry();
+
+	void	* unk08;	// 08
 };

@@ -4,6 +4,7 @@
 #include "f4se/BSSkin.h"
 
 class NiProperty;
+class ID3D11Buffer;
 
 // 40
 class BSGeometrySegmentData : public NiObject
@@ -38,6 +39,40 @@ public:
 	UInt32	unk3C;	// 3C
 };
 
+class BSGeometryData
+{
+public:
+	UInt64	vertexDesc;
+
+	struct VertexData
+	{
+		ID3D11Buffer	* d3d11Buffer;	// 00 - const CLayeredObjectWithCLS<class CBuffer>::CContainedObject::`vftable'{for `CPrivateDataImpl<struct ID3D11Buffer>'}
+		UInt8			* vertexBlock;	// 08
+		UInt64			unk10;			// 10
+		UInt64			unk18;			// 18
+		UInt64			unk20;			// 20
+		UInt64			unk28;			// 28
+		UInt64			unk30;			// 30
+		volatile SInt32	refCount;		// 38
+	};
+
+	struct TriangleData
+	{
+		ID3D11Buffer	* d3d11Buffer;	// 00 - Same buffer as VertexData
+		UInt16			* triangles;	// 08
+		UInt64			unk10;			// 10
+		UInt64			unk18;			// 18
+		UInt64			unk20;			// 20
+		UInt64			unk28;			// 28
+		UInt64			unk30;			// 30
+		volatile SInt32	refCount;		// 38
+	};
+
+	VertexData			* vertexData;	// 08
+	TriangleData		* triangleData;	// 10
+	volatile SInt32		refCount;		// 18
+};
+
 // 160
 class BSGeometry : public NiAVObject
 {
@@ -55,26 +90,6 @@ public:
 	NiPointer<NiProperty> effectState;		// 130
 	NiPointer<NiProperty> shaderProperty;	// 138
 	NiPointer<BSSkin::Instance>	skinInstance;		// 140
-
-	struct GeometryData
-	{
-		UInt64	vertexDesc;
-
-		struct VertexData
-		{
-			void	* unk00;	// 00
-			UInt8	* vertexBlock;	// 08
-		};
-
-		struct TriangleData
-		{
-			void	* unk00;		// 00 - same ptr as the one on vertexData
-			UInt16	* triangles;	// 08
-		};
-
-		VertexData		* vertexData;	// 08
-		TriangleData	* triangleData;	// 10
-	};
 
 	enum : UInt64
 	{
@@ -96,7 +111,7 @@ public:
 		kFlag_Unk8			= (1ULL << 55),
 	};
 
-	GeometryData	* geometryData;			// 148
+	BSGeometryData	* geometryData;			// 148
 	UInt64			vertexDesc;				// 150
 
 	UInt16 GetVertexSize() const { return (vertexDesc << 2) & 0x3C; } // 0x3C might be a compiler optimization, (vertexDesc & 0xF) << 2 makes more sense

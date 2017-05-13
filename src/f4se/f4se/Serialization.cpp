@@ -538,19 +538,26 @@ namespace Serialization
 	template <>
 	bool ReadData<BSFixedString>(const F4SESerializationInterface * intfc, BSFixedString * str)
 	{
-		char buf[257] = { 0 };
 		UInt16 len = 0;
 
 		if (! intfc->ReadRecordData(&len, sizeof(len)))
 			return false;
-
-		if (len > 256)
+		if(len == 0)
+			return true;
+		if (len > SHRT_MAX)
 			return false;
 
-		if (! intfc->ReadRecordData(buf, len))
+		char * buf = new char[len + 1];
+		buf[0] = 0;
+
+		if (! intfc->ReadRecordData(buf, len)) {
+			delete [] buf;
 			return false;
+		}
+		buf[len] = 0;
 
 		*str = BSFixedString(buf);
+		delete [] buf;
 		return true;
 	}
 
@@ -558,11 +565,12 @@ namespace Serialization
 	bool WriteData<std::string>(const F4SESerializationInterface * intfc, const std::string * str)
 	{
 		UInt16 len = str->length();
-		if (len > 256)
+		if (len > SHRT_MAX)
 			return false;
-
 		if (! intfc->WriteRecordData(&len, sizeof(len)))
 			return false;
+		if (len == 0)
+			return true;
 		if (! intfc->WriteRecordData(str->data(), len))
 			return false;
 		return true;
@@ -571,19 +579,25 @@ namespace Serialization
 	template <>
 	bool ReadData<std::string>(const F4SESerializationInterface * intfc, std::string * str)
 	{
-		char buf[257] = { 0 };
 		UInt16 len = 0;
-
 		if (! intfc->ReadRecordData(&len, sizeof(len)))
 			return false;
-
-		if (len > 256)
+		if (len == 0)
+			return true;
+		if (len > SHRT_MAX)
 			return false;
 
-		if (! intfc->ReadRecordData(buf, len))
+		char * buf = new char[len + 1];
+		buf[0] = 0;
+
+		if (! intfc->ReadRecordData(buf, len)) {
+			delete [] buf;
 			return false;
+		}
+		buf[len] = 0;
 
 		*str = std::string(buf);
+		delete [] buf;
 		return true;
 	}
 
@@ -591,87 +605,14 @@ namespace Serialization
 	bool WriteData<const char>(const F4SESerializationInterface * intfc, const char* str)
 	{
 		UInt16 len = strlen(str);
-		if (len > 256)
+		if (len > SHRT_MAX)
 			return false;
-
 		if (! intfc->WriteRecordData(&len, sizeof(len)))
 			return false;
+		if (len == 0)
+			return true;
 		if (! intfc->WriteRecordData(str, len))
 			return false;
 		return true;
-	}
-
-	template <>
-	bool WriteData<GFxValue>(const F4SESerializationInterface* intfc, const GFxValue* val)
-	{
-		UInt32 type = val->GetType();
-		if (! WriteData(intfc, &type))
-			return false;
-
-		switch (type)
-		{
-		case GFxValue::kType_Bool:
-		{
-			bool t = val->GetBool();
-			return WriteData(intfc, &t);
-		}
-		case GFxValue::kType_Number:
-		{
-			double t = val->GetNumber();
-			return WriteData(intfc, &t);
-		}
-		case GFxValue::kType_String:
-		{
-			const char* t = val->GetString();
-			return WriteData(intfc, &t);
-		}
-		default:
-			// Unsupported
-			return false;
-		}
-
-		return false;
-	}
-
-	template <>
-	bool ReadData<GFxValue>(const F4SESerializationInterface* intfc, GFxValue* val)
-	{
-		UInt32 type;
-		if (! ReadData(intfc, &type))
-			return false;
-
-		switch (type)
-		{
-		case GFxValue::kType_Bool:
-		{
-			bool t;
-			if (! ReadData(intfc, &t))
-				return false;
-			val->SetBool(t);
-			return true;
-		}
-		case GFxValue::kType_Number:
-		{
-			double t;
-			if (! ReadData(intfc, &t))
-				return false;
-			val->SetNumber(t);
-			return true;
-		}
-		case GFxValue::kType_String:
-		{
-			// As usual, using string cache to manage strings
-			BSFixedString t;
-			if (! ReadData(intfc, &t))
-				return false;
-			val->SetString(t.c_str());
-			return true;
-		}
-		default:
-			// Unsupported
-			return false;
-		}
-
-		return false;
 	}
 }

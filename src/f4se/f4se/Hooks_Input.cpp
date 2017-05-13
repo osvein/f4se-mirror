@@ -127,14 +127,14 @@ public:
 				keyCode,
 				[&keyCode](const EventRegistration<NullParameters> & reg)
 				{
-					SendPapyrusEvent1<UInt32>(reg.handle, "OnKeyDown", keyCode);
+					SendPapyrusEvent1<UInt32>(reg.handle, reg.scriptName, "OnKeyDown", keyCode);
 				}
 			);
 			g_inputControlEventRegs.ForEach(
 				control,
 				[&control](const EventRegistration<NullParameters> & reg)
 				{
-					SendPapyrusEvent1<BSFixedString>(reg.handle, "OnControlDown", control);
+					SendPapyrusEvent1<BSFixedString>(reg.handle, reg.scriptName, "OnControlDown", control);
 				}
 			);
 		}
@@ -144,14 +144,14 @@ public:
 				keyCode,
 				[&keyCode, &timer](const EventRegistration<NullParameters> & reg)
 				{
-					SendPapyrusEvent2<UInt32, float>(reg.handle, "OnKeyUp", keyCode, timer);
+					SendPapyrusEvent2<UInt32, float>(reg.handle, reg.scriptName, "OnKeyUp", keyCode, timer);
 				}
 			);
 			g_inputControlEventRegs.ForEach(
 				control,
 				[&control, &timer](const EventRegistration<NullParameters> & reg)
 				{
-					SendPapyrusEvent2<BSFixedString, float>(reg.handle, "OnControlUp", control, timer);
+					SendPapyrusEvent2<BSFixedString, float>(reg.handle, reg.scriptName, "OnControlUp", control, timer);
 				}
 			);
 		}

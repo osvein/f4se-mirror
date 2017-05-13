@@ -52,7 +52,7 @@ Function SetProtected(bool abProtected = true) native
 Function SetOutfit( Outfit akOutfit, bool abSleepOutfit = false ) native
 
 
-; F4SE additions built 2017-02-07 05:37:32.528000 UTC
+; F4SE additions built 2017-05-10 00:55:06.671000 UTC
 ; Gets the template of the ActorBase, topmost will return the highest parent
 ActorBase Function GetTemplate(bool bTopMost = true) native
 
@@ -64,3 +64,16 @@ HeadPart[] Function GetHeadParts(bool bOverlays = false) native
 
 ; Get the Outfit of the actor
 Outfit Function GetOutfit(bool bSleepOutfit = false) native
+
+struct BodyWeight
+	float thin
+	float muscular
+	float large
+EndStruct
+
+; The sum of the three ratios should add to 1.0
+; Call QueueUpdate on the Actor instance to update visually
+Function SetBodyWeight(BodyWeight weight) native
+
+; Returns the 3 weight ratios
+BodyWeight Function GetBodyWeight() native

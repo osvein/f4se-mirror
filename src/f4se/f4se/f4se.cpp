@@ -15,6 +15,7 @@
 #include "Hooks_Input.h"
 #include "Hooks_Debug.h"
 #include "Hooks_Threads.h"
+#include "Hooks_Camera.h"
 #include "PluginManager.h"
 #include "InternalSerialization.h"
 
@@ -81,6 +82,7 @@ void F4SE_Initialize(void)
 		Hooks_SaveLoad_Init();
 		Hooks_Input_Init();
 		Hooks_Threads_Init();
+		Hooks_Camera_Init();
 
 		g_pluginManager.Init();
 
@@ -93,6 +95,7 @@ void F4SE_Initialize(void)
 		Hooks_SaveLoad_Commit();
 		Hooks_Input_Commit();
 		Hooks_Threads_Commit();
+		Hooks_Camera_Commit();
 
 		Init_CoreSerialization_Callbacks();
 

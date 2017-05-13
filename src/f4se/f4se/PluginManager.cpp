@@ -83,6 +83,16 @@ static const F4SETaskInterface	g_F4SETaskInterface =
 	TaskInterface::AddTask
 };
 
+#include "f4se/PapyrusDelayFunctors.h"
+#include "f4se/PapyrusObjects.h"
+
+static const F4SEObjectInterface g_F4SEObjectInterface =
+{
+	F4SEObjectInterface::kInterfaceVersion,
+	F4SEDelayFunctorManagerInstance,
+	F4SEObjectRegistryInstance,
+	F4SEObjectStorageInstance
+};
 
 PluginManager::PluginManager()
 {
@@ -177,6 +187,9 @@ void * PluginManager::QueryInterface(UInt32 id)
 		break;
 	case kInterface_Task:
 		result = (void *)&g_F4SETaskInterface;
+		break;
+	case kInterface_Object:
+		result = (void *)&g_F4SEObjectInterface;
 		break;
 	default:
 		_WARNING("unknown QueryInterface %08X", id);

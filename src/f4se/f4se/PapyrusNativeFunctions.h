@@ -123,7 +123,7 @@ protected:
 	ParameterInfo	m_params;		// 30
 	bool			m_isStatic;		// 40
 	UInt8			m_unk41;		// 41
-	UInt8			m_unk42;		// 42 - is latent
+	bool			m_isLatent;		// 42 - is latent
 	UInt8			m_pad43;		// 43
 	UInt32			m_unk44;		// 44
 	BSFixedString	m_unk48;		// 48

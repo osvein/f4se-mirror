@@ -79,12 +79,6 @@ namespace Serialization
 	// Note: Read would have to allocate somehow. You have to do that manually.
 	template <> bool WriteData<const char>(const F4SESerializationInterface * intfc, const char* data);
 
-	template <>
-	bool WriteData<GFxValue>(const F4SESerializationInterface* intfc, const GFxValue* val);
-	
-	template <>
-	bool ReadData<GFxValue>(const F4SESerializationInterface* intfc, GFxValue* val);
-
 	template <typename T>
 	bool SaveClassHelper(const F4SESerializationInterface* intfc, UInt32 type, T& instance)
 	{

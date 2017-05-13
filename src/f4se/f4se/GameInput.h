@@ -126,6 +126,12 @@ class BSInputDevice
 public:
 	virtual ~BSInputDevice();
 
+	virtual void Unk_01();
+	virtual void Unk_02();
+	virtual bool IsEnabled();
+	virtual void Unk_04();
+	virtual void Unk_05();
+
 	UInt64		unk008; // init to 0
 	UInt64		unk010;
 	UInt32		unk018; // padding?
@@ -260,9 +266,14 @@ public:
 	UInt64						unk00;					// 000
 	BSPCKeyboardDevice*			keyboardDevice;			// 008
 	BSPCMouseDevice*			mouseDevice;			// 010
-	BSPCGamepadDeviceHandler*	gamepadHandler018;		// 018
+	BSPCGamepadDeviceHandler*	gamepadHandler;			// 018
 	BSPCGamepadDeviceHandler*	gamepadHandler020;		// 020
 	BSPCVirtualKeyboardDevice*	virtualKeyboardDevice;	// 028
+
+	bool IsGamepadEnabled()
+	{
+		return gamepadHandler ? gamepadHandler->IsEnabled() : false;
+	}
 };
 extern RelocPtr <InputDeviceManager*> g_inputDeviceMgr;
 
@@ -272,7 +283,8 @@ class InputManager
 public:
 	enum
 	{
-		kContextCount = (0xF0/8)
+		kContext_Gameplay = 0,
+		kContextCount = (0xF0/8) // 30
 	};
 
 	struct InputContext

@@ -194,3 +194,16 @@ public:
 	MEMBER_FN_PREFIX(IObjectBindPolicy);
 	DEFINE_MEMBER_FN(BindObject, void, 0x02695530, VMIdentifier ** identifier, UInt64 handle);
 };
+
+class TESObjectREFR;
+
+// 18
+struct VMRefHandle
+{
+	TESObjectREFR	* refr;		// 00 - May be null
+	TESObjectREFR	* owner;	// 08
+	UInt16			uniqueId;	// 10
+};
+
+typedef VMRefHandle * (* _GetRefFromHandle)(VMRefHandle * ref, UInt64 handle);
+extern RelocAddr <_GetRefFromHandle> GetRefFromHandle;

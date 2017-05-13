@@ -34,7 +34,7 @@ public:
 	virtual void	RegisterForm(UInt32 typeID, const char * papyrusClassName);
 	virtual void	Unk_08();
 	virtual bool	GetObjectTypeInfo(UInt32 formType, VMObjectTypeInfo ** outTypeInfo);	// Must release outTypeInfo explicitly
-	virtual bool	GetObjectTypeInfoByName(BSFixedString * name, VMObjectTypeInfo ** outTypeInfo); // Must release outTypeInfo explicitly
+	virtual bool	GetObjectTypeInfoByName(const BSFixedString * name, VMObjectTypeInfo ** outTypeInfo); // Must release outTypeInfo explicitly
 	virtual void	Unk_0B();
 	virtual bool	Unk_0C(BSFixedString * typeName0, UInt32 * unk);
 	virtual void	Unk_0D();
@@ -43,12 +43,12 @@ public:
 	virtual void	Unk_10();
 	virtual void	Unk_11();
 	virtual void	Unk_12();
-	virtual bool	GetStructTypeInfo(BSFixedString * name, VMStructTypeInfo ** outTypeInfo);	// Must release outTypeInfo explicitly
+	virtual bool	GetStructTypeInfo(const BSFixedString * name, VMStructTypeInfo ** outTypeInfo);	// Must release outTypeInfo explicitly
 	virtual void	Unk_14();
 	virtual void	Unk_15();
 	virtual void	Unk_16();
-	virtual bool	CreateObjectIdentifier(BSFixedString * className, VMIdentifier ** identifier);
-	virtual bool	CreateStruct(BSFixedString * name, VMValue::StructData ** value);
+	virtual bool	CreateObjectIdentifier(const BSFixedString * className, VMIdentifier ** identifier);
+	virtual bool	CreateStruct(const BSFixedString * name, VMValue::StructData ** value);
 	virtual bool	CreateArray(VMValue * value, UInt32 size, VMValue::ArrayData ** data);
 	virtual void	Unk_1A();
 	virtual void	RegisterFunction(IFunction * fn);
@@ -67,13 +67,13 @@ public:
 	virtual void	Unk_28();
 	virtual void	Unk_29();
 	virtual void	Unk_2A();
-	virtual void	Unk_2B();
+	virtual void	QueueEvent(UInt64 handle, BSFixedString * eventName, void * unk1);
 	virtual void	Unk_2C();
 	virtual void	Unk_2D();
 	virtual void	Unk_2E();
 	virtual void	Unk_2F();
 	virtual void	Unk_30();
-	virtual void	Unk_31();
+	virtual void	ResumeStack(UInt32 stackId, VMValue* result);
 	virtual void	Unk_32();
 	virtual IObjectHandlePolicy *	GetHandlePolicy(void);
 	virtual void	Unk_34();
@@ -142,12 +142,44 @@ public:
 			_MESSAGE("\t\tname: %s", name.c_str());
 		}
 	};
+
+	class StackTableItem
+	{
+	public:
+		UInt32				stackId;
+		void				*	data;
+
+		bool operator==(const StackTableItem & rhs) const	{ return stackId == rhs.stackId; }
+		operator UInt32() const	{ return stackId; }
+
+		static inline UInt32 GetHash(UInt32* pStackId)
+		{
+			UInt32 hash;
+			CalculateCRC32_32(&hash, (UInt32)*pStackId, 0);
+			return hash;
+		}
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\tstack: %d", stackId);
+			_MESSAGE("\t\tdata: %016I64X", data);
+		}
+	};
+
 	tHashSet<ComplexTypeInfoItem, BSFixedString> m_objectTypes;		// 168
 	tHashSet<ComplexTypeInfoItem, BSFixedString> m_structTypes;		// 198
-	tHashSet<FormTypeName, UInt32> m_typeNames;	// 1F0
+	tHashSet<FormTypeName, UInt32> m_typeNames;	// 1C8
+
+	bool HasStack(UInt32 stackId);
+
+	UInt64	unk1F8[(0xBD58 - 0x1F8) >> 3];
+	SimpleLock stackLock;							// BD58
+	tHashSet<StackTableItem, UInt32> m_allStacks;	// BD60
+	tHashSet<StackTableItem, UInt32> m_waitStacks;	// BD90
 };
 STATIC_ASSERT(offsetof(VirtualMachine, m_objectTypes) == 0x168);
 STATIC_ASSERT(offsetof(VirtualMachine, m_structTypes) == 0x198);
+STATIC_ASSERT(offsetof(VirtualMachine, m_typeNames) == 0x1C8);
 
 // 87A0?
 class GameVM : public IClientVM

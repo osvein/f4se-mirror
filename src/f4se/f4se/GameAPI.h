@@ -27,3 +27,5 @@ extern RelocPtr <ConsoleManager *> g_console;
 extern RelocAddr <UInt32 *> g_consoleHandle;
 
 void Console_Print(const char * fmt, ...);
+
+LONGLONG GetPerfCounter(void);

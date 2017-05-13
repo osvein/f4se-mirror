@@ -38,6 +38,13 @@ namespace papyrusF4SE {
 
 		return -1;
 	}
+
+	void TestInventoryFunc(StaticFunctionTag* base, VMRefOrInventoryObj ref)
+	{
+		TESForm * baseForm = nullptr;
+		ExtraDataList * extraData = nullptr;
+		ref.GetExtraData(&baseForm, &extraData);
+	}
 }
 
 void papyrusF4SE::RegisterFuncs(VirtualMachine* vm)
@@ -56,6 +63,9 @@ void papyrusF4SE::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction1<StaticFunctionTag, UInt32, BSFixedString>("GetPluginVersion", "F4SE", papyrusF4SE::GetPluginVersion, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1<StaticFunctionTag, void, VMRefOrInventoryObj>("TestInventoryFunc", "F4SE", papyrusF4SE::TestInventoryFunc, vm));
 
 	vm->SetFunctionFlags("F4SE", "GetVersion", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("F4SE", "GetVersionMinor", IFunction::kFunctionFlag_NoWait);

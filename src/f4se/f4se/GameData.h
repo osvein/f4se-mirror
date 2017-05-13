@@ -17,7 +17,10 @@ class TESObjectARMA;
 class TESObjectCONT;
 class TESObjectCELL;
 class TESRegionList;
+class TESWorldSpace;
 class BGSAddonNode;
+class TESWaterForm;
+class BGSPerk;
 
 struct ModInfo		// referred to by game as TESFile
 {
@@ -31,7 +34,18 @@ struct ModInfo		// referred to by game as TESFile
 	void								* unk68;			// 068
 	char								name[MAX_PATH];		// 070
 	char								directory[MAX_PATH];	// 174
-	UInt64								unk278[0xF8/8];		// 278
+	UInt64								unk278[0xD8/8];		// 278
+	struct Dependency
+	{
+		void		* unk00;	// 00
+		const char	* name;		// 08
+		Dependency	* next;		// 10
+	};
+	Dependency							* depends;			// 350
+	UInt32								numRefMods;			// 358
+	UInt32								unk35C;				// 35C
+	ModInfo								** refModInfo;		// 360
+	UInt64								unk368;				// 360
 	UInt8								modIndex;			// 370
 	UInt8								pad[7];				// 371
 	BSString							author;				// 378
@@ -67,7 +81,7 @@ public:
 	UnkFormArray						arrLCRT;	// Form Type 5
 	tArray<BGSAction*>					arrAACT;	// Form Type 6
 	tArray<BGSTransform*>				arrTRNS;	// Form Type 7
-	UnkFormArray						arrCMPO;	// Form Type 8
+	tArray<BGSComponent*>				arrCMPO;	// Form Type 8
 	UnkFormArray						arrTXST;	// Form Type 9
 	UnkFormArray						arrMICN;	// Form Type 10
 	UnkFormArray						arrGLOB;	// Form Type 11
@@ -94,7 +108,7 @@ public:
 	UnkFormArray						arrDOOR;	// Form Type 32
 	tArray<IngredientItem*>				arrINGR;	// Form Type 33
 	UnkFormArray						arrLIGH;	// Form Type 34
-	UnkFormArray						arrMISC;	// Form Type 35
+	tArray<TESObjectMISC*>				arrMISC;	// Form Type 35
 	UnkFormArray						arrSTAT;	// Form Type 36
 	UnkFormArray						arrSCOL;	// Form Type 37
 	UnkFormArray						arrMSTT;	// Form Type 38
@@ -146,15 +160,15 @@ public:
 	UnkFormArray						arrLSCR;	// Form Type 84
 	UnkFormArray						arrLVSP;	// Form Type 85
 	UnkFormArray						arrANIO;	// Form Type 86
-	UnkFormArray						arrWATR;	// Form Type 87
+	tArray<TESWaterForm*>				arrWATR;	// Form Type 87
 	UnkFormArray						arrEFSH;	// Form Type 88
 	UnkFormArray						arrTOFT;	// Form Type 89
 	UnkFormArray						arrEXPL;	// Form Type 90
 	UnkFormArray						arrDEBR;	// Form Type 91
 	UnkFormArray						arrIMGS;	// Form Type 92
 	UnkFormArray						arrIMAD;	// Form Type 93
-	UnkFormArray						arrFLST;	// Form Type 94
-	UnkFormArray						arrPERK;	// Form Type 95
+	tArray<BGSListForm*>				arrFLST;	// Form Type 94
+	tArray<BGSPerk*>					arrPERK;	// Form Type 95
 	UnkFormArray						arrBPTD;	// Form Type 96
 	UnkFormArray						arrADDN;	// Form Type 97
 	UnkFormArray						arrAVIF;	// Form Type 98
@@ -245,3 +259,28 @@ STATIC_ASSERT(offsetof(DataHandler, unk17C0) == 0x17C0);
 
 extern RelocPtr <DataHandler*> g_dataHandler;
 extern RelocPtr <bool> g_isGameDataReady;
+
+// 30
+class LocationData
+{
+public:
+	LocationData(Actor * actor)
+	{
+		CALL_MEMBER_FN(this, ctor)(actor);
+	}
+	~LocationData() { };
+
+	float			unk00;			// 00
+	float			unk04;			// 04
+	float			unk08;			// 08
+	float			unk0C;			// 0C
+	float			unk10;			// 10
+	float			unk14;			// 14
+	void			* unk18;		// 18
+	TESObjectCELL	* cell;			// 20
+	TESWorldSpace	* worldspace;	// 28
+
+	MEMBER_FN_PREFIX(LocationData);
+	DEFINE_MEMBER_FN(ctor, LocationData*, 0x001F69F0, Actor * refr);
+};
+

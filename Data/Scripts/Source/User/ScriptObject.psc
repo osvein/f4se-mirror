@@ -354,7 +354,7 @@ EndEvent
 Event OnTutorialEvent(String asEventName, Message aMessage)
 EndEvent
 
-; F4SE additions built 2017-02-07 05:37:32.528000 UTC
+; F4SE additions built 2017-05-10 00:55:06.671000 UTC
 Function RegisterForKey(int key) native
 
 Function UnregisterForKey(int key) native
@@ -373,4 +373,31 @@ Event OnControlDown(string control)
 EndEvent
 
 Event OnControlUp(string control, float time)
+EndEvent
+
+; Callback is the function name that is called when the event is triggered
+Function RegisterForExternalEvent(string eventName, string callback) native
+
+Function UnregisterForExternalEvent(string eventName) native
+
+
+Function RegisterForCameraState() native
+
+Function UnregisterForCameraState() native
+
+; States
+; 0 - First Person
+; 1 - Auto Vanity
+; 2 - VATS
+; 3 - Free
+; 4 - Iron Sights
+; 5 - Transition
+; 6 - Tween Menu
+; 7 - ThirdPerson1
+; 8 - ThirdPerson2
+; 9 - Furniture
+; 10 - Horse
+; 11 - Bleedout
+; 12 - Dialogue
+Event OnPlayerCameraState(int oldState, int newState)
 EndEvent

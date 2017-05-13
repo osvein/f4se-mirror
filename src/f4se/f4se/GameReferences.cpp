@@ -13,6 +13,12 @@ RelocPtr <UInt32> g_invalidRefHandle(0x03858084);
 
 RelocAddr<_HasDetectionLOS> HasDetectionLOS(0x0133DA60);
 
+RelocAddr<_GetLinkedRef_Native> GetLinkedRef_Native(0x0047EE40);
+
+RelocAddr<_SetLinkedRef_Native> SetLinkedRef_Native(0x0047EE60);
+
+RelocAddr<_MoveRefrToPosition> MoveRefrToPosition(0x013E0BD0);
+
 UInt32 TESObjectREFR::CreateRefHandle(void)
 {
 	if (handleRefObject.GetRefCount() > 0)

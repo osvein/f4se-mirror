@@ -144,9 +144,9 @@ UInt64 GetArrayType(UInt64 type)
 	{
 		return type & ~0x01;
 	}
-	else if(type > VMValue::kType_StringArray)
+	else if(type > VMValue::kType_IntegralStart)
 	{
-		return type - 10;
+		return type - VMValue::kType_ArrayOffset;
 	}
 
 	return type;

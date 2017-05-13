@@ -10,19 +10,27 @@ StringCache::Ref::Ref()
 	CALL_MEMBER_FN(this, ctor)("");
 }
 
-StringCache::RefW::RefW()
-{
-	CALL_MEMBER_FN(this, ctor)(L"");
-}
-
 StringCache::Ref::Ref(const char * buf)
 {
 	CALL_MEMBER_FN(this, ctor)(buf);
 }
 
-StringCache::RefW::RefW(const wchar_t * buf)
+StringCache::Ref::Ref(const wchar_t * buf)
 {
-	CALL_MEMBER_FN(this, ctor)(buf);
+	CALL_MEMBER_FN(this, ctor_w)(buf);
+}
+
+void StringCache::Ref::Release()
+{
+	CALL_MEMBER_FN(this, Release)();
+}
+
+bool StringCache::Ref::operator==(const char * lhs) const
+{
+	Ref tmp(lhs);
+	bool res = data == tmp.data;
+	CALL_MEMBER_FN(&tmp, Release)();
+	return res;
 }
 
 void SimpleLock::Lock(void)

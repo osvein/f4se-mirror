@@ -5,7 +5,9 @@
 
 #include "f4se/GameObjects.h"
 #include "f4se/GameData.h"
- 
+
+DECLARE_STRUCT(BodyWeight, "ActorBase")
+
 namespace papyrusActorBase
 {	
 	TESNPC* GetTemplate(TESNPC* thisNPC, bool topMost)
@@ -53,6 +55,29 @@ namespace papyrusActorBase
 			return NULL;
 		return bSleepOutfit ? thisNPC->outfit[1] : thisNPC->outfit[0];
 	}
+
+	void SetBodyWeight(TESNPC* thisNPC, BodyWeight weight)
+	{
+		if(thisNPC) {
+			weight.Get<float>("thin", &thisNPC->weightThin);
+			weight.Get<float>("muscular", &thisNPC->weightMuscular);
+			weight.Get<float>("large", &thisNPC->weightLarge);
+
+			thisNPC->MarkChanged(0x4000);
+		}
+	}
+
+	BodyWeight GetBodyWeight(TESNPC* thisNPC)
+	{
+		BodyWeight weight;
+		if(thisNPC) {
+			weight.Set<float>("thin", thisNPC->weightThin);
+			weight.Set<float>("muscular", thisNPC->weightMuscular);
+			weight.Set<float>("large", thisNPC->weightLarge);
+		}
+
+		return weight;
+	}
 }
 
 void papyrusActorBase::RegisterFuncs(VirtualMachine* vm)
@@ -69,8 +94,11 @@ void papyrusActorBase::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new NativeFunction1 <TESNPC, BGSOutfit*, bool>("GetOutfit", "ActorBase", papyrusActorBase::GetOutfit, vm));
 
+	vm->RegisterFunction(
+		new NativeFunction1 <TESNPC, void, BodyWeight>("SetBodyWeight", "ActorBase", papyrusActorBase::SetBodyWeight, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction0 <TESNPC, BodyWeight>("GetBodyWeight", "ActorBase", papyrusActorBase::GetBodyWeight, vm));
+
 	vm->SetFunctionFlags("ActorBase", "GetTemplate", IFunction::kFunctionFlag_NoWait);
-	vm->SetFunctionFlags("ActorBase", "HasHeadPartOverlays", IFunction::kFunctionFlag_NoWait);
-	vm->SetFunctionFlags("ActorBase", "GetHeadParts", IFunction::kFunctionFlag_NoWait);
-	vm->SetFunctionFlags("ActorBase", "GetOutfit", IFunction::kFunctionFlag_NoWait);
 }

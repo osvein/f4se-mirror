@@ -215,6 +215,63 @@
     <ClCompile Include="PapyrusScriptObject.cpp">
       <Filter>papyrus\functions</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusDelayFunctors.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusObjects.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusUtility.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusUI.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleformSerialization.cpp">
+      <Filter>scaleform</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusSerialization.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusScaleformAdapter.cpp">
+      <Filter>papyrus\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusInput.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Translation.cpp">
+      <Filter>internal</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusForm.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusWeapon.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusEquipSlot.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusObjectMod.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusInstanceData.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCamera.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Camera.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusCell.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusWaterType.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusPerk.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -224,12 +281,6 @@
     <None Include="PapyrusNativeFunctionDef.inl">
       <Filter>papyrus\vm</Filter>
     </None>
-    <None Include="PapyrusStructDef_Base.inl">
-      <Filter>papyrus\vm</Filter>
-    </None>
-    <None Include="PapyrusStructDef.inl">
-      <Filter>papyrus\vm</Filter>
-    </None>
     <None Include="PapyrusNativeFunctionDef_Base.inl">
       <Filter>papyrus\vm</Filter>
     </None>
@@ -237,6 +288,12 @@
       <Filter>papyrus\vm</Filter>
     </None>
     <None Include="PapyrusEventsDef_Base.inl">
+      <Filter>papyrus\vm</Filter>
+    </None>
+    <None Include="PapyrusDelayFunctorsDef.inl">
+      <Filter>papyrus\vm</Filter>
+    </None>
+    <None Include="PapyrusDelayFunctorsDef_Base.inl">
       <Filter>papyrus\vm</Filter>
     </None>
   </ItemGroup>
@@ -481,6 +538,63 @@
       <Filter>papyrus\vm</Filter>
     </ClInclude>
     <ClInclude Include="PapyrusScriptObject.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusDelayFunctors.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusObjects.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusUtility.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusUI.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleformSerialization.h">
+      <Filter>scaleform</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusSerialization.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusScaleformAdapter.h">
+      <Filter>papyrus\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusInput.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Translation.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusForm.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusWeapon.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusEquipSlot.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusObjectMod.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusInstanceData.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCamera.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Camera.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusCell.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusWaterType.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusPerk.h">
       <Filter>papyrus\functions</Filter>
     </ClInclude>
   </ItemGroup>

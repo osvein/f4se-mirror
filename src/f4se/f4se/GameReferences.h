@@ -11,6 +11,7 @@ class BSAnimationGraphEvent;
 class TESObjectCELL;
 class NiNode;
 class ExtraDataList;
+class TESWorldSpace;
 
 typedef bool (* _CreateHandleByREFR)(UInt32 * handle, TESObjectREFR * ref);
 extern RelocAddr <_CreateHandleByREFR> CreateHandleByREFR;
@@ -22,6 +23,15 @@ extern RelocPtr <UInt32> g_invalidRefHandle;
 
 typedef bool (* _HasDetectionLOS)(Actor* source, TESObjectREFR* target, UInt8 * unk1);
 extern RelocAddr<_HasDetectionLOS> HasDetectionLOS;
+
+typedef TESObjectREFR* (* _GetLinkedRef_Native)(TESObjectREFR* target, BGSKeyword * keyword);
+extern RelocAddr<_GetLinkedRef_Native> GetLinkedRef_Native;
+
+typedef void (* _SetLinkedRef_Native)(TESObjectREFR* target, TESObjectREFR* linked, BGSKeyword * keyword);
+extern RelocAddr<_SetLinkedRef_Native> SetLinkedRef_Native;
+
+typedef void (* _MoveRefrToPosition)(TESObjectREFR* source, UInt32* pTargetHandle, TESObjectCELL* parentCell, TESWorldSpace* worldSpace, NiPoint3* postion, NiPoint3* rotation);
+extern RelocAddr<_MoveRefrToPosition> MoveRefrToPosition;
 
 // 10
 class BSHandleRefObject : public NiRefObject
@@ -197,7 +207,10 @@ public:
 	UInt64										unkA8;					// A8
 	UInt64										unkB0;					// B0
 	TESObjectCELL								* parentCell;			// B8
-	float										unkC0[(0xE0 - 0xC0) >> 2];	// C0
+	NiPoint3									rot;					// C0, C4, C8 - Probably quat?
+	float										unkCC;
+	NiPoint3									pos;					// D0, D4, D8
+	float										unkDC;
 	TESForm										* baseForm;				// E0
 	void										* unkE8;				// E8
 	void										* unkF0;				// F0 - Root node at 0x08
@@ -210,6 +223,7 @@ public:
 
 	MEMBER_FN_PREFIX(TESObjectREFR);
 	DEFINE_MEMBER_FN(GetReferenceName, const char *, 0x004095A0);
+	DEFINE_MEMBER_FN(GetWorldspace, TESWorldSpace*, 0x0040D0D0);
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);
@@ -357,19 +371,59 @@ public:
 
 		struct Data08
 		{
-			UInt64	unk00[0x496/8];		// 000
+			UInt64	unk00[0x280 >> 3];		// 000
+
+			SimpleLock lock;				// 280
+
+			struct EquipData
+			{
+				TESForm				* item;			// 00
+				TBO_InstanceData	* instanceData;	// 08
+				BGSEquipSlot		* equipSlot;	// 10
+				UInt64				unk18;			// 18
+				EquippedWeaponData	* equippedData;	// 20
+			};
+
+			EquipData * equipData;		// 288
+
+			UInt64	unk290[(0x490 - 0x290) >> 3];
 			enum
 			{
 				kDirtyHeadParts	= 0x04,
 				kDirtyGender	= 0x20
 			};
+			UInt32	unk490;				// 490
+			UInt16	unk494;				// 494
 			UInt16	unk496;				// 496 - somekind of dirty flag?
 		};
 
 		Data08 * unk08;	// 08
+
+		MEMBER_FN_PREFIX(Data300);
+		DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00E46A50, Actor * actor, UInt32 flags); 
 	};
 	Data300 * unk300;					// 300
-	UInt64	unk308[(0x428-0x308)/8];
+	UInt64	unk308[(0x338-0x308)/8];
+
+	struct ActorValueData
+	{
+		UInt32	avFormID;	// 00
+		float	value;	// 04
+	};
+	tArray<ActorValueData>	actorValueData;		// 338
+
+	struct Data350 // ActorValue related, not sure what the 3 values are
+	{
+		UInt32	avFormID;	// 00
+		float	unk04;		// 04
+		float	unk08;		// 08
+		float	unk0C;		// 0C
+	};
+
+	tArray<Data350>	unk350;				// 350
+	UInt64	unk368[(0x418-0x368)/8];
+	TESRace			* race;				// 418
+	UInt64			unk420;				// 420
 	ActorEquipData	* equipData;		// 428
 	UInt64	unk430[(0x490-0x430)/8];	// 430
 
@@ -379,10 +433,12 @@ public:
 	}
 
 	MEMBER_FN_PREFIX(Actor);
-	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D70400, bool bDoFaceGen, UInt32 unk2, bool unk3, UInt32 unk4); // 0, 0, 1, 0
+	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D70400, bool bDoFaceGen, UInt32 unk2, bool DoQueue, UInt32 flags); // 0, 0, 1, 0
 	DEFINE_MEMBER_FN(IsHostileToActor, bool, 0x00D77290, Actor * actor);
+	DEFINE_MEMBER_FN(UpdateEquipment, void, 0x004060B0); 
 };
 STATIC_ASSERT(offsetof(Actor, equipData) == 0x428);
+STATIC_ASSERT(offsetof(Actor::Data300::Data08, equipData) == 0x288);
 
 // E10
 class PlayerCharacter : public Actor
