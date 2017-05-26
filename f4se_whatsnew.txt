@@ -1,3 +1,11 @@
+0.4.0
+- InstanceData Get/SetDamageTypes now supports both Armor and Weapon instances
+- Added InstanceData functions:
+    - Get/SetWeight - supports Weapon and Armor instances
+    - Get/SetGoldValue - supports Weapon and Armor instances
+- Added ObjectReference Functions:
+    - GetInventoryItems
+
 0.3.2
 - Fixed Scaleform SendExternalEvent and CallFunctionNoWait
 - Fixed UI.Invoke when Args > 0

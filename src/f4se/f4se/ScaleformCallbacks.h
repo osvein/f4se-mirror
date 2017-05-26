@@ -37,10 +37,10 @@ typedef std::map <const std::type_info *, GFxFunctionHandler *>	FunctionHandlerC
 extern FunctionHandlerCache g_functionHandlerCache;
 
 template <typename T>
-void RegisterFunction(GFxValue * dst, GFxMovieRoot * movie, const char * name)
+void CreateFunction(GFxValue * dst, GFxMovieRoot * movie)
 {
 	// either allocate the object or retrieve an existing instance from the cache
-	GFxFunctionHandler	* fn = NULL;
+	GFxFunctionHandler	* fn = nullptr;
 
 	// check the cache
 	FunctionHandlerCache::iterator iter = g_functionHandlerCache.find(&typeid(T));
@@ -58,10 +58,15 @@ void RegisterFunction(GFxValue * dst, GFxMovieRoot * movie, const char * name)
 	}
 
 	// create the function object
-	GFxValue	fnValue;
-	movie->CreateFunction(&fnValue, fn);
+	movie->CreateFunction(dst, fn);
+}
 
-	// register it
+template <typename T>
+void RegisterFunction(GFxValue * dst, GFxMovieRoot * movie, const char * name)
+{
+	// either allocate the object or retrieve an existing instance from the cache
+	GFxValue fnValue;
+	CreateFunction<T>(&fnValue, movie);
 	dst->SetMember(name, &fnValue);
 }
 

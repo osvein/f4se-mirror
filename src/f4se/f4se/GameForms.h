@@ -1356,31 +1356,25 @@ public:
 	TESFullName				fullName;		// 020
 	BGSKeywordForm			keywordForm;	// 030
 
-	BGSLocation*			location50;		// 050
-	UInt64					unk58;
-	BGSMusicType*			music60;		// 060 
-	BGSEncounterZone*		encounterZone68;// 068 
-	UInt32					unk70;
-	float					unk74;
+	BGSLocation*			parent;			// 050
+	UInt64					unk58;			// 058
+	BGSMusicType*			musicType;		// 060 
+	BGSEncounterZone*		encounterZone;	// 068 
+	UInt32					unk70;			// 070
+	float					worldRadius;	// 074
 	float					unk78;	// init to 1.0
 	UInt32					unk7C;
 
-	struct arr80Data {
-		BGSLocationRefType*	refType0;
-		UInt64	unk8;
-		UInt64	unk10;
+	struct CellStaticReference {
+		BGSLocationRefType*	refType;	// 00
+		UInt32	markerForm;				// 08
+		UInt32	locationForm;			// 0C
+		SInt16	gridY;					// 10
+		SInt16	gridX;					// 12
+		UInt32	pad10;					// 14
 	};
-	tArray<arr80Data>	arr80;
-	//UInt64					unk80;	// maybe tArray<>
-	//UInt32					unk88;
-	//UInt32					unk8C;
-	//UInt64					unk90;
+	tArray<CellStaticReference>		staticReferences;
 	UnkArray				arr98;
-	//UInt64					unk98;
-	//UInt32					unkA0;
-	//UInt32					unkA4;
-	//UInt32					unkA8;
-	//UInt32					unkAC;
 	UInt64					unkB0;
 	UInt64					unkB8;
 	UInt32					unkC0;
@@ -1471,9 +1465,19 @@ class BGSEncounterZone : public TESForm
 public:
 	enum { kTypeID = kFormType_ECZN };
 
+	enum
+	{
+		kFlag_NeverResets = 1,
+		kFlag_Workshop = 8
+	};
+
 	UInt64					unk20;		// 20
 	BGSLocation*			location;	// 28
-	UInt64					unk30;		// 30
+	SInt8					rank;		// 30
+	UInt8					minLevel;	// 30
+	UInt8					flags;		// 32
+	UInt8					maxLevel;	// 33
+	UInt32					unk34;		// 34
 	UInt64					unk38;		// 38
 	UInt64					unk40;		// 40
 };
@@ -1623,6 +1627,8 @@ public:
 class BGSPerk : public TESForm
 {
 public:
+	enum { kTypeID = kFormType_PERK };
+
 	// parents
 	TESFullName				fullName;		// 20
 	TESDescription			description;	// 30

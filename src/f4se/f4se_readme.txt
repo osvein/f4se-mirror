@@ -1,5 +1,5 @@
-Fallout 4 Script Extender v0.3.0
-by Ian Patterson, Stephen Abel, and Purple Lunchbox (ianpatt, behippo, and plb)
+Fallout 4 Script Extender v0.4.0
+by Ian Patterson, Stephen Abel, and Brendan Borthwick (ianpatt, behippo, and plb)
 
 The Fallout 4 Script Extender, or F4SE for short, is a modder's resource that expands the scripting capabilities of Fallout 4. It does so without modifying the executable files on disk, so there are no permanent side effects.
 
@@ -9,7 +9,7 @@ Compatibility:
 
 F4SE will support the latest version of Fallout available on Steam, and _only_ this version. When a new version is released, we'll update as soon as possible: please be patient. Don't email asking when the update will be ready; we already know the new version is out. The editor does not currently need modification, however when available a custom set of .pex/psc files must be installed.
 
-This version is compatible with runtime 1.8.7. You can ignore any part of the version number after those components; they're not relevant for compatibility purposes.
+This version is compatible with runtime 1.9.4. You can ignore any part of the version number after those components; they're not relevant for compatibility purposes.
 
 [ Installation ]
 

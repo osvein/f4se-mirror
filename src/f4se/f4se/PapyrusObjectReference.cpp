@@ -48,12 +48,16 @@ RelocAddr <_ScrapReference> ScrapReference(0x00206640);
 
 namespace papyrusObjectReference {
 
-	VMArray<BGSMod::Attachment::Mod*> GetAllMods(TESObjectREFR * thisObj)
+	VMArray<BGSMod::Attachment::Mod*> GetAllMods(VMRefOrInventoryObj * thisObj)
 	{
+		TESForm * baseForm = nullptr;
+		ExtraDataList * extraDataList = nullptr;
+		thisObj->GetExtraData(&baseForm, &extraDataList);
+
 		VMArray<BGSMod::Attachment::Mod*> result;
-		if(thisObj->extraDataList)
+		if(extraDataList)
 		{
-			BSExtraData * extraData = thisObj->extraDataList->GetByType(ExtraDataType::kExtraData_ObjectInstance);
+			BSExtraData * extraData = extraDataList->GetByType(ExtraDataType::kExtraData_ObjectInstance);
 			if(extraData)
 			{
 				BGSObjectInstanceExtra * objectModData = DYNAMIC_CAST(extraData, BSExtraData, BGSObjectInstanceExtra);
@@ -236,6 +240,45 @@ namespace papyrusObjectReference {
 		return result;
 	}
 
+	BSFixedString GetDisplayName(TESObjectREFR* thisRef)
+	{
+		if(!thisRef)
+			return BSFixedString();
+
+		return CALL_MEMBER_FN(thisRef, GetReferenceName)();
+	}
+
+
+	VMArray<TESForm*> GetInventoryItemsLatent(UInt32 stackId, TESObjectREFR * refr)
+	{
+		VMArray<TESForm*> results;
+		if(!refr)
+			return results;
+
+		auto inventory = refr->inventoryList;
+		if(inventory) {
+			for(int i = 0; i < inventory->items.count; i++) {
+				BGSInventoryItem item;
+				inventory->items.GetNthItem(i, item);
+				
+				results.Push(&item.form);
+			}
+		}
+
+		return results;
+	}
+
+	DECLARE_DELAY_FUNCTOR(F4SEInventoryFunctor, 0, GetInventoryItemsLatent, TESObjectREFR, VMArray<TESForm*>);
+
+	bool GetInventoryItems(VirtualMachine * vm, UInt32 stackId, TESObjectREFR* refr)
+	{
+		if(!refr)
+			return false;
+
+		F4SEDelayFunctorManagerInstance().Enqueue(new F4SEInventoryFunctor(GetInventoryItemsLatent, vm, stackId, refr));
+		return true;
+	}
+
 #ifdef _DEBUG
 	void ScrapLatent(UInt32 stackId, TESObjectREFR * refr)
 	{
@@ -254,27 +297,21 @@ namespace papyrusObjectReference {
 		return true;
 	}
 #endif
-
-	BSFixedString GetDisplayName(TESObjectREFR* thisRef)
-	{
-		if(!thisRef)
-			return BSFixedString();
-
-		return CALL_MEMBER_FN(thisRef, GetReferenceName)();
-	}
 }
 
 void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 {
 	F4SEObjectRegistry& f4seObjRegistry = F4SEObjectRegistryInstance();
 	f4seObjRegistry.RegisterClass<F4SEAttachWireFunctor>();
+	f4seObjRegistry.RegisterClass<F4SEInventoryFunctor>();
+
 
 #ifdef _DEBUG
 	f4seObjRegistry.RegisterClass<F4SEScrapFunctor>();
 #endif
 
 	vm->RegisterFunction(
-		new NativeFunction0<TESObjectREFR, VMArray<BGSMod::Attachment::Mod*>>("GetAllMods", "ObjectReference", papyrusObjectReference::GetAllMods, vm));
+		new NativeFunction0<VMRefOrInventoryObj, VMArray<BGSMod::Attachment::Mod*>>("GetAllMods", "ObjectReference", papyrusObjectReference::GetAllMods, vm));
 
 	vm->RegisterFunction(
 		new NativeFunction0<TESObjectREFR, VMArray<TESObjectREFR*>>("GetConnectedObjects", "ObjectReference", papyrusObjectReference::GetConnectedObjects, vm));
@@ -282,14 +319,19 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new LatentNativeFunction2<TESObjectREFR, TESObjectREFR*, TESObjectREFR*, TESForm*>("AttachWire", "ObjectReference", papyrusObjectReference::AttachWire, vm));
 
-#ifdef _DEBUG
-	vm->RegisterFunction(
-		new LatentNativeFunction0<TESObjectREFR, void>("Scrap", "ObjectReference", papyrusObjectReference::Scrap, vm));
-#endif
-
 	vm->RegisterFunction(
 		new NativeFunction0<TESObjectREFR, BSFixedString>("GetDisplayName", "ObjectReference", papyrusObjectReference::GetDisplayName, vm));
 
+	vm->RegisterFunction(
+		new LatentNativeFunction0<TESObjectREFR, VMArray<TESForm*>>("GetInventoryItems", "ObjectReference", papyrusObjectReference::GetInventoryItems, vm));
+
 	vm->SetFunctionFlags("ObjectReference", "AttachWire", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("ObjectReference", "GetInventoryItems", IFunction::kFunctionFlag_NoWait);
+
+#ifdef _DEBUG
+	vm->RegisterFunction(
+		new LatentNativeFunction0<TESObjectREFR, void>("Scrap", "ObjectReference", papyrusObjectReference::Scrap, vm));
+
 	vm->SetFunctionFlags("ObjectReference", "Scrap", IFunction::kFunctionFlag_NoWait);
+#endif
 }

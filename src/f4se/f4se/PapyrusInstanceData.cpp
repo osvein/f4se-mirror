@@ -3,6 +3,7 @@
 #include "f4se/GameObjects.h"
 #include "f4se/GameReferences.h"
 #include "f4se/GameRTTI.h"
+#include "f4se/GameExtraData.h"
 
 #include "f4se/PapyrusVM.h"
 #include "f4se/PapyrusNativeFunctions.h"
@@ -18,13 +19,45 @@ namespace papyrusInstanceData
 			return nullptr;
 
 		TESForm * form = nullptr;
+		ExtraDataList * extraDataList = nullptr;
+
 		if(!thisInstance->Get("owner", &form))
 			return nullptr;
+
+		// Must be an inventory object, or doesn't exist
+		if(!form) {
+			VMRefOrInventoryObj ref;
+			if(!thisInstance->Get("owner", &ref))
+				return nullptr;
+
+			// Try to get ExtraDataList instead
+			ref.GetExtraData(&form, &extraDataList);
+		}
+
+		// Passed a reference directly, just get the instance data directly
+		TESObjectREFR * refr = DYNAMIC_CAST(form, TESForm, TESObjectREFR);
+		if(refr)
+			extraDataList = refr->extraDataList;
+
+		if(extraDataList) {
+			BSExtraData * extraData = extraDataList->GetByType(ExtraDataType::kExtraData_ObjectInstance);
+			if(extraData) {
+				ExtraInstanceData * objectModData = DYNAMIC_CAST(extraData, BSExtraData, ExtraInstanceData);
+				if(objectModData)
+					return objectModData->instanceData;
+			}
+		}
 
 		TESObjectWEAP * weapon = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
 		if(weapon) {
 			return &weapon->weapData;
 		}
+
+		TESObjectARMO * armor = DYNAMIC_CAST(form, TESForm, TESObjectARMO);
+		if(armor) {
+			return &armor->instanceData;
+		}
+
 		Actor * actor = DYNAMIC_CAST(form, TESForm, Actor);
 		if(actor) {
 			UInt32 iSlotIndex = 0;
@@ -113,15 +146,29 @@ namespace papyrusInstanceData
 
 	VMArray<DamageTypeInfo> GetDamageTypes(StaticFunctionTag*, Owner thisInstance)
 	{
-		auto instanceData = GetWeaponInstanceData(&thisInstance);
 		VMArray<DamageTypeInfo> result;
-		if(!instanceData || !instanceData->damageTypes)
+		tArray<TBO_InstanceData::DamageTypes> * damageTypes = nullptr;
+		TBO_InstanceData * instanceData = GetInstanceData(&thisInstance);
+		if(!instanceData)
 			return result;
 
-		for(UInt32 i = 0; i < instanceData->damageTypes->count; i++)
+		if(instanceData) {
+			auto weaponInstance = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weaponInstance)
+				damageTypes = weaponInstance->damageTypes;
+
+			auto armorInstance = (TESObjectARMO::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectARMO__InstanceData);
+			if(armorInstance)
+				damageTypes = armorInstance->damageTypes;
+		}
+
+		if(!damageTypes)
+			return result;
+
+		for(UInt32 i = 0; i < damageTypes->count; i++)
 		{
 			TESObjectWEAP::InstanceData::DamageTypes dt;
-			instanceData->damageTypes->GetNthItem(i, dt);
+			damageTypes->GetNthItem(i, dt);
 
 			DamageTypeInfo dts;
 			dts.Set<TESForm*>("type", dt.damageType);
@@ -134,13 +181,24 @@ namespace papyrusInstanceData
 
 	void SetDamageTypes(StaticFunctionTag*, Owner thisInstance, VMArray<DamageTypeInfo> dts)
 	{
-		auto instanceData = GetWeaponInstanceData(&thisInstance);
-		if(instanceData)
-		{
-			if(!instanceData->damageTypes)
-				instanceData->damageTypes = new tArray<TESObjectWEAP::InstanceData::DamageTypes>();
+		tArray<TBO_InstanceData::DamageTypes> ** damageTypes = nullptr;
+		TBO_InstanceData * instanceData = GetInstanceData(&thisInstance);
+		if(instanceData) {
+			auto weaponInstance = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weaponInstance)
+				damageTypes = &weaponInstance->damageTypes;
 
-			instanceData->damageTypes->Clear();
+			auto armorInstance = (TESObjectARMO::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectARMO__InstanceData);
+			if(armorInstance)
+				damageTypes = &armorInstance->damageTypes;
+		}
+
+		if(damageTypes)
+		{
+			if(!(*damageTypes))
+				(*damageTypes) = new tArray<TBO_InstanceData::DamageTypes>();
+
+			(*damageTypes)->Clear();
 
 			for(UInt32 i = 0; i < dts.Length(); i++)
 			{
@@ -157,7 +215,7 @@ namespace papyrusInstanceData
 					TESObjectWEAP::InstanceData::DamageTypes dt;
 					dt.damageType = (BGSDamageType*)damageType;
 					dt.value = damage;
-					instanceData->damageTypes->Push(dt);
+					(*damageTypes)->Push(dt);
 				}
 			}
 		}
@@ -418,6 +476,106 @@ namespace papyrusInstanceData
 			}
 		}
 	}
+
+
+	UInt32 GetArmorHealth(StaticFunctionTag*, Owner thisInstance)
+	{
+		auto instanceData = GetArmorInstanceData(&thisInstance);
+		return instanceData ? instanceData->health : 0;
+	}
+
+	void SetArmorHealth(StaticFunctionTag*, Owner thisInstance, UInt32 health)
+	{
+		auto instanceData = GetArmorInstanceData(&thisInstance);
+		if(instanceData) {
+			instanceData->health = health;
+		}
+	}
+
+	UInt32 GetArmorRating(StaticFunctionTag*, Owner thisInstance)
+	{
+		auto instanceData = GetArmorInstanceData(&thisInstance);
+		return instanceData ? instanceData->armorRating : 0;
+	}
+
+	void SetArmorRating(StaticFunctionTag*, Owner thisInstance, UInt32 health)
+	{
+		auto instanceData = GetArmorInstanceData(&thisInstance);
+		if(instanceData) {
+			instanceData->armorRating = health;
+		}
+	}
+
+	float GetWeight(StaticFunctionTag*, Owner thisInstance)
+	{
+		float * weight = nullptr;
+		TBO_InstanceData * instanceData = GetInstanceData(&thisInstance);
+		if(instanceData) {
+			auto weaponInstance = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weaponInstance)
+				weight = &weaponInstance->weight;
+
+			auto armorInstance = (TESObjectARMO::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectARMO__InstanceData);
+			if(armorInstance)
+				weight = &armorInstance->weight;
+		}
+
+		return weight ? *weight : 0.0f;
+	}
+
+	void SetWeight(StaticFunctionTag*, Owner thisInstance, float newWeight)
+	{
+		float * weight = nullptr;
+		TBO_InstanceData * instanceData = GetInstanceData(&thisInstance);
+		if(instanceData) {
+			auto weaponInstance = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weaponInstance)
+				weight = &weaponInstance->weight;
+
+			auto armorInstance = (TESObjectARMO::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectARMO__InstanceData);
+			if(armorInstance)
+				weight = &armorInstance->weight;
+		}
+
+		if(weight)
+			*weight = newWeight;
+	}
+
+	UInt32 GetGoldValue(StaticFunctionTag*, Owner thisInstance)
+	{
+		UInt32 * value = nullptr;
+		TBO_InstanceData * instanceData = GetInstanceData(&thisInstance);
+		if(instanceData) {
+			auto weaponInstance = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weaponInstance)
+				value = &weaponInstance->value;
+
+			auto armorInstance = (TESObjectARMO::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectARMO__InstanceData);
+			if(armorInstance)
+				value = &armorInstance->value;
+		}
+
+		return value ? *value : 0;
+	}
+
+	void SetGoldValue(StaticFunctionTag*, Owner thisInstance, UInt32 newValue)
+	{
+		UInt32 * value = nullptr;
+		TBO_InstanceData * instanceData = GetInstanceData(&thisInstance);
+		if(instanceData) {
+			auto weaponInstance = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weaponInstance)
+				value = &weaponInstance->value;
+
+			auto armorInstance = (TESObjectARMO::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectARMO__InstanceData);
+			if(armorInstance)
+				value = &armorInstance->value;
+		}
+
+		if(value)
+			*value = newValue;
+	}
+	
 }
 
 void papyrusInstanceData::RegisterFuncs(VirtualMachine* vm)
@@ -553,4 +711,28 @@ void papyrusInstanceData::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction3 <StaticFunctionTag, void, Owner, UInt32, bool>("SetFlag", "InstanceData", papyrusInstanceData::SetFlag, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, UInt32, Owner>("GetArmorHealth", "InstanceData", papyrusInstanceData::GetArmorHealth, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction2 <StaticFunctionTag, void, Owner, UInt32>("SetArmorHealth", "InstanceData", papyrusInstanceData::SetArmorHealth, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, UInt32, Owner>("GetArmorRating", "InstanceData", papyrusInstanceData::GetArmorRating, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction2 <StaticFunctionTag, void, Owner, UInt32>("SetArmorRating", "InstanceData", papyrusInstanceData::SetArmorRating, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, float, Owner>("GetWeight", "InstanceData", papyrusInstanceData::GetWeight, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction2 <StaticFunctionTag, void, Owner, float>("SetWeight", "InstanceData", papyrusInstanceData::SetWeight, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, UInt32, Owner>("GetGoldValue", "InstanceData", papyrusInstanceData::GetGoldValue, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction2 <StaticFunctionTag, void, Owner, UInt32>("SetGoldValue", "InstanceData", papyrusInstanceData::SetGoldValue, vm));
 }

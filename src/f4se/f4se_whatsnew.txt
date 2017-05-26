@@ -1,3 +1,33 @@
+0.4.0
+- InstanceData Get/SetDamageTypes now supports both Armor and Weapon instances
+- Added InstanceData functions:
+    - Get/SetWeight - supports Weapon and Armor instances
+    - Get/SetGoldValue - supports Weapon and Armor instances
+- Added ObjectReference Functions:
+    - GetInventoryItems
+
+0.3.2
+- Fixed Scaleform SendExternalEvent and CallFunctionNoWait
+- Fixed UI.Invoke when Args > 0
+- Added UI.Load (see UI.psc for example usage)
+- Added Scaleform GetDirectoryListing 
+    - e.g. root.f4se.GetDirectoryListing("Data/Somewhere", "*.ini", recursive=false)
+    result: Array=[{"nativePath": "Data/Somewhere/File.ini", "name": "File.ini", "lastModified": Date(), "creationDate": Date(), "isDirectory" : false, "isHidden": false0}]
+- Added Location Functions:
+    -GetParent
+    -Get/SetEncounterZone
+- Added EncounterZone Functions:
+    -Get/SetLocation
+    -Get/SetRank
+    -Get/SetMinLevel
+    -Get/SetMaxLevel
+    -Set/IsNeverResetable
+    -Set/IsWorkshop
+- InstanceData functions can now accept ObjectReferences as the Form
+- ObjectReference.GetAllMods is now inventory safe
+- Added Game Functions:
+    -SetGameSettingInt/Float/Bool/String
+
 0.3.1
 - Fixed script unique event registration
 - Added template serialization of VM for Latent functions

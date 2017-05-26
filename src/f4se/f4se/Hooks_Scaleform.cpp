@@ -4,6 +4,7 @@
 #include "xbyak/xbyak.h"
 
 #include "f4se_common/f4se_version.h"
+#include "common/IDirectoryIterator.h"
 
 #include "Translation.h"
 
@@ -134,6 +135,8 @@ public:
 					vm->CreateArray(&packedArgs, length, &arrayData);
 
 					packedArgs.type.value = VMValue::kType_VariableArray;
+					packedArgs.data.arr = arrayData;
+
 					for(UInt32 i = 0; i < length; i++)
 					{
 						VMValue * var = new VMValue;
@@ -176,6 +179,8 @@ public:
 			vm->CreateArray(&packedArgs, length, &arrayData);
 
 			packedArgs.type.value = VMValue::kType_VariableArray;
+			packedArgs.data.arr = arrayData;
+
 			for(UInt32 i = 0; i < length; i++)
 			{
 				VMValue * var = new VMValue;
@@ -188,6 +193,71 @@ public:
 				CallFunctionNoWait_Internal(vm, 0, identifier, &functionName, &packedArgs);
 				args->result->SetBool(true);
 			}
+		}
+	}
+};
+
+
+class F4SEScaleform_GetDirectoryListing : public GFxFunctionHandler
+{
+public:
+	virtual void Invoke(Args * args)
+	{
+		ASSERT(args->numArgs >= 1);
+		ASSERT(args->args[0].GetType() == GFxValue::kType_String);
+
+		const char * directory = args->args[0].GetString();
+		const char * match = nullptr;
+		if(args->numArgs >= 2)
+			match = args->args[1].GetString();
+
+		args->movie->movieRoot->CreateArray(args->result);
+
+		for(IDirectoryIterator iter(directory, match); !iter.Done(); iter.Next())
+		{
+			std::string	path = iter.GetFullPath();
+			WIN32_FIND_DATA * fileData = iter.Get();
+
+			GFxValue fileInfo;
+			args->movie->movieRoot->CreateObject(&fileInfo);
+
+			GFxValue filePath;
+			args->movie->movieRoot->CreateString(&filePath, path.c_str());
+			fileInfo.SetMember("nativePath", &filePath);
+
+			GFxValue fileName;
+			args->movie->movieRoot->CreateString(&fileName, fileData->cFileName);
+			fileInfo.SetMember("name", &filePath);
+
+			SYSTEMTIME sysTime;
+			FileTimeToSystemTime(&fileData->ftLastWriteTime, &sysTime);
+
+			GFxValue date;
+			GFxValue params[7];
+			params[0].SetNumber(sysTime.wYear);
+			params[1].SetNumber(sysTime.wMonth - 1); // Flash Month is 0-11, System time is 1-12
+			params[2].SetNumber(sysTime.wDay);
+			params[3].SetNumber(sysTime.wHour);
+			params[4].SetNumber(sysTime.wMinute);
+			params[5].SetNumber(sysTime.wSecond);
+			params[6].SetNumber(sysTime.wMilliseconds);
+			args->movie->movieRoot->CreateObject(&date, "Date", params, 7);
+			fileInfo.SetMember("lastModified", &date);
+
+			FileTimeToSystemTime(&fileData->ftCreationTime, &sysTime);
+			params[0].SetNumber(sysTime.wYear);
+			params[1].SetNumber(sysTime.wMonth - 1); // Flash Month is 0-11, System time is 1-12
+			params[2].SetNumber(sysTime.wDay);
+			params[3].SetNumber(sysTime.wHour);
+			params[4].SetNumber(sysTime.wMinute);
+			params[5].SetNumber(sysTime.wSecond);
+			params[6].SetNumber(sysTime.wMilliseconds);
+			args->movie->movieRoot->CreateObject(&date, "Date", params, 7);
+			fileInfo.SetMember("creationDate", &date);
+
+			fileInfo.SetMember("isDirectory", &GFxValue((fileData->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY));
+			fileInfo.SetMember("isHidden", &GFxValue((fileData->dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == FILE_ATTRIBUTE_HIDDEN));
+			args->result->PushBack(&fileInfo);
 		}
 	}
 };
@@ -212,6 +282,7 @@ void ScaleformInitHook_Install(GFxMovieView * view)
 	RegisterFunction<F4SEScaleform_AllowTextInput>(&f4se, movieRoot, "AllowTextInput");
 	RegisterFunction<F4SEScaleform_SendExternalEvent>(&f4se, movieRoot, "SendExternalEvent");
 	RegisterFunction<F4SEScaleform_CallFunctionNoWait>(&f4se, movieRoot, "CallFunctionNoWait");
+	RegisterFunction<F4SEScaleform_GetDirectoryListing>(&f4se, movieRoot, "GetDirectoryListing");
 	
 	GFxValue	version;
 	movieRoot->CreateObject(&version);

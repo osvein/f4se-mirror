@@ -6,6 +6,7 @@ class BGSMaterialSwap;
 class BGSMessage;
 class TESQuest;
 class TESWaterForm;
+class TBO_InstanceData;
 
 enum ExtraDataType
 {
@@ -269,13 +270,6 @@ public:
 	SimpleLock			m_lock;			// 20
 };
 
-class ExtraInstanceData : public BSExtraData
-{
-public:
-	void	* unk18;	// 18
-	void	* unk20;	// 20
-};
-
 // 28
 class BGSObjectInstanceExtra : public BSExtraData
 {
@@ -372,4 +366,12 @@ class ExtraCellWaterType : public BSExtraData
 {
 public:
 	TESWaterForm * waterForm;	// 18
+};
+
+// 28
+class ExtraInstanceData : public BSExtraData
+{
+public:
+	TESForm				* baseForm;		// 18
+	TBO_InstanceData	* instanceData;	// 20
 };

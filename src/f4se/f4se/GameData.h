@@ -21,6 +21,7 @@ class TESWorldSpace;
 class BGSAddonNode;
 class TESWaterForm;
 class BGSPerk;
+class TESLevCharacter;
 
 struct ModInfo		// referred to by game as TESFile
 {
@@ -119,7 +120,7 @@ public:
 	tArray<TESObjectWEAP*>				arrWEAP;	// Form Type 43
 	UnkFormArray						arrAMMO;	// Form Type 44
 	tArray<TESNPC*>						arrNPC_;	// Form Type 45
-	UnkFormArray						arrLVLN;	// Form Type 46
+	tArray<TESLevCharacter*>			arrLVLN;	// Form Type 46
 	UnkFormArray						arrKEYM;	// Form Type 47
 	tArray<AlchemyItem*>				arrALCH;	// Form Type 48
 	UnkFormArray						arrIDLM;	// Form Type 49

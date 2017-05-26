@@ -31,6 +31,73 @@ UInt32 Setting::GetType(void) const
 	return kType_Unknown;
 }
 
+bool Setting::GetDouble(double * out) const
+{
+	switch(GetType())
+	{
+	case kType_Integer:	*out = data.s32; break;
+	case kType_Float:	*out = data.f32; break;
+	case kType_String:	return false;
+	case kType_Bool:	*out = data.u8 ? 1 : 0; break;
+	case kType_ID6:		*out = data.u32 >> 8; break;
+	case kType_ID:		*out = data.u32; break;
+	default:			return false;
+	case kType_Unknown:	return false;
+	}
+
+	return true;
+}
+
+bool Setting::SetDouble(double value)
+{
+	switch(GetType())
+	{
+	case kType_Integer:	data.s32 = value; break;
+	case kType_Float:	data.f32 = value; break;
+	case kType_String:	return false;
+	case kType_Bool:	data.u8 = value ? 1 : 0; break;
+	case kType_ID6:		data.u32 = ((UInt32)value) << 8; break;
+	case kType_ID:		data.u32 = value; break;
+	default:			return false;
+	case kType_Unknown:	return false;
+	}
+
+	return true;
+}
+
+char * FormHeap_Strdup(const char * src)
+{
+	UInt32	len = strlen(src) + 1;
+	char	* result = (char *)Heap_Allocate(len);
+	memcpy(result, src, len);
+
+	return result;
+}
+
+bool Setting::SetString(const char * value)
+{
+	if(GetType() == kType_String)
+	{
+		if(name[0] == 'S')
+			Heap_Free(data.s);
+
+		data.s = FormHeap_Strdup(value);
+
+		// mark string as dynamically allocated
+		if(name[0] != 'S')
+		{
+			name = FormHeap_Strdup(name);
+			name[0] = 'S';
+		}
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 Setting * GetINISetting(const char * name)
 {
 	Setting	* setting = (*g_iniSettings)->Get(name);

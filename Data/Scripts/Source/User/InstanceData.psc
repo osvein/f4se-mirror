@@ -33,7 +33,8 @@ struct DamageTypeInfo
 	int damage
 EndStruct
 
-; Gets/sets this weapons base damage type and damage value
+; Works for both Armor and Weapon instances
+; Gets/sets this Weapon or Armor's base damage type and damage value
 DamageTypeInfo[] Function GetDamageTypes(Owner akOwner) native global
 Function SetDamageTypes(Owner akOwner, DamageTypeInfo[] dts) native global
 
@@ -98,3 +99,19 @@ Function SetSightedTransition(Owner akOwner, float seconds) native global
 
 bool Function GetFlag(Owner akOwner, int flag) native global
 Function SetFlag(Owner akOwner, int flag, bool set) native global
+
+; Only works for Armor instances
+int Function GetArmorHealth(Owner akOwner) native global
+Function SetArmorHealth(Owner akOwner, int health) native global
+
+; Only works for Armor instances
+int Function GetArmorRating(Owner akOwner) native global
+Function SetArmorRating(Owner akOwner, int health) native global
+
+; Works for both Armor and Weapon instances
+float Function GetWeight(Owner akOwner) native global
+Function SetWeight(Owner akOwner, float weight) native global
+
+; Works for both Armor and Weapon instances
+int Function GetGoldValue(Owner akOwner) native global
+Function SetGoldValue(Owner akOwner, int value) native global

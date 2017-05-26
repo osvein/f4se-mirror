@@ -272,6 +272,12 @@
     <ClCompile Include="PapyrusPerk.cpp">
       <Filter>papyrus\functions</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusEncounterZone.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusLocation.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -595,6 +601,12 @@
       <Filter>papyrus\functions</Filter>
     </ClInclude>
     <ClInclude Include="PapyrusPerk.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusEncounterZone.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusLocation.h">
       <Filter>papyrus\functions</Filter>
     </ClInclude>
   </ItemGroup>

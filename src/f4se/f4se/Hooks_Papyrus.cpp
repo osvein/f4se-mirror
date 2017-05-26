@@ -23,6 +23,8 @@
 #include "f4se/PapyrusWaterType.h"
 #include "f4se/PapyrusCell.h"
 #include "f4se/PapyrusPerk.h"
+#include "f4se/PapyrusLocation.h"
+#include "f4se/PapyrusEncounterZone.h"
 
 #include "f4se/Serialization.h"
 
@@ -116,6 +118,12 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 
 	// Perk
 	papyrusPerk::RegisterFuncs(vm);
+
+	// EncounterZone
+	papyrusEncounterZone::RegisterFuncs(vm);
+
+	// Location
+	papyrusLocation::RegisterFuncs(vm);
 
 	// Plugins
 	for(PapyrusPluginList::iterator iter = s_pap_plugins.begin(); iter != s_pap_plugins.end(); ++iter)

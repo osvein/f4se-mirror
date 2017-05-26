@@ -77,7 +77,7 @@ STATIC_ASSERT(offsetof(TESBoundObject, previewTransform) == 0x50);
 STATIC_ASSERT(offsetof(TESBoundObject, soundTagComponent) == 0x60);
 STATIC_ASSERT(sizeof(TESBoundObject) == 0x68);
 
-// 30
+// 68
 class TESBoundAnimObject : public TESBoundObject
 {
 public:
@@ -309,22 +309,8 @@ public:
 		FiringData					* firingData;				// 98
 		tArray<EnchantmentItem*>	* enchantments;				// A0
 		tArray<BGSMaterialSwap*>	* materialSwaps;			// A8
-
-		struct DamageTypes
-		{
-			BGSDamageType	* damageType;	// 00
-			UInt64			value;			// 08
-		};
-
 		tArray<DamageTypes>			* damageTypes;				// B0
-
-		struct ValueModifier
-		{
-			ActorValueInfo * avInfo;	// 00
-			UInt32			unk08;		// 08
-		};
 		tArray<ValueModifier>		* modifiers;				// B8
-
 		float						unkC0;						// C0
 		float						reloadSpeed;				// C4
 		float						speed;						// C8
@@ -435,16 +421,18 @@ public:
 	struct InstanceData : public TBO_InstanceData
 	{
 	public:
-		UInt64 unk10;
-		UInt64 unk18;
-		UInt64 unk20;
-		BGSKeywordForm * keyword;
-		UInt64 unk30;
-		UInt64 unk38;
-		UInt32 unk40;
-		UInt32 pad44;
-		float unk48; // init to 0x7f7fffff
-		UInt64 unk50;
+		UInt64 unk10;								// 10
+		UInt64 unk18;								// 18
+		UInt64 unk20;								// 20
+		BGSKeywordForm * keyword;					// 28
+		tArray<DamageTypes>			* damageTypes;	// 30
+		UInt64 unk38;								// 38
+		float weight;								// 40
+		SInt32 pad44;								// 44
+		UInt32 value;								// 48
+		UInt32 health;								// 4C
+		UInt32 unk50;								// 50
+		UInt32 armorRating;							// 54
 	};
 	InstanceData				instanceData;	// 250 - 2A8 ( 592 - 680)
 
@@ -792,3 +780,14 @@ public:
 
 	UInt64 unkC0[(0x188 - 0xC0) >> 3];
 };
+
+// D8
+class TESLevCharacter : public TESBoundAnimObject
+{
+public:
+	enum { kTypeID = kFormType_LVLN };
+
+	TESLeveledList			leveledList;	// 68
+	BGSModelMaterialSwap	matSwap;		// 98
+};
+STATIC_ASSERT(sizeof(TESLevCharacter) == 0xD8);

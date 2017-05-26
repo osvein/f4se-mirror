@@ -325,11 +325,26 @@ template <> void UnpackValue(VMObject ** dst, VMValue * src)
 	if(src->IsIdentifier() && src->data.id)
 	{
 		*dst = new VMObject;
-		UnpackValue((*dst), src);
+		UnpackValue(*dst, src);
 	}
 }
 
 template <> void DestroyValue(VMObject ** dst)
+{
+	if(*dst)
+		delete (*dst);
+}
+
+template <> void UnpackValue(VMRefOrInventoryObj ** dst, VMValue * src)
+{
+	if(src->IsIdentifier() && src->data.id)
+	{
+		*dst = new VMRefOrInventoryObj;
+		UnpackValue(*dst, src);
+	}
+}
+
+template <> void DestroyValue(VMRefOrInventoryObj ** dst)
 {
 	if(*dst)
 		delete (*dst);

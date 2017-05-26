@@ -394,6 +394,9 @@ void DestroyValue(T ** dst)
 template <> void UnpackValue(VMObject ** dst, VMValue * src);
 template <> void DestroyValue(VMObject ** dst);
 
+template <> void UnpackValue(VMRefOrInventoryObj ** dst, VMValue * src);
+template <> void DestroyValue(VMRefOrInventoryObj ** dst);
+
 template <typename T>
 void UnpackArray(VMArray<T> * dst, VMValue * src, const UInt64 type)
 {

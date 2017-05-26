@@ -30,6 +30,7 @@ class ExtraDataList;
 class ActorValueInfo;
 class Condition;
 class TESObjectREFR;
+class BGSDamageType;
 
 typedef bool (* _EvaluationConditions)(Condition * condition, TESObjectREFR * ref1, TESObjectREFR * ref2);
 extern RelocAddr <_EvaluationConditions> EvaluationConditions; // Evaluates whole condition LinkedList
@@ -61,6 +62,18 @@ public:
 
 //	void	** _vtbl;	// 00
 //  BSIntrusiveRefCounted refCount; // 08
+
+	struct DamageTypes
+	{
+		BGSDamageType	* damageType;	// 00
+		UInt32			value;			// 08
+	};
+
+	struct ValueModifier
+	{
+		ActorValueInfo * avInfo;	// 00
+		UInt32			unk08;		// 08
+	};
 };
 
 // 08
@@ -637,6 +650,42 @@ public:
 	UInt64	unk08;	// 08
 };
 
+// 30
+class TESLeveledList : public BaseFormComponent
+{
+public:
+	virtual void	Unk_07(void);
+	virtual void	Unk_08(void);
+	virtual void	Unk_09(void);
+	virtual void	Unk_0A(void);
+
+	struct Entry
+	{
+		TESForm * form;		// 00
+		void	* unk08;	// 08
+		UInt16	count;		// 04
+		UInt16	level;		// 06
+		UInt32	unk8;		// 08
+	};
+
+	enum
+	{
+		kFlagCalculateFromAllLevelsLTPCLevel =	1 << 0,
+		kFlagCalculateForEachItemInCount	 =	1 << 1
+	};
+
+	UInt64	unk08;			// 08
+	tArray<BGSKeyword*>	* filterKeywords;	// 10
+	Entry	* entries;		// 18
+	UInt64	unk20;			// 20
+	UInt8	unk28;			// 28
+	UInt8	length;			// 29
+	UInt8	unk2A;			// 2A
+	UInt8	flags;			// 2B
+	UInt32	unk2C;			// 2C
+};
+STATIC_ASSERT(sizeof(TESLeveledList) == 0x30);
+
 // 18
 class MagicTarget
 {
@@ -804,7 +853,7 @@ public:
 	Condition	* next;					// 00
 	float		compareValue;			// 08
 	UInt32		unk0C;					// 0C
-	UInt32		unk10;					// 10
+	UInt32		refHandle;				// 10
 	UInt32		unk14;					// 14 - FFFFFFFF
 	UInt16		functionId;				// 18
 	UInt8		unk1A;					// 1A
@@ -924,9 +973,9 @@ struct BGSInventoryItem
 	public:
 		virtual ~Stack();
 
-		Stack	* next;		// 10
+		Stack			* next;			// 10
 		ExtraDataList	* extraData;	// 18
-		UInt32	unk20;		// 20
+		SInt32			count;			// 20
 
 		enum
 		{

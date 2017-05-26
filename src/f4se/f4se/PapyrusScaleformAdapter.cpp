@@ -240,6 +240,7 @@ namespace PlatformAdapter
 							strct->GetStruct()[item->index].type.value = typeObject->m_data.entries[item->index].m_type;
 							return true;
 						});
+						dest->data.strct = strct;
 					}
 
 					StructMemberVisitor visitor(vm, typeObject, strct);
@@ -260,6 +261,8 @@ namespace PlatformAdapter
 				vm->CreateArray(dest, length, &arrayData);
 
 				dest->type.value = VMValue::kType_VariableArray;
+				dest->data.arr = arrayData;
+
 				for(UInt32 i = 0; i < length; i++)
 				{
 					GFxValue value;

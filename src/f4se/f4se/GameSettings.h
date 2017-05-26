@@ -34,6 +34,9 @@ public:
 	char	* name;		// 10
 
 	UInt32	GetType(void) const;
+	bool GetDouble(double * out) const;
+	bool SetDouble(double value);
+	bool SetString(const char * value);
 };
 
 // 118

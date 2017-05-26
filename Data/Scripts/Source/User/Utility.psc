@@ -80,7 +80,7 @@ string Function GetBudgetLimit(int aiBudgetNumber) native global debugOnly
 bool Function OverBudget(int aiBudgetNumber) native global debugOnly
 string Function GetBudgetName(int aiBudgetNumber) native global debugOnly
 
-; F4SE additions built 2017-05-14 22:37:44.241000 UTC
+; F4SE additions built 2017-05-23 18:22:56.236000 UTC
 
 ; The following functions are prone to cyclic references and may break games
 ; Cyclic reference example:

@@ -289,7 +289,21 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		DumpClass(waterForm, sizeof(TESWaterForm)/8);
 	}*/
 
-	for(UInt32 i = 0; i < (*g_dataHandler)->arrPERK.count; i++)
+	/*_MESSAGE("Location");
+	for(UInt32 i = 0; i < (*g_dataHandler)->arrLCTN.count; i++)
+	{
+		BGSLocation * form = (*g_dataHandler)->arrLCTN[i];
+		DumpClass(form, sizeof(BGSLocation)/8);
+	}
+
+	_MESSAGE("EncounterZone");
+	for(UInt32 i = 0; i < (*g_dataHandler)->arrECZN.count; i++)
+	{
+		BGSEncounterZone * form = (*g_dataHandler)->arrECZN[i];
+		DumpClass(form, sizeof(BGSEncounterZone)/8);
+	}*/
+
+	/*for(UInt32 i = 0; i < (*g_dataHandler)->arrPERK.count; i++)
 	{
 		BGSPerk * form = (*g_dataHandler)->arrPERK[i];
 		_MESSAGE("Form: %s", form->fullName.name.c_str());
@@ -302,6 +316,15 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		}
 
 		DumpClass(form, sizeof(BGSPerk)/8);
+	}*/
+
+
+	for(UInt32 i = 0; i < 2; i++)
+	{
+		TESObjectARMO * armor = (TESObjectARMO*)LookupFormByID(0x7B000F99 + i);
+		if(armor) {
+			DumpClass(armor, sizeof(TESObjectARMO)/8);
+		}
 	}
 
 	
@@ -800,6 +823,33 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		}
 
 		return true;
+	}
+	if(0)
+	{
+		TESNPC * npc = DYNAMIC_CAST(thisObj->baseForm, TESForm, TESNPC);
+		if(npc) {
+			_MESSAGE("Actor: %08X ActorBase: %08X BaseContainer", actor->formID, npc->formID);
+
+			TESContainer * container = DYNAMIC_CAST(npc, TESNPC, TESContainer);
+			if(container)
+			{
+				for(UInt32 i = 0; i < container->numEntries; i++)
+				{
+					_MESSAGE("%016I64X %s - Count: %d", container->entries[i]->form->formID, GetObjectClassName(container->entries[i]->form), container->entries[i]->count);
+					DumpClass(container->entries[i]->data, sizeof(TESContainer::Entry::Data) >> 3);
+				}
+			}
+		}
+
+		_MESSAGE("Actor: %08X Inventory", actor->formID);
+		auto inventory = actor->inventoryList;
+		if(inventory) {
+			for(int i = 0; i < inventory->items.count; i++) {
+				BGSInventoryItem item;
+				inventory->items.GetNthItem(i, item);
+				item.Dump();
+			}
+		}
 	}
 
 	if(0) {

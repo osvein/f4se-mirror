@@ -74,6 +74,7 @@
     <ClCompile Include="PapyrusArgs.cpp" />
     <ClCompile Include="PapyrusCell.cpp" />
     <ClCompile Include="PapyrusDelayFunctors.cpp" />
+    <ClCompile Include="PapyrusEncounterZone.cpp" />
     <ClCompile Include="PapyrusEquipSlot.cpp" />
     <ClCompile Include="PapyrusEvents.cpp" />
     <ClCompile Include="PapyrusF4SE.cpp" />
@@ -83,6 +84,7 @@
     <ClCompile Include="PapyrusInput.cpp" />
     <ClCompile Include="PapyrusInstanceData.cpp" />
     <ClCompile Include="PapyrusInterfaces.cpp" />
+    <ClCompile Include="PapyrusLocation.cpp" />
     <ClCompile Include="PapyrusMath.cpp" />
     <ClCompile Include="PapyrusNativeFunctions.cpp" />
     <ClCompile Include="PapyrusObjectMod.cpp" />
@@ -175,6 +177,7 @@
     <ClInclude Include="PapyrusArgs.h" />
     <ClInclude Include="PapyrusCell.h" />
     <ClInclude Include="PapyrusDelayFunctors.h" />
+    <ClInclude Include="PapyrusEncounterZone.h" />
     <ClInclude Include="PapyrusEquipSlot.h" />
     <ClInclude Include="PapyrusEvents.h" />
     <ClInclude Include="PapyrusF4SE.h" />
@@ -184,6 +187,7 @@
     <ClInclude Include="PapyrusInput.h" />
     <ClInclude Include="PapyrusInstanceData.h" />
     <ClInclude Include="PapyrusInterfaces.h" />
+    <ClInclude Include="PapyrusLocation.h" />
     <ClInclude Include="PapyrusMath.h" />
     <ClInclude Include="PapyrusNativeFunctions.h" />
     <ClInclude Include="PapyrusObjectMod.h" />
