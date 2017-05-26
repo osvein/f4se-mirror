@@ -15,9 +15,36 @@ Var Function Get(string menu, string path) native global
 ; Struct Example:
 ; {"__struct__": {"__type__": "scriptowner#mystruct", "__data__": {"member1": 1.0, "member2": false}}}
 ; Form Example:
-; {"__type__": "ScriptObject", "__handleHigh__": 0xFFFFFFFF, "__handleLow__": 0x00000000}
+; {"__type__": "ScriptObject", "__handleHigh__": 0x0000FFFF, "__handleLow__": 0x00000000}
 ; Forms shouldn't be manipulated from AS3, they are container objects meant to be passed back from AS3 to Papyrus
 Var Function Invoke(string menu, string path, Var[] args = None) native global
+
+; Loads an asset (swf) as a child to the target variable
+; Target variable must be a Container (or has the addChild function)
+; This function will create a Loader object, add the Loader to the target
+; Then load the asset as a child to the Loader, this function is not immediate
+bool Function Load(string menu, string sourceVar, string assetPath, ScriptObject receiver = None, string callback = "") native global
+
+
+;; Load Example:
+; Scriptname MyScript extends ScriptObject ; Or any other type
+; Function TestFunc()
+;     ; Paths are already relative to Interface/ when you do a load
+;     ; root1 is used here because "root" may already be cached as "Root" in Papyrus, and Scaleform is case-sensitive
+;     ; root and root1 are the same object, the toplevel MovieClip that is not the stage (this is not the same as AS2's _root)
+;     ; Self refers to MyScript
+;     ; "OnLoadComplete" is the function that will be called on MyScript to notify that the clip is loaded (or not) and where it loaded to and from
+;     UI.Load("HUDMenu", "root1", "something.swf", self, "OnLoadComplete")
+; EndFunction
+
+;; The parameters to this function are fixed (bool,string,string,string,string) but the function name can be changed by UI.Load
+; Function OnLoadComplete(bool success, string menuName, string sourceVar, string destVar, string assetPath)
+;     ; success = true/false if it failed or not
+;     ; menuName = "HUDMenu"
+;     ; sourceVar = "root1"
+;     ; destVar = "root1.instanceX.instanceY" (non-empty on success) -- This is manually extracted by going up to parent until there are no more named parents, X and Y are incrementally assigned numbers but these are basically indeterminate
+;     ; assetPath = "something.swf"
+; EndFunction
 
 
 ;; Array of Arrays
@@ -31,13 +58,13 @@ Var Function Invoke(string menu, string path, Var[] args = None) native global
 ; a[2] = Utility.VarArrayToVar(b)
 ; UI.Invoke("HUDMenu", "root.func", a)
 ;; AS3 expansion becomes:
-;; func(Number=1.0, String="Str1", Array=[{"__type__": "MiscObject", "__handleHigh__": 0xFFFFFFFF, "__handleLow__": 0x0000000F}, {"__type__": "ActorBase", "__handleHigh__": 0xFFFFFFFF, "__handleLow__": 0x00000007}])
+;; func(Number=1.0, String="Str1", Array=[{"__type__": "MiscObject", "__handleHigh__": 0x0000FFFF, "__handleLow__": 0x0000000F}, {"__type__": "ActorBase", "__handleHigh__": 0x0000FFFF, "__handleLow__": 0x00000007}])
 
 ;; Scaleform to Papyrus
 ;; Top-level parameters are expanded directly as parameters
 
 ;; Scaleform Code:
-; root.f4se.SendExternalEvent("myeventname", Number=1.0, String="Str1", Array=[{"__type__": "MiscObject", "__handleHigh__": 0xFFFFFFFF, "__handleLow__": 0x0000000F}, {"__type__": "ActorBase", "__handleHigh__": 0xFFFFFFFF, "__handleLow__": 0x00000007}])
+; root.f4se.SendExternalEvent("myeventname", 1.0, "Str1", [{"__type__": "MiscObject", "__handleHigh__": 0x0000FFFF, "__handleLow__": 0x0000000F}, {"__type__": "ActorBase", "__handleHigh__": 0x0000FFFF, "__handleLow__": 0x00000007}])
 
 ;; Papyrus code:
 ;; Must have previously registered for the event and established a callback name

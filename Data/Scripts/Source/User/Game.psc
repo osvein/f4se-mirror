@@ -379,7 +379,7 @@ bool Function UsingGamepad() native global
 ; Issue a warning to the script log and warning system
 Function Warning(string asMessage) native global betaOnly
 
-; F4SE additions built 2017-05-10 00:55:06.671000 UTC
+; F4SE additions built 2017-05-14 22:37:44.241000 UTC
 ; Returns the current console ref
 ObjectReference Function GetCurrentConsoleRef() native global
 
@@ -395,3 +395,8 @@ PluginInfo[] Function GetInstalledPlugins() native global
 
 ; Returns the mod dependencies of the specified plugin
 string[] Function GetPluginDependencies(string plugin) native global
+
+Function SetGameSettingFloat(string setting, float value) global native
+Function SetGameSettingInt(string setting, int value) global native
+Function SetGameSettingBool(string setting, bool value) global native
+Function SetGameSettingString(string setting, string value) global native

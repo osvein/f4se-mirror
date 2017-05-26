@@ -52,7 +52,7 @@ Function SetProtected(bool abProtected = true) native
 Function SetOutfit( Outfit akOutfit, bool abSleepOutfit = false ) native
 
 
-; F4SE additions built 2017-05-10 00:55:06.671000 UTC
+; F4SE additions built 2017-05-14 22:37:44.241000 UTC
 ; Gets the template of the ActorBase, topmost will return the highest parent
 ActorBase Function GetTemplate(bool bTopMost = true) native
 
