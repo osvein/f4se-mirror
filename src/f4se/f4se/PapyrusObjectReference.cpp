@@ -9,6 +9,12 @@
 #include "f4se/GameExtraData.h"
 #include "f4se/GameRTTI.h"
 #include "f4se/GameData.h"
+#include "f4se/GameWorkshop.h"
+
+#include "f4se/NiExtraData.h"
+#include "f4se/NiObjects.h"
+#include "f4se/NiNodes.h"
+#include "f4se/bhkWorld.h"
 
 #include "f4se/Serialization.h"
 
@@ -16,35 +22,9 @@
 
 #include <set>
 
-typedef void(*_LinkPower)(BSExtraData* workshopExtraData, TESObjectREFR* akRef1, TESObjectREFR* akRef2, TESObjectREFR* akWireRef);
-RelocAddr <_LinkPower> LinkPower_Internal(0x001F4FE0);
-
-typedef void(*_LinkPower2)(TESObjectREFR* akRef, BSExtraData* workshopExtraData);
-RelocAddr <_LinkPower2> LinkPower2_Internal(0x001FFCD0);
-
-typedef void(*_LinkPower3)(BSExtraData* workshopExtraData, TESObjectREFR* akWireRef);
-RelocAddr <_LinkPower3> LinkPower3_Internal(0x001F4A50);
-
-typedef void(*_LinkPower4)(TESObjectREFR* akWireRef);
-RelocAddr <_LinkPower4> LinkPower4_Internal(0x002027D0);
-
-typedef void(*_SetWireEndpoints)(TESObjectREFR* akRef1, SInt32 unk2, TESObjectREFR* akRef2, SInt32 unk4, TESObjectREFR* akWireRef);	// unk2 and unk4 always 0 - Adds the ExtraData
-RelocAddr <_SetWireEndpoints> SetWireEndpoints_Internal(0x001FF010);
-
-typedef void(*_FinalizeWireLink)(LocationData* locationData, TESObjectREFR* akWireRef, TESObjectREFR* akRef1, int unk4, TESObjectREFR* akRef2, int unk6);	// unk4 and unk6 always 0
-RelocAddr <_FinalizeWireLink> FinalizeWireLink(0x001FED10);
-
 RelocAddr<_PlaceAtMe_Native> PlaceAtMe_Native(0x0013ED4D0);
 
-struct MaterialsReturned
-{
-	TESForm	* form;
-	UInt32	amount;
-};
-
-typedef void(*_ScrapReference)(LocationData* locationData, TESObjectREFR** akRef, tArray<MaterialsReturned> * materials);
-RelocAddr <_ScrapReference> ScrapReference(0x00206640);
-
+DECLARE_STRUCT(ConnectPoint, "ObjectReference");
 
 namespace papyrusObjectReference {
 
@@ -279,6 +259,181 @@ namespace papyrusObjectReference {
 		return true;
 	}
 
+	VMArray<ConnectPoint> GetConnectPointsLatent(UInt32 stackId, TESObjectREFR * refr)
+	{
+		VMArray<ConnectPoint> results;
+		if(!refr)
+			return results;
+
+		NiNode * root = refr->GetObjectRootNode();
+		if(!root)
+			return results;
+
+		BSConnectPoint::Parents * extraData = (BSConnectPoint::Parents *)Runtime_DynamicCast(root->GetExtraData("CPA"), RTTI_NiExtraData, RTTI_BSConnectPoint__Parents);
+		if(extraData)
+		{
+			for(UInt32 i = 0; i < extraData->points.count; i++)
+			{
+				BSConnectPoint::Parents::ConnectPoint * connectPoint = extraData->points[i];
+				if(connectPoint)
+				{
+					ConnectPoint point;
+
+					point.Set<BSFixedString>("parent", connectPoint->parent);
+					point.Set<BSFixedString>("name", connectPoint->name);
+
+					float yaw, pitch, roll;
+					connectPoint->rot.GetEulerAngles(roll, pitch, yaw);
+					yaw *= 180.0 / MATH_PI;
+					pitch *= 180.0 / MATH_PI;
+					roll *= 180.0 / MATH_PI;
+
+					point.Set<float>("roll", roll);
+					point.Set<float>("pitch", pitch);
+					point.Set<float>("yaw", yaw);
+
+					NiPoint3 localPos = connectPoint->pos;
+
+					NiAVObject * parent = nullptr;
+					if(connectPoint->parent == BSFixedString(""))
+					{
+						parent = root;
+					}
+					else
+					{
+						NiAVObject * child = root->GetObjectByName(&connectPoint->parent);
+						if(child)
+							parent = child;
+					}
+
+					NiPoint3 worldPos = localPos;
+					if(parent) {
+						worldPos = parent->m_worldTransform.rot.Transpose() * localPos + parent->m_worldTransform.pos;
+						point.Set<float>("x", worldPos.x);
+						point.Set<float>("y", worldPos.y);
+						point.Set<float>("z", worldPos.z);
+					} else {
+						point.Set<float>("x", 0.0f);
+						point.Set<float>("y", 0.0f);
+						point.Set<float>("z", 0.0f);
+					}
+
+					point.Set<float>("scale", connectPoint->scale);
+
+					point.Set<TESObjectREFR*>("object", nullptr);
+
+					if(parent != root && refr->parentCell) {
+						bhkWorld * world = CALL_MEMBER_FN(refr->parentCell, GetHavokWorld)();
+						if(world) {
+							TESObjectREFR * connected = GetObjectAtConnectPoint(refr, &worldPos, world, 8.0f);
+							if(connected) {
+								point.Set<TESObjectREFR*>("object", connected);
+							}
+						}
+					}
+
+					results.Push(&point);
+				}
+			}
+		}		
+		
+		return results;
+	}
+
+	DECLARE_DELAY_FUNCTOR(F4SEConnectPointsFunctor, 0, GetConnectPointsLatent, TESObjectREFR, VMArray<ConnectPoint>);
+
+	bool GetConnectPoints(VirtualMachine * vm, UInt32 stackId, TESObjectREFR* refr)
+	{
+		if(!refr)
+			return false;
+
+		F4SEDelayFunctorManagerInstance().Enqueue(new F4SEConnectPointsFunctor(GetConnectPointsLatent, vm, stackId, refr));
+		return true;
+	}
+
+	bool TransmitConnectedPowerLatent(UInt32 stackId, TESObjectREFR * refr)
+	{
+		if(!refr)
+			return false;
+
+		NiNode * root = refr->GetObjectRootNode();
+		if(!root) {
+			return false;
+		}
+			
+		BGSKeyword * keyword = DYNAMIC_CAST(LookupFormByID(0x00054BA6), TESForm, BGSKeyword);
+		// No workshop keyword is bad
+		if(!keyword) {
+			return false;
+		}
+
+		// Get the workshop by keyword
+		TESObjectREFR * workshopRef = GetLinkedRef_Native(refr, keyword);
+		if(!workshopRef) {
+			return false;
+		}
+
+		// Workshop ref isn't a workshop!
+		BSExtraData* extraDataWorkshop = workshopRef->extraDataList->GetByType(ExtraDataType::kExtraData_WorkshopExtraData);
+		if(!extraDataWorkshop) {
+			return false;
+		}
+
+		BSConnectPoint::Parents * extraData = (BSConnectPoint::Parents *)Runtime_DynamicCast(root->GetExtraData("CPA"), RTTI_NiExtraData, RTTI_BSConnectPoint__Parents);
+		if(!extraData) {
+			return false;
+		}
+		
+		for(UInt32 i = 0; i < extraData->points.count; i++)
+		{
+			BSConnectPoint::Parents::ConnectPoint * connectPoint = extraData->points[i];
+			if(!connectPoint)
+				continue;
+
+			NiPoint3 localPos = connectPoint->pos;
+			NiAVObject * parent = nullptr;
+			if(connectPoint->parent == "")
+				parent = root;
+			else
+			{
+				NiAVObject * child = root->GetObjectByName(&connectPoint->parent);
+				if(child)
+					parent = child;
+			}
+
+			NiPoint3 worldPos = localPos;
+			if(parent) {
+				worldPos = parent->m_worldTransform.rot.Transpose() * localPos + parent->m_worldTransform.pos;
+			}
+
+			float scale = connectPoint->scale;
+			if(parent != root && refr->parentCell) {
+				bhkWorld * world = CALL_MEMBER_FN(refr->parentCell, GetHavokWorld)();
+				if(world) {
+					TESObjectREFR * connected = GetObjectAtConnectPoint(refr, &worldPos, world, 8.0f);
+					if(connected) {
+						LinkPower_Internal(extraDataWorkshop, refr, connected, nullptr);
+						LinkPower2_Internal(connected, extraDataWorkshop);
+					}
+				}
+			}
+		}
+
+		LinkPower2_Internal(refr, extraDataWorkshop);
+		return true;
+	}
+
+	DECLARE_DELAY_FUNCTOR(F4SETransmitConnectedPowerFunctor, 0, TransmitConnectedPowerLatent, TESObjectREFR, bool);
+
+	bool TransmitConnectedPower(VirtualMachine * vm, UInt32 stackId, TESObjectREFR* refr)
+	{
+		if(!refr)
+			return false;
+
+		F4SEDelayFunctorManagerInstance().Enqueue(new F4SETransmitConnectedPowerFunctor(TransmitConnectedPowerLatent, vm, stackId, refr));
+		return true;
+	}
+
 #ifdef _DEBUG
 	void ScrapLatent(UInt32 stackId, TESObjectREFR * refr)
 	{
@@ -304,7 +459,8 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 	F4SEObjectRegistry& f4seObjRegistry = F4SEObjectRegistryInstance();
 	f4seObjRegistry.RegisterClass<F4SEAttachWireFunctor>();
 	f4seObjRegistry.RegisterClass<F4SEInventoryFunctor>();
-
+	f4seObjRegistry.RegisterClass<F4SEConnectPointsFunctor>();
+	f4seObjRegistry.RegisterClass<F4SETransmitConnectedPowerFunctor>();
 
 #ifdef _DEBUG
 	f4seObjRegistry.RegisterClass<F4SEScrapFunctor>();
@@ -325,8 +481,16 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new LatentNativeFunction0<TESObjectREFR, VMArray<TESForm*>>("GetInventoryItems", "ObjectReference", papyrusObjectReference::GetInventoryItems, vm));
 
+	vm->RegisterFunction(
+		new LatentNativeFunction0<TESObjectREFR, VMArray<ConnectPoint>>("GetConnectPoints", "ObjectReference", papyrusObjectReference::GetConnectPoints, vm));
+
+	vm->RegisterFunction(
+		new LatentNativeFunction0<TESObjectREFR, bool>("TransmitConnectedPower", "ObjectReference", papyrusObjectReference::TransmitConnectedPower, vm));
+
 	vm->SetFunctionFlags("ObjectReference", "AttachWire", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("ObjectReference", "GetInventoryItems", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("ObjectReference", "GetConnectPoints", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("ObjectReference", "TransmitConnectedPower", IFunction::kFunctionFlag_NoWait);
 
 #ifdef _DEBUG
 	vm->RegisterFunction(

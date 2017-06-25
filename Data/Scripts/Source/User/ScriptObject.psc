@@ -354,7 +354,7 @@ EndEvent
 Event OnTutorialEvent(String asEventName, Message aMessage)
 EndEvent
 
-; F4SE additions built 2017-05-23 18:22:56.236000 UTC
+; F4SE additions built 2017-06-04 23:21:29.171000 UTC
 Function RegisterForKey(int key) native
 
 Function UnregisterForKey(int key) native

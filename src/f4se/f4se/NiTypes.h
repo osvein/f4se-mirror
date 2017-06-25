@@ -171,6 +171,43 @@ public:
 	float	m_fX;	// 4
 	float	m_fY;	// 8
 	float	m_fZ;	// C
+
+
+	void SetEulerAngles(float pitch, float roll, float yaw)
+	{
+		float t0 = std::cos(yaw * 0.5);
+		float t1 = std::sin(yaw * 0.5);
+		float t2 = std::cos(roll * 0.5);
+		float t3 = std::sin(roll * 0.5);
+		float t4 = std::cos(pitch * 0.5);
+		float t5 = std::sin(pitch * 0.5);
+
+		m_fW = t0 * t2 * t4 + t1 * t3 * t5;
+		m_fX = t0 * t3 * t4 - t1 * t2 * t5;
+		m_fY = t0 * t2 * t5 + t1 * t3 * t4;
+		m_fZ = t1 * t2 * t4 - t0 * t3 * t5;
+	}
+
+	void GetEulerAngles(float& roll, float& pitch, float& yaw)
+	{
+		float ysqr = m_fY * m_fY;
+
+		// roll (x-axis rotation)
+		float t0 = +2.0 * (m_fW * m_fX + m_fY * m_fZ);
+		float t1 = +1.0 - 2.0 * (m_fX * m_fX + ysqr);
+		roll = std::atan2(t0, t1);
+
+		// pitch (y-axis rotation)
+		float t2 = +2.0 * (m_fW * m_fY - m_fZ * m_fX);
+		t2 = t2 > 1.0 ? 1.0 : t2;
+		t2 = t2 < -1.0 ? -1.0 : t2;
+		pitch = std::asin(t2);
+
+		// yaw (z-axis rotation)
+		float t3 = +2.0 * (m_fW * m_fZ + m_fX * m_fY);
+		float t4 = +1.0 - 2.0 * (ysqr + m_fZ * m_fZ);  
+		yaw = std::atan2(t3, t4);
+	}
 };
 
 // 8
@@ -187,10 +224,16 @@ class NiMatrix43
 public:
 	union
 	{
-		float	data[4][3];
+		float	data[3][4];
 		float   arr[12];
 	};
+
+	NiMatrix43 Transpose() const;
+	NiPoint3 operator* (const NiPoint3& pt) const;
 };
+
+// math.h
+#define MATH_PI       3.14159265358979323846
 
 // 40
 class NiTransform
@@ -199,6 +242,8 @@ public:
 	NiMatrix43	rot;	// 00
 	NiPoint3	pos;	// 30
 	float		scale;	// 3C
+
+	NiPoint3 operator*(const NiPoint3 & pt) const;
 };
 STATIC_ASSERT(sizeof(NiTransform) == 0x40);
 

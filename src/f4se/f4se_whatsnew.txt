@@ -1,3 +1,9 @@
+0.4.1
+- Fixed bug when passing Script objects to Scaleform
+- Added ObjectReference Functions:
+    - TransmitConnectedPower
+    - GetConnectPoints
+
 0.4.0
 - InstanceData Get/SetDamageTypes now supports both Armor and Weapon instances
 - Added InstanceData functions:

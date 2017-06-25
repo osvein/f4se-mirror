@@ -1167,7 +1167,7 @@ int Property Motion_Keyframed = 2 AutoReadOnly
 
 
 
-; F4SE additions built 2017-05-23 18:22:56.236000 UTC
+; F4SE additions built 2017-06-04 23:21:29.171000 UTC
 ; Returns all the mods for this reference
 ObjectMod[] Function GetAllMods() native
 
@@ -1204,3 +1204,28 @@ string Function GetDisplayName() native
 
 ; Returns all the base forms from the inventory
 Form[] Function GetInventoryItems() native
+
+struct ConnectPoint
+	string parent
+	string name
+	float roll
+	float pitch
+	float yaw
+	float x
+	float y
+	float z
+	float scale
+	ObjectReference object
+EndStruct
+
+; Returns connect points to an object, if used on wired objects you may only 
+; get one wire ref unless the object has multiple attach points
+; 'object' is not None when there is another object directly connected
+; to the attach point that also has a workshop connect point
+; Object 3d must be loaded for this function to work at all
+ConnectPoint[] Function GetConnectPoints() native
+
+; Links power to any objects connected by attach point (The two attach points are touching)
+; e.g. progammatically placed conduits
+; Should be called on each programmatically placed conduit/junction/radiatior
+bool Function TransmitConnectedPower() native

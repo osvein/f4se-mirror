@@ -22,6 +22,7 @@
     <ResourceCompile Include="..\f4se_common\f4se_version.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bhkWorld.cpp" />
     <ClCompile Include="BSGeometry.cpp" />
     <ClCompile Include="BSGraphics.cpp" />
     <ClCompile Include="BSModelDB.cpp" />
@@ -47,6 +48,7 @@
     <ClCompile Include="GameThreads.cpp" />
     <ClCompile Include="GameTypes.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
+    <ClCompile Include="GameWorkshop.cpp" />
     <ClCompile Include="Hooks_Camera.cpp" />
     <ClCompile Include="Hooks_Debug.cpp" />
     <ClCompile Include="Hooks_Gameplay.cpp" />
@@ -126,6 +128,7 @@
     <None Include="PapyrusNativeFunctionDef_Base.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bhkWorld.h" />
     <ClInclude Include="BSGeometry.h" />
     <ClInclude Include="BSGraphics.h" />
     <ClInclude Include="BSModelDB.h" />
@@ -150,6 +153,7 @@
     <ClInclude Include="GameThreads.h" />
     <ClInclude Include="GameTypes.h" />
     <ClInclude Include="GameUtilities.h" />
+    <ClInclude Include="GameWorkshop.h" />
     <ClInclude Include="Hooks_Camera.h" />
     <ClInclude Include="Hooks_Debug.h" />
     <ClInclude Include="Hooks_Gameplay.h" />

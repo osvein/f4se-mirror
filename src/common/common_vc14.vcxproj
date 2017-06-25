@@ -22,9 +22,12 @@
     <ProjectName>common_vc14</ProjectName>
     <ProjectGuid>{D4C128A1-73DC-4941-A453-CE55AF239BA8}</ProjectGuid>
     <RootNamespace>common</RootNamespace>
-    <SccProjectName>Perforce Project</SccProjectName>
-    <SccLocalPath>.</SccLocalPath>
-    <SccProvider>MSSCCI:Perforce SCM</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

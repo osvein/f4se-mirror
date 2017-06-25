@@ -60,3 +60,24 @@ protected:
 };
 
 extern RelocAddr<uintptr_t> s_BSFaceGenBaseMorphExtraDataVtbl;
+
+
+class BSConnectPoint
+{
+public:
+	// 30
+	class Parents : public NiExtraData
+	{
+	public:
+		struct ConnectPoint
+		{
+			UInt64			unk00;	// 00 - refcount?
+			BSFixedString	parent;	// 08
+			BSFixedString	name;	// 10
+			NiQuaternion	rot;	// 18
+			NiPoint3		pos;	// 28
+			float			scale;	// 34
+		};
+		tArray<ConnectPoint*>	points;	// 18
+	};
+};

@@ -27,6 +27,7 @@ class TESImageSpace;
 class SpellItem;
 class TESObjectLAND;
 class TESWorldSpace;
+class bhkWorld;
 
 typedef TESForm* (* _LookupFormByID)(UInt32 id);
 extern RelocAddr <_LookupFormByID> LookupFormByID;
@@ -1454,6 +1455,9 @@ public:
 	UInt64					unkE0;				// E0
 	UInt32					preVisCell;			// E8 - FormID
 	UInt32					unkEC;				// EC
+
+	MEMBER_FN_PREFIX(TESObjectCELL);
+	DEFINE_MEMBER_FN(GetHavokWorld, bhkWorld*, 0x003B27E0);
 };
 STATIC_ASSERT(offsetof(TESObjectCELL, objectList) == 0x70);
 STATIC_ASSERT(offsetof(TESObjectCELL, worldSpace) == 0xC8);

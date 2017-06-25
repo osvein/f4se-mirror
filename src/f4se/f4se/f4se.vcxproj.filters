@@ -278,6 +278,12 @@
     <ClCompile Include="PapyrusLocation.cpp">
       <Filter>papyrus\functions</Filter>
     </ClCompile>
+    <ClCompile Include="bhkWorld.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWorkshop.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -608,6 +614,12 @@
     </ClInclude>
     <ClInclude Include="PapyrusLocation.h">
       <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="bhkWorld.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWorkshop.h">
+      <Filter>api</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

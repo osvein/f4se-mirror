@@ -14,7 +14,7 @@ Actor[] Function GetActors( Keyword apRequiredLinkedRefKeyword = None, Keyword a
 ; Tells this encounter zone to reset the next time the player enters it
 Function Reset() native
 
-; F4SE additions built 2017-05-23 18:22:56.236000 UTC
+; F4SE additions built 2017-06-04 23:21:29.171000 UTC
 
 Location Function GetLocation() native
 Function SetLocation(Location akLoc) native

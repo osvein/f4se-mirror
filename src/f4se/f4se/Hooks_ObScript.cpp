@@ -70,6 +70,7 @@ bool GetF4SEVersion_Execute(void * paramInfo, void * scriptData, TESObjectREFR *
 #include "f4se/NiTextures.h"
 #include "f4se/PapyrusEvents.h"
 #include "f4se/GameCamera.h"
+#include "f4se/GameWorkshop.h"
 
 RelocAddr <uintptr_t> GetActorBaseHeadData_Start(0x00687920 + 0xCF);
 RelocAddr <uintptr_t> GetMorphGroups_Start(0x00687920 + 0x390);
@@ -162,7 +163,7 @@ void DumpNodeChildren(NiAVObject * node)
 	if(node->m_extraData) {
 		gLog.Indent();
 		for(UInt16 i = 0; i < node->m_extraData->count; i++) {
-			_MESSAGE("{%s} {%s} {%016I64X}", node->m_extraData->entries[i]->GetRTTI()->name, node->m_extraData->entries[i]->m_name.c_str(), node);
+			_MESSAGE("{%s} {%s} {%016I64X}", node->m_extraData->entries[i]->GetRTTI()->name, node->m_extraData->entries[i]->m_name.c_str(), node->m_extraData->entries[i]);
 		}
 		gLog.Outdent();
 	}
@@ -865,7 +866,7 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 	}
 
 	if(thisObj) {
-		//DumpNodeChildren(thisObj->GetObjectRootNode());
+		DumpNodeChildren(thisObj->GetObjectRootNode());
 
 		/*BGSInventoryList	* inventory = thisObj->inventoryList;
 		_MESSAGE("Reference: %08X Inventory Dump %016I64X", thisObj->formID, inventory);
@@ -878,13 +879,87 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 				_MESSAGE("%016I64X %s", item.form, GetObjectClassName(item.form));
 				item.Dump();
 			}
+		}*/
+
+		NiNode * root = thisObj->GetObjectRootNode();
+		if(root) {
+
+			BGSKeyword * keyword = DYNAMIC_CAST(LookupFormByID(0x00054BA6), TESForm, BGSKeyword);
+			// No workshop keyword is bad
+			// Connecting a wire to another wire or connecting a non-wire is invalid
+			if(!keyword) {
+				return true;
+			}
+
+			// Get the workshop by keyword
+			TESObjectREFR * workshopRef = GetLinkedRef_Native(thisObj, keyword);
+			if(!workshopRef) {
+				return true;
+			}
+
+			// Workshop ref isn't a workshop!
+			BSExtraData* extraDataWorkshop = workshopRef->extraDataList->GetByType(ExtraDataType::kExtraData_WorkshopExtraData);
+			if(!extraDataWorkshop) {
+				return true;
+			}
+
+			BSConnectPoint::Parents * extraData = (BSConnectPoint::Parents *)Runtime_DynamicCast(root->GetExtraData("CPA"), RTTI_NiExtraData, RTTI_BSConnectPoint__Parents);
+			if(extraData)
+			{
+				for(UInt32 i = 0; i < extraData->points.count; i++)
+				{
+					BSConnectPoint::Parents::ConnectPoint * connectPoint = extraData->points[i];
+					if(connectPoint)
+					{
+						/*BSFixedString parentName = connectPoint->parent;
+						BSFixedString pointName = connectPoint->name;
+
+						float yaw, pitch, roll;
+						connectPoint->rot.GetEulerAngles(roll, pitch, yaw);
+						yaw *= 180.0 / MATH_PI;
+						pitch *= 180.0 / MATH_PI;
+						roll *= 180.0 / MATH_PI;*/
+
+						NiPoint3 localPos = connectPoint->pos;
+
+						NiAVObject * parent = nullptr;
+						if(connectPoint->parent == BSFixedString(""))
+							parent = root;
+						else
+						{
+							NiAVObject * child = root->GetObjectByName(&connectPoint->parent);
+							if(child)
+								parent = child;
+						}
+
+						NiPoint3 worldPos = localPos;
+						if(parent) {
+							worldPos = parent->m_worldTransform.rot.Transpose() * localPos + parent->m_worldTransform.pos;
+						}
+
+						float scale = connectPoint->scale;
+						if(parent != root) {
+							bhkWorld * world = CALL_MEMBER_FN(thisObj->parentCell, GetHavokWorld)();
+							if(world) {
+								TESObjectREFR * connected = GetObjectAtConnectPoint(thisObj, &worldPos, world, 8.0f);
+								if(connected) {
+									LinkPower_Internal(extraDataWorkshop, thisObj, connected, nullptr);
+									LinkPower2_Internal(thisObj, extraDataWorkshop);
+								}
+							}
+						}
+					}
+				}
+
+				LinkPower2_Internal(thisObj, extraDataWorkshop);
+			}
 		}
 
 		ExtraDataList		* extraDataList = thisObj->extraDataList;
 		_MESSAGE("Reference: %08X Data Dump %016I64X", thisObj->formID, extraDataList);
 		if(extraDataList) {
 			extraDataList->Dump();
-		}*/
+		}
 	}
 
 	

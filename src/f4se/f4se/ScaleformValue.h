@@ -12,8 +12,8 @@ class GFxValue
 public:
 	GFxValue()					: objectInterface(NULL), type(kType_Undefined), unk18(nullptr)	{ data.obj = nullptr; }
 	GFxValue(int v)				: objectInterface(NULL), type(kType_Int), unk18(nullptr)		{ data.number = v; }
-	GFxValue(UInt32 v)			: objectInterface(NULL), type(kType_UInt), unk18(nullptr)		{ data.number = v; }
-	GFxValue(SInt32 v)			: objectInterface(NULL), type(kType_Int), unk18(nullptr)		{ data.number = v; }
+	GFxValue(UInt32 v)			: objectInterface(NULL), type(kType_UInt), unk18(nullptr)		{ data.u32 = v; }
+	GFxValue(SInt32 v)			: objectInterface(NULL), type(kType_Int), unk18(nullptr)		{ data.s32 = v; }
 	GFxValue(double v)			: objectInterface(NULL), type(kType_Number), unk18(nullptr)		{ data.number = v; }
 	GFxValue(bool v)			: objectInterface(NULL), type(kType_Bool), unk18(nullptr)		{ data.boolean = v; }
 	GFxValue(const char* ps)	: objectInterface(NULL), type(kType_String), unk18(nullptr)		{ data.string = ps; }
