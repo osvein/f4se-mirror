@@ -98,7 +98,7 @@ public:
 	TESContainer				container;				// D0
 	TESSpellList				spellList;				// E8
 	TESAIForm					aiForm;					// F8
-	TESFullName					fullName;				// 120
+	TESFullName					fullName;				// 120 - CF 0x20
 	ActorValueOwner				actorValueOwner;		// 130
 	BGSDestructibleObjectForm	destructibleObjectForm;	// 138
 	BGSSkinForm					skinForm;				// 148
@@ -116,7 +116,7 @@ public:
 	enum { kTypeID = kFormType_NPC_ };
 
 	// parents
-	TESRaceForm					race;					// 1B0
+	TESRaceForm					race;					// 1B0 - CF 0x2000000
 	BGSOverridePackCollection	overridePackCollection;	// 1C0
 	BGSForcedLocRefType			forcedLocRefType;		// 1F8
 	BGSNativeTerminalForm		nativeTerminalForm;		// 208
@@ -138,16 +138,16 @@ public:
 	UInt16						unk23C;					// 23C
 	UInt8						unk23E;					// 23E
 	UInt8						pad23F;					// 23F
-	TESClass					* npcClass;				// 240
-	HeadData					* headData;				// 248
+	TESClass					* npcClass;				// 240 - CF 0x400
+	HeadData					* headData;				// 248 - CF 0x800
 	UInt64						unk250;					// 250
 	TESCombatStyle				* combatStyle;			// 258
 	UInt64						unk260;					// 260
-	UInt64						unk268;					// 268
+	UInt64						unk268;					// 268 - CF 0x2000000
 	TESNPC						* templateNPC;			// 270
-	float						weightThin;				// 278
-	float						weightMuscular;			// 27C
-	float						weightLarge;			// 280
+	float						weightThin;				// 278 - CF 0x4000
+	float						weightMuscular;			// 27C - CF 0x4000
+	float						weightLarge;			// 280 - CF 0x4000
 	float						unk284;					// 284
 	float						unk288;					// 288
 	UInt32						unk28C;					// 28C
@@ -155,11 +155,11 @@ public:
 	void						* unk298;				// 298
 	UInt64						unk2A0;					// 2A0
 	UInt64						unk2A8;					// 2A8
-	BGSOutfit					* outfit[2];			// 2B0
+	BGSOutfit					* outfit[2];			// 2B0 - CF 0x40000, 0x80000
 	UInt64						unk2C0;					// 2C0
 	TESFaction					* unk2C8;				// 2C8
 	BGSHeadPart					** headParts;			// 2D0
-	tArray<float>				* morphSetValue;		// 2D8 - 5 elements (MRSV)
+	tArray<float>				* morphSetValue;		// 2D8 - 5 elements (MRSV) - CF 0x4000
 
 	// 08
 	struct MorphSetData // (MSDK/MSDV) pair
@@ -207,7 +207,7 @@ public:
 	};
 
 	tHashSet<FaceMorphRegion, UInt32>	* morphRegionData;	// 2E0 - (key links to CharacterCreation::FaceMorphRegion::index)
-	UInt8								numHeadParts;		// 2E8
+	UInt8								numHeadParts;		// 2E8 - CF 0x800
 	UInt8								unk2E9;				// 2E9
 	struct SkinColor
 	{
@@ -215,12 +215,12 @@ public:
 		UInt8 green;
 		UInt8 blue;
 		UInt8 alpha;
-	} skinColor;
+	} skinColor; // - CF 0x800
 	UInt8								unk2EE;				// 2EE
 	UInt8								unk2EF;				// 2EF
-	UInt64								unk2F0;				// 2F0
+	UInt64								unk2F0;				// 2F0 - CF 0x800
 	tHashSet<MorphSetData, UInt32>		* morphSetData;		// 2F8 - (key links to CharacterCreation::MorphGroup::Preset::index)
-	tArray<BGSCharacterTint::Entry*>	* tints;			// 300
+	tArray<BGSCharacterTint::Entry*>	* tints;			// 300 - CF 0x800
 
 	MEMBER_FN_PREFIX(TESNPC);
 	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x005AC720);

@@ -40,6 +40,8 @@ public:
 	VMArray() : m_arr(nullptr), m_none(false) { }
 	~VMArray() { }
 
+	enum { kTypeID = 0 };
+
 	VMArray(std::vector<T> & vec)
 	{
 		for(auto & v : vec)
@@ -50,9 +52,7 @@ public:
 
 	VMArray<T> & operator=(std::vector<T> & vec)
 	{
-		m_data.clear();
-		if(m_arr)
-			m_arr->arr.Clear();
+		Clear();
 
 		for(auto & v : vec)
 		{
@@ -60,8 +60,6 @@ public:
 		}
 		return *this;
 	}
-
-	enum { kTypeID = 0 };
 
 	UInt32 Length() const
 	{
@@ -101,6 +99,13 @@ public:
 		m_data.resize(size);
 		if(m_arr)
 			m_arr->arr.Resize(size);
+	}
+
+	void Clear()
+	{
+		m_data.clear();
+		if(m_arr)
+			m_arr->arr.Clear();
 	}
 
 	void PackArray(VMValue * dst, VirtualMachine * vm)
@@ -213,6 +218,11 @@ public:
 	{
 		m_var = value->data.var;
 		m_value = *m_var;
+	}
+
+	bool IsNone()
+	{
+		return m_value.GetTypeEnum() == 0;
 	}
 
 	// Provides direct access to the VM data, advanced use only

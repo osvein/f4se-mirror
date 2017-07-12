@@ -284,6 +284,30 @@
     <ClCompile Include="GameWorkshop.cpp">
       <Filter>api</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusDefaultObject.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="BSLight.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="BSParticleShaderEmitter.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="BSCollision.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiSerialization.cpp">
+      <Filter>netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusConstructibleObject.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusComponent.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusMiscObject.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -620,6 +644,33 @@
     </ClInclude>
     <ClInclude Include="GameWorkshop.h">
       <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="NiCloningProcess.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusDefaultObject.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="BSLight.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="BSParticleShaderEmitter.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="BSCollision.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiSerialization.h">
+      <Filter>netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusConstructibleObject.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusComponent.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusMiscObject.h">
+      <Filter>papyrus\functions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -159,9 +159,9 @@ public:
 	virtual UInt64	GetInvalidHandle(void);
 	virtual UInt64	Create(UInt32 typeID, void * srcData);
 	virtual bool	IsREFR(UInt64 handle);	// return IsType(TESObjectREFR::kTypeID, handle);
-	virtual UInt64	Unk_08(UInt64 unk1);
-	virtual UInt32	Unk_09(UInt64 unk1);
+	virtual UInt64	Unk_09(UInt64 unk1);
 	virtual UInt32	Unk_0A(UInt64 unk1);
+	virtual UInt32	Unk_0B(UInt64 unk1);
 	virtual void *	Resolve(UInt32 typeID, UInt64 handle);
 	virtual void	AddRef(UInt64 handle);
 	virtual void	Release(UInt64 handle);

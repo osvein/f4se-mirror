@@ -23,9 +23,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhkWorld.cpp" />
+    <ClCompile Include="BSCollision.cpp" />
     <ClCompile Include="BSGeometry.cpp" />
     <ClCompile Include="BSGraphics.cpp" />
+    <ClCompile Include="BSLight.cpp" />
     <ClCompile Include="BSModelDB.cpp" />
+    <ClCompile Include="BSParticleShaderEmitter.cpp" />
     <ClCompile Include="BSSkin.cpp" />
     <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="GameData.cpp" />
@@ -68,6 +71,7 @@
     <ClCompile Include="NiObjects.cpp" />
     <ClCompile Include="NiProperties.cpp" />
     <ClCompile Include="NiRTTI.cpp" />
+    <ClCompile Include="NiSerialization.cpp" />
     <ClCompile Include="NiTextures.cpp" />
     <ClCompile Include="NiTypes.cpp" />
     <ClCompile Include="ObScript.cpp" />
@@ -75,6 +79,9 @@
     <ClCompile Include="PapyrusActorBase.cpp" />
     <ClCompile Include="PapyrusArgs.cpp" />
     <ClCompile Include="PapyrusCell.cpp" />
+    <ClCompile Include="PapyrusComponent.cpp" />
+    <ClCompile Include="PapyrusConstructibleObject.cpp" />
+    <ClCompile Include="PapyrusDefaultObject.cpp" />
     <ClCompile Include="PapyrusDelayFunctors.cpp" />
     <ClCompile Include="PapyrusEncounterZone.cpp" />
     <ClCompile Include="PapyrusEquipSlot.cpp" />
@@ -88,6 +95,7 @@
     <ClCompile Include="PapyrusInterfaces.cpp" />
     <ClCompile Include="PapyrusLocation.cpp" />
     <ClCompile Include="PapyrusMath.cpp" />
+    <ClCompile Include="PapyrusMiscObject.cpp" />
     <ClCompile Include="PapyrusNativeFunctions.cpp" />
     <ClCompile Include="PapyrusObjectMod.cpp" />
     <ClCompile Include="PapyrusObjectReference.cpp" />
@@ -129,10 +137,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bhkWorld.h" />
+    <ClInclude Include="BSCollision.h" />
     <ClInclude Include="BSGeometry.h" />
     <ClInclude Include="BSGraphics.h" />
+    <ClInclude Include="BSLight.h" />
     <ClInclude Include="BSModelDB.h" />
+    <ClInclude Include="BSParticleShaderEmitter.h" />
     <ClInclude Include="BSSkin.h" />
+    <ClInclude Include="NiSerialization.h" />
+    <ClInclude Include="PapyrusComponent.h" />
+    <ClInclude Include="PapyrusConstructibleObject.h" />
+    <ClInclude Include="PapyrusDefaultObject.h" />
     <ClInclude Include="GameAPI.h" />
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="GameData.h" />
@@ -167,6 +182,7 @@
     <ClInclude Include="Hooks_Threads.h" />
     <ClInclude Include="InputMap.h" />
     <ClInclude Include="InternalSerialization.h" />
+    <ClInclude Include="NiCloningProcess.h" />
     <ClInclude Include="NiExtraData.h" />
     <ClInclude Include="NiMaterials.h" />
     <ClInclude Include="NiNodes.h" />
@@ -193,6 +209,7 @@
     <ClInclude Include="PapyrusInterfaces.h" />
     <ClInclude Include="PapyrusLocation.h" />
     <ClInclude Include="PapyrusMath.h" />
+    <ClInclude Include="PapyrusMiscObject.h" />
     <ClInclude Include="PapyrusNativeFunctions.h" />
     <ClInclude Include="PapyrusObjectMod.h" />
     <ClInclude Include="PapyrusObjectReference.h" />

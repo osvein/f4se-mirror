@@ -16,7 +16,7 @@ void Hooks_ObScript_Init()
 {
 	// instead of hooking the entire classic scripting system, we're just hijacking some unused commands
 
-	for(ObScriptCommand * iter = g_firstConsoleCommand; iter->opcode < kObScript_NumConsoleCommands; ++iter)
+	for(ObScriptCommand * iter = g_firstConsoleCommand; iter->opcode < (kObScript_NumConsoleCommands + kObScript_ConsoleOpBase); ++iter)
 	{
 		if(!strcmp(iter->longName, "ForceRSXCrash"))
 		{
@@ -71,6 +71,9 @@ bool GetF4SEVersion_Execute(void * paramInfo, void * scriptData, TESObjectREFR *
 #include "f4se/PapyrusEvents.h"
 #include "f4se/GameCamera.h"
 #include "f4se/GameWorkshop.h"
+#include "f4se/NiCloningProcess.h"
+#include "f4se/NiSerialization.h"
+#include "f4se/BSCollision.h"
 
 RelocAddr <uintptr_t> GetActorBaseHeadData_Start(0x00687920 + 0xCF);
 RelocAddr <uintptr_t> GetMorphGroups_Start(0x00687920 + 0x390);
@@ -157,17 +160,93 @@ ObScriptCommand * GetCommandByOpcode(UInt16 opcode)
 	return nullptr;
 }
 
+void DumpSeveredLimbs(NiAVObject * node)
+{
+	BSFixedString name("Severed Limbs");
+	NiAVObject * severedLimbs = node->GetObjectByName(&name);
+	if(severedLimbs) {
+
+		// Strip all extra data and collision
+		severedLimbs->Visit([&](NiAVObject * object)
+		{
+			if(object->m_extraData) {
+				object->m_extraData->Clear();
+			}
+			if(object->m_spCollisionObject.m_pObject) {
+				object->m_spCollisionObject = nullptr;
+			}
+			return false;
+		});
+
+		UInt8 niStream[0x708];
+		NiStream * stream = (NiStream *)niStream;
+		CALL_MEMBER_FN(stream, ctor)();
+		CALL_MEMBER_FN(stream, AddObject)(severedLimbs);
+		
+		stream->SavePath("G:\\Games\\Steam\\steamapps\\common\\Fallout 4\\Data\\F4SE\\Plugins\\F4EE\\Dump\\limbs.nif");
+		CALL_MEMBER_FN(stream, dtor)();
+	}
+}
+
 void DumpNodeChildren(NiAVObject * node)
 {
-	_MESSAGE("{%s} {%s} {%016I64X} {Flags %016I64X}", node->GetRTTI()->name, node->m_name.c_str(), node, node->flags);
+	BSTriShape * trishape = node->GetAsBSTriShape();
+	
+	if(trishape) {
+		_MESSAGE("{%s} {%s} {%016I64X} {Vertices %d} {Flags %016I64X}", trishape->GetRTTI()->name, trishape->m_name.c_str(), trishape, trishape->numVertices, trishape->flags);
+		gLog.Indent();
+		_MESSAGE("{VertexData: %016I64X}", trishape->geometryData->vertexData);
+
+		BSDynamicTriShape * dynamicShape = trishape->GetAsBSDynamicTriShape();
+		if(dynamicShape) {
+			_MESSAGE("{DynamicData: %016I64X}", dynamicShape->dynamicVertices);
+		}
+		BSSubIndexTriShape * subIndexTriShape = trishape->GetAsBSSubIndexTriShape();
+		if(subIndexTriShape) {
+			_MESSAGE("{SegmentData: %016I64X}", subIndexTriShape->spSegments.m_pObject);
+			_MESSAGE("{segmentData2: %016I64X}", subIndexTriShape->segmentData);
+			_MESSAGE("{numIndices: %016I64X}", subIndexTriShape->numIndices);
+			_MESSAGE("{unk188: %016I64X}", subIndexTriShape->unk188);
+		}
+
+		gLog.Outdent();
+	}
+	else
+	{
+		_MESSAGE("{%s} {%s} {%016I64X} {Flags %016I64X}", node->GetRTTI()->name, node->m_name.c_str(), node, node->flags);
+	}
+	
 	if(node->m_extraData) {
 		gLog.Indent();
 		for(UInt16 i = 0; i < node->m_extraData->count; i++) {
 			_MESSAGE("{%s} {%s} {%016I64X}", node->m_extraData->entries[i]->GetRTTI()->name, node->m_extraData->entries[i]->m_name.c_str(), node->m_extraData->entries[i]);
+			BSDismembermentExtraData * dismemberData = DYNAMIC_CAST(node->m_extraData->entries[i], NiExtraData, BSDismembermentExtraData);
+			if(dismemberData)
+			{
+				gLog.Indent();
+				for(UInt32 j = 0; j < 16; j++)
+				{
+					for(UInt32 i = 0; i < dismemberData->segments[j].count; i++)
+					{
+						BSTriShape * shape = nullptr;
+						dismemberData->segments[j].GetNthItem(i, shape);
+						if(shape) {
+							DumpNodeChildren(shape);
+						}
+					}
+				}
+				gLog.Outdent();
+			}
+			BSSegmentDataStorage * pSegmentDataStorage = DYNAMIC_CAST(node->m_extraData->entries[i], NiExtraData, BSSegmentDataStorage);
+			if(pSegmentDataStorage) {
+				gLog.Indent();
+				_MESSAGE("{SegmentData: %016I64X}", pSegmentDataStorage->segmentData);
+				gLog.Outdent();
+			}
 		}
 		gLog.Outdent();
 	}
-	//DumpClass(node);
+
 	NiNode * niNode = node->GetAsNiNode();
 	if(niNode && niNode->m_children.m_emptyRunStart > 0)
 	{
@@ -176,26 +255,7 @@ void DumpNodeChildren(NiAVObject * node)
 		{
 			NiAVObject * object = niNode->m_children.m_data[i];
 			if(object) {
-				BSTriShape * trishape = object->GetAsBSTriShape();
-				BSDynamicTriShape * dynamicShape = object->GetAsBSDynamicTriShape();
-				if(trishape || dynamicShape) {
-					_MESSAGE("{%s} {%s} {%016I64X} {Vertices %d} {Flags %016I64X}", trishape->GetRTTI()->name, trishape->m_name.c_str(), trishape, trishape->numVertices, trishape->flags);
-					gLog.Indent();
-					_MESSAGE("{VertexData: %016I64X}", trishape->geometryData->vertexData);
-					if(dynamicShape) {
-						_MESSAGE("{DynamicData: %016I64X}", dynamicShape->dynamicVertices);
-					}
-					gLog.Outdent();
-					if(object->m_extraData) {
-						gLog.Indent();
-						for(UInt16 i = 0; i < object->m_extraData->count; i++) {
-							_MESSAGE("{%s} {%s} {%016I64X} {Flags %016I64X}", object->m_extraData->entries[i]->GetRTTI()->name, object->m_extraData->entries[i]->m_name.c_str(), object, object->flags);
-						}
-						gLog.Outdent();
-					}					
-				} else {
-					DumpNodeChildren(object);
-				}
+				DumpNodeChildren(object);
 			}
 		}
 		gLog.Outdent();
@@ -253,10 +313,23 @@ public:
 
 CombatSink combatSink;
 
+class FurnitureSink : public BSTEventSink<TESFurnitureEvent>
+{
+public:
+	virtual	EventResult	ReceiveEvent(TESFurnitureEvent * evn, void * dispatcher) override
+	{
+		DumpClass(evn, 6);
+		return kEvent_Continue;
+	}
+};
+
+FurnitureSink furnitureSink;
+
 
 //#include "d3d11.h"
 //#include "d3dx11tex.h"
 //#define BODY_PAINT
+//#define INVENTORY_HOOK
 
 bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * thisObj, void * containingObj, void * scriptObj, void * locals, double * result, void * opcodeOffsetPtr)
 {
@@ -267,6 +340,12 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		DumpClass(headPart, sizeof(BGSHeadPart)/8);
 	}*/
 
+	/*for(UInt32 i = 0; i < (*g_dataHandler)->arrCOBJ.count; i++)
+	{
+		BGSConstructibleObject * cobj = (*g_dataHandler)->arrCOBJ[i];
+		DumpClass(cobj, sizeof(BGSConstructibleObject)/8);
+	}*/
+
 	/*for(UInt32 i = 0; i < (*g_dataHandler)->arrFLST.count; i++)
 	{
 		BGSListForm * listForm = (*g_dataHandler)->arrFLST[i];
@@ -274,6 +353,11 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 			DumpClass(listForm, sizeof(BGSListForm)/8);
 		}
 	}*/
+
+	//TESForm * form = (TESForm *)LookupFormByID(0x19ECDD);
+	//DumpClass(form, 0x38 >> 3);
+	//TESForm * workshopKeyword = (*g_defaultObjectMap)->GetDefaultObject("WorkshopSplineObject");
+	//DumpClass(workshopKeyword, sizeof(BGSKeyword) >> 3);
 
 	/*for(UInt32 i = 0; i < (*g_dataHandler)->arrMISC.count; i++)
 	{
@@ -320,13 +404,13 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 	}*/
 
 
-	for(UInt32 i = 0; i < 2; i++)
+	/*for(UInt32 i = 0; i < 2; i++)
 	{
 		TESObjectARMO * armor = (TESObjectARMO*)LookupFormByID(0x7B000F99 + i);
 		if(armor) {
 			DumpClass(armor, sizeof(TESObjectARMO)/8);
 		}
-	}
+	}*/
 
 	
 	/*for(UInt32 i = 0; i < 18; i++)
@@ -469,6 +553,222 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 	}
 
 	return true;*/
+
+	//GetEventDispatcher<TESFurnitureEvent>()->AddEventSink(&furnitureSink);
+
+	if(thisObj) {
+		//NiNode * root1 = thisObj->GetActorRootNode(false);
+		//NiNode * root2 = thisObj->GetActorRootNode(true);
+
+		//DumpSeveredLimbs(root1);
+		//DumpNodeChildren(root1);
+
+		//DumpSeveredLimbs(root1);
+		
+		Actor * actor = DYNAMIC_CAST(thisObj, TESForm, Actor);
+		if(0) {
+			auto middleProcess = actor->middleProcess;
+			if(middleProcess) {
+				UInt32 furnitureHandle = 0;
+				auto data08 = middleProcess->unk08;
+				if(data08) {
+					if(actor->actorState.flags & (ActorState::Flags::kUnk1 | ActorState::Flags::kUnk2))
+						furnitureHandle = data08->furnitureHandle2;
+					else
+						furnitureHandle = data08->furnitureHandle1;
+
+					TESObjectREFR * refr2 = nullptr;
+					LookupREFRByHandle(&furnitureHandle, &refr2);
+					if(refr2) {
+						_MESSAGE("Furniture: %s", CALL_MEMBER_FN(refr2, GetReferenceName)());
+					}
+				}
+			}
+		}
+
+		if(actor) {
+			TESNPC * actorBase = DYNAMIC_CAST(thisObj->baseForm, TESForm, TESNPC);
+
+			tArray<BGSCharacterTint::Entry*> tempTints;
+			tArray<BGSCharacterTint::Entry*> * charTints = nullptr;
+			if(thisObj == (*g_player))
+				charTints = (*g_player)->tints;
+			else
+				charTints = actorBase->tints;
+
+			BGSCharacterTint::PaletteEntry* pSkinReference = nullptr;
+			for(int i = 0; i < charTints->count; i++)
+			{
+				BGSCharacterTint::Entry* tintEntry;
+				charTints->GetNthItem(i, tintEntry);
+
+				if(tintEntry->tintIndex == 0x490)
+				{
+					pSkinReference = static_cast<BGSCharacterTint::PaletteEntry*>(tintEntry);
+					break;
+				}
+			}
+
+			if(pSkinReference) {
+				pSkinReference->color.channel.red = 0xFF;
+				pSkinReference->color.channel.green = 0x00;
+				pSkinReference->color.channel.blue = 0x00;
+				pSkinReference->percent = 100;
+
+				actorBase->MarkChanged(0x800); // Save FaceData
+				actorBase->MarkChanged(0x4000); // Save weights
+
+				CharacterCreation * characterCreation = g_characterCreation[*g_characterIndex];
+				if(characterCreation) {
+					//characterCreation->unk516 = 1;
+					characterCreation->unk517 = 1;
+
+					characterCreation->dirty = 1;
+				}
+			}
+
+			//CALL_MEMBER_FN(actor, QueueUpdate)(true, 0, true, 0);
+		}
+
+		if(0) {
+			TESObjectARMO * skin = (TESObjectARMO *)LookupFormByID(0x93000F99);
+			BGSTextureSet * txst = (BGSTextureSet *)LookupFormByID(0x93000F9E);
+
+			TESNPC * actorBase = DYNAMIC_CAST(thisObj->baseForm, TESForm, TESNPC);
+
+			actorBase->skinForm.skin = skin;
+
+			if(!actorBase->headData)
+				actorBase->headData = new TESNPC::HeadData();
+			if(actorBase->headData)
+				actorBase->headData->faceTextures = txst;
+			if(actorBase->morphSetData)
+				actorBase->morphSetData->Clear();
+
+			// Toggle equipment
+			/*static std::unordered_map<TESForm*, std::pair<SInt32, UInt8>> stackList;
+
+			if(stackList.empty())
+			{
+				auto inventory = actor->inventoryList;
+				if(inventory)
+				{
+					for(UInt32 i = 0; i < inventory->items.count; i++)
+					{
+						SInt32 s = 0;
+						inventory->items[i].stack->Visit([&](BGSInventoryItem::Stack * stack)
+						{
+							if(stack->flags & BGSInventoryItem::Stack::kFlagEquipped) {
+								stackList.emplace(inventory->items[i].form, std::make_pair(s, stack->flags & 0xF));
+								stack->flags &= ~0xF;
+							}
+							s++;
+							return true;
+						});
+					}
+				}
+			}
+			else
+			{
+				auto inventory = actor->inventoryList;
+				if(inventory)
+				{
+					for(UInt32 i = 0; i < inventory->items.count; i++)
+					{
+						SInt32 s = 0;
+						auto it = stackList.find(inventory->items[i].form);
+						if(it != stackList.end())
+						{
+							inventory->items[i].stack->Visit([&](BGSInventoryItem::Stack * stack)
+							{
+								if(it->second.first == s) {
+									stack->flags |= it->second.second & 0xF;
+									return false;
+								}
+
+								s++;
+								return true;
+							});
+						}
+					}
+				}
+				stackList.clear();
+			}*/
+
+			CALL_MEMBER_FN(actor->middleProcess, UpdateEquipment)(actor, 0x11);
+		}
+
+
+		/*std::vector<BSTriShape*> childrenToAdd;
+		VisitObjects(root, [&](NiAVObject* object) {
+			BSTriShape * trishape = object->GetAsBSTriShape();
+			if(trishape) {
+				BSLightingShaderProperty * lightingShader = ni_cast(trishape->shaderProperty, BSLightingShaderProperty);
+				if(lightingShader) {
+
+					BSLightingShaderMaterialBase * material = static_cast<BSLightingShaderMaterialBase *>(lightingShader->shaderMaterial);
+					if(material->GetType() == BSLightingShaderMaterialBase::kType_SkinTint) {
+						NiCloningProcess cp;
+						memset(&cp, 0, sizeof(NiCloningProcess));
+						cp.unk60 = 1;
+						BSTriShape * cloned = (BSTriShape*)trishape->CreateClone(&cp);
+						cloned->skinInstance = trishape->skinInstance;
+
+						std::string newName = trishape->m_name.c_str();
+						newName += "-Attached";
+						cloned->m_name = newName.c_str();
+
+						cloned->IncRef();
+						childrenToAdd.push_back(cloned);
+					}
+				}
+			}
+			return false;
+		});
+
+		for(auto & node : childrenToAdd)
+		{
+#if 0
+			BSLightingShaderProperty * newShader = ni_cast(node->shaderProperty, BSLightingShaderProperty);
+			BSLightingShaderMaterialBase * newMaterial = static_cast<BSLightingShaderMaterialBase *>(newShader->shaderMaterial);
+
+			BSShaderTextureSet * textureSet = niptr_cast<BSShaderTextureSet>(newMaterial->spTextureSet);
+			textureSet = CALL_MEMBER_FN(textureSet, Copy)();
+			textureSet->SetTextureFilename(0, "actors\\character\\Character Assets\\TintMasks\\Test Scar_d.DDS");
+			newMaterial->spTextureSet = textureSet;
+#endif
+
+			root->AttachChild(node, false);
+			node->DecRef();
+
+#if 0
+			newMaterial->ClearTextures();
+			CALL_MEMBER_FN(newShader, LoadTextureSet)(0);
+			CALL_MEMBER_FN(newShader, MakeValidForRendering)(node);
+#endif
+			BSMaterialBlock matBlock;
+			LoadMaterialFile("materials\\test\\test.bgsm", &matBlock, 0);
+			CALL_MEMBER_FN(&matBlock, SetProperties)(node);
+
+			BSLightingShaderProperty * newShader = ni_cast(node->shaderProperty, BSLightingShaderProperty);
+			BSLightingShaderMaterialBase * newMaterial = static_cast<BSLightingShaderMaterialBase *>(newShader->shaderMaterial);
+			if(newMaterial->GetType() == BSLightingShaderMaterialBase::kType_SkinTint) {
+				BSLightingShaderMaterialSkinTint * skinTint = static_cast<BSLightingShaderMaterialSkinTint *>(newShader->shaderMaterial);
+				skinTint->kTintColor.r = 0.0;
+				skinTint->kTintColor.g = 0.0;
+				skinTint->kTintColor.b = 1.0;
+				skinTint->kTintColor.a = 1.0;
+			}
+			
+		}*/
+
+		//_MESSAGE("Root1");
+		//DumpNodeChildren(root1);
+
+		//_MESSAGE("Root2");
+		//DumpNodeChildren(root2);
+		return true;
+	}
 
 #ifdef BODY_PAINT
 	TESNPC * actorBase = DYNAMIC_CAST(thisObj->baseForm, TESForm, TESNPC);
@@ -781,10 +1081,10 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 	Actor * actor = DYNAMIC_CAST(thisObj, TESForm, Actor);
 	if(0)
 	{
-		if(actor->unk300) {
-			DumpClass(actor->unk300, 80);
-			if(actor->unk300->unk08) {
-				DumpClass(actor->unk300->unk08, 80);
+		if(actor->middleProcess) {
+			DumpClass(actor->middleProcess, 80);
+			if(actor->middleProcess->unk08) {
+				DumpClass(actor->middleProcess->unk08, 80);
 			}
 		}
 
@@ -865,7 +1165,7 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		return true;
 	}
 
-	if(thisObj) {
+	if(0) {
 		DumpNodeChildren(thisObj->GetObjectRootNode());
 
 		/*BGSInventoryList	* inventory = thisObj->inventoryList;
@@ -960,22 +1260,20 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		if(extraDataList) {
 			extraDataList->Dump();
 		}
+
+		return true;
 	}
 
-	
-	return true;
-
-
-	TESNPC * npc = DYNAMIC_CAST(thisObj->baseForm, TESForm, TESNPC);
 	if(0)
 	{
+		TESNPC * npc = DYNAMIC_CAST(thisObj->baseForm, TESForm, TESNPC);
 		TESRace * race = npc->race.race;
 		UInt8 gender = CALL_MEMBER_FN(npc, GetSex)();
 
 		CharacterCreation::CharGenData * chargen = race->chargenData[gender];
 		TESRace::BoneScaleMap * boneScaleMap = race->boneScaleMap[gender];
 
-		auto tints = chargen->tintData;
+		/*auto tints = chargen->tintData;
 		_MESSAGE("TintData Categories: %d", tints->count);
 		for(UInt32 i = 0; i < tints->count; i++)
 		{
@@ -1019,7 +1317,7 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 				}
 			}
 			gLog.Outdent();
-		}
+		}*/
 
 		/*auto morphs = chargen->faceMorphs;
 		_MESSAGE("FaceMorphRegions: %d", morphs->count);
@@ -1032,7 +1330,7 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 			//gLog.Indent();
 			//region->dataSet.Dump();
 			//gLog.Outdent();
-		}
+		}*/
 
 		auto morphGroups = chargen->morphGroups;
 		_MESSAGE("MorphGroups: %d", morphGroups->count);
@@ -1048,7 +1346,7 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 				CharacterCreation::MorphGroup::Preset preset;
 				morphGroup->presets.GetNthItem(k, preset);
 
-				_MESSAGE("Morph Index: %08X, Name: %s, Morph: %s", preset.index, preset.name.data ? preset.name.data->Get<char>() : "", preset.morph.data ? preset.morph.data->Get<char>() : "");
+				_MESSAGE("Morph Index: %08X, Name: %s, Morph: %s, unk18: %08X", preset.index, preset.name.data ? preset.name.data->Get<char>() : "", preset.morph.data ? preset.morph.data->Get<char>() : "", preset.unk18);
 				gLog.Indent();
 				if(preset.texture)
 				{
@@ -1057,16 +1355,22 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 						_MESSAGE("%d - %s", n, preset.texture->texture[n].str.data ? preset.texture->texture[n].str.data->Get<char>() : "");
 					}
 				}
+				
 				gLog.Outdent();
+			}
+			_MESSAGE("unk20 list");
+			for(UInt32 n = 0; n < morphGroup->unk20.count; n++) {
+				_MESSAGE("%d - %f", n, morphGroup->unk20[n]);
 			}
 			gLog.Outdent();
 		}
-
+		
 		_MESSAGE("morphSliders");
 		gLog.Indent();
 		race->morphSliders.Dump();
 		gLog.Outdent();
 
+		/*
 		_MESSAGE("WeightMap 1");
 		gLog.Indent();
 		boneScaleMap->weightMap1.Dump();
@@ -1075,7 +1379,7 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		gLog.Indent();
 		boneScaleMap->weightMap2.Dump();
 		gLog.Outdent();
-
+		*/
 		_MESSAGE("morphSetData");
 		gLog.Indent();
 		if(npc->morphSetData)
@@ -1094,7 +1398,7 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 
 		tArray<BGSCharacterTint::Entry*> * tintArray[2];
 		tintArray[0] = npc->tints;
-		tintArray[1] = pc ? pc->tints : nullptr;
+		tintArray[1] = (*g_player) ? (*g_player)->tints : nullptr;
 
 		for(UInt32 t = 0; t < 2; t++)
 		{
@@ -1117,17 +1421,10 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 						case BGSCharacterTint::Entry::kTypeMask:
 							{
 								gLog.Indent();
-								BGSCharacterTint::Template::Mask * templateMask = static_cast<BGSCharacterTint::Template::Mask *>(entry->templateEntry);
-								if(templateMask)
+								BGSCharacterTint::Template::Mask * pMask = (BGSCharacterTint::Template::Mask *)Runtime_DynamicCast(entry, RTTI_BGSCharacterTint__Template__Entry, RTTI_BGSCharacterTint__Template__Mask);
+								if(pMask)
 								{
-									_MESSAGE("Mask: Index: %08X, Name: %s, unk18: %d, unk1E: %d, unk1F: %d, unk28: %08X, unk2C: %08X", templateMask->templateIndex, templateMask->name.data ? templateMask->name.data->Get<char>() : "", templateMask->unk18, templateMask->unk1E, templateMask->unk1F, templateMask->unk28, templateMask->unk2C);
-									Condition * pCondition = templateMask->conditions;
-									while(pCondition)
-									{
-										ObScriptCommand * cmd = GetCommandByOpcode(pCondition->functionId);
-										_MESSAGE("Condition: Compare: %f, Type: %d Function: %s, ReferenceType: %d, P1: %016I64X, P2: %016I64X", pCondition->compareValue, pCondition->comparisonType, cmd ? cmd->longName : "no name", pCondition->referenceType, pCondition->param1.form, pCondition->param2.form);
-										pCondition = pCondition->next;
-									}
+									_MESSAGE("Mask: Index: %08X, Name: %s, slot: %d, flags: %d, unk1F: %d, blendOp: %08X, unk2C: %08X", pMask->templateIndex, pMask->name.data ? pMask->name.data->Get<char>() : "", pMask->slot, pMask->flags, pMask->unk1F, pMask->blendOp, pMask->unk2C);
 								}
 								gLog.Outdent();
 							}
@@ -1135,22 +1432,15 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 						case BGSCharacterTint::Entry::kTypeTexture:
 							{
 								gLog.Indent();
-								BGSCharacterTint::Template::TexureSet * templateTexture = static_cast<BGSCharacterTint::Template::TexureSet *>(entry->templateEntry);
-								if(templateTexture)
+								BGSCharacterTint::Template::TextureSet * pTS = (BGSCharacterTint::Template::TextureSet *)Runtime_DynamicCast(entry, RTTI_BGSCharacterTint__Template__Entry, RTTI_BGSCharacterTint__Template__TextureSet);
+								if(pTS)
 								{
-									_MESSAGE("Texture: Index: %08X, Name: %s, unk18: %d, unk1E: %d, unk1F: %d, unk38: %08X, unk3C: %08X", templateTexture->templateIndex, templateTexture->name.data ? templateTexture->name.data->Get<char>() : "", templateTexture->unk18, templateTexture->unk1E, templateTexture->unk1F, templateTexture->unk38, templateTexture->unk3C);
+									_MESSAGE("TextureSet: Index: %08X, Name: %s, slot: %d, flags: %d, unk1F: %d, blendOp: %08X, defaultValue: %f", pTS->templateIndex, pTS->name.data ? pTS->name.data->Get<char>() : "", pTS->slot, pTS->flags, pTS->unk1F, pTS->blendOp, pTS->defaultValue);
 									gLog.Indent();
-									_MESSAGE("Diffuse: %s", templateTexture->diffuse.data ? templateTexture->diffuse.data->Get<char>() : "Empty");
-									_MESSAGE("Normal: %s", templateTexture->specular.data ? templateTexture->specular.data->Get<char>() : "Empty");
-									_MESSAGE("Specular: %s", templateTexture->normal.data ? templateTexture->normal.data->Get<char>() : "Empty");
+									_MESSAGE("Diffuse: %s", pTS->diffuse.data ? pTS->diffuse.data->Get<char>() : "Empty");
+									_MESSAGE("Normal: %s", pTS->specular.data ? pTS->specular.data->Get<char>() : "Empty");
+									_MESSAGE("Specular: %s", pTS->normal.data ? pTS->normal.data->Get<char>() : "Empty");
 									gLog.Outdent();
-									Condition * pCondition = templateTexture->conditions;
-									while(pCondition)
-									{
-										ObScriptCommand * cmd = GetCommandByOpcode(pCondition->functionId);
-										_MESSAGE("Condition: Compare: %f, Type: %d Function: %s, ReferenceType: %d, P1: %016I64X, P2: %016I64X", pCondition->compareValue, pCondition->comparisonType, cmd ? cmd->longName : "no name", pCondition->referenceType, pCondition->param1.form, pCondition->param2.form);
-										pCondition = pCondition->next;
-									}
 								}
 								gLog.Outdent();
 							}
@@ -1158,30 +1448,18 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 						case BGSCharacterTint::Entry::kTypePalette:
 							{
 								gLog.Indent();
-								BGSCharacterTint::PaletteEntry* paletteEntry = static_cast<BGSCharacterTint::PaletteEntry*>(entry);
-								_MESSAGE("Palette: color: %08X, colorID: %04X", paletteEntry->color, paletteEntry->colorID);
-
-								BGSCharacterTint::Template::Palette * templatePalette = static_cast<BGSCharacterTint::Template::Palette *>(entry->templateEntry);
-								if(templatePalette)
+								BGSCharacterTint::Template::Palette * pPalette = (BGSCharacterTint::Template::Palette *)Runtime_DynamicCast(entry, RTTI_BGSCharacterTint__Template__Entry, RTTI_BGSCharacterTint__Template__Palette);
+								if(pPalette)
 								{
-									
-									_MESSAGE("Mask: Index: %08X, Name: %s, unk18: %d, unk1E: %d, unk1F: %d, unk28: %08X, unk2C: %08X", templatePalette->templateIndex, templatePalette->name.data ? templatePalette->name.data->Get<char>() : "", templatePalette->unk18, templatePalette->unk1E, templatePalette->unk1F, templatePalette->unk28, templatePalette->unk2C);
+									_MESSAGE("Palette: Index: %08X, Name: %s, slot: %d, flags: %d, unk1F: %d, unk28: %08X, unk2C: %08X", pPalette->templateIndex, pPalette->name.data ? pPalette->name.data->Get<char>() : "", pPalette->slot, pPalette->flags, pPalette->unk1F, pPalette->unk28, pPalette->unk2C);
 									gLog.Indent();
-									for(UInt32 k = 0; k < templatePalette->colors.count; k++)
+									for(UInt32 k = 0; k < pPalette->colors.count; k++)
 									{
 										BGSCharacterTint::Template::Palette::ColorData colorData;
-										templatePalette->colors.GetNthItem(k, colorData);
-										_MESSAGE("Color: Name: %s FormID: %08X, Color: %08X, alpha: %f, unk0C: %08X, colorID: %04X, unk12: %04X, unk14: %04X", colorData.colorForm->fullName.name.data ? colorData.colorForm->fullName.name.data->Get<char>() : "", colorData.colorForm->formID, colorData.colorForm->color.rgb, colorData.alpha, colorData.unk0C, colorData.colorID, colorData.unk12, colorData.unk14);
+										pPalette->colors.GetNthItem(k, colorData);
+										_MESSAGE("Color: Name: %s FormID: %08X, Color: %08X, alpha: %f, blendOp: %08X, colorID: %04X, unk12: %04X, unk14: %04X", colorData.colorForm->fullName.name.data ? colorData.colorForm->fullName.name.data->Get<char>() : "", colorData.colorForm->formID, colorData.colorForm->color.rgb, colorData.alpha, colorData.blendOp, colorData.colorID, colorData.unk12, colorData.unk14);
 									}
 									gLog.Outdent();
-									Condition * pCondition = templatePalette->conditions;
-									while(pCondition)
-									{
-										ObScriptCommand * cmd = GetCommandByOpcode(pCondition->functionId);
-										_MESSAGE("Condition: Compare: %f, Type: %d Function: %s, ReferenceType: %d, P1: %016I64X, P2: %016I64X", pCondition->compareValue, pCondition->comparisonType, cmd ? cmd->longName : "no name", pCondition->referenceType, pCondition->param1.form, pCondition->param2.form);
-										pCondition = pCondition->next;
-									}
-									
 								}
 								gLog.Outdent();
 							}
@@ -1192,11 +1470,34 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 				}
 			}
 			gLog.Outdent();
-		}*/
+		}
 	}
 
 	Console_Print("F4SE test func executed");
 	return true;
+}
+#endif
+
+#ifdef INVENTORY_HOOK
+typedef void * (* _Inventory_Hook1)(void * unk1, void * unk2, void * unk3);
+RelocAddr <_Inventory_Hook1> Inventory_Hook_1(0x0AEABF0);
+_Inventory_Hook1 Inventory_Hook1_Original = nullptr;
+
+typedef void (* _Inventory_Hook2)(void * unk1, void * unk2);
+RelocAddr <_Inventory_Hook2> Inventory_Hook_2(0x00AEAE30);
+_Inventory_Hook2 Inventory_Hook2_Original = nullptr;
+
+
+// 140AEABF0
+// 140AEAE30
+void * Inventory_Hook1(void * unk1, void * unk2, void * unk3)
+{
+	return Inventory_Hook1_Original(unk1, unk2, unk3);
+}
+
+void Inventory_Hook2(void * unk1, void * unk2)
+{
+	Inventory_Hook2_Original(unk1, unk2);
 }
 #endif
 
@@ -1231,6 +1532,7 @@ void Hooks_ObScript_Commit()
 		SafeWriteBuf((uintptr_t)s_testCommand, &testcmd, sizeof(testcmd));
 	}
 #endif
+
 
 	/*// Allow re-enable Survival
 	UInt8 nop[] = {0x90, 0x90, 0x90, 0x90, 0x90};
@@ -1307,5 +1609,56 @@ void Hooks_ObScript_Commit()
 	}
 
 	g_branchTrampoline.Write5Call(StaticTextureIndexed_Ctor_Start.GetUIntPtr(), (uintptr_t)StaticTextureIndexed_ctor_Hook);
+#endif
+
+#ifdef INVENTORY_HOOK
+	{
+		struct InventoryHook1_Code : Xbyak::CodeGenerator {
+			InventoryHook1_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)
+			{
+				Xbyak::Label retnLabel;
+
+				mov(ptr [rsp+0x20], rbx);
+
+				jmp(ptr [rip + retnLabel]);
+
+				L(retnLabel);
+				dq(Inventory_Hook_1.GetUIntPtr() + 5);
+			}
+		};
+
+		void * codeBuf = g_localTrampoline.StartAlloc();
+		InventoryHook1_Code code(codeBuf);
+		g_localTrampoline.EndAlloc(code.getCurr());
+
+		Inventory_Hook1_Original = (_Inventory_Hook1)codeBuf;
+
+		g_branchTrampoline.Write5Branch(Inventory_Hook_1.GetUIntPtr(), (uintptr_t)Inventory_Hook1);
+	}
+
+	{
+		struct InventoryHook2_Code : Xbyak::CodeGenerator {
+			InventoryHook2_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)
+			{
+				Xbyak::Label retnLabel;
+
+				push(rbx);
+				sub(rsp, 0x60);
+
+				jmp(ptr [rip + retnLabel]);
+
+				L(retnLabel);
+				dq(Inventory_Hook_2.GetUIntPtr() + 6);
+			}
+		};
+
+		void * codeBuf = g_localTrampoline.StartAlloc();
+		InventoryHook2_Code code(codeBuf);
+		g_localTrampoline.EndAlloc(code.getCurr());
+
+		Inventory_Hook2_Original = (_Inventory_Hook2)codeBuf;
+
+		g_branchTrampoline.Write6Branch(Inventory_Hook_2.GetUIntPtr(), (uintptr_t)Inventory_Hook2);
+	}
 #endif
 }

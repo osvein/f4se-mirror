@@ -13,6 +13,13 @@ class BSGeometry;
 class BSTriShape;
 class BSDynamicTriShape;
 class BSSubIndexTriShape;
+class NiCloningProcess;
+class NiCollisionObject;
+class bhkNiCollisionObject;
+class bhkBlendCollisionObject;
+class bhkNPCollisionObject;
+class bhkRigidBody;
+class bhkLimitedHingeConstraint;
 
 typedef void (* _WorldToScreen)(NiPoint3 * in, NiPoint3 * out);
 extern RelocAddr <_WorldToScreen> WorldToScreen_Internal;
@@ -57,17 +64,17 @@ public:
 	virtual void				* GetAsParticleSystem() { return nullptr; };
 	virtual void				* GetAsLinesGeom() { return nullptr; };
 	virtual void				* GetAsLight() { return nullptr; };
-	virtual void				* GetAsBhkNiCollisionObject() { return nullptr; };
-	virtual void				* GetAsBhkBlendCollisionObject() { return nullptr; };
-	virtual void				* GetAsBhkRigidBody() { return nullptr; };
-	virtual void				* GetAsBhkLimitedHingeConstraint() { return nullptr; };
-	virtual void				* GetAsbhkNPCollisionObject() { return nullptr; };
-	virtual NiObject			* CreateClone(void * unk1) { return nullptr; };
+	virtual bhkNiCollisionObject		* GetAsBhkNiCollisionObject() { return nullptr; };
+	virtual bhkBlendCollisionObject		* GetAsBhkBlendCollisionObject() { return nullptr; };
+	virtual bhkRigidBody				* GetAsBhkRigidBody() { return nullptr; };
+	virtual bhkLimitedHingeConstraint	* GetAsBhkLimitedHingeConstraint() { return nullptr; };
+	virtual bhkNPCollisionObject		* GetAsbhkNPCollisionObject() { return nullptr; };
+	virtual NiObject			* CreateClone(NiCloningProcess * unk1) { return nullptr; };
 	virtual void				LoadBinary(void * stream) { }; // LoadBinary
 	virtual void				Unk_1C() { };
 	virtual bool				Unk_1D() { return false; };
 	virtual void				SaveBinary(void * stream) { }; // SaveBinary
-	virtual bool				IsEqual(NiObject * object) { return false; }	// IsEqual
+	virtual bool				IsEqual(NiObject * object) { return CALL_MEMBER_FN(this, Internal_IsEqual)(object); }	// IsEqual
 	virtual bool				Unk_20(void * unk1) { return false; };
 	virtual void				Unk_21() { };
 	virtual bool				Unk_22() { return false; };
@@ -76,12 +83,22 @@ public:
 	virtual bool				Unk_25() { return false; };
 	virtual void				Unk_26() { };
 	virtual bool				Unk_27() { return false; };
+
+	MEMBER_FN_PREFIX(NiObject);
+	DEFINE_MEMBER_FN(Internal_IsEqual, bool, 0x01B6C1B0, NiObject * object);
 };
 
 // 28
 class NiObjectNET : public NiObject
 {
 public:
+	enum CopyType
+	{
+		COPY_NONE,
+		COPY_EXACT,
+		COPY_UNIQUE
+	};
+
 	BSFixedString					m_name;			// 10
 	void							* unk10;		// 18 - Controller?
 	tMutexArray<NiExtraData*>		* m_extraData;	// 20 - must be locked/unlocked when altering/acquiring
@@ -132,13 +149,12 @@ public:
 	virtual void Unk_37();
 	virtual void Unk_38();
 
-	NiNode			* m_parent;			// 28
-	NiTransform		m_localTransform;	// 30
-	NiTransform		m_worldTransform;	// 70
-	NiPoint3		unkB0;				// B0
-	float			unkBC;				// BC
-	NiTransform		unkC0;				// C0
-	UInt64			unk100;				// 100
+	NiNode						* m_parent;				// 28
+	NiTransform					m_localTransform;		// 30
+	NiTransform					m_worldTransform;		// 70
+	NiBound						m_worldBound;			// B0
+	NiTransform					m_previousWorld;		// C0
+	NiPointer<NiCollisionObject> m_spCollisionObject;	// 100
 
 	enum : UInt64
 	{
@@ -176,13 +192,34 @@ public:
 	};
 
 	UInt64			flags;				// 108
-	TESObjectREFR	* m_reference;		// 110
+	void			* unk110;			// 110
 	float			unk118;				// 118
 	UInt32			unk11C;				// 11C
 
 	MEMBER_FN_PREFIX(NiAVObject);
 	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C6B030, BSFixedString * name, bool unk1, bool unk2);
+	DEFINE_MEMBER_FN(SetScenegraphChange, void, 0x01B7BE70);
+
+	// Return true in the functor to halt traversal
+	template<typename T>
+	bool Visit(T & functor)
+	{
+		if (functor(this))
+			return true;
+
+		NiPointer<NiNode> node(GetAsNiNode());
+		if(node) {
+			for(UInt32 i = 0; i < node->m_children.m_emptyRunStart; i++) {
+				NiPointer<NiAVObject> object(node->m_children.m_data[i]);
+				if(object) {
+					if (object->Visit(functor))
+						return true;
+				}
+			}
+		}
+
+		return false;
+	}
 };
-STATIC_ASSERT(offsetof(NiAVObject, m_reference) == 0x110);
 STATIC_ASSERT(sizeof(NiAVObject) == 0x120);
 

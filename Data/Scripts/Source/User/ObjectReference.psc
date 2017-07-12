@@ -1167,7 +1167,7 @@ int Property Motion_Keyframed = 2 AutoReadOnly
 
 
 
-; F4SE additions built 2017-06-04 23:21:29.171000 UTC
+; F4SE additions built 2017-07-09 18:13:43.356000 UTC
 ; Returns all the mods for this reference
 ObjectMod[] Function GetAllMods() native
 
@@ -1204,6 +1204,9 @@ string Function GetDisplayName() native
 
 ; Returns all the base forms from the inventory
 Form[] Function GetInventoryItems() native
+
+; Returns the total weight of this objects inventory
+float Function GetInventoryWeight() native
 
 struct ConnectPoint
 	string parent

@@ -8,11 +8,11 @@
 #include "f4se/PapyrusVM.h"
 #include "f4se/PapyrusNativeFunctions.h"
 
-DECLARE_STRUCT(DamageTypeInfo, "InstanceData");
-DECLARE_STRUCT(Owner, "InstanceData");
-
 namespace papyrusInstanceData
 {
+	DECLARE_STRUCT(DamageTypeInfo, "InstanceData")
+	DECLARE_STRUCT(Owner, "InstanceData")
+
 	TBO_InstanceData * GetInstanceData(Owner* thisInstance)
 	{
 		if(!thisInstance)

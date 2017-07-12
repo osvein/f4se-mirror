@@ -1,5 +1,7 @@
 #pragma once
 
+#include "f4se/GameAPI.h"
+
 // 8
 template <class T>
 class NiPointer
@@ -117,14 +119,19 @@ public:
 	NiPoint3& operator/= (float fScalar);
 };
 
-// 10
+class __declspec(align(8)) NiPoint3A : NiPoint3
+{
+public:
+
+};
+
+// C
 class NiColor
 {
 public:
 	float	r;	// 00
 	float	g;	// 04
 	float	b;	// 08
-	UInt32	pad0C;	// 0C
 };
 
 // 10
@@ -218,6 +225,42 @@ public:
 	float	y;	// 4
 };
 
+// 10
+class NiBound
+{
+public:
+	NiPoint3 m_kCenter;
+	union
+	{
+		float m_fRadius;
+		int m_iRadiusAsInt;
+	};
+};
+
+class NiPoint4
+{
+public:
+	struct NiPoint4Struct
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+	};
+	union
+	{
+		NiPoint4Struct v;
+		float m_pt[4];
+	};
+};
+
+
+class NiMatrix3
+{
+public:
+	NiPoint4 m_pEntry[3];
+};
+
 // 30
 class NiMatrix43
 {
@@ -247,6 +290,13 @@ public:
 };
 STATIC_ASSERT(sizeof(NiTransform) == 0x40);
 
+// 10
+struct NiPlane
+{
+	NiPoint3 m_kNormal;
+	float m_fConstant;
+};
+
 // 18
 template <typename T>
 class NiTArray
@@ -264,4 +314,72 @@ public:
 	UInt16	m_emptyRunStart;	// 12 - index of beginning of empty slot run
 	UInt16	m_size;				// 14 - number of filled slots
 	UInt16	m_growSize;			// 16 - number of slots to grow m_data by
+};
+
+// 20
+// derives from NiTMapBase, we don't bother
+template <typename T_key, typename T_data>
+class NiTMap
+{
+public:
+	virtual ~NiTMap();
+
+	struct NiTMapItem
+	{
+		NiTMapItem	* next;
+		T_key		key;
+		T_data		data;
+	};
+
+	T_data	Get(T_key key)
+	{
+		UInt32	bucket = GetBucket(key);
+
+		for(NiTMapItem * iter = buckets[bucket]; iter; iter = iter->next)
+		{
+			if(Compare(iter->key, key))
+			{
+				return iter->data;
+			}
+		}
+
+		return T_data();
+	}
+
+	virtual UInt32	GetBucket(T_key key);					// return hash % numBuckets;
+	virtual bool	Compare(T_key lhs, T_key rhs);			// return lhs == rhs;
+	virtual void	FillItem(NiTMapItem * item, T_key key, T_data data);
+	// item->key = key; item->data = data;
+	virtual void	Fn_04(UInt32 arg);	// nop
+	virtual NiTMapItem *	AllocItem(void);				// return new NiTMapItem;
+	virtual void	FreeItem(NiTMapItem * item);			// item->data = 0; delete item;
+
+	void RemoveAll()
+	{
+		for (UInt32 ui = 0; ui < numBuckets; ui++) 
+		{
+			while (buckets[ui])
+			{
+				NiTMapItem * pkSave = buckets[ui];
+				buckets[ui] = buckets[ui]->next;
+				DeleteItem(pkSave);
+			}
+		}
+
+		numEntries = 0;
+	}
+
+	//	void		** _vtbl;	// 00
+	UInt32		numBuckets;	// 08
+	UInt32		unk0C;		// 0C
+	NiTMapItem	** buckets;	// 10
+	UInt32		numEntries;	// 18
+};
+
+// 10
+template <typename T_key, typename T_data>
+class NiTPointerMap : public NiTMap <T_key, T_data>
+{
+public:
+
 };

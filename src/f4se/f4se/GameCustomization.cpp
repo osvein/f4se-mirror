@@ -42,7 +42,7 @@ bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 
 bool BGSCharacterTint::PaletteEntry::IsEqual(Entry * rhs)
 {
-	return __super::IsEqual(rhs) && color == ((PaletteEntry*)rhs)->color && colorID == ((PaletteEntry*)rhs)->colorID;
+	return __super::IsEqual(rhs) && color.bgra == ((PaletteEntry*)rhs)->color.bgra && colorID == ((PaletteEntry*)rhs)->colorID;
 }
 
 void BGSCharacterTint::Entry::Copy(Entry * rhs)

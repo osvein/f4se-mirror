@@ -6,37 +6,66 @@
 class NiProperty;
 class ID3D11Buffer;
 
+// 38
+struct BSGeometrySegmentFlagData
+{
+	tHashSet<UInt32,BSFixedString>	SegmentDeltas;	// 00
+	BSFixedString					BaseBoneName;	// 30
+};
+
+// 68
+class BSGeometrySegmentSharedData : public BSIntrusiveRefCounted
+{
+public:
+	BSFixedString	SSFFileName;		// 08
+	UInt32			uiNumSegments;		// 10
+	UInt32			uiTotalNumSegments;	// 14
+	UInt32			* pSegmentStarts;	// 18
+
+	// 28
+	struct PerSegmentSharedData
+	{
+		UInt32	uiUserIndex;			// 00
+		UInt32	uiBoneID;				// 04
+		float	fValidCutOffsets[8];	// 08
+	};
+
+	PerSegmentSharedData *pPerSegmentSharedData;	// 20
+	BSGeometrySegmentFlagData SegmentsEnabledData;	// 28
+	bool bProcessedCutOffsets;						// 60
+};
+
 // 40
 class BSGeometrySegmentData : public NiObject
 {
 public:
-	// 68
-	struct SSFData
+	// 18
+	struct Segment
 	{
-		struct SubData
-		{
-			UInt32	unk00;		// 00
-			UInt32	unk04;		// 04
-			float	unk08[8];	// 08
-		};
-		UInt64	unk00;			// 00
-		BSFixedString ssfFile;	// 08
-		UInt32	sequenceCount;	// 10
-		UInt32	numSubIndexes;	// 14
-		UInt32	* sequence;		// 18
-		SubData	* subIndexData;	// 20
-		UInt64	unk28[(0x68-0x28)/8];
+		UInt32 uiStartIndex;		// 00
+		UInt32 uiNumPrimitives;		// 04
+		UInt32 uiParentArrayIndex;	// 08
+		UInt32 uiChildCount;		// 0C
+		UInt8 ucDisabledCount;		// 10
 	};
 
-	SSFData	* ssfData;	// 10
-	UInt32	* segment;	// 18
-	void	* unk20;	// 20
-	UInt32	unk28;	// 28
-	UInt32	unk2C;	// 2C
-	UInt32	unk30;	// 30
-	UInt32	numTriangles;	// 34
-	UInt32	unk38;	// 38
-	UInt32	unk3C;	// 3C
+	// 8
+	struct DrawData
+	{
+		UInt32 uiStartIndex;	// 00
+		UInt32 uiNumPrimitives;	// 04
+	};
+
+	BSGeometrySegmentSharedData	* spSharedData;			// 10
+	Segment						* pSegments;			// 18
+	DrawData					* pSegmentDrawData;		// 20
+	UInt32						uiNumDraws;				// 28
+	UInt32						uiNumSegments;			// 2C
+	UInt32						uiTotalNumSegments;		// 30
+	UInt32						uiTotalNumPrimitives;	// 34
+	UInt32						uiSegToZeroMap;			// 38
+	bool						bSegmentsChanged;		// 3C
+	bool						bIgnoreSegments;		// 3D
 };
 
 class BSGeometryData
@@ -86,10 +115,30 @@ public:
 	virtual void Unk_3F();
 	virtual void Unk_40();
 
-	float	unk120[4];						// 120
+	NiBound kModelBound;					// 120
 	NiPointer<NiProperty> effectState;		// 130
 	NiPointer<NiProperty> shaderProperty;	// 138
 	NiPointer<BSSkin::Instance>	skinInstance;		// 140
+
+	union VertexDesc
+	{
+		struct
+		{
+			UInt8 szVertexData : 4;
+			UInt8 szVertex : 4;  // 0 when not dynamic
+			UInt8 oTexCoord0 : 4;
+			UInt8 oTexCoord1 : 4;
+			UInt8 oNormal : 4;
+			UInt8 oTangent : 4;
+			UInt8 oColor : 4;
+			UInt8 oSkinningData : 4;
+			UInt8 oLandscapeData : 4;
+			UInt8 oEyeData: 4;
+			UInt16 vertexFlags : 16;
+			UInt8 unused : 8;
+		};
+		UInt64 vertexDesc;
+	};
 
 	enum : UInt64
 	{
@@ -116,8 +165,8 @@ public:
 
 	UInt16 GetVertexSize() const { return (vertexDesc << 2) & 0x3C; } // 0x3C might be a compiler optimization, (vertexDesc & 0xF) << 2 makes more sense
 
-	UInt8	unk158;							// 158
-	UInt8	unk159;							// 159
+	SInt8	ucType;							// 158
+	bool	Registered;						// 159
 	UInt16	pad15A;							// 15A
 	UInt32	unk15C;							// 15C
 
@@ -145,13 +194,13 @@ STATIC_ASSERT(sizeof(BSTriShape) == 0x170);
 class BSDynamicTriShape : public BSTriShape
 {
 public:
-	UInt32					unk170;				// 170
-	UInt32					unk174;				// 174
-	SimpleLock				lock;				// 178
-	UInt8					* dynamicVertices;	// 180 - geometry pointer, must lock/unlock when altering
-	BSGeometrySegmentData	* segmentData;		// 188
-	void					* unk190;			// 190
-	void					* unk198;			// 198
+	UInt32								uiDynamicDataSize;	// 170
+	UInt32								uiFrameCount;		// 174
+	SimpleLock							lock;				// 178
+	UInt8								* dynamicVertices;	// 180 - geometry pointer, must lock/unlock when altering
+	NiPointer<BSGeometrySegmentData>	spSegments;		// 188
+	void								* unk190;			// 190
+	void								* unk198;			// 198
 
 	UInt16 GetDynamicVertexSize() const { return (vertexDesc >> 2) & 0x3C; }
 };
@@ -161,10 +210,25 @@ STATIC_ASSERT(sizeof(BSDynamicTriShape) == 0x1A0);
 class BSSubIndexTriShape : public BSTriShape
 {
 public:
-	BSGeometrySegmentData	* segmentData;	// 170
-	void	* unk178;	// 178
-	void	* unk180;	// 180
-	void	* unk188;	// 188
+	NiPointer<BSGeometrySegmentData> spSegments;	// 170
+
+	struct SegmentData
+	{
+		ID3D11Buffer	* d3d11Buffer;	// 00 - const CLayeredObjectWithCLS<class CBuffer>::CContainedObject::vftable'{forCPrivateDataImpl<struct ID3D11Buffer>'}
+		UInt8			* segmentBlock;	// 08
+		UInt64			unk10;			// 10
+		UInt64			unk18;			// 18
+		UInt64			unk20;			// 20
+		void			* unk28;		// 28
+		UInt32			unk30;			// 30
+		UInt32			unk34;			// 34
+		volatile SInt32	refCount;		// 38
+	};
+
+	SegmentData		* segmentData;	// 178
+	UInt32			numIndices;		// 180
+	UInt32			unk184;			// 184
+	void			* unk188;		// 188
 };
 STATIC_ASSERT(sizeof(BSSubIndexTriShape) == 0x190);
 

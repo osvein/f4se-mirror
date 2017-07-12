@@ -163,9 +163,7 @@ struct IsStructType<VMStruct<NAME>>
 	static inline const char* name() { return NAME; };
 };
 
-#define DECLARE_STRUCT_TYPE(structName, ...) <Name_##structName##> ##structName##;
 #define DECLARE_STRUCT_STRING(structName) #structName
-
 #define DECLARE_STRUCT(structName, scriptOwner) \
 	char StructName_##structName##[] = ##scriptOwner## "#" DECLARE_STRUCT_STRING(structName); \
 	typedef VMStruct<StructName_##structName##> ##structName##;

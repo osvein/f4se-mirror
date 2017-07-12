@@ -7,6 +7,7 @@
 #include "f4se/PapyrusValue.h"
 
 // skipping the BSScript::Internal namespace stuff
+#include <functional>
 
 class IFunction;
 
@@ -216,6 +217,9 @@ public:
 	UInt64			unkF0[(0x1E0 - 0xF0) >> 3];				// F0
 	IObjectHandlePolicy		* m_objectHandlePolicy;			// 1E0
 	// ...
+
+	MEMBER_FN_PREFIX(GameVM);
+	DEFINE_MEMBER_FN(SendPapyrusEvent, void, 0x01357390, UInt64 handle, const BSFixedString & eventName, std::function<bool(void*)> functor);
 };
 
 extern RelocPtr <GameVM *> g_gameVM;

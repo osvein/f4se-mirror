@@ -2,6 +2,7 @@
 
 #include "f4se/GameTypes.h"
 
+class Actor;
 class TESObjectREFR;
 
 enum EventResult
@@ -124,6 +125,13 @@ struct TESLoadGameEvent
 
 };
 
+struct TESFurnitureEvent
+{
+	Actor			* actor;
+	TESObjectREFR	* furniture;
+	bool			isGettingUp;
+};
+
 struct TESInitScriptEvent
 {
 	TESObjectREFR * reference;
@@ -195,8 +203,11 @@ DECLARE_EVENT_DISPATCHER(TESLoadGameEvent, 0x00440CF0)
 
 DECLARE_EVENT_DISPATCHER(TESInitScriptEvent, 0x00440BB0)
 
+DECLARE_EVENT_DISPATCHER(TESFurnitureEvent, 0x00440A70)
+
 // TESFormIDRemapEvent
 // 04409D0
 
 // TESFormDeleteEvent
 // 0440930
+

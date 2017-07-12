@@ -269,6 +269,7 @@ public:
 	PresenceBitfield	* m_presence;	// 18
 	SimpleLock			m_lock;			// 20
 };
+STATIC_ASSERT(sizeof(ExtraDataList) == 0x28);
 
 // 28
 class BGSObjectInstanceExtra : public BSExtraData

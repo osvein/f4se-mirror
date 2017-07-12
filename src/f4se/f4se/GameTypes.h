@@ -5,12 +5,11 @@
 
 class TESForm;
 
-// 08
+// 04 or 08 depending alignment
 struct BSIntrusiveRefCounted
 {
 public:
 	volatile UInt32	m_refCount;	// 00
-	UInt32			unk04;		// 04
 };
 
 // 04
@@ -1061,6 +1060,7 @@ class tHashSet
 public:
 
 	tHashSet() : m_size(0), m_freeCount(0), m_freeOffset(0), m_entries(NULL), m_eolPtr(&sentinel) { }
+	~tHashSet() { if(m_entries) Heap_Free(m_entries); }
 
 	UInt32	Size() const		{ return m_size; }
 	UInt32	FreeCount() const	{ return m_freeCount; }

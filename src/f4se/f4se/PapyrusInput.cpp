@@ -102,6 +102,6 @@ void papyrusInput::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new NativeFunction1 <StaticFunctionTag, BSFixedString, SInt32>("GetMappedControl", "Input", papyrusInput::GetMappedControl, vm));
 
-	vm->SetFunctionFlags("GetMappedKey", "Input", IFunction::kFunctionFlag_NoWait);
-	vm->SetFunctionFlags("GetMappedControl", "Input", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("Input", "GetMappedKey", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("Input", "GetMappedControl", IFunction::kFunctionFlag_NoWait);
 }

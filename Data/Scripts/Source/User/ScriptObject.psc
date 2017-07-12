@@ -354,7 +354,7 @@ EndEvent
 Event OnTutorialEvent(String asEventName, Message aMessage)
 EndEvent
 
-; F4SE additions built 2017-06-04 23:21:29.171000 UTC
+; F4SE additions built 2017-07-09 18:13:43.356000 UTC
 Function RegisterForKey(int key) native
 
 Function UnregisterForKey(int key) native
@@ -400,4 +400,20 @@ Function UnregisterForCameraState() native
 ; 11 - Bleedout
 ; 12 - Dialogue
 Event OnPlayerCameraState(int oldState, int newState)
+EndEvent
+
+; Filter can be one or none of the following:
+; ObjectReference
+; Var[] (containing ObjectReferece Vars)
+; FormList (containing ObjectReference)
+; Filtering by Furniture object will receive events from any Actor who sits in it
+; Filtering by Actor will receive events from whenever the specified Actor sits on any furniture
+; Registering again with a different filter will result in merging of the filters
+Function RegisterForFurnitureEvent(Var filter = None) native
+
+; Filter works similarly to Register
+; None filter will remove all active filters and unregister the event
+Function UnregisterForFurnitureEvent(Var filter = None) native
+
+Event OnFurnitureEvent(Actor akActor, ObjectReference akFurniture, bool isGettingUp)
 EndEvent

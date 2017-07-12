@@ -28,6 +28,7 @@ class SpellItem;
 class TESObjectLAND;
 class TESWorldSpace;
 class bhkWorld;
+class BGSComponent;
 
 typedef TESForm* (* _LookupFormByID)(UInt32 id);
 extern RelocAddr <_LookupFormByID> LookupFormByID;
@@ -395,7 +396,7 @@ public:
 	virtual void	Unk_0E();
 	virtual void	Unk_0F();
 	virtual void	Unk_10();
-	virtual void	Unk_11();
+	virtual void	Unk_11(); // Serialize
 	virtual void	Unk_12();
 	virtual void	Unk_13();
 	virtual void	Unk_14();
@@ -473,6 +474,17 @@ public:
 	UInt8	formType;	// 1A
 	UInt8	unk1B;		// 1B
 	UInt32	pad1C;		// 1C
+};
+
+// 38
+class BGSDefaultObject : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_DFOB };
+
+	TESForm			* form;		// 20
+	UInt64			unk28;		// 28
+	BSFixedString	editorId;	// 30
 };
 
 // 118
@@ -714,7 +726,16 @@ public:
 	void	* func_ptr;		// 60 - address of offset 48
 	const char * avName;	// 68
 
-	UInt64	unk70[(0x190-0x70)/8];	// 70
+	UInt64	unk70[(0x160-0x70)/8];		// 70
+	UInt32	unk160;						// 160
+	UInt32	unk164;						// 164
+	UInt32	unk168;						// 168
+	UInt32	flags;						// 16C
+	UInt32	unk170;						// 170
+	UInt32	unk174;						// 174
+	float	unk178;						// 178 -- maximum?
+	UInt32	unk17C;						// 17C
+	UInt64	unk180[(0x190-0x180)/8];	// 180
 };
 
 // 80
@@ -1651,6 +1672,44 @@ public:
 	BGSPerk					* nextPerk;		// 80
 	BGSSoundDescriptorForm	* sound;		// 88
 	BSFixedString			swfPath;		// 90
+};
+
+// 88
+class BGSConstructibleObject : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_COBJ };
+
+	BGSPickupPutdownSounds	pickupPutdownSounds;	// 20
+	TESDescription			description;			// 30
+
+	UInt64					unk48;	// 48
+
+	struct Component
+	{
+		BGSComponent	* component;	// 00
+		UInt32			count;			// 08
+	};
+
+	tArray<Component>	* components;		// 50
+	Condition			* conditions;		// 58
+	TESForm				* createdObject;	// 60
+	BGSKeyword			* workbenchKeyword;	// 68
+	UInt16				createdCount;		// 70
+	UInt16				priority;			// 72
+	UInt32				unk74;				// 74
+	UInt64				unk80;				// 80
+};
+
+// 38
+class TESGlobal : public TESForm
+{
+public:
+	enum { kTypeID = kFormType_GLOB };
+
+	UInt64	unk20;	// 20
+	UInt64	unk28;	// 28
+	UInt64	unk30;	// 30
 };
 
 // 08

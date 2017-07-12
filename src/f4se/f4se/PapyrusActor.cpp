@@ -10,11 +10,19 @@
 #include "f4se/GameRTTI.h"
 #include "f4se/GameObjects.h"
 #include "f4se/GameExtraData.h"
-	
-DECLARE_STRUCT(WornItem, "Actor")
 
+#include "f4se/PapyrusDelayFunctors.h"
+
+#include "f4se/NiRTTI.h"
+#include "f4se/NiNodes.h"
+#include "f4se/BSGeometry.h"
+#include "f4se/NiProperties.h"
+#include "f4se/NiMaterials.h"
+	
 namespace papyrusActor
 {
+	DECLARE_STRUCT(WornItem, "Actor")
+
 	WornItem GetWornItem(Actor* actor, UInt32 slotIndex, bool bFirstPerson)
 	{
 		WornItem result;
@@ -92,6 +100,30 @@ namespace papyrusActor
 			CALL_MEMBER_FN(actor, QueueUpdate)(bDoEquipment, 0, true, flags);
 		}
 	}
+
+	TESObjectREFR * GetFurnitureReference(Actor * actor)
+	{
+		TESObjectREFR * refr = nullptr;
+		if(!actor)
+			return nullptr;
+
+		auto middleProcess = actor->middleProcess;
+		if(!middleProcess)
+			return nullptr;
+
+		UInt32 furnitureHandle = 0;
+		auto data08 = middleProcess->unk08;
+		if(!data08)
+			return nullptr;
+
+		if(actor->actorState.flags & (ActorState::Flags::kUnk1 | ActorState::Flags::kUnk2))
+			furnitureHandle = data08->furnitureHandle2;
+		else
+			furnitureHandle = data08->furnitureHandle1;
+
+		LookupREFRByHandle(&furnitureHandle, &refr);
+		return refr;
+	}
 }
 
 void papyrusActor::RegisterFuncs(VirtualMachine* vm)
@@ -104,4 +136,7 @@ void papyrusActor::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction2<Actor, void, bool, UInt32>("QueueUpdate", "Actor", papyrusActor::QueueUpdate, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction0<Actor, TESObjectREFR*>("GetFurnitureReference", "Actor", papyrusActor::GetFurnitureReference, vm));
 }

@@ -6,6 +6,9 @@ RelocPtr <DataHandler*> g_dataHandler(0x0585A300);
 // C5B21010DCF340FCDDDC7866C50C3D78AEF34CB5+6B
 RelocPtr <bool> g_isGameDataReady(0x059E43B4);
 
+RelocPtr <DefaultObjectMap*> g_defaultObjectMap(0x0585F120);
+RelocPtr <SimpleLock> g_defaultObjectMapLock(0x0585FB88);
+
 class LoadedModFinder
 {
 	const char * m_stringToFind;
@@ -48,4 +51,16 @@ UInt8 DataHandler::GetLoadedModIndex(const char* modName)
 	}
 
 	return -1;
+}
+
+BGSDefaultObject * DefaultObjectMap::GetDefaultObject(BSFixedString name)
+{
+	SimpleLocker locker(g_defaultObjectMapLock);
+	if(*g_defaultObjectMap) {
+		auto entry = (*g_defaultObjectMap)->Find(&name.data);
+		if(entry) {
+			return entry->defaultObject;
+		}
+	}
+	return nullptr;
 }

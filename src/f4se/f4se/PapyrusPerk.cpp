@@ -41,7 +41,7 @@ namespace papyrusPerk
 		if(!thisPerk || !actor)
 			return false;
 
-		Condition * condition = thisPerk->condition;
+		Condition ** condition = &thisPerk->condition;
 		if(condition)
 			return EvaluationConditions(condition, actor, actor);
 

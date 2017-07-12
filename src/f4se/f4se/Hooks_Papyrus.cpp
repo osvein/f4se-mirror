@@ -3,6 +3,7 @@
 #include "f4se_common/BranchTrampoline.h"
 
 #include "f4se/PapyrusVM.h"
+#include "f4se/PapyrusEvents.h"
 
 #include "f4se/PapyrusF4SE.h"
 #include "f4se/PapyrusForm.h"
@@ -25,6 +26,11 @@
 #include "f4se/PapyrusPerk.h"
 #include "f4se/PapyrusLocation.h"
 #include "f4se/PapyrusEncounterZone.h"
+#include "f4se/PapyrusInput.h"
+#include "f4se/PapyrusDefaultObject.h"
+#include "f4se/PapyrusConstructibleObject.h"
+#include "f4se/PapyrusComponent.h"
+#include "f4se/PapyrusMiscObject.h"
 
 #include "f4se/Serialization.h"
 
@@ -124,6 +130,23 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 
 	// Location
 	papyrusLocation::RegisterFuncs(vm);
+
+	// Input
+	papyrusInput::RegisterFuncs(vm);
+
+	// DefaultObject
+	papyrusDefaultObject::RegisterFuncs(vm);
+
+	// ConstructibleObject
+	papyrusConstructibleObject::RegisterFuncs(vm);
+
+	// Component
+	papyrusComponent::RegisterFuncs(vm);
+
+	// MiscObject
+	papyrusMiscObject::RegisterFuncs(vm);
+
+	GetEventDispatcher<TESFurnitureEvent>()->AddEventSink(&g_furnitureEventSink);
 
 	// Plugins
 	for(PapyrusPluginList::iterator iter = s_pap_plugins.begin(); iter != s_pap_plugins.end(); ++iter)

@@ -203,7 +203,18 @@ public:
 		virtual UInt32 GetType(void) { return kTypePalette; };	// 1
 		virtual void Unk_06(void);
 
-		SInt32	color;		// 18
+		union Color
+		{
+			struct Channel
+			{
+				UInt8 red;
+				UInt8 green;
+				UInt8 blue;
+				UInt8 unused;
+			} channel; // 18
+			UInt32 bgra;
+		} color;
+		
 		SInt16	colorID;	// 1C - ID of the color from the template's list
 		UInt16	pad1E;		// 1E
 	};

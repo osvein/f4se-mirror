@@ -1,14 +1,38 @@
 #pragma once
 
+#include "f4se/NiRTTI.h"
 #include "f4se/NiObjects.h"
+
+class BSGeometrySegmentData;
 
 // 18
 class NiExtraData : public NiObject
 {
 public:
-	virtual ~NiExtraData();
+	virtual ~NiExtraData() { };
+
+	virtual NiRTTI				* GetRTTI(void) override { return NIRTTI_NiExtraData; };
+
+	virtual void				LoadBinary(void * stream) override { CALL_MEMBER_FN(this, Internal_LoadBinary)(stream); };
+	virtual void				SaveBinary(void * stream) override { CALL_MEMBER_FN(this, Internal_SaveBinary)(stream); };
+
+	virtual bool				IsEqual(NiObject * object) override
+	{
+		bool equal = __super::IsEqual(object);
+		if(equal)
+			return m_name == static_cast<NiExtraData*>(object)->m_name;
+	}
+
+	virtual bool				Unk_28() { return false; };
+	virtual bool				Unk_29() { return false; };
+	virtual bool				Unk_2A() { return true; };
+	virtual bool				Unk_2B() { return true; };
 
 	BSFixedString	m_name;	// 10
+
+	MEMBER_FN_PREFIX(NiObject);
+	DEFINE_MEMBER_FN(Internal_LoadBinary, void, 0x01B6DB20, void * stream);
+	DEFINE_MEMBER_FN(Internal_SaveBinary, void, 0x01B6DBC0, void * stream);
 };
 
 // 20
@@ -80,4 +104,36 @@ public:
 		};
 		tArray<ConnectPoint*>	points;	// 18
 	};
+};
+
+// 198
+class BSDismembermentExtraData : public NiExtraData
+{
+public:
+	tArray<BSTriShape*> segments[16];	// 18
+};
+
+STATIC_ASSERT(sizeof(BSDismembermentExtraData) == 0x198);
+
+// 20
+class NiIntegerExtraData : public NiExtraData
+{
+public:
+	UInt32	value;	// 18
+	UInt32	pad1C;	// 1C
+};
+
+// 20
+class BSDismembermentLimbExtraData : public NiExtraData
+{
+public:
+	UInt32	dismemberIndex;	// 18 - Links to which index of the 0-15 array in BSDismemberExtraData this shape is on
+	UInt32	unk1C;	// 1C
+};
+
+// 20
+class BSSegmentDataStorage : public NiExtraData
+{
+public:
+	BSGeometrySegmentData * segmentData;	// 18
 };

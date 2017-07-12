@@ -32,7 +32,7 @@ class Condition;
 class TESObjectREFR;
 class BGSDamageType;
 
-typedef bool (* _EvaluationConditions)(Condition * condition, TESObjectREFR * ref1, TESObjectREFR * ref2);
+typedef bool (* _EvaluationConditions)(Condition ** condition, TESObjectREFR * ref1, TESObjectREFR * ref2);
 extern RelocAddr <_EvaluationConditions> EvaluationConditions; // Evaluates whole condition LinkedList
 
 // 10
@@ -147,13 +147,13 @@ public:
 
 	virtual float	GetValue(ActorValueInfo * actorValueInfo);
 	virtual float	GetMaximum(ActorValueInfo * actorValueInfo);
-	virtual void	Unk_03(void);
-	virtual void	Unk_04(void);
-	virtual void	Unk_05(void);
-	virtual void	Unk_06(void);
-	virtual void	Unk_07(void);
-	virtual void	Unk_08(void);
-	virtual void	Unk_09(void);
+	virtual float	GetBase(ActorValueInfo * actorValueInfo);
+	virtual void	SetBase(ActorValueInfo * actorValueInfo, float value);
+	virtual void	ModBase(ActorValueInfo * actorValueInfo, float value);
+	virtual void	Mod(UInt32 unk1, ActorValueInfo * actorValueInfo, float value); // unk1=0 for regular ModAV
+	virtual float	GetMod(UInt32 unk1, ActorValueInfo * actorValueInfo);
+	virtual void	Unk_08(ActorValueInfo * actorValueInfo, float value); // Calls Mod with unk1=2
+	virtual void	Unk_09(ActorValueInfo * actorValueInfo, float value); // Just calls SetBase
 	virtual void	Unk_0A(void);
 
 //	void	** _vtbl;	// 00
@@ -791,7 +791,14 @@ public:
 	virtual void	Unk_1F();
 	virtual void	Unk_20();
 
-	void * unk08;	// 08
+	enum Flags
+	{
+		kUnk1 = 0x80000,
+		kUnk2 = 0x40000
+	};
+
+	UInt32	unk08;	// 08
+	UInt32	flags;	// 0C
 };
 
 // 08
@@ -1009,8 +1016,11 @@ class BGSInventoryList
 public:
 	UInt64	unk00;	// 00
 	tArray<BSTEventSink<BGSInventoryListEvent::Event>> eventSinks;	// 08
-	UInt64	unk20[(0x58-0x20)/8];
-	tArray<BGSInventoryItem> items;
+	UInt64	unk20[(0x58-0x20)/8];	// 20
+	tArray<BGSInventoryItem> items;	// 58
+	float		inventoryWeight;	// 70 - is (-1) when not calculated
+	UInt32		unk74;				// 74
+	SimpleLock	inventoryLock;		// 78
 };
 
 // 08

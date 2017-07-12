@@ -22,6 +22,8 @@ class BGSAddonNode;
 class TESWaterForm;
 class BGSPerk;
 class TESLevCharacter;
+class BGSDefaultObject;
+class BGSConstructibleObject;
 
 struct ModInfo		// referred to by game as TESFile
 {
@@ -185,7 +187,7 @@ public:
 	UnkFormArray						arrMESG;	// Form Type 108
 	UnkFormArray						arrRGDL;	// Form Type 109
 	UnkFormArray						arrDOBJ;	// Form Type 110
-	UnkFormArray						arrBFOB;	// Form Type 111
+	tArray<BGSDefaultObject*>			arrDFOB;	// Form Type 111
 	UnkFormArray						arrLGTM;	// Form Type 112
 	UnkFormArray						arrMUSC;	// Form Type 113
 	UnkFormArray						arrFSTP;	// Form Type 114
@@ -217,7 +219,7 @@ public:
 	UnkFormArray						arrRFGP;	// Form Type 140
 	UnkFormArray						arrAMDL;	// Form Type 141
 	UnkFormArray						arrLAYR;	// Form Type 142
-	UnkFormArray						arrCOBJ;	// Form Type 143
+	tArray<BGSConstructibleObject*>		arrCOBJ;	// Form Type 143
 	tArray<BGSMod::Attachment::Mod*>	arrOMOD;	// Form Type 144
 	tArray<BGSMaterialSwap*>			arrMSWP;	// Form Type 145
 	UnkFormArray						arrZOOM;	// Form Type 146
@@ -247,7 +249,7 @@ public:
 
 	ModList								modList;		// FB0
 
-	UInt64								unk17C0[(0x17E8-0x17C0)/8];	// F88
+	UInt64								unk17C0[(0x17E8-0x17C0)/8];	// 17C0
 
 	const ModInfo* LookupModByName(const char* modName);
 	UInt8 GetModIndex(const char* modName);
@@ -285,3 +287,32 @@ public:
 	DEFINE_MEMBER_FN(ctor, LocationData*, 0x001F69F0, Actor * refr);
 };
 
+struct DefaultObjectEntry
+{
+	BSFixedString		editorId;
+	BGSDefaultObject	* defaultObject;
+
+	operator StringCache::Entry*() const					{ return editorId.data; }
+
+	static inline UInt32 GetHash(StringCache::Entry** key)
+	{
+		UInt32 hash;
+		CalculateCRC32_64(&hash, (UInt64)*key, 0);
+		return hash;
+	}
+
+	void Dump(void)
+	{
+		_MESSAGE("\t\tname: %s", editorId.data->Get<char>());
+		_MESSAGE("\t\tinstance: %08X", defaultObject->formID);
+	}
+};
+
+class DefaultObjectMap : public tHashSet<DefaultObjectEntry, StringCache::Entry*>
+{
+public:
+	BGSDefaultObject * GetDefaultObject(BSFixedString name);
+};
+
+extern RelocPtr <DefaultObjectMap*> g_defaultObjectMap;
+extern RelocPtr <SimpleLock> g_defaultObjectMapLock;

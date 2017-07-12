@@ -77,6 +77,9 @@ class BSShaderTextureSet : public BSTextureSet
 {
 public:
 	BSFixedString	textures[10];	// 10
+
+	MEMBER_FN_PREFIX(BSShaderTextureSet);
+	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C14F0);
 };
 STATIC_ASSERT(sizeof(BSShaderTextureSet) == 0x60);
 

@@ -41,6 +41,11 @@ namespace papyrusMath
 	{
 		return log(arg1);
 	}
+
+	float Exp(StaticFunctionTag* base, float arg1)
+	{
+		return exp(arg1);
+	}
 }
 
 void papyrusMath::RegisterFuncs(VirtualMachine* vm)
@@ -66,6 +71,9 @@ void papyrusMath::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new NativeFunction1 <StaticFunctionTag, float, float>("Log", "Math", papyrusMath::Log, vm));
 
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, float, float>("Exp", "Math", papyrusMath::Exp, vm));
+
 	vm->SetFunctionFlags("Math", "LeftShift", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("Math", "RightShift", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("Math", "LogicalAnd", IFunction::kFunctionFlag_NoWait);
@@ -73,4 +81,5 @@ void papyrusMath::RegisterFuncs(VirtualMachine* vm)
 	vm->SetFunctionFlags("Math", "LogicalXor", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("Math", "LogicalNot", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("Math", "Log", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("Math", "Exp", IFunction::kFunctionFlag_NoWait);
 }

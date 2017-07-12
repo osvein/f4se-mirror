@@ -1101,7 +1101,7 @@ bool Function CanMoveVertical() native debugOnly
 ; Check to see if the actor can strafe side to side.
 bool Function CanStrafe() native debugOnly
 
-; F4SE additions built 2017-06-04 23:21:29.171000 UTC
+; F4SE additions built 2017-07-09 18:13:43.356000 UTC
 struct WornItem
 	Form item ; Can be ARMO or WEAP
 	Form model ; Can be ARMA or WEAP depending on item
@@ -1125,7 +1125,9 @@ InstanceData:Owner Function GetInstanceOwner(int slotIndex)
 	return inst
 EndFunction
 
-
 ; Updates the entire actor from the ground-up
 ; Using zero flag is very expensive, to update only the body use flags=0xC
 Function QueueUpdate(bool bDoEquipment = false, int flags = 0) native
+
+; Returns the current furniture reference
+ObjectReference Function GetFurnitureReference() native

@@ -8,9 +8,10 @@
 #include "f4se/GameData.h"
 #include "f4se/GameSettings.h"
 
-DECLARE_STRUCT(PluginInfo, "Game");
 
-namespace papyrusGame {
+namespace papyrusGame
+{
+	DECLARE_STRUCT(PluginInfo, "Game")
 
 	TESObjectREFR * GetCurrentConsoleRef(StaticFunctionTag * base)
 	{

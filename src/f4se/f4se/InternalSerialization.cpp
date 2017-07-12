@@ -69,6 +69,7 @@ void Core_RevertCallback(const F4SESerializationInterface * intfc)
 	g_inputControlEventRegs.Clear();
 	g_externalEventRegs.Clear();
 	g_cameraEventRegs.Clear();
+	g_furnitureEventRegs.Clear();
 
 	F4SEDelayFunctorManagerInstance().OnRevert();
 	F4SEObjectStorageInstance().ClearAndRelease();
@@ -91,6 +92,9 @@ void Core_SaveCallback(const F4SESerializationInterface * intfc)
 
 	_MESSAGE("Saving camera event registrations...");
 	g_cameraEventRegs.Save(intfc, 'CAMR', InternalEventVersion::kCurrentVersion);
+
+	_MESSAGE("Saving furniture event registrations...");
+	g_furnitureEventRegs.Save(intfc, 'FRNR', InternalEventVersion::kCurrentVersion);
 
 	_MESSAGE("Saving SKSEPersistentObjectStorage data...");
 	SaveClassHelper(intfc, 'OBMG', F4SEObjectStorageInstance());
@@ -134,6 +138,12 @@ void Core_LoadCallback(const F4SESerializationInterface * intfc)
 		case 'CAMR':
 			_MESSAGE("Loading camera event registrations...");
 			g_cameraEventRegs.Load(intfc, InternalEventVersion::kCurrentVersion);
+			break;
+
+			// Furniture events
+		case 'FRNR':
+			_MESSAGE("Loading furniture event registrations...");
+			g_furnitureEventRegs.Load(intfc, InternalEventVersion::kCurrentVersion);
 			break;
 
 			// SKSEPersistentObjectStorage

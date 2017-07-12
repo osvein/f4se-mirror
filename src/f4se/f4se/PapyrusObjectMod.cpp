@@ -6,10 +6,10 @@
 
 #include "f4se/PapyrusStruct.h"
 
-DECLARE_STRUCT(PropertyModifier, "ObjectMod")
-
 namespace papyrusObjectMod
 {
+	DECLARE_STRUCT(PropertyModifier, "ObjectMod")
+
 	VMArray<PropertyModifier> GetPropertyModifiers(BGSMod::Attachment::Mod * thisMod)
 	{
 		VMArray<PropertyModifier> result;

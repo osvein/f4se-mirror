@@ -1,27 +1,61 @@
 #pragma once
 
 #include "f4se/NiObjects.h"
+#include "f4se/BSLight.h"
 
 // 140
 class NiNode : public NiAVObject
 {
 public:
+	virtual void	Unk_39(void);
 	virtual void	AttachChild(NiAVObject * obj, bool firstAvail);
-	virtual void	DetachChild(UInt32 unk1, NiAVObject * obj);
-	virtual void	Unk_3B(void);
-	virtual void	RemoveChild(NiAVObject * obj, NiAVObject ** out);
-	virtual void	Remove(NiAVObject * obj);
-	virtual void	RemoveChildAt(UInt32 i, NiAVObject ** out);
-	virtual void	RemoveAt(UInt32 i);
-	virtual void	ReplaceChild(UInt32 index, NiAVObject * obj, NiAVObject ** replaced);
-	virtual void	ReplaceAt(UInt32 index, NiAVObject * obj);
+	virtual void	InsertChildAt(UInt32 index, NiAVObject * obj);
+	virtual void	DetachChild(NiAVObject * obj, NiPointer<NiAVObject> & out);
+	virtual void	RemoveChild(NiAVObject * obj);
+	virtual void	DetachChildAt(UInt32 i, NiPointer<NiAVObject> & out);
+	virtual void	RemoveChildAt(UInt32 i);
+	virtual void	SetAt(UInt32 index, NiAVObject * obj, NiPointer<NiAVObject> & replaced);
+	virtual void	SetAt(UInt32 index, NiAVObject * obj);
 	virtual void	Unk_42(void);
 
 	NiTArray <NiAVObject *>	m_children;	// 120
 	float					unk138;
 	float					unk13C;
+
+	static NiNode * Create(UInt16 children = 0);
+
+	MEMBER_FN_PREFIX(NiNode);
+	DEFINE_MEMBER_FN(ctor, NiNode*, 0x01B70040, UInt16 children);
 };
 STATIC_ASSERT(sizeof(NiNode) == 0x140);
+
+// 1C0
+class BSFadeNode : public NiNode
+{
+public:
+	virtual ~BSFadeNode();
+
+	struct FlattenedGeometryData
+	{
+		NiBound					kBound;		// 00
+		NiPointer<BSGeometry>	spGeometry;	// 10
+		UInt32					uiFlags;	// 18
+	};
+
+	BSShaderPropertyLightData		kLightData;					// 140
+	tArray<FlattenedGeometryData*>	kGeomArray;					// 168
+	tArray<NiBound>					MergedGeomBoundsA;			// 180
+	float							fNearDistSqr;				// 198
+	float							fFarDistSqr;				// 19C
+	float							fCurrentFade;				// 1A0
+	float							fCurrentDecalFade;			// 1A4
+	float							fBoundRadius;				// 1A8
+	float							fTimeSinceUpdate;			// 1AC
+	SInt32							iFrameCounter;				// 1B0
+	float							fPreviousMaxA;				// 1B4
+	float							fCurrentShaderLODLevel;		// 1B8
+	float							fPreviousShaderLODLevel;	// 1BC
+};
 
 // 190
 class BSFaceGenNiNode : public NiNode

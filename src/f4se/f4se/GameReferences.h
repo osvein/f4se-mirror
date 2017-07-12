@@ -125,7 +125,7 @@ public:
 	virtual void	Unk_88();
 	virtual void	Unk_89();
 	virtual void	Unk_8A();
-	virtual NiNode *	GetActorRootNode();	// 8B - Returns either first person or third person, possibly the active skeleton
+	virtual NiNode *	GetActorRootNode(bool firstPerson);	// 8B - Returns either first person or third person
 	virtual NiNode *	GetObjectRootNode(); // 8C - Returns the 3rd person skeleton
 	virtual void	Unk_8D();
 	virtual void	Unk_8E();
@@ -213,7 +213,24 @@ public:
 	float										unkDC;
 	TESForm										* baseForm;				// E0
 	void										* unkE8;				// E8
-	void										* unkF0;				// F0 - Root node at 0x08
+
+	struct LoadedData
+	{
+		UInt64	unk00;
+		NiNode	* rootNode;
+		UInt64	unk10;
+		UInt64	unk18;
+
+		enum
+		{
+			kFlag_PhysicsInitialized = 1
+		};
+
+		UInt64	flags;
+		// ...
+	};
+
+	LoadedData									* unkF0;				// F0 - Root node at 0x08
 	BGSInventoryList							* inventoryList;		// F8
 	ExtraDataList								* extraDataList;		// 100 - ExtraData?
 	UInt32										unk104;					// 104
@@ -224,6 +241,8 @@ public:
 	MEMBER_FN_PREFIX(TESObjectREFR);
 	DEFINE_MEMBER_FN(GetReferenceName, const char *, 0x004095A0);
 	DEFINE_MEMBER_FN(GetWorldspace, TESWorldSpace*, 0x0040D0D0);
+	DEFINE_MEMBER_FN(GetInventoryWeight, float, 0x003FE2B0);
+	DEFINE_MEMBER_FN(GetCarryWeight, float, 0x00D6D400);
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);
@@ -365,7 +384,8 @@ public:
 	UInt32	unk2D4;
 	UInt64	unk2D8[(0x300-0x2D8)/8];	// 2D8
 
-	struct Data300
+	// Lots of misc data goes here, equipping, perks, etc
+	struct MiddleProcess
 	{
 		void * unk00;	// 00
 
@@ -386,7 +406,13 @@ public:
 
 			EquipData * equipData;		// 288
 
-			UInt64	unk290[(0x490 - 0x290) >> 3];
+			UInt64	unk290[(0x3A0 - 0x290) >> 3];
+			UInt32	unk3A0;				// 3A0
+			UInt32	furnitureHandle1;	// 3A4
+			UInt32	furnitureHandle2;	// 3A8
+			UInt32	unk3AC;				// 3AC
+			UInt64	unk3B0[(0x490 - 0x3B0) >> 3];
+
 			enum
 			{
 				kDirtyHeadParts	= 0x04,
@@ -399,10 +425,10 @@ public:
 
 		Data08 * unk08;	// 08
 
-		MEMBER_FN_PREFIX(Data300);
+		MEMBER_FN_PREFIX(MiddleProcess);
 		DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00E46A50, Actor * actor, UInt32 flags); 
 	};
-	Data300 * unk300;					// 300
+	MiddleProcess * middleProcess;					// 300
 	UInt64	unk308[(0x338-0x308)/8];
 
 	struct ActorValueData
@@ -438,7 +464,7 @@ public:
 	DEFINE_MEMBER_FN(UpdateEquipment, void, 0x004060B0); 
 };
 STATIC_ASSERT(offsetof(Actor, equipData) == 0x428);
-STATIC_ASSERT(offsetof(Actor::Data300::Data08, equipData) == 0x288);
+STATIC_ASSERT(offsetof(Actor::MiddleProcess::Data08, equipData) == 0x288);
 
 // E10
 class PlayerCharacter : public Actor
@@ -460,7 +486,8 @@ public:
 
 	UInt64	unk458[(0xB70-0x4C0)/8];	// 4C0
 	ActorEquipData	* playerEquipData;	// B70 - First person?
-	UInt64	unkB68[(0xD00-0xB78)/8];	// B78
+	NiNode			* firstPersonSkeleton;	// B78
+	UInt64	unkB68[(0xD00-0xB80)/8];	// B78
 	tArray<BGSCharacterTint::Entry*> * tints;	// D00
 	UInt64	unkC90[(0xE10-0xCF8)/8];	// CF8
 };

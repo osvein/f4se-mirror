@@ -7,8 +7,8 @@
 #include "f4se/PluginAPI.h"
 #include "f4se/Serialization.h"
 
+#include <map>
 #include <set>
-
 
 // This is the callback function to ScriptObject.SendCustomEvent, the high-level parameters were more convenient
 // The only issue is you actually need a sending object and a CustomEvent on the sender's script, which can't be native
@@ -70,8 +70,6 @@ template <typename D>
 class EventRegistration
 {
 public:
-	
-
 	UInt64			handle;
 	BSFixedString	scriptName;
 	D				params;
@@ -127,6 +125,83 @@ public:
 	bool Save(const F4SESerializationInterface * intfc, UInt32 version) const { return true; }
 	bool Load(const F4SESerializationInterface * intfc, UInt32 version) { return true; }
 	void Dump(void) {}
+};
+
+class FormParameters
+{
+public:
+	std::set<UInt32> forms;
+
+	bool Save(const F4SESerializationInterface * intfc, UInt32 version) const
+	{
+		UInt32 size = forms.size();
+		if (! intfc->WriteRecordData(&size, sizeof(size)))
+			return false;
+
+		for(auto & form : forms)
+		{
+			UInt32 formId = form;
+			if (! intfc->WriteRecordData(&formId, sizeof(formId)))
+				return false;
+		}
+
+		return true;
+	}
+
+	bool Load(const F4SESerializationInterface * intfc, UInt32 version)
+	{
+		UInt32 size = 0;
+		if (!Serialization::ReadData(intfc, &size))
+		{
+			_MESSAGE("Error loading formId size parameter");
+			return false;
+		}
+
+		for(UInt32 i = 0; i < size; i++)
+		{
+			UInt32 oldformId = 0;
+			UInt32 newformId = 0;
+
+			if (!Serialization::ReadData(intfc, &oldformId))
+			{
+				_MESSAGE("Error loading formId parameter");
+				return false;
+			}
+
+			// Skip if handle is no longer valid.
+			if (!intfc->ResolveFormId(oldformId, &newformId))
+				continue;
+
+			forms.insert(newformId);
+		}
+
+		return true;
+	}
+
+	void AddFilter(TESForm * form)
+	{
+		forms.insert(form ? form->formID : 0);
+	}
+
+	void RemoveFilter(TESForm * form)
+	{
+		forms.erase(form ? form->formID : 0);
+	}
+
+	bool HasFilter(TESForm * form) const
+	{
+		return forms.find(form ? form->formID : 0) != forms.end();
+	}
+
+	bool NoFilter() const
+	{
+		return forms.size() == 0;
+	}
+
+	void Dump(void)
+	{
+		_MESSAGE("> formId:\t%08X", forms.size());
+	}
 };
 
 class ExternalEventParameters
@@ -488,6 +563,15 @@ extern RegistrationMapHolder<UInt32>									g_inputKeyEventRegs;
 extern RegistrationMapHolder<BSFixedString>								g_inputControlEventRegs;
 extern RegistrationMapHolder<BSFixedString, ExternalEventParameters>	g_externalEventRegs;
 extern RegistrationSetHolder<NullParameters>							g_cameraEventRegs;
+extern RegistrationSetHolder<FormParameters>							g_furnitureEventRegs;
+
+class F4SEFurnitureEventSink : public BSTEventSink<TESFurnitureEvent>
+{
+public:
+	virtual	EventResult	ReceiveEvent(TESFurnitureEvent * evn, void * dispatcher) override;
+};
+
+extern F4SEFurnitureEventSink g_furnitureEventSink;
 
 #define NUM_PARAMS 1
 #include "PapyrusEventsDef.inl"

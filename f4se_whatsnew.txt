@@ -1,3 +1,32 @@
+0.4.2
+- Added DefaultObject class and functions:
+    - Get/Set
+    - GetDefaultObject
+- Added ObjectReference functions:
+    - GetInventoryWeight
+- Fixed Input binding
+- Fixed Perk.IsEligible
+- Added Math functions:
+    - Exp
+- Added Location functions:
+    - SetParent
+- Added Actor functions:
+    - GetFurnitureReference
+- Added ScriptObject functions:
+    - Un/registerForFurnitureEvent
+    - OnFurnitureEvent(Actor akActor, ObjectReference akFurniture, bool isGettingUp)
+- Added ConstructibleObject functions:
+    - Get/SetConstructibleComponents
+    - Get/SetCreatedObject
+    - Get/SetCreatedCount
+    - Get/SetPriority
+    - Get/SetWorkbenchKeyword
+- Added Component functions:
+    - Get/SetScrapItem
+    - Get/SetScrapScalar
+- Added MiscObject functions:
+    - Get/SetMiscComponents
+
 0.4.1
 - Fixed bug when passing Script objects to Scaleform
 - Added ObjectReference Functions:

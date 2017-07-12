@@ -64,7 +64,10 @@ namespace papyrusObjectReference {
 		VirtualMachine* vm = (*g_gameVM)->m_virtualMachine;
 
 		if(!splineForm) {
-			splineForm = LookupFormByID(0x0001D971);
+			BGSDefaultObject * splineDefault = (*g_defaultObjectMap)->GetDefaultObject("WorkshopSplineObject");
+			if(splineDefault) {
+				splineForm = splineDefault->form;
+			}
 		}
 
 		// No specified spline, no refs, refs are same item, or no 3D loaded
@@ -121,7 +124,12 @@ namespace papyrusObjectReference {
 		BGSBendableSpline * splineA = DYNAMIC_CAST(refA->baseForm, TESForm, BGSBendableSpline);
 		BGSBendableSpline * splineB = DYNAMIC_CAST(refB->baseForm, TESForm, BGSBendableSpline);
 
-		BGSKeyword * keyword = DYNAMIC_CAST(LookupFormByID(0x00054BA6), TESForm, BGSKeyword);
+		BGSKeyword * keyword = nullptr;
+		BGSDefaultObject * workshopItemDefault = (*g_defaultObjectMap)->GetDefaultObject("WorkshopItem");
+		if(workshopItemDefault) {
+			keyword = DYNAMIC_CAST(workshopItemDefault->form, TESForm, BGSKeyword);
+		}
+
 		// No workshop keyword is bad
 		// Connecting a wire to another wire or connecting a non-wire is invalid
 		if(!keyword || !spline || splineA || splineB) {
@@ -237,15 +245,24 @@ namespace papyrusObjectReference {
 
 		auto inventory = refr->inventoryList;
 		if(inventory) {
+			inventory->inventoryLock.Lock();
+
 			for(int i = 0; i < inventory->items.count; i++) {
 				BGSInventoryItem item;
 				inventory->items.GetNthItem(i, item);
 				
 				results.Push(&item.form);
 			}
+
+			inventory->inventoryLock.Release();
 		}
 
 		return results;
+	}
+
+	float GetInventoryWeight(TESObjectREFR * refr)
+	{
+		return refr ? CALL_MEMBER_FN(refr, GetInventoryWeight)() : 0.0f;
 	}
 
 	DECLARE_DELAY_FUNCTOR(F4SEInventoryFunctor, 0, GetInventoryItemsLatent, TESObjectREFR, VMArray<TESForm*>);
@@ -360,8 +377,13 @@ namespace papyrusObjectReference {
 		if(!root) {
 			return false;
 		}
-			
-		BGSKeyword * keyword = DYNAMIC_CAST(LookupFormByID(0x00054BA6), TESForm, BGSKeyword);
+
+		BGSKeyword * keyword = nullptr;
+		BGSDefaultObject * workshopItemDefault = (*g_defaultObjectMap)->GetDefaultObject("WorkshopItem");
+		if(workshopItemDefault) {
+			keyword = DYNAMIC_CAST(workshopItemDefault->form, TESForm, BGSKeyword);
+		}
+		
 		// No workshop keyword is bad
 		if(!keyword) {
 			return false;
@@ -412,8 +434,15 @@ namespace papyrusObjectReference {
 				if(world) {
 					TESObjectREFR * connected = GetObjectAtConnectPoint(refr, &worldPos, world, 8.0f);
 					if(connected) {
-						LinkPower_Internal(extraDataWorkshop, refr, connected, nullptr);
-						LinkPower2_Internal(connected, extraDataWorkshop);
+						try // Probably wont make a difference but doesnt hurt to try
+						{
+							LinkPower_Internal(extraDataWorkshop, refr, connected, nullptr);
+							LinkPower2_Internal(connected, extraDataWorkshop);
+						}
+						catch (...)
+						{
+							_MESSAGE("Power link error!");
+						}
 					}
 				}
 			}
@@ -480,6 +509,9 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new LatentNativeFunction0<TESObjectREFR, VMArray<TESForm*>>("GetInventoryItems", "ObjectReference", papyrusObjectReference::GetInventoryItems, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction0<TESObjectREFR, float>("GetInventoryWeight", "ObjectReference", papyrusObjectReference::GetInventoryWeight, vm));
 
 	vm->RegisterFunction(
 		new LatentNativeFunction0<TESObjectREFR, VMArray<ConnectPoint>>("GetConnectPoints", "ObjectReference", papyrusObjectReference::GetConnectPoints, vm));
