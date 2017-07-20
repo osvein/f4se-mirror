@@ -184,9 +184,9 @@ template<typename EventT>
 BSTEventDispatcher<EventT> * GetEventDispatcher() { };
 
 #define DECLARE_EVENT_DISPATCHER(Event, address) \
-template<> inline BSTEventDispatcher<##Event##> * GetEventDispatcher() \
+template<> inline BSTEventDispatcher<Event> * GetEventDispatcher() \
 { \
-	typedef BSTEventDispatcher<##Event##> * (*_GetEventDispatcher)(); \
+	typedef BSTEventDispatcher<Event> * (*_GetEventDispatcher)(); \
 	RelocAddr<_GetEventDispatcher> GetDispatcher(address); \
 	return GetDispatcher(); \
 }
