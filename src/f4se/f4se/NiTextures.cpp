@@ -1,5 +1,5 @@
 #include "f4se/NiTextures.h"
 
-RelocAddr <_CreateTexture> CreateTexture(0x01B7C8D0);
+RelocAddr <_CreateTexture> CreateTexture(0x01BA3130);
 
-RelocAddr <_CreateBSShaderTextureSet> CreateBSShaderTextureSet(0x0276EB40);
+RelocAddr <_CreateBSShaderTextureSet> CreateBSShaderTextureSet(0x027D0D60);

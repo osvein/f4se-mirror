@@ -1,12 +1,12 @@
 #include "f4se/ScaleformValue.h"
 
-RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020CA930);
-RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020CA630);
-RelocAddr <_SetDefaultColors> SetDefaultColors(0x020CA880);
+RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020F11F0);
+RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020F0EF0);
+RelocAddr <_SetDefaultColors> SetDefaultColors(0x020F1140);
 
-RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x020E5880);
-RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x020E5B90);
-RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x020E5A10);
+RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x0210C140);
+RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x0210C450);
+RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x0210C2D0);
 
 
 GFxValue::~GFxValue()

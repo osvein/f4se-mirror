@@ -22,7 +22,7 @@
 
 #include <set>
 
-RelocAddr<_PlaceAtMe_Native> PlaceAtMe_Native(0x0013ED4D0);
+RelocAddr<_PlaceAtMe_Native> PlaceAtMe_Native(0x01409060);
 
 DECLARE_STRUCT(ConnectPoint, "ObjectReference");
 

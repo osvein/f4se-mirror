@@ -2,7 +2,7 @@
 #include "f4se_common/Relocation.h"
 
 typedef void * (* _Runtime_DynamicCast_Internal)(void * srcObj, UInt32 arg1, const void * fromType, const void * toType, UInt32 arg4);
-RelocAddr <_Runtime_DynamicCast_Internal> Runtime_DynamicCast_Internal(0x028E8342);	// __RTDynamicCast
+RelocAddr <_Runtime_DynamicCast_Internal> Runtime_DynamicCast_Internal(0x0294A67A);	// __RTDynamicCast
 
 void * Runtime_DynamicCast(void * srcObj, const void * fromType, const void * toType)
 {

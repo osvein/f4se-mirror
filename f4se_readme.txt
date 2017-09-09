@@ -1,4 +1,4 @@
-Fallout 4 Script Extender v0.4.2
+Fallout 4 Script Extender v0.5.0
 by Ian Patterson, Stephen Abel, and Brendan Borthwick (ianpatt, behippo, and plb)
 
 The Fallout 4 Script Extender, or F4SE for short, is a modder's resource that expands the scripting capabilities of Fallout 4. It does so without modifying the executable files on disk, so there are no permanent side effects.
@@ -13,7 +13,7 @@ This version is compatible with runtime 1.9.4. You can ignore any part of the ve
 
 [ Installation ]
 
-1. Copy f4se_1_9_4.dll, f4se_loader.exe, and f4se_steam_loader.dll to your Fallout installation folder. This is usually C:\Program Files (x86)\Steam\SteamApps\common\Fallout 4\, but if you have installed to a custom Steam library then you will need to find this folder yourself. The files in _for_test_only are, as it says, for test only.
+1. Copy f4se_1_10_20.dll, f4se_loader.exe, and f4se_steam_loader.dll to your Fallout installation folder. This is usually C:\Program Files (x86)\Steam\SteamApps\common\Fallout 4\, but if you have installed to a custom Steam library then you will need to find this folder yourself. The files in _for_test_only are, as it says, for test only.
 
 2. Launch the game by running the copy of f4se_loader.exe that you placed in the Fallout installation folder.
 

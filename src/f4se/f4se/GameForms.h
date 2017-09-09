@@ -5,6 +5,8 @@
 #include "f4se/GameCustomization.h"
 #include "f4se/GameUtilities.h"
 
+#include <functional>
+
 class TESForm;
 class TESNPC;
 class BGSColorForm;
@@ -717,26 +719,42 @@ class ActorValueInfo : public TESForm
 public:
 	enum { kTypeID = kFormType_AVIF };
 
-	TESFullName			fullName;		// 20
-	TESDescription		description;	// 30
+	TESFullName       fullName;             // 20
+	TESDescription    description;          // 30
 
-	void	* func_impl;	// 48
-	void	* func;			// 50
-	void	* unk58;		// 58
-	void	* func_ptr;		// 60 - address of offset 48
-	const char * avName;	// 68
+	std::function<void(Actor *, ActorValueInfo *, float, float, Actor *)> calcFunction;	// 48
 
-	UInt64	unk70[(0x160-0x70)/8];		// 70
-	UInt32	unk160;						// 160
-	UInt32	unk164;						// 164
-	UInt32	unk168;						// 168
-	UInt32	flags;						// 16C
-	UInt32	unk170;						// 170
-	UInt32	unk174;						// 174
-	float	unk178;						// 178 -- maximum?
-	UInt32	unk17C;						// 17C
-	UInt64	unk180[(0x190-0x180)/8];	// 180
+	const char      * avName;               // 68
+	UInt64            unk70;                // 70
+	ActorValueInfo  * dependentAVs[0xF];    // 78
+
+	std::function<float(ActorValueOwner*, ActorValueInfo*)> derivedFunction;	// F0
+
+	UInt32    unk110[(0x16C - 0x110) / 4];  // 110
+
+	UInt32    avFlags;                      // 16C
+	enum AVFlags
+	{
+		kFlag_DefaultBase_0             = (1 << 10),    // 10 | Default Base: 0
+		kFlag_DefaultBase_1             = (1 << 11),    // 11 | Default Base: 1
+		kFlag_DefaultBase_100           = (1 << 12),    // 12 | Default Base: 100
+		kFlag_DefaultBase_UserDefined   = (1 << 13),    // 13 | Default Base: User Defined
+		kFlag_DefaultBase_Derived       = (1 << 15),    // 15 | Default Base: Derived (bits 10-13 must not be set)
+		kFlag_DamageIsPositive          = (1 << 26),    // 26 | Damage is Positive
+		kFlag_GodModeImmune             = (1 << 27),    // 27 | God Mode Immune
+		kFlag_Hardcoded                 = (1 << 31)     // 31 | Hardcoded
+	};
+
+	UInt32    unk170;                       // 170
+	UInt32    numDependentAVs;              // 174
+	UInt32    unk178;                       // 178
+	UInt32    unk17C;                       // 17C
+	UInt32    unk180;                       // 180
+	float     defaultBase;                  // 184
+	UInt32    unk188;                       // 188
+	UInt32    unk18C;                       // 18C
 };
+STATIC_ASSERT(offsetof(ActorValueInfo, avName) == 0x68);
 
 // 80
 class BGSMaterialType : public TESForm
@@ -1478,7 +1496,7 @@ public:
 	UInt32					unkEC;				// EC
 
 	MEMBER_FN_PREFIX(TESObjectCELL);
-	DEFINE_MEMBER_FN(GetHavokWorld, bhkWorld*, 0x003B27E0);
+	DEFINE_MEMBER_FN(GetHavokWorld, bhkWorld*, 0x003B4810);
 };
 STATIC_ASSERT(offsetof(TESObjectCELL, objectList) == 0x70);
 STATIC_ASSERT(offsetof(TESObjectCELL, worldSpace) == 0xC8);
@@ -1681,9 +1699,7 @@ public:
 	enum { kTypeID = kFormType_COBJ };
 
 	BGSPickupPutdownSounds	pickupPutdownSounds;	// 20
-	TESDescription			description;			// 30
-
-	UInt64					unk48;	// 48
+	TESDescription			description;			// 38
 
 	struct Component
 	{
@@ -1698,8 +1714,12 @@ public:
 	UInt16				createdCount;		// 70
 	UInt16				priority;			// 72
 	UInt32				unk74;				// 74
+	void				* unk78;			// 78
 	UInt64				unk80;				// 80
 };
+STATIC_ASSERT(offsetof(BGSConstructibleObject, createdObject) == 0x60);
+STATIC_ASSERT(offsetof(BGSConstructibleObject, workbenchKeyword) == 0x68);
+STATIC_ASSERT(sizeof(BGSConstructibleObject) == 0x88);
 
 // 38
 class TESGlobal : public TESForm

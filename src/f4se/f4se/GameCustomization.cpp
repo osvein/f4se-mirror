@@ -3,37 +3,38 @@
 #include "f4se/GameObjects.h"
 
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+B5
-RelocPtr <CharacterCreation*> g_characterCreation(0x059F2DE0);	// array
+RelocPtr <CharacterCreation*> g_characterCreation(0x05A857B0);	// array
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+AF
-RelocPtr <UInt32> g_characterIndex(0x059F2DB8);
+RelocPtr <UInt32> g_characterIndex(0x05A857D0);
 
 // 89B16A159EF66C1743643F2F457380448C4803F0+18
-RelocPtr <BSFaceGenManager*> g_faceGenManager(0x0585BB00);
+RelocPtr <BSFaceGenManager*> g_faceGenManager(0x058EEC80);
 
 // E5618E306F15B8DF84D22F68B984045D0DD91165+29
-RelocPtr <TESNPC*> g_customizationDummy1(0x05966778);	// Either Nora or Nate's dummy actors
+RelocPtr <TESNPC*> g_customizationDummy1(0x059F9168);	// Either Nora or Nate's dummy actors
 // E5618E306F15B8DF84D22F68B984045D0DD91165+32
-RelocPtr <TESNPC*> g_customizationDummy2(0x05966740);	// Either Nora or Nate's dummy actors
+RelocPtr <TESNPC*> g_customizationDummy2(0x059F9130);	// Either Nora or Nate's dummy actors
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A38A0);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A2890);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002A8B10);
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A5640);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A4630);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x02AA8B0);
 
 // For manipulating the tint lists, their signatures aren't quite right yet
-RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A2A30);
-RelocAddr <_MergeTintTextures> MergeTintTextures(0x00687920);
-RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00687710);
+RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A47D0);
+RelocAddr <_MergeTintTextures> MergeTintTextures(0x00689A30);
+RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00689820);
 
-RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensityMap(0x036A6328);
+// 8290027174FC425F1C5C8233B65132B99D1A37E1+F6
+RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensityMap(0x03733370-0x08);
 
 // These are for creating new instances
 
 // ??_7Mask@Template@BGSCharacterTint@@6B@
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02C156A8);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02C80D28);
 // ??_7Palette@Template@BGSCharacterTint@@6B@
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02C156D8);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02C80D58);
 // ??_7TextureSet@Template@BGSCharacterTint@@6B@
-RelocAddr<uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02C15708);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02C80D88);
 
 bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 {
@@ -99,6 +100,24 @@ BGSCharacterTint::Template::Palette::ColorData * BGSCharacterTint::Template::Pal
 	return nullptr;
 }
 
+BGSCharacterTint::Template::Entry * CharacterCreation::CharGenData::GetTemplateBySlot(UInt32 slotType)
+{
+	if(!tintData)
+		return nullptr;
+
+	for(UInt32 i = 0; i < tintData->count; i++)
+	{
+		CharacterCreation::TintData * data;
+		tintData->GetNthItem(i, data);
+
+		BGSCharacterTint::Template::Entry* entry = data->GetTemplateBySlot(slotType);
+		if(entry)
+			return entry;
+	}
+
+	return nullptr;
+}
+
 BGSCharacterTint::Template::Entry * CharacterCreation::CharGenData::GetTemplateByIndex(UInt16 index)
 {
 	if(!tintData)
@@ -109,14 +128,37 @@ BGSCharacterTint::Template::Entry * CharacterCreation::CharGenData::GetTemplateB
 		CharacterCreation::TintData * data;
 		tintData->GetNthItem(i, data);
 
-		for(UInt32 k = 0; k < data->entry.count; k++)
-		{
-			BGSCharacterTint::Template::Entry* entry;
-			data->entry.GetNthItem(k, entry);
+		BGSCharacterTint::Template::Entry* entry = data->GetTemplateByIndex(index);
+		if(entry)
+			return entry;
+	}
 
-			if(entry->templateIndex == index)
-				return entry;
-		}
+	return nullptr;
+}
+
+BGSCharacterTint::Template::Entry * CharacterCreation::TintData::GetTemplateByIndex(UInt16 index)
+{
+	for(UInt32 k = 0; k < entry.count; k++)
+	{
+		BGSCharacterTint::Template::Entry* templateEntry;
+		entry.GetNthItem(k, templateEntry);
+
+		if(templateEntry->templateIndex == index)
+			return templateEntry;
+	}
+
+	return nullptr;
+}
+
+BGSCharacterTint::Template::Entry * CharacterCreation::TintData::GetTemplateBySlot(UInt32 slotType)
+{
+	for(UInt32 k = 0; k < entry.count; k++)
+	{
+		BGSCharacterTint::Template::Entry* templateEntry;
+		entry.GetNthItem(k, templateEntry);
+
+		if(templateEntry->slot == slotType)
+			return templateEntry;
 	}
 
 	return nullptr;

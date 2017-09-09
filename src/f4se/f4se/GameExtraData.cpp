@@ -1,6 +1,7 @@
 #include "f4se/GameExtraData.h"
 
-RelocAddr<uintptr_t> s_ExtraPowerLinksVtbl(0x02BFCDE0);
+// ??_7ExtraPowerLinks@@6B@
+RelocAddr <uintptr_t> s_ExtraPowerLinksVtbl(0x02C683A8);
 
 bool ExtraDataList::PresenceBitfield::HasType(UInt32 type) const
 {

@@ -283,6 +283,16 @@ namespace Serialization
 			*formIdOut = formId;
 			return true;
 		}
+		else if(modID == 0xFE)
+		{
+			UInt16	modLightID = (formId & 0x00FFF000) >> 12;
+			UInt32 lightIndex = (UInt32)ResolveLightModIndex(modLightID);
+			if(lightIndex == 0xFFFF)
+				return false;
+
+			*formIdOut = (formId & 0xFF000FFF) | (lightIndex << 12);
+			return true;
+		}
 
 		UInt8	loadedModID = ResolveModIndex(modID);
 
@@ -291,7 +301,6 @@ namespace Serialization
 
 		// fixup ID, success
 		*formIdOut = (formId & 0x00FFFFFF) | (((UInt32)loadedModID) << 24);
-
 		return true;
 	}
 
@@ -304,6 +313,16 @@ namespace Serialization
 			*handleOut = handle;
 			return true;
 		}
+		else if(modID == 0xFE)
+		{
+			UInt16	modLightID = (handle & 0x00FFF000) >> 12;
+			UInt32 lightIndex = (UInt32)ResolveLightModIndex(modLightID);
+			if(lightIndex == 0xFFFF)
+				return false;
+
+			*handleOut = (handle & 0xFFFFFFFFFF000FFF) | (lightIndex << 12);
+			return true;
+		}
 
 		UInt8	loadedModID = ResolveModIndex(modID);
 
@@ -312,7 +331,6 @@ namespace Serialization
 
 		// fixup ID, success
 		*handleOut = (handle & 0xFFFFFFFF00FFFFFF) | (((UInt64)loadedModID) << 24);
-
 		return true;
 	}
 

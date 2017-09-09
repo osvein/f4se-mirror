@@ -219,7 +219,7 @@ public:
 	UInt64			unk30[7];		// 30
 
 	MEMBER_FN_PREFIX(TESActorBaseData);
-	DEFINE_MEMBER_FN(SetSex, void, 0x001480A0, UInt32 unk1, bool isFemale, UInt32 unk2); // unk1 = 1, unk2 = 1
+	DEFINE_MEMBER_FN(SetSex, void, 0x00149730, UInt32 unk1, bool isFemale, UInt32 unk2); // unk1 = 1, unk2 = 1
 };
 STATIC_ASSERT(sizeof(TESActorBaseData) == 0x68);
 
@@ -893,11 +893,11 @@ public:
 		UInt64	unk10[(0x78 - 0x08) >> 3];
 
 		MEMBER_FN_PREFIX(Evaluator);
-		DEFINE_MEMBER_FN(ctor, void, 0x007284E0, TESForm * a1, TESForm * a2, UInt64 unk1); // a1 might be player or subject, not sure yet
+		DEFINE_MEMBER_FN(ctor, void, 0x0072A5F0, TESForm * a1, TESForm * a2, UInt64 unk1); // a1 might be player or subject, not sure yet
 	};
 
 	MEMBER_FN_PREFIX(Condition);
-	DEFINE_MEMBER_FN(Evaluate, bool, 0x0072A2A0, Evaluator * eval); // Evaluates only a single condition
+	DEFINE_MEMBER_FN(Evaluate, bool, 0x0072C3B0, Evaluator * eval); // Evaluates only a single condition
 };
 STATIC_ASSERT(offsetof(Condition, referenceType) == 0x31);
 STATIC_ASSERT(sizeof(Condition) == 0x38);

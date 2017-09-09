@@ -36,19 +36,19 @@
 
 #include "xbyak/xbyak.h"
 
-RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013C8FB0 + 0x461);
-RelocAddr <uintptr_t> DelayFunctorQueue_Start(0x0135A0B0 + 0x6A);
+RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013E4B40 + 0x461);
+RelocAddr <uintptr_t> DelayFunctorQueue_Start(0x01375C50 + 0x6A);
 
 typedef bool (* _SaveRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, void * saveStorageWrapper);
-RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x01456EC0);
+RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x01472A50);
 _SaveRegistrationHandles SaveRegistrationHandles_Original = nullptr;
 
 typedef bool (* _LoadRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, UInt16 version, void * loadStorageWrapper, void * unk2);
-RelocAddr <_LoadRegistrationHandles> LoadRegistrationHandles(0x01456F50);
+RelocAddr <_LoadRegistrationHandles> LoadRegistrationHandles(0x01472AE0);
 _LoadRegistrationHandles LoadRegistrationHandles_Original = nullptr;
 
 typedef void (* _RevertGlobalData)(void * vm);
-RelocAddr <_RevertGlobalData> RevertGlobalData(0x013586D0);
+RelocAddr <_RevertGlobalData> RevertGlobalData(0x01374270);
 _RevertGlobalData RevertGlobalData_Original = nullptr;
 
 typedef std::list <F4SEPapyrusInterface::RegisterFunctions> PapyrusPluginList;

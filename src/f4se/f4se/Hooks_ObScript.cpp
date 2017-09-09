@@ -340,6 +340,8 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		DumpClass(headPart, sizeof(BGSHeadPart)/8);
 	}*/
 
+	DumpClass((*g_dataHandler), 0x2000/8);
+
 	/*for(UInt32 i = 0; i < (*g_dataHandler)->arrCOBJ.count; i++)
 	{
 		BGSConstructibleObject * cobj = (*g_dataHandler)->arrCOBJ[i];
