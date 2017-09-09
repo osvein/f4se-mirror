@@ -184,30 +184,26 @@ template<typename EventT>
 BSTEventDispatcher<EventT> * GetEventDispatcher() { };
 
 #define DECLARE_EVENT_DISPATCHER(Event, address) \
-template<> inline BSTEventDispatcher<##Event##> * GetEventDispatcher() \
+template<> inline BSTEventDispatcher<Event> * GetEventDispatcher() \
 { \
-	typedef BSTEventDispatcher<##Event##> * (*_GetEventDispatcher)(); \
+	typedef BSTEventDispatcher<Event> * (*_GetEventDispatcher)(); \
 	RelocAddr<_GetEventDispatcher> GetDispatcher(address); \
 	return GetDispatcher(); \
 }
 
 // A548D71D41C7C2E9D21B25E06730FB911FC31F47+B4 (struct+A0)
-DECLARE_EVENT_DISPATCHER(TESCombatEvent, 0x0043FF30) // 0x0043FF30 GetInstance
+DECLARE_EVENT_DISPATCHER(TESCombatEvent, 0x00441F60)
 
 // A548D71D41C7C2E9D21B25E06730FB911FC31F47+118 (struct+C8)
-DECLARE_EVENT_DISPATCHER(TESDeathEvent, 0x00440390)
+DECLARE_EVENT_DISPATCHER(TESDeathEvent, 0x004423C0)
 
-DECLARE_EVENT_DISPATCHER(TESObjectLoadedEvent, 0x00441010)
+// A548D71D41C7C2E9D21B25E06730FB911FC31F47 (struct+140)
+DECLARE_EVENT_DISPATCHER(TESObjectLoadedEvent, 0x00443040)
 
-DECLARE_EVENT_DISPATCHER(TESLoadGameEvent, 0x00440CF0)
+// A548D71D41C7C2E9D21B25E06730FB911FC31F47 (struct+128)
+DECLARE_EVENT_DISPATCHER(TESLoadGameEvent, 0x00442D20)
 
-DECLARE_EVENT_DISPATCHER(TESInitScriptEvent, 0x00440BB0)
+DECLARE_EVENT_DISPATCHER(TESInitScriptEvent, 0x00442BE0)
 
-DECLARE_EVENT_DISPATCHER(TESFurnitureEvent, 0x00440A70)
-
-// TESFormIDRemapEvent
-// 04409D0
-
-// TESFormDeleteEvent
-// 0440930
-
+// A548D71D41C7C2E9D21B25E06730FB911FC31F47 (struct+108)
+DECLARE_EVENT_DISPATCHER(TESFurnitureEvent, 0x00442AA0)

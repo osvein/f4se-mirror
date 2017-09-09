@@ -1,13 +1,16 @@
 #include "f4se/GameData.h"
 
 // 856197F11173AF60E35EBF54A88E7BF43AFC3588+305
-RelocPtr <DataHandler*> g_dataHandler(0x0585A300);
+RelocPtr <DataHandler*> g_dataHandler(0x058ED480);
 
-// C5B21010DCF340FCDDDC7866C50C3D78AEF34CB5+6B
-RelocPtr <bool> g_isGameDataReady(0x059E43B4);
+// 5ED90DCE1A1D1EDBCC888F3EA1234E23E307DD26+6 (4 matches)
+RelocPtr <bool> g_isGameDataReady(0x05A76DA4);
 
-RelocPtr <DefaultObjectMap*> g_defaultObjectMap(0x0585F120);
-RelocPtr <SimpleLock> g_defaultObjectMapLock(0x0585FB88);
+// 637A4CF3B8D5BEB4F483234F10F54E7595CA465F+A49
+RelocPtr <DefaultObjectMap*> g_defaultObjectMap(0x058F1AD0);
+
+// 637A4CF3B8D5BEB4F483234F10F54E7595CA465F+A3D
+RelocPtr <SimpleLock> g_defaultObjectMapLock(0x058F2538);
 
 class LoadedModFinder
 {
@@ -34,8 +37,19 @@ UInt8 DataHandler::GetModIndex(const char* modName)
 
 const ModInfo* DataHandler::LookupLoadedModByName(const char* modName)
 {
-	for(UInt32 i = 0; i < modList.loadedModCount; i++) {
+	for(UInt32 i = 0; i < modList.loadedMods.count; i++) {
 		ModInfo * modInfo = modList.loadedMods[i];
+		if(_stricmp(modInfo->name, modName) == 0)
+			return modInfo;
+	}
+
+	return nullptr;
+}
+
+const ModInfo* DataHandler::LookupLoadedLightModByName(const char* modName)
+{
+	for(UInt32 i = 0; i < modList.lightMods.count; i++) {
+		ModInfo * modInfo = modList.lightMods[i];
 		if(_stricmp(modInfo->name, modName) == 0)
 			return modInfo;
 	}
@@ -48,6 +62,17 @@ UInt8 DataHandler::GetLoadedModIndex(const char* modName)
 	const ModInfo * modInfo = LookupLoadedModByName(modName);
 	if(modInfo) {
 		return modInfo->modIndex;
+	}
+
+	return -1;
+}
+
+UInt16 DataHandler::GetLoadedLightModIndex(const char* modName)
+{
+	for(UInt32 i = 0; i < modList.lightMods.count; i++) {
+		ModInfo * modInfo = modList.lightMods[i];
+		if(_stricmp(modInfo->name, modName) == 0)
+			return i;
 	}
 
 	return -1;

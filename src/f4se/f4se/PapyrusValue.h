@@ -99,7 +99,7 @@ public:
 	void	Destroy(void);
 
 	MEMBER_FN_PREFIX(VMIdentifier);
-	DEFINE_MEMBER_FN(Destroy_Internal, void, 0x0269D910);
+	DEFINE_MEMBER_FN(Destroy_Internal, void, 0x026FFB30);
 };
 
 // 10
@@ -162,7 +162,7 @@ public:
 		tArray<VMValue>		arr;	// 18
 
 		MEMBER_FN_PREFIX(ArrayData);
-		DEFINE_MEMBER_FN(Destroy, void, 0x026C99C0);
+		DEFINE_MEMBER_FN(Destroy, void, 0x0272BBE0);
 	};
 
 	struct StructData
@@ -329,8 +329,8 @@ public:
 	}
 
 	MEMBER_FN_PREFIX(VMValue);
-	DEFINE_MEMBER_FN(Set, void, 0x026A2920, const VMValue * src);
-	DEFINE_MEMBER_FN(Destroy, void, 0x026A22D0);
+	DEFINE_MEMBER_FN(Set, void, 0x02704B40, const VMValue * src);
+	DEFINE_MEMBER_FN(Destroy, void, 0x027044F0);
 	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
 };
 

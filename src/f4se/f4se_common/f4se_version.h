@@ -3,9 +3,9 @@
 
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
-#define F4SE_VERSION_INTEGER_MINOR	4
-#define F4SE_VERSION_INTEGER_BETA	2
-#define F4SE_VERSION_VERSTRING		"0, 0, 4, 2"
+#define F4SE_VERSION_INTEGER_MINOR	5
+#define F4SE_VERSION_INTEGER_BETA	0
+#define F4SE_VERSION_VERSTRING		"0, 0, 5, 0"
 #define F4SE_VERSION_PADDEDSTRING	"0006"
 #define F4SE_VERSION_RELEASEIDX		6
 
@@ -50,12 +50,13 @@
 #define RUNTIME_VERSION_1_7_22	MAKE_EXE_VERSION(1, 7, 22)	// 0x01070160	release - bugfix for 1.7.19
 #define RUNTIME_VERSION_1_8_7	MAKE_EXE_VERSION(1, 8, 7)	// 0x01080070	release - poking at the built-in mod manager
 #define RUNTIME_VERSION_1_9_4	MAKE_EXE_VERSION(1, 9, 4)	// 0x01090040	release - high-resolution texture pack
+#define RUNTIME_VERSION_1_10_20	MAKE_EXE_VERSION(1, 10, 20)	// 0x010A0140	beta/release - creation club
 
 #define PACKED_F4SE_VERSION		MAKE_EXE_VERSION(F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA)
 
 // information about the state of the game at the time of release
 #define F4SE_TARGETING_BETA_VERSION	0
-#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_9_4
-#define CURRENT_RELEASE_F4SE_STR	"0.4.2"
+#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_10_20
+#define CURRENT_RELEASE_F4SE_STR	"0.5.0"
 
 #endif /* __F4SE_VERSION_H__ */

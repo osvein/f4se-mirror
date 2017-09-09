@@ -35,7 +35,7 @@ public:
 	UInt32	unk34;		// 34
 
 	MEMBER_FN_PREFIX(TESCamera);
-	DEFINE_MEMBER_FN(SetCameraState, void, 0x0082C690, TESCameraState * cameraState);
+	DEFINE_MEMBER_FN(SetCameraState, void, 0x0082E7B0, TESCameraState * cameraState);
 };
 
 class PlayerCamera : public TESCamera

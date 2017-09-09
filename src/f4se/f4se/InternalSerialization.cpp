@@ -17,6 +17,9 @@
 static UInt8	s_savefileIndexMap[0xFF];
 static UInt8	s_numSavefileMods = 0;
 
+static UInt8	s_savefileLightIndexMap[0xFFF];
+static UInt8	s_numSavefileLightMods = 0;
+
 void LoadModList(const F4SESerializationInterface * intfc)
 {
 	_MESSAGE("Loading mod list:");
@@ -39,7 +42,7 @@ void LoadModList(const F4SESerializationInterface * intfc)
 
 void SaveModList(const F4SESerializationInterface * intfc)
 {
-	UInt8 modCount = (*g_dataHandler)->modList.loadedModCount;
+	UInt8 modCount = (*g_dataHandler)->modList.loadedMods.count;
 
 	intfc->OpenRecord('MODS', 0);
 	intfc->WriteRecordData(&modCount, sizeof(modCount));
@@ -56,9 +59,53 @@ void SaveModList(const F4SESerializationInterface * intfc)
 	}
 }
 
+void LoadLightModList(const F4SESerializationInterface * intfc)
+{
+	_MESSAGE("Loading light mod list:");
+
+	char name[0x104] = { 0 };
+	UInt16 nameLen = 0;
+
+	intfc->ReadRecordData(&s_numSavefileLightMods, sizeof(s_numSavefileLightMods));
+	for (UInt32 i = 0; i < s_numSavefileLightMods; i++)
+	{
+		intfc->ReadRecordData(&nameLen, sizeof(nameLen));
+		intfc->ReadRecordData(&name, nameLen);
+		name[nameLen] = 0;
+
+		UInt16 newIndex = (*g_dataHandler)->GetLoadedLightModIndex(name);
+		s_savefileLightIndexMap[i] = newIndex;
+		_MESSAGE("\t(%d -> %d)\t%s", i, newIndex, &name);
+	}
+}
+
+void SaveLightModList(const F4SESerializationInterface * intfc)
+{
+	UInt8 modCount = (*g_dataHandler)->modList.lightMods.count;
+
+	intfc->OpenRecord('LMOD', 0);
+	intfc->WriteRecordData(&modCount, sizeof(modCount));
+
+	_MESSAGE("Saving light mod list:");
+
+	for (UInt32 i = 0; i < modCount; i++)
+	{
+		ModInfo * modInfo = (*g_dataHandler)->modList.lightMods[i];
+		UInt16 nameLen = strlen(modInfo->name);
+		intfc->WriteRecordData(&nameLen, sizeof(nameLen));
+		intfc->WriteRecordData(modInfo->name, nameLen);
+		_MESSAGE("\t(%d)\t%s", i, &modInfo->name);
+	}
+}
+
 UInt8 ResolveModIndex(UInt8 modIndex)
 {
 	return (modIndex < s_numSavefileMods) ? s_savefileIndexMap[modIndex] : 0xFF;
+}
+
+UInt16 ResolveLightModIndex(UInt16 modIndex)
+{
+	return (modIndex < s_numSavefileLightMods) ? s_savefileLightIndexMap[modIndex] : 0xFFFF;
 }
 
 //// Callbacks
@@ -80,6 +127,7 @@ void Core_SaveCallback(const F4SESerializationInterface * intfc)
 	using namespace Serialization;
 
 	SaveModList(intfc);
+	SaveLightModList(intfc);
 
 	_MESSAGE("Saving key input event registrations...");
 	g_inputKeyEventRegs.Save(intfc, 'KEYR', InternalEventVersion::kCurrentVersion);
@@ -114,6 +162,11 @@ void Core_LoadCallback(const F4SESerializationInterface * intfc)
 		// Mod list
 		case 'MODS':
 			LoadModList(intfc);
+			break;
+
+		// Light Mod list
+		case 'LMOD':
+			LoadLightModList(intfc);
 			break;
 
 			// Key input events

@@ -42,8 +42,8 @@ public:
 
 		MEMBER_FN_PREFIX(TESProcessor);
 		// ??_7BSModelProcessor@BSModelDB@@6B@
-		DEFINE_MEMBER_FN(dtor, void, 0x01C65310);
-		DEFINE_MEMBER_FN(Impl_Process, void, 0x001367D0, ModelData * modelData, const char * modelName, NiAVObject ** root, UInt32 * typeOut);
+		DEFINE_MEMBER_FN(dtor, void, 0x01C8BB70);
+		DEFINE_MEMBER_FN(Impl_Process, void, 0x00137E60, ModelData * modelData, const char * modelName, NiAVObject ** root, UInt32 * typeOut);
 	};
 };
 

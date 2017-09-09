@@ -20,7 +20,7 @@ typedef UINT (WINAPI * _GetRawInputData)(HRAWINPUT rawinput, UINT cmd, void * da
 _GetRawInputData Original_GetRawInputData = nullptr;
 
 typedef void (* _CreateMenuControlHandlers)(MenuControls * mem);
-RelocAddr <_CreateMenuControlHandlers> CreateMenuControlHandlers(0x0128A410);
+RelocAddr <_CreateMenuControlHandlers> CreateMenuControlHandlers(0x012A6070);
 _CreateMenuControlHandlers CreateMenuControlHandlers_Original = nullptr;
 
 BOOL WINAPI Hook_RegisterRawInputDevices(RAWINPUTDEVICE * devices, UINT numDevices, UINT structSize)

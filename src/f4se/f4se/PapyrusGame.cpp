@@ -28,7 +28,7 @@ namespace papyrusGame
 	VMArray<PluginInfo> GetInstalledPlugins(StaticFunctionTag * base)
 	{
 		VMArray<PluginInfo> result;
-		UInt8 modCount = (*g_dataHandler)->modList.loadedModCount;
+		UInt8 modCount = (*g_dataHandler)->modList.loadedMods.count;
 		for (UInt32 i = 0; i < modCount; i++)
 		{
 			ModInfo * modInfo = (*g_dataHandler)->modList.loadedMods[i];
@@ -44,12 +44,34 @@ namespace papyrusGame
 		return result;
 	}
 
+	VMArray<PluginInfo> GetInstalledLightPlugins(StaticFunctionTag * base)
+	{
+		VMArray<PluginInfo> result;
+		UInt8 modCount = (*g_dataHandler)->modList.lightMods.count;
+		for (UInt32 i = 0; i < modCount; i++)
+		{
+			ModInfo * modInfo = (*g_dataHandler)->modList.lightMods[i];
+
+			PluginInfo info;
+			info.Set<UInt32>("index", modInfo->modIndex);
+			info.Set<BSFixedString>("name", modInfo->name);
+			info.Set<BSFixedString>("author", modInfo->author.Get());
+			info.Set<BSFixedString>("description", modInfo->description.Get());
+			result.Push(&info);
+		}
+
+		return result;
+	}
+
 	VMArray<BSFixedString> GetPluginDependencies(StaticFunctionTag * base, BSFixedString plugin)
 	{
 		VMArray<BSFixedString> result;
 		const ModInfo* pluginInfo = (*g_dataHandler)->LookupLoadedModByName(plugin);
-		if(pluginInfo) {
+		if(!pluginInfo)
+			pluginInfo = (*g_dataHandler)->LookupLoadedLightModByName(plugin);
 
+		if(pluginInfo)
+		{
 			for(UInt32 i = 0; i < pluginInfo->numRefMods; i++)
 			{
 				ModInfo * modInfo = pluginInfo->refModInfo[i];
@@ -143,6 +165,9 @@ void papyrusGame::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction0 <StaticFunctionTag, VMArray<PluginInfo>>("GetInstalledPlugins", "Game", papyrusGame::GetInstalledPlugins, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction0 <StaticFunctionTag, VMArray<PluginInfo>>("GetInstalledLightPlugins", "Game", papyrusGame::GetInstalledLightPlugins, vm));
 
 	vm->RegisterFunction(
 		new NativeFunction1 <StaticFunctionTag, VMArray<BSFixedString>, BSFixedString>("GetPluginDependencies", "Game", papyrusGame::GetPluginDependencies, vm));

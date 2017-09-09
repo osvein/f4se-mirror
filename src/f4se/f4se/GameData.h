@@ -61,9 +61,9 @@ STATIC_ASSERT(offsetof(ModInfo, author) == 0x378);
 struct ModList
 {
 	tList<ModInfo>		modInfoList;		// 00
-	UInt32				loadedModCount;		// 10
-	UInt32				pad14;				// 14
-	ModInfo*			loadedMods[0xFF];	// 18
+	tArray<ModInfo*>	loadedMods;			// 10
+	tArray<ModInfo*>	lightMods;			// 28
+	tArray<UInt32>		formMapping;		// 40
 };
 
 // 17E8?
@@ -256,9 +256,10 @@ public:
 
 	const ModInfo* LookupLoadedModByName(const char* modName);
 	UInt8 GetLoadedModIndex(const char* modName);
-};
 
-STATIC_ASSERT(offsetof(DataHandler, unk17C0) == 0x17C0);
+	const ModInfo* LookupLoadedLightModByName(const char* modName);
+	UInt16 GetLoadedLightModIndex(const char* modName);
+};
 
 extern RelocPtr <DataHandler*> g_dataHandler;
 extern RelocPtr <bool> g_isGameDataReady;
@@ -284,7 +285,7 @@ public:
 	TESWorldSpace	* worldspace;	// 28
 
 	MEMBER_FN_PREFIX(LocationData);
-	DEFINE_MEMBER_FN(ctor, LocationData*, 0x001F69F0, Actor * refr);
+	DEFINE_MEMBER_FN(ctor, LocationData*, 0x001F8790, Actor * refr);
 };
 
 struct DefaultObjectEntry

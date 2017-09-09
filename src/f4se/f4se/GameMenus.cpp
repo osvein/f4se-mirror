@@ -1,9 +1,9 @@
 #include "f4se/GameMenus.h"
 
 // 2CA5233612B3158658DB6DB9C90FD0258F1836E2+AD
-RelocPtr <UI*> g_ui(0x0585BB18);
+RelocPtr <UI*> g_ui(0x058EEC98);
 
-RelocAddr <_HasHUDContext> HasHUDContext(0x00A4D0C0);
+RelocAddr <_HasHUDContext> HasHUDContext(0x00A4F1E0);
 
 bool UI::IsMenuOpen(BSFixedString * menuName)
 {
