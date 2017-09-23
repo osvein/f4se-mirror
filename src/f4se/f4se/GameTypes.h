@@ -9,7 +9,7 @@ class TESForm;
 struct BSIntrusiveRefCounted
 {
 public:
-	volatile UInt32	m_refCount;	// 00
+	volatile SInt32	m_refCount;	// 00
 };
 
 // 04
@@ -97,13 +97,13 @@ public:
 		Entry	* data;
 
 		MEMBER_FN_PREFIX(Ref);
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B3FCC0, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
-		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B40AE0, const wchar_t * buf); // 34CA732E6B3C7BCD20DEFC8B3711427E5285FF82+AA
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B3FD80, const char * buf);	// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
+		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B40BA0, const wchar_t * buf); // 34CA732E6B3C7BCD20DEFC8B3711427E5285FF82+AA
 
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01B3FDF0, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
-		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B42340, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01B3FEB0, const char * buf);		// 489C5F60950D108691FCB6CB0026101275BE474A+79
+		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B42400, const wchar_t * buf);
 
-		DEFINE_MEMBER_FN(Release, void, 0x01B40F50);
+		DEFINE_MEMBER_FN(Release, void, 0x01B41010);
 
 		Ref();
 		Ref(const char * buf);

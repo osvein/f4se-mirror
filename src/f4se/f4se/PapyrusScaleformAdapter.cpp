@@ -27,11 +27,11 @@ namespace PlatformAdapter
 			return true;
 			break;
 		case VMValue::kType_Float:
-			dest->SetInt(src->data.f);
+			dest->SetNumber(src->data.f);
 			return true;
 			break;
 		case VMValue::kType_Bool:
-			dest->SetInt(src->data.b);
+			dest->SetBool(src->data.b);
 			return true;
 			break;
 		case VMValue::kType_Identifier:

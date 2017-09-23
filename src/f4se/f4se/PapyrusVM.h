@@ -219,7 +219,7 @@ public:
 	// ...
 
 	MEMBER_FN_PREFIX(GameVM);
-	DEFINE_MEMBER_FN(SendPapyrusEvent, void, 0x01372F30, UInt64 handle, const BSFixedString & eventName, std::function<bool(void*)> functor); // Signature not correct yet
+	DEFINE_MEMBER_FN(SendPapyrusEvent, void, 0x01372FF0, UInt64 handle, const BSFixedString & eventName, std::function<bool(void*)> functor); // Signature not correct yet
 };
 
 extern RelocPtr <GameVM *> g_gameVM;

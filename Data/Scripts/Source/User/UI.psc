@@ -1,5 +1,7 @@
 Scriptname UI Native Hidden
 
+bool Function IsMenuOpen(string menu) native global
+
 ; Sets a variable in AS3 to the newly assigned type
 ; Can accept arrays using VarArrayToVar
 bool Function Set(string menu, string path, Var arg) native global

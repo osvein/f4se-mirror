@@ -159,7 +159,7 @@ public:
 		return true;
 	}
 
-	bool RemoveEventSink(SinkT * sink)
+	void RemoveEventSink(SinkT * sink)
 	{
 		SimpleLocker locker(&lock);
 
@@ -180,6 +180,16 @@ public:
 	char				pad[3];
 };
 
+class ColorEventDispatcher
+{
+public:
+	void * unk00;	// 00
+	void * unk08;	// 08
+	BSTEventDispatcher<ApplyColorUpdateEvent> dispatcher;	// 10
+};
+
+extern RelocPtr <ColorEventDispatcher*> g_colorUpdateDispatcher;
+
 template<typename EventT>
 BSTEventDispatcher<EventT> * GetEventDispatcher() { };
 
@@ -192,18 +202,19 @@ template<> inline BSTEventDispatcher<Event> * GetEventDispatcher() \
 }
 
 // A548D71D41C7C2E9D21B25E06730FB911FC31F47+B4 (struct+A0)
-DECLARE_EVENT_DISPATCHER(TESCombatEvent, 0x00441F60)
+DECLARE_EVENT_DISPATCHER(TESCombatEvent, 0x00441F50)
 
 // A548D71D41C7C2E9D21B25E06730FB911FC31F47+118 (struct+C8)
-DECLARE_EVENT_DISPATCHER(TESDeathEvent, 0x004423C0)
+DECLARE_EVENT_DISPATCHER(TESDeathEvent, 0x004421D0)
 
 // A548D71D41C7C2E9D21B25E06730FB911FC31F47 (struct+140)
-DECLARE_EVENT_DISPATCHER(TESObjectLoadedEvent, 0x00443040)
+DECLARE_EVENT_DISPATCHER(TESObjectLoadedEvent, 0x00443030)
 
 // A548D71D41C7C2E9D21B25E06730FB911FC31F47 (struct+128)
-DECLARE_EVENT_DISPATCHER(TESLoadGameEvent, 0x00442D20)
+DECLARE_EVENT_DISPATCHER(TESLoadGameEvent, 0x00442D10)
 
-DECLARE_EVENT_DISPATCHER(TESInitScriptEvent, 0x00442BE0)
+// 22274238010A92A75A0E77127FF6D54FDBC6F943+821 (inside call)
+DECLARE_EVENT_DISPATCHER(TESInitScriptEvent, 0x00442BD0)
 
 // A548D71D41C7C2E9D21B25E06730FB911FC31F47 (struct+108)
-DECLARE_EVENT_DISPATCHER(TESFurnitureEvent, 0x00442AA0)
+DECLARE_EVENT_DISPATCHER(TESFurnitureEvent, 0x00442A90)

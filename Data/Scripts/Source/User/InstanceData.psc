@@ -115,3 +115,7 @@ Function SetWeight(Owner akOwner, float weight) native global
 ; Works for both Armor and Weapon instances
 int Function GetGoldValue(Owner akOwner) native global
 Function SetGoldValue(Owner akOwner, int value) native global
+
+; Works for both Armor and Weapon instances
+Keyword[] Function GetKeywords(Owner akOwner) native global
+Function SetKeywords(Owner akOwner, Keyword[] kwds) native global

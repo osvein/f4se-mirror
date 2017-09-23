@@ -1,3 +1,19 @@
+0.5.1
+- Fixed bug with F4SE based inventory-safe functions
+- Fixed crash when passing None structs to native functions taking structs as args
+- Fixed incorrect definitions to ActorValueInfo
+- Added UI.IsMenuOpen
+- InstanceData functions will now create InstanceData where applicable (e.g. target equipped item has no mods at all)
+- Added InstanceData.Get/SetKeywords
+- Fixed Scaleform function AllowTextInput
+- Added missing two control mappings to CustomControlMap.txt
+- ObjectReference.GetDisplayName is now inventory safe
+
+0.5.0
+- Added support for Light plugins
+- Added Game.GetInstalledLightPlugins
+- Update for new game version
+
 0.4.2
 - Added DefaultObject class and functions:
     - Get/Set

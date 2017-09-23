@@ -52,10 +52,11 @@ public:
 		void			* obj;
 	};
 
+	// D8
 	class DisplayInfo
 	{
 	public:
-		DisplayInfo() : _varsSet(0) {}
+		DisplayInfo() : _varsSet(0), unkD0(0), unkD6(0) {}
 		enum
 		{
 			kChange_x				= (1 << 0),
@@ -86,9 +87,11 @@ public:
 		double		_yRotation;		// 48
 		double		_zScale;		// 50
 		double		_perspFOV;		// 58
-		GMatrix3D	_viewMatrix3D;	// 60
-		GMatrix3D	_perspectiveMatrix3D;	// A0
-		UInt16		_varsSet;		// E0
+		GMatrix3F	_viewMatrix3D;	// 60
+		GMatrix4F	_perspectiveMatrix3D;	// A0
+		UInt32		unkD0;			// D0
+		UInt16		_varsSet;		// D4
+		UInt16		unkD6;			// D6
 
 		void SetX(double x)					{ SetFlags(kChange_x); _x = x; }
 		void SetY(double y)					{ SetFlags(kChange_y); _y = y; }
@@ -102,7 +105,7 @@ public:
 		void SetYRotation(double degrees)	{ SetFlags(kChange_yrotation); _yRotation = degrees; }
 		void SetZScale(double zscale)		{ SetFlags(kChange_zscale); _zScale = zscale; }
 		void SetFOV(double fov)				{ SetFlags(kChange_FOV); _perspFOV = fov; }
-		void SetProjectionMatrix3D(const GMatrix3D *pmat)  
+		void SetProjectionMatrix3D(const GMatrix4F *pmat)  
 		{ 
 			if (pmat) {
 				SetFlags(kChange_projMatrix3D);
@@ -110,7 +113,7 @@ public:
 			} else
 				ClearFlags(kChange_projMatrix3D); 
 		}
-		void SetViewMatrix3D(const GMatrix3D *pmat) 
+		void SetViewMatrix3D(const GMatrix3F *pmat) 
 		{ 
 			if (pmat) { 
 				SetFlags(kChange_viewMatrix3D); 
@@ -147,29 +150,29 @@ public:
 		void * unk1;
 
 		MEMBER_FN_PREFIX(ObjectInterface);
-		DEFINE_MEMBER_FN(HasMember, bool, 0x020AE210, void* pData, const char* name);
-		DEFINE_MEMBER_FN(GetMember, bool, 0x020A65C0, void* pData, const char* name, GFxValue* pValue, bool isDisplayObj);
-		DEFINE_MEMBER_FN(SetMember, bool, 0x020CEB40, void* pData, const char* name, const GFxValue* pValue, bool isDisplayObj);
-		DEFINE_MEMBER_FN(Invoke, bool, 0x020B0280, void * pData, GFxValue * result, const char * name, GFxValue * args, UInt64 numArgs, UInt8 isDisplayObj);
-		DEFINE_MEMBER_FN(CreateEmptyMovieClip, bool, 0x02088620, void* pData, GFxValue* pValue, const char* instanceName, SInt32 depth);
-		DEFINE_MEMBER_FN(AttachMovie, bool, 0x0207FB90, void* pData, GFxValue* pValue, const char* symbolName, const char* instanceName, SInt32 depth, const void * initArgs);
-		DEFINE_MEMBER_FN(GetArraySize, UInt32, 0x020A03C0, void * pData);
+		DEFINE_MEMBER_FN(HasMember, bool, 0x020AE2D0, void* pData, const char* name);
+		DEFINE_MEMBER_FN(GetMember, bool, 0x020A6680, void* pData, const char* name, GFxValue* pValue, bool isDisplayObj);
+		DEFINE_MEMBER_FN(SetMember, bool, 0x020CEC00, void* pData, const char* name, const GFxValue* pValue, bool isDisplayObj);
+		DEFINE_MEMBER_FN(Invoke, bool, 0x020B0340, void * pData, GFxValue * result, const char * name, GFxValue * args, UInt64 numArgs, UInt8 isDisplayObj);
+		DEFINE_MEMBER_FN(CreateEmptyMovieClip, bool, 0x020886E0, void* pData, GFxValue* pValue, const char* instanceName, SInt32 depth);
+		DEFINE_MEMBER_FN(AttachMovie, bool, 0x0207FC50, void* pData, GFxValue* pValue, const char* symbolName, const char* instanceName, SInt32 depth, const void * initArgs);
+		DEFINE_MEMBER_FN(GetArraySize, UInt32, 0x020A0480, void * pData);
 		// ref CC19A4FFD76032A42FBBC61E80011469E50993D7 (+4)
-		DEFINE_MEMBER_FN(SetArraySize, bool, 0x020C8F80, void * pData, UInt32 size);
-		DEFINE_MEMBER_FN(GetElement, bool, 0x020A40B0, void * pData, UInt32 index, GFxValue * value);
-		DEFINE_MEMBER_FN(PushBack, bool, 0x020C0ED0, void * pData, GFxValue * value);
-		DEFINE_MEMBER_FN(PopBack, bool, 0x020BCDF0, void * pData, GFxValue * value);
-		DEFINE_MEMBER_FN(VisitElements, void, 0x020D9640, void * pData, ArrayVisitor * visitor, UInt32 idx, SInt32 count);
+		DEFINE_MEMBER_FN(SetArraySize, bool, 0x020C9040, void * pData, UInt32 size);
+		DEFINE_MEMBER_FN(GetElement, bool, 0x020A4170, void * pData, UInt32 index, GFxValue * value);
+		DEFINE_MEMBER_FN(PushBack, bool, 0x020C0F90, void * pData, GFxValue * value);
+		DEFINE_MEMBER_FN(PopBack, bool, 0x020BCEB0, void * pData, GFxValue * value);
+		DEFINE_MEMBER_FN(VisitElements, void, 0x020D9700, void * pData, ArrayVisitor * visitor, UInt32 idx, SInt32 count);
 		// ref D46DE0BD07CCA1A3763C21820E22DC491344D2C5 (+485)
-		DEFINE_MEMBER_FN(GotoLabeledFrame, bool, 0x021E4770, void * pData, const char * frameLabel, bool stop);
+		DEFINE_MEMBER_FN(GotoLabeledFrame, bool, 0x020D9830, void * pData, const char * frameLabel, bool stop);
 		// ref 1A7DD5D4A014A3E7CBF9A53D55DA751C11218613 (+1E7)
-		DEFINE_MEMBER_FN(VisitMembers, void, 0x020AABA0, void * pData, ObjVisitor * visitor, bool isDisplayObj);
-		DEFINE_MEMBER_FN(GetText, bool, 0x020ABE30, void * pData, GFxValue * value, bool html);
-		DEFINE_MEMBER_FN(SetText, bool, 0x020D1C20, void * pData, const char * text, bool html);
-		DEFINE_MEMBER_FN(GetDisplayInfo, bool, 0x020A37A0, void * pData, DisplayInfo * displayInfo);
-		DEFINE_MEMBER_FN(SetDisplayInfo, bool, 0x020CD450, void * pData, DisplayInfo * displayInfo);
-		DEFINE_MEMBER_FN(AddManaged_Internal, void, 0x020B8190, GFxValue * value, void * pData);
-		DEFINE_MEMBER_FN(ReleaseManaged_Internal, void, 0x020B81E0, GFxValue * value, void * pData);
+		DEFINE_MEMBER_FN(VisitMembers, void, 0x020D9830, void * pData, ObjVisitor * visitor, bool isDisplayObj);
+		DEFINE_MEMBER_FN(GetText, bool, 0x020ABEF0, void * pData, GFxValue * value, bool html);
+		DEFINE_MEMBER_FN(SetText, bool, 0x020D1CE0, void * pData, const char * text, bool html);
+		DEFINE_MEMBER_FN(GetDisplayInfo, bool, 0x020A3860, void * pData, DisplayInfo * displayInfo);
+		DEFINE_MEMBER_FN(SetDisplayInfo, bool, 0x020CD510, void * pData, DisplayInfo * displayInfo);
+		DEFINE_MEMBER_FN(AddManaged_Internal, void, 0x020B8250, GFxValue * value, void * pData);
+		DEFINE_MEMBER_FN(ReleaseManaged_Internal, void, 0x020B82A0, GFxValue * value, void * pData);
 	};
 
 	ObjectInterface	* objectInterface;	// 00
@@ -225,6 +228,9 @@ public:
 	bool	SetText(const char * text, bool html);
 	bool	GetDisplayInfo(DisplayInfo * displayInfo);
 	bool	SetDisplayInfo(DisplayInfo * displayInfo);
+
+	MEMBER_FN_PREFIX(GFxValue);
+	DEFINE_MEMBER_FN(RemoveChild_Internal, void, 0x0210B960, GFxValue * name);
 };
 
 // 38
@@ -247,8 +253,8 @@ public:
 class BSGFxDisplayObject : public BSGFxObject
 {
 public:
-	BSGFxDisplayObject() : unk40(0), unk48(0), unk4C(0) { }
-	BSGFxDisplayObject(GFxValue * value) : BSGFxObject(value), unk40(0)
+	BSGFxDisplayObject() : parent(nullptr), unk48(0), unk4C(0) { }
+	BSGFxDisplayObject(GFxValue * value) : BSGFxObject(value), parent(nullptr)
 	{
 		GFxValue width, height;
 		GetMember("width", &width);
@@ -256,24 +262,27 @@ public:
 		unk48 = width.GetNumber();
 		unk4C = height.GetNumber();
 	}
-	virtual ~BSGFxDisplayObject() { };
+	virtual ~BSGFxDisplayObject()
+	{
+		if(parent)
+			CALL_MEMBER_FN(parent, RemoveChild_Internal)(this);
+	};
 
 	struct BSDisplayInfo
 	{
 		BSGFxDisplayObject		* displayObject;	// 00
 		BSGFxDisplayObject		* unk08;			// 08
-		GFxValue::DisplayInfo	displayInfo;		// 10
-		double	unkF0[(0x1C0 - 0xF0) >> 3];			// F0
-		UInt32	unk1C0;	// 1C0
-		UInt16	unk1C4;	// 1C4
-		UInt16	unk1C6;	// 1C6
+		GFxValue::DisplayInfo	displayInfo1;		// 10
+		UInt64					unkE8;				// E8
+		GFxValue::DisplayInfo	displayInfo2;		// F0
 	};
 
-	UInt64	unk40;	// 40
-	float	unk48;	// 48
-	float	unk4C;	// 4C
+	GFxValue	* parent;	// 40
+	float		unk48;		// 48
+	float		unk4C;		// 4C
 };
 STATIC_ASSERT(sizeof(BSGFxDisplayObject) == 0x50);
+STATIC_ASSERT(offsetof(BSGFxDisplayObject::BSDisplayInfo, displayInfo2) == 0xF0);
 
 class BSGFxShaderFXTarget;
 
@@ -291,7 +300,7 @@ public:
 	BSGFxShaderFXTarget(GFxValue * source) : BSGFxDisplayObject(source), 
 		unk58(0), unk60(0), unk68(0), unk6C(0), unk70(0), unk74(0), unk78(0), unk7C(0), red(0), 
 		green(0), blue(0), multiplier(0), unk94(0), unk98(0), unkA0(0), colorType(0), unkAC(0) {  }//{ CALL_MEMBER_FN(this, Impl_ctor)(source); }
-	virtual ~BSGFxShaderFXTarget() { CALL_MEMBER_FN(this, Impl_dtor)(); };
+	virtual ~BSGFxShaderFXTarget();// { CALL_MEMBER_FN(this, Impl_dtor)(); };
 
 	virtual void Unk_01(void * unk1, void * unk2)
 	{

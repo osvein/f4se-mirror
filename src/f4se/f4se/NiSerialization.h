@@ -38,7 +38,7 @@ public:
 	UInt64	unk08[(0x708 - 0x08) >> 3];	// 08
 
 	MEMBER_FN_PREFIX(NiStream);
-	DEFINE_MEMBER_FN(ctor, NiStream *, 0x01BB6EA0);
-	DEFINE_MEMBER_FN(dtor, void, 0x01BB70D0);
-	DEFINE_MEMBER_FN(AddObject, void, 0x01BB7200, NiObject * object);
+	DEFINE_MEMBER_FN(ctor, NiStream *, 0x01BB6F60);
+	DEFINE_MEMBER_FN(dtor, void, 0x01BB7190);
+	DEFINE_MEMBER_FN(AddObject, void, 0x01BB72C0, NiObject * object);
 };

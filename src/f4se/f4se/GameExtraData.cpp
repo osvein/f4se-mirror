@@ -1,7 +1,12 @@
 #include "f4se/GameExtraData.h"
+#include "f4se/GameObjects.h"
 
 // ??_7ExtraPowerLinks@@6B@
 RelocAddr <uintptr_t> s_ExtraPowerLinksVtbl(0x02C683A8);
+
+RelocAddr <uintptr_t> s_ExtraInstanceDataVtbl(0x02C69C30);
+
+RelocAddr <uintptr_t> s_ExtraHealthVtbl(0x02C68208);
 
 bool ExtraDataList::PresenceBitfield::HasType(UInt32 type) const
 {
@@ -116,4 +121,22 @@ ExtraPowerLinks* ExtraPowerLinks::Create()
 	pPowerLinks->connections.count = 0;
 	pPowerLinks->connections.capacity = 0;
 	return pPowerLinks;
+}
+
+ExtraInstanceData* ExtraInstanceData::Create(TESForm * baseForm, TBO_InstanceData * instanceData)
+{
+	ExtraInstanceData* pInstanceData = (ExtraInstanceData*)BSExtraData::Create(sizeof(ExtraInstanceData), s_ExtraInstanceDataVtbl.GetUIntPtr());
+	pInstanceData->type = kExtraData_InstanceData;
+	pInstanceData->baseForm = baseForm;
+	pInstanceData->instanceData = instanceData;
+	InterlockedIncrement(&instanceData->m_refCount);
+	return pInstanceData;
+}
+
+ExtraHealth* ExtraHealth::Create(float value)
+{
+	ExtraHealth* pHeath = (ExtraHealth*)BSExtraData::Create(sizeof(ExtraHealth), s_ExtraHealthVtbl.GetUIntPtr());
+	pHeath->type = kExtraData_Health;
+	pHeath->health = value;
+	return pHeath;
 }

@@ -446,7 +446,7 @@ bool VMRefOrInventoryObj::GetExtraData(TESForm ** baseForm, ExtraDataList ** ext
 		return false;
 
 	BGSInventoryList * inventoryList = owner->inventoryList;
-	if(inventoryList)
+	if(!inventoryList)
 		return false;
 
 	for(UInt32 i = 0; i < inventoryList->items.count; i++)
@@ -456,14 +456,13 @@ bool VMRefOrInventoryObj::GetExtraData(TESForm ** baseForm, ExtraDataList ** ext
 		if(!item.stack)
 			continue;
 
-		*baseForm = item.form;
-
 		item.stack->Visit([&](BGSInventoryItem::Stack * stack)
 		{
 			ExtraDataList * stackDataList = stack->extraData;
 			if(stackDataList) {
 				ExtraUniqueID * extraUID = static_cast<ExtraUniqueID*>(stackDataList->GetByType(kExtraData_UniqueID));
 				if(extraUID && extraUID->uniqueId == m_refData.uniqueId) {
+					*baseForm = item.form;
 					*extraData = stackDataList;
 					return false;
 				}

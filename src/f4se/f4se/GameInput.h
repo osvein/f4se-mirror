@@ -277,14 +277,14 @@ public:
 };
 extern RelocPtr <InputDeviceManager*> g_inputDeviceMgr;
 
-// 13C
+// 148
 class InputManager
 {
 public:
 	enum
 	{
 		kContext_Gameplay = 0,
-		kContextCount = (0xF0/8) // 30
+		kContextCount = (0x108/8) // 33
 	};
 
 	struct InputContext
@@ -306,22 +306,20 @@ public:
 
 	void		* unk00;					// 000
 	InputContext * context[kContextCount];	// 008
-	tArray<UInt32>	unkF8;					// 0F8
-	tArray<InputContext::Mapping>	unk110;	// 110
-	UInt64			unk128;					// 128
-	UInt64			unk130;					// 130
-	UInt8			allowTextInput;			// 138
-	UInt8			unk139;					// 139
-	UInt8			unk13A;					// 13A
-	UInt8			unk13B;					// 13B
-	UInt32			unk13C;					// 13C
+	tArray<UInt32>	unk110;					// 110
+	tArray<InputContext::Mapping>	unk128;	// 128
+	UInt8			allowTextInput;			// 140
+	UInt8			unk141;					// 141
+	UInt8			unk142;					// 142
+	UInt8			unk143;					// 143
+	UInt32			unk144;					// 144
 
 	UInt8			AllowTextInput(bool allow);
 	UInt32			GetMappedKey(BSFixedString name, UInt32 deviceType, UInt32 contextIdx);
 	BSFixedString	GetMappedControl(UInt32 buttonID, UInt32 deviceType, UInt32 contextIdx);
 };
-STATIC_ASSERT(offsetof(InputManager, unkF8) == 0xF8);
 STATIC_ASSERT(offsetof(InputManager, unk110) == 0x110);
-STATIC_ASSERT(offsetof(InputManager, allowTextInput) == 0x138);
+STATIC_ASSERT(offsetof(InputManager, unk128) == 0x128);
+STATIC_ASSERT(offsetof(InputManager, allowTextInput) == 0x140);
 
 extern RelocPtr <InputManager*> g_inputMgr;

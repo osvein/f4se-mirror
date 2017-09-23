@@ -14,6 +14,11 @@
 
 namespace papyrusUI
 {
+	bool IsMenuOpen(StaticFunctionTag *, BSFixedString menuName)
+	{
+		return (*g_ui)->IsMenuOpen(&menuName);
+	}
+
 	bool UI_LatentSet(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath, VMVariable var)
 	{
 		IMenu * menu = (*g_ui)->GetMenu(&menuName);

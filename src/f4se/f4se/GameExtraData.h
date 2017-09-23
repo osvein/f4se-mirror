@@ -351,6 +351,9 @@ public:
 	UInt16      nameLength;		// 40
 	UInt16      unk42;			// 42
 	UInt32      unk44;			// 44
+
+	MEMBER_FN_PREFIX(ExtraTextDisplayData);
+	DEFINE_MEMBER_FN(GetReferenceName, BSFixedString *, 0x000C0A00, TESForm * baseForm);
 };
 
 // 20
@@ -375,4 +378,37 @@ class ExtraInstanceData : public BSExtraData
 public:
 	TESForm				* baseForm;		// 18
 	TBO_InstanceData	* instanceData;	// 20
+
+	static ExtraInstanceData * Create(TESForm * baseForm, TBO_InstanceData * instanceData);
 };
+
+// 30
+class ExtraPromotedRef : public BSExtraData
+{
+public:
+	tArray<TESForm*> promoters; // 18 - a list of forms that are keeping this reference persistent
+};
+STATIC_ASSERT(sizeof(ExtraPromotedRef) == 0x30);
+
+// 20
+class ExtraFlags : public BSExtraData
+{
+public:
+	enum {
+		kFlag_PlayerHasTaken = 1 << 5,
+	};
+	UInt32 flags;   // 18
+	UInt32 pad1C;   // 1C
+};
+STATIC_ASSERT(sizeof(ExtraFlags) == 0x20);
+
+// 20
+class ExtraHealth : public BSExtraData
+{
+public:
+	float health;    // 18 - value is a percentage from 0-1.
+	UInt32 pad1C;    // 1C
+
+	static ExtraHealth* Create(float value);
+};
+STATIC_ASSERT(sizeof(ExtraHealth) == 0x20);

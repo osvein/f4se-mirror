@@ -39,12 +39,12 @@ public:
 };
 
 // 68
-class TESBoundObject : public TESForm
+class TESBoundObject : public TESObject
 {
 public:
 	virtual void	Unk_54();
 	virtual void	Unk_55();
-	virtual void	Unk_56();
+	virtual TBO_InstanceData	* CloneInstanceData(TBO_InstanceData * other);
 	virtual void	Unk_57();
 	virtual void	Unk_58();
 	virtual void	Unk_59();
@@ -223,14 +223,14 @@ public:
 	tArray<BGSCharacterTint::Entry*>	* tints;			// 300 - CF 0x800
 
 	MEMBER_FN_PREFIX(TESNPC);
-	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x005AE670);
-	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005BFF40);
-	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005C0060);
-	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005C0110);
-	DEFINE_MEMBER_FN(GetSex, SInt64, 0x005A23D0); // npc->actorData.unk08 & 1
-	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005B53D0, BGSHeadPart *, bool bRemoveExtraParts);
-	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005B9960, BGSHeadPart *);
-	DEFINE_MEMBER_FN(GetSkinColorFromTint, void, 0x005B5730, NiColorA * outColor, BGSCharacterTint::PaletteEntry* paletteEntry, bool allowCustomization); // This function alters the npc's Skin Color values
+	DEFINE_MEMBER_FN(ctor, TESNPC*, 0x005AE660);
+	DEFINE_MEMBER_FN(HasOverlays, bool, 0x005BFF30);
+	DEFINE_MEMBER_FN(GetOverlayHeadParts, BGSHeadPart**, 0x005C0050);
+	DEFINE_MEMBER_FN(GetNumOverlayHeadParts, int, 0x005C0100);
+	DEFINE_MEMBER_FN(GetSex, SInt64, 0x005A23C0); // npc->actorData.unk08 & 1
+	DEFINE_MEMBER_FN(ChangeHeadPartRemovePart, void, 0x005B53C0, BGSHeadPart *, bool bRemoveExtraParts);
+	DEFINE_MEMBER_FN(ChangeHeadPart, void, 0x005B9950, BGSHeadPart *);
+	DEFINE_MEMBER_FN(GetSkinColorFromTint, void, 0x005B5720, NiColorA * outColor, BGSCharacterTint::PaletteEntry* paletteEntry, bool allowCustomization); // This function alters the npc's Skin Color values
 
 	void ChangeHeadPart(BGSHeadPart * headPart, bool bRemovePart, bool bRemoveExtraParts);
 	BGSHeadPart * GetHeadPartByType(UInt32 type, bool bOverlays = false);
@@ -287,7 +287,7 @@ public:
 		TESAmmo						* ammo;						// 68 TESAmmo *
 		BGSEquipSlot				* equipSlot;				// 70 BGSEquipSlot*
 		SpellItem					* unk78;					// 78 SpellItem*
-		UInt64						unk80;						// 80
+		BGSKeywordForm				* keywords;					// 80
 		BGSAimModel					* aimModel;					// 88 BGSAimModel *
 		BGSZoomData					* zoomData;					// 90 BGSZoomData*
 
@@ -424,7 +424,7 @@ public:
 		UInt64 unk10;								// 10
 		UInt64 unk18;								// 18
 		UInt64 unk20;								// 20
-		BGSKeywordForm * keyword;					// 28
+		BGSKeywordForm * keywords;					// 28
 		tArray<DamageTypes>			* damageTypes;	// 30
 		UInt64 unk38;								// 38
 		float weight;								// 40
@@ -791,3 +791,13 @@ public:
 	BGSModelMaterialSwap	matSwap;		// 98
 };
 STATIC_ASSERT(sizeof(TESLevCharacter) == 0xD8);
+
+// 98
+class TESLevItem : public TESBoundObject
+{
+public:
+	enum { kTypeID = kFormType_LVLI };
+
+	TESLeveledList          leveledList;    // 68
+};
+STATIC_ASSERT(sizeof(TESLevItem) == 0x98);

@@ -1,18 +1,18 @@
 #include "f4se/GameWorkshop.h"
 
 // Power related natives
-RelocAddr <_LinkPower> LinkPower_Internal(0x001F6D80);
+RelocAddr <_LinkPower> LinkPower_Internal(0x001F6D70);
 
 // Usually paired with LinkPower
-RelocAddr <_LinkPower2> LinkPower2_Internal(0x00201A70);
+RelocAddr <_LinkPower2> LinkPower2_Internal(0x00201A60);
 
 // Acquires objects that are touching attach points
-RelocAddr <_GetObjectAtConnectPoint> GetObjectAtConnectPoint(0x001FF2C0);
+RelocAddr <_GetObjectAtConnectPoint> GetObjectAtConnectPoint(0x001FF2B0);
 
 // Wire related calls
-RelocAddr <_LinkPower3> LinkPower3_Internal(0x001F67F0);
-RelocAddr <_LinkPower4> LinkPower4_Internal(0x00204570);
-RelocAddr <_SetWireEndpoints> SetWireEndpoints_Internal(0x00200DB0);
-RelocAddr <_FinalizeWireLink> FinalizeWireLink(0x00200AB0);
+RelocAddr <_LinkPower3> LinkPower3_Internal(0x001F67E0);
+RelocAddr <_LinkPower4> LinkPower4_Internal(0x00204560);
+RelocAddr <_SetWireEndpoints> SetWireEndpoints_Internal(0x00200DA0);
+RelocAddr <_FinalizeWireLink> FinalizeWireLink(0x00200AA0);
 
-RelocAddr <_ScrapReference> ScrapReference(0x002083E0);
+RelocAddr <_ScrapReference> ScrapReference(0x002083D0);

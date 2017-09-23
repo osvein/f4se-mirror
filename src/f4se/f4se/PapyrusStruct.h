@@ -127,15 +127,27 @@ public:
 		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
 		if(vm->GetStructTypeInfo(&structName, &typeInfo) && complexType == typeInfo)
 		{
-			VMValue * values = src->data.strct->GetStruct();
-
-			typeInfo->m_members.ForEach([&](VMStructTypeInfo::MemberItem * item)
+			if(src->data.strct)
 			{
-				m_data[item->name] = values[item->index];
-				return true;
-			});
+				VMValue * values = src->data.strct->GetStruct();
 
-			m_struct = src->data.strct;
+				typeInfo->m_members.ForEach([&](VMStructTypeInfo::MemberItem * item)
+				{
+					m_data[item->name] = values[item->index];
+					return true;
+				});
+
+				m_struct = src->data.strct;
+			}
+			else
+			{
+				typeInfo->m_members.ForEach([&](VMStructTypeInfo::MemberItem * item)
+				{
+					m_data[item->name].type.value = typeInfo->m_data[item->index].m_type;
+					return true;
+				});
+				m_none = true;
+			}
 
 			typeInfo->Release();
 		}

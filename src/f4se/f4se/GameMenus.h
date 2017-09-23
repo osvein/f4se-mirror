@@ -75,7 +75,7 @@ public:
 
 
 	MEMBER_FN_PREFIX(LooksMenu);
-	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B413D0); // This function updates all the internals from the current character
+	DEFINE_MEMBER_FN(LoadCharacterParameters, void, 0x00B413F0); // This function updates all the internals from the current character
 																 // It's followed by a call to onCommitCharacterPresetChange
 };
 STATIC_ASSERT(offsetof(LooksMenu, nextBoneID) == 0x150);
@@ -121,9 +121,9 @@ public:
 	UInt8							padF3[5];		// F3
 
 	MEMBER_FN_PREFIX(HUDComponentBase);
-	DEFINE_MEMBER_FN(Impl_ctor, HUDComponentBase *, 0x00A228C0, GFxValue * parent, const char * componentName, HUDContextArray<BSFixedString> * contextList);
-	DEFINE_MEMBER_FN(Impl_IsVisible, bool, 0x00A22C00);
-	DEFINE_MEMBER_FN(Impl_UpdateComponent, void, 0x00A22960);
+	DEFINE_MEMBER_FN(Impl_ctor, HUDComponentBase *, 0x00A228E0, GFxValue * parent, const char * componentName, HUDContextArray<BSFixedString> * contextList);
+	DEFINE_MEMBER_FN(Impl_IsVisible, bool, 0x00A22C20);
+	DEFINE_MEMBER_FN(Impl_UpdateComponent, void, 0x00A22980);
 	
 };
 STATIC_ASSERT(offsetof(HUDComponentBase, contexts) == 0xC8);
@@ -145,7 +145,7 @@ public:
 	UInt32								numComponents;			// 108 - 0x1E
 
 	MEMBER_FN_PREFIX(HUDComponents);
-	DEFINE_MEMBER_FN(Impl_Destroy, void, 0x01280C60);	// 3DD133AB9DDB89D138FB8958EB3A68CBF2F15DD9+FE
+	DEFINE_MEMBER_FN(Impl_Destroy, void, 0x01280D20);	// 3DD133AB9DDB89D138FB8958EB3A68CBF2F15DD9+FE
 };
 
 // 220
@@ -214,15 +214,17 @@ public:
 		menuTable.ForEach(menuFunc);
 	}
 
-protected:
-	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02042250, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x020406C0, BSFixedString * name);
-
 	UInt64	unk08[(0x190-0x08)/8];	// 458
 	tArray<IMenu*>	menuStack;		// 190
 	MenuTable		menuTable;		// 1A8
+	UInt64			unk1D8;         // 1D8
+	UInt32			menuMode;       // 1E0
 	// ...
+
+protected:
+	MEMBER_FN_PREFIX(UI);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02042310, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02040780, BSFixedString * name);
 };
 
 extern RelocPtr <UI*> g_ui;

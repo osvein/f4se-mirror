@@ -1,13 +1,13 @@
 #include "f4se/ScaleformValue.h"
+#include "f4se/GameEvents.h"
 
-RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020F11F0);
-RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020F0EF0);
-RelocAddr <_SetDefaultColors> SetDefaultColors(0x020F1140);
+RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020F12B0);
+RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020F0FB0);
+RelocAddr <_SetDefaultColors> SetDefaultColors(0x020F1200);
 
-RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x0210C140);
-RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x0210C450);
-RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x0210C2D0);
-
+RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x0210C200);
+RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x0210C510);
+RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x0210C390);
 
 GFxValue::~GFxValue()
 {
@@ -259,3 +259,9 @@ EventResult	BSGFxShaderFXTarget::ReceiveEvent(ApplyColorUpdateEvent * evn, void 
 	}
 	return kEvent_Continue;
 };
+
+BSGFxShaderFXTarget::~BSGFxShaderFXTarget()
+{
+	if((*g_colorUpdateDispatcher))
+		(*g_colorUpdateDispatcher)->dispatcher.RemoveEventSink(this);
+}

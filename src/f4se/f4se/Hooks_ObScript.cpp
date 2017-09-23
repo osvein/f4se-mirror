@@ -75,9 +75,9 @@ bool GetF4SEVersion_Execute(void * paramInfo, void * scriptData, TESObjectREFR *
 #include "f4se/NiSerialization.h"
 #include "f4se/BSCollision.h"
 
-RelocAddr <uintptr_t> GetActorBaseHeadData_Start(0x00687920 + 0xCF);
-RelocAddr <uintptr_t> GetMorphGroups_Start(0x00687920 + 0x390);
-RelocAddr <uintptr_t> StaticTextureIndexed_Ctor_Start(0x00687920 + 0xD38);
+RelocAddr <uintptr_t> GetActorBaseHeadData_Start(0x00689A30 + 0xCF);
+RelocAddr <uintptr_t> GetMorphGroups_Start(0x00689A30 + 0x390);
+RelocAddr <uintptr_t> StaticTextureIndexed_Ctor_Start(0x00689A30 + 0xD38);
 
 #include <mutex>
 #include "f4se/GameObjects.h"
@@ -325,6 +325,7 @@ public:
 
 FurnitureSink furnitureSink;
 
+#include "GameInput.h"
 
 //#include "d3d11.h"
 //#include "d3dx11tex.h"
@@ -340,7 +341,8 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		DumpClass(headPart, sizeof(BGSHeadPart)/8);
 	}*/
 
-	DumpClass((*g_dataHandler), 0x2000/8);
+	//DumpClass((*g_dataHandler), 0x2000/8);
+	//DumpClass(*g_inputMgr, sizeof(InputManager)/8+10);
 
 	/*for(UInt32 i = 0; i < (*g_dataHandler)->arrCOBJ.count; i++)
 	{
@@ -353,6 +355,19 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		BGSListForm * listForm = (*g_dataHandler)->arrFLST[i];
 		if(listForm->unk38 != 0) {
 			DumpClass(listForm, sizeof(BGSListForm)/8);
+		}
+	}*/
+
+	//RelocAddr<ActorValueInfo** (*)()> avInfos(0x0006B1F0);
+
+	/*TESObjectWEAP * weap = (*g_dataHandler)->arrWEAP[0];
+	if(weap) {
+		TBO_InstanceData * instanceData = weap->CloneInstanceData(nullptr);
+		if(instanceData) {
+			TESObjectWEAP::InstanceData* weapData = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weapData) {
+				DumpClass(weapData, sizeof(TESObjectWEAP::InstanceData)/8);
+			}
 		}
 	}*/
 
@@ -568,7 +583,28 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		//DumpSeveredLimbs(root1);
 		
 		Actor * actor = DYNAMIC_CAST(thisObj, TESForm, Actor);
-		if(0) {
+		if(actor) {
+
+			UInt32 iSlotIndex = 41;
+			// Invalid slot id
+			if(iSlotIndex >= ActorEquipData::kMaxSlots)
+				return false;
+
+			ActorEquipData * equipData = actor->equipData;
+			if(!equipData)
+				return false;
+
+			// Make sure there is an item in this slot
+			auto item = equipData->slots[iSlotIndex].item;
+			if(!item)
+				return false;
+
+			auto instanceData = equipData->slots[iSlotIndex].instanceData;
+			if(instanceData) {
+				DumpClass(instanceData, sizeof(TESObjectWEAP::InstanceData)/8);
+				return false;
+			}
+
 			auto middleProcess = actor->middleProcess;
 			if(middleProcess) {
 				UInt32 furnitureHandle = 0;
@@ -887,7 +923,7 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 						}
 
 						BGSCharacterTint::PaletteEntry* pTattoo = (BGSCharacterTint::PaletteEntry*)CreateCharacterTintEntry((3603L << 16) | BGSCharacterTint::Entry::kTypePalette);
-						pTattoo->color = 0xffffff00;//colorData.colorForm->color.rgb;//0x00CBD3E7;
+						pTattoo->color.bgra = 0x00ffff00;//colorData.colorForm->color.rgb;//0x00CBD3E7;
 						pTattoo->colorID = colorData.colorID;
 						pTattoo->percent = 100;
 						pTattoo->templateEntry = pTattooTemplate;

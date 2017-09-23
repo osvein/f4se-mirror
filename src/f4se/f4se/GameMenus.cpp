@@ -3,7 +3,7 @@
 // 2CA5233612B3158658DB6DB9C90FD0258F1836E2+AD
 RelocPtr <UI*> g_ui(0x058EEC98);
 
-RelocAddr <_HasHUDContext> HasHUDContext(0x00A4F1E0);
+RelocAddr <_HasHUDContext> HasHUDContext(0x00A4F200);
 
 bool UI::IsMenuOpen(BSFixedString * menuName)
 {

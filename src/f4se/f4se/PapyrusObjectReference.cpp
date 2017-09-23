@@ -22,7 +22,7 @@
 
 #include <set>
 
-RelocAddr<_PlaceAtMe_Native> PlaceAtMe_Native(0x01409060);
+RelocAddr<_PlaceAtMe_Native> PlaceAtMe_Native(0x01409120);
 
 DECLARE_STRUCT(ConnectPoint, "ObjectReference");
 
@@ -228,12 +228,33 @@ namespace papyrusObjectReference {
 		return result;
 	}
 
-	BSFixedString GetDisplayName(TESObjectREFR* thisRef)
+	BSFixedString GetDisplayName(VMRefOrInventoryObj * thisObj)
 	{
-		if(!thisRef)
-			return BSFixedString();
+		TESForm * baseForm = nullptr;
+		ExtraDataList * extraDataList = nullptr;
+		thisObj->GetExtraData(&baseForm, &extraDataList);
 
-		return CALL_MEMBER_FN(thisRef, GetReferenceName)();
+		if(baseForm)
+		{
+			if(extraDataList)
+			{
+				BSExtraData * extraData = extraDataList->GetByType(ExtraDataType::kExtraData_TextDisplayData);
+				if(extraData)
+				{
+					ExtraTextDisplayData * displayText = DYNAMIC_CAST(extraData, BSExtraData, ExtraTextDisplayData);
+					if(displayText)
+					{
+						return *CALL_MEMBER_FN(displayText, GetReferenceName)(baseForm);
+					}
+				}
+			}
+
+			TESFullName* pFullName = DYNAMIC_CAST(baseForm, TESForm, TESFullName);
+			if (pFullName)
+				return pFullName->name;
+		}
+
+		return BSFixedString();
 	}
 
 
@@ -505,7 +526,7 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 		new LatentNativeFunction2<TESObjectREFR, TESObjectREFR*, TESObjectREFR*, TESForm*>("AttachWire", "ObjectReference", papyrusObjectReference::AttachWire, vm));
 
 	vm->RegisterFunction(
-		new NativeFunction0<TESObjectREFR, BSFixedString>("GetDisplayName", "ObjectReference", papyrusObjectReference::GetDisplayName, vm));
+		new NativeFunction0<VMRefOrInventoryObj, BSFixedString>("GetDisplayName", "ObjectReference", papyrusObjectReference::GetDisplayName, vm));
 
 	vm->RegisterFunction(
 		new LatentNativeFunction0<TESObjectREFR, VMArray<TESForm*>>("GetInventoryItems", "ObjectReference", papyrusObjectReference::GetInventoryItems, vm));

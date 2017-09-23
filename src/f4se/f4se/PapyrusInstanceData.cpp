@@ -15,7 +15,7 @@ namespace papyrusInstanceData
 
 	TBO_InstanceData * GetInstanceData(Owner* thisInstance)
 	{
-		if(!thisInstance)
+		if(!thisInstance || thisInstance->IsNone())
 			return nullptr;
 
 		TESForm * form = nullptr;
@@ -40,11 +40,25 @@ namespace papyrusInstanceData
 			extraDataList = refr->extraDataList;
 
 		if(extraDataList) {
-			BSExtraData * extraData = extraDataList->GetByType(ExtraDataType::kExtraData_ObjectInstance);
+			BSExtraData * extraData = extraDataList->GetByType(ExtraDataType::kExtraData_InstanceData);
 			if(extraData) {
 				ExtraInstanceData * objectModData = DYNAMIC_CAST(extraData, BSExtraData, ExtraInstanceData);
 				if(objectModData)
 					return objectModData->instanceData;
+			}
+			else {
+				TESBoundObject * boundObject = DYNAMIC_CAST(form, TESForm, TESBoundObject);
+				TBO_InstanceData * instanceData = nullptr;
+				if(boundObject) {
+					instanceData = boundObject->CloneInstanceData(nullptr);
+					if(instanceData) {
+						ExtraInstanceData * objectModData = ExtraInstanceData::Create(form, instanceData);
+						if(objectModData) {
+							extraDataList->Add(ExtraDataType::kExtraData_InstanceData, objectModData);
+							return instanceData;
+						}
+					}
+				}
 			}
 		}
 
@@ -576,6 +590,71 @@ namespace papyrusInstanceData
 			*value = newValue;
 	}
 	
+
+	VMArray<BGSKeyword*> GetKeywords(StaticFunctionTag*, Owner thisInstance)
+	{
+		VMArray<BGSKeyword*> result;
+		BGSKeywordForm * keywordForm = nullptr;
+		TBO_InstanceData * instanceData = GetInstanceData(&thisInstance);
+		if(!instanceData)
+			return result;
+
+		if(instanceData) {
+			auto weaponInstance = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weaponInstance)
+				keywordForm = weaponInstance->keywords;
+
+			auto armorInstance = (TESObjectARMO::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectARMO__InstanceData);
+			if(armorInstance)
+				keywordForm = armorInstance->keywords;
+		}
+
+		if(!keywordForm)
+			return result;
+
+		for(UInt32 i = 0; i < keywordForm->numKeywords; i++)
+		{
+			result.Push(&keywordForm->keywords[i]);
+		}
+
+		return result;
+	}
+
+	void SetKeywords(StaticFunctionTag*, Owner thisInstance, VMArray<BGSKeyword*> kwds)
+	{
+		BGSKeywordForm * keywordForm = nullptr;
+		TBO_InstanceData * instanceData = GetInstanceData(&thisInstance);
+		if(instanceData) {
+			auto weaponInstance = (TESObjectWEAP::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectWEAP__InstanceData);
+			if(weaponInstance)
+				keywordForm = weaponInstance->keywords;
+
+			auto armorInstance = (TESObjectARMO::InstanceData*)Runtime_DynamicCast(instanceData, RTTI_TBO_InstanceData, RTTI_TESObjectARMO__InstanceData);
+			if(armorInstance)
+				keywordForm = armorInstance->keywords;
+		}
+
+		if(keywordForm)
+		{
+			if(keywordForm->keywords) {
+				Heap_Free(keywordForm->keywords);
+				keywordForm->keywords = nullptr;
+				keywordForm->numKeywords = 0;
+			}
+			if(kwds.Length() > 0)
+			{
+				keywordForm->keywords = (BGSKeyword**)Heap_Allocate(sizeof(BGSKeyword*) * kwds.Length());
+				keywordForm->numKeywords = kwds.Length();
+
+				for(UInt32 i = 0; i < kwds.Length(); i++)
+				{
+					BGSKeyword * kwd = nullptr;
+					kwds.Get(&kwd, i);
+					keywordForm->keywords[i] = kwd;
+				}
+			}
+		}
+	}
 }
 
 void papyrusInstanceData::RegisterFuncs(VirtualMachine* vm)
@@ -735,4 +814,10 @@ void papyrusInstanceData::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction2 <StaticFunctionTag, void, Owner, UInt32>("SetGoldValue", "InstanceData", papyrusInstanceData::SetGoldValue, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, VMArray<BGSKeyword*>, Owner>("GetKeywords", "InstanceData", papyrusInstanceData::GetKeywords, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction2 <StaticFunctionTag, void, Owner, VMArray<BGSKeyword*>>("SetKeywords", "InstanceData", papyrusInstanceData::SetKeywords, vm));
 }

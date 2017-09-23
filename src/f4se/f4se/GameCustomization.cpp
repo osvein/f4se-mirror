@@ -15,14 +15,14 @@ RelocPtr <TESNPC*> g_customizationDummy1(0x059F9168);	// Either Nora or Nate's d
 // E5618E306F15B8DF84D22F68B984045D0DD91165+32
 RelocPtr <TESNPC*> g_customizationDummy2(0x059F9130);	// Either Nora or Nate's dummy actors
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A5640);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A4630);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x02AA8B0);
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A5630);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A4620);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002AA8A0);
 
 // For manipulating the tint lists, their signatures aren't quite right yet
-RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A47D0);
-RelocAddr <_MergeTintTextures> MergeTintTextures(0x00689A30);
-RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00689820);
+RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A47C0);
+RelocAddr <_MergeTintTextures> MergeTintTextures(0x00689A20);
+RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00689810);
 
 // 8290027174FC425F1C5C8233B65132B99D1A37E1+F6
 RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensityMap(0x03733370-0x08);
@@ -30,11 +30,11 @@ RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensity
 // These are for creating new instances
 
 // ??_7Mask@Template@BGSCharacterTint@@6B@
-RelocAddr <uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02C80D28);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02C80D38);
 // ??_7Palette@Template@BGSCharacterTint@@6B@
-RelocAddr <uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02C80D58);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02C80D68);
 // ??_7TextureSet@Template@BGSCharacterTint@@6B@
-RelocAddr <uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02C80D88);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02C80D98);
 
 bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 {

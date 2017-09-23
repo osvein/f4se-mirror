@@ -7,6 +7,7 @@
 
 #include <functional>
 
+struct ModInfo;
 class TESForm;
 class TESNPC;
 class BGSColorForm;
@@ -404,11 +405,11 @@ public:
 	virtual void	Unk_14();
 	virtual void	Unk_15();
 	virtual void	Unk_16();
-	virtual void	Unk_17();
-	virtual void	Unk_18();
-	virtual void	Unk_19();
-	virtual void	Unk_1A();
-	virtual void	Unk_1B();
+	virtual ModInfo*  GetLastModifiedMod(); // 17 - Returns the ModInfo* of the mod that last modified the form.
+	virtual ModInfo*  GetLastModifiedMod_2(); // 18 - Returns the ModInfo* of the mod that last modified the form. Calls a helper function to do so.
+	virtual UInt8     GetFormType();  // 19
+	virtual void      Unk_1A(); // 1A - GetDebugName(TESForm * form, char * destBuffer, unsigned int bufferSize);
+	virtual bool      GetPlayerKnows(); // 1B - Gets flag bit 6.
 	virtual void	Unk_1C();
 	virtual void	Unk_1D();
 	virtual void	Unk_1E();
@@ -434,7 +435,7 @@ public:
 	virtual void	Unk_32();
 	virtual void	Unk_33();
 	virtual void	Unk_34();
-	virtual void	Unk_35();
+	virtual const char *  GetFullName();  // 35
 	virtual void	Unk_36();
 	virtual void	Unk_37();
 	virtual void	Unk_38();
@@ -454,19 +455,18 @@ public:
 	virtual void	Unk_46();
 	virtual void	Unk_47();
 
+	enum {
+		kFlag_IsDeleted     = 1 << 5,
+		kFlag_PlayerKnows   = 1 << 6,
+		kFlag_Persistent    = 1 << 10,
+		kFlag_IsDisabled    = 1 << 11,
+		kFlag_NoHavok       = 1 << 29,
+	};
+
 	struct Data
 	{
-		struct Entry
-		{
-			UInt64	unk00[0x50/8];
-			BSFile	* file;	// 50
-			UInt64	unk58[(0x330-0x58)/8];
-			UInt32	unk330;	// 330
-			UInt32	unk334; // 334 (unk334 & 1) == 1 // Load external head?
-			// ...
-		};
-		Entry ** entries;
-		UInt64	size;
+		ModInfo ** entries;     // array of ModInfo* - mods that change this form.
+		UInt64  size;
 	};
 
 	Data	* unk08;	// 08
@@ -722,13 +722,27 @@ public:
 	TESFullName       fullName;             // 20
 	TESDescription    description;          // 30
 
-	std::function<void(Actor *, ActorValueInfo *, float, float, Actor *)> calcFunction;	// 48
+#if _MSC_VER == 1700
+	std::function<void(Actor *, ActorValueInfo&, float, float, Actor *)> calcFunction;	// 48
+#else
+	void            * func_vtable;			// 48 - vtable of the lambda function
+	void            * func;					// 50
+	UInt64            unk58;				// 58
+	void            * func_ptr;				// 60 - address of offset 48
+#endif
 
 	const char      * avName;               // 68
 	UInt64            unk70;                // 70
 	ActorValueInfo  * dependentAVs[0xF];    // 78
 
-	std::function<float(ActorValueOwner*, ActorValueInfo*)> derivedFunction;	// F0
+#if _MSC_VER == 1700
+	std::function<float(ActorValueOwner*, ActorValueInfo&)> derivedFunction;	// F0
+#else
+	void            * derived_func_vtable;	// F0 - vtable of the lambda function
+	void            * derived_func;			// F8
+	UInt64            unk100;				// 100
+	void            * derived_func_ptr;		// 108 - address of offset F0
+#endif
 
 	UInt32    unk110[(0x16C - 0x110) / 4];  // 110
 
@@ -920,7 +934,7 @@ public:
 	enum { kTypeID = kFormType_FLST };
 
 	tArray<TESForm*>	forms;			// 20
-	UInt64				unk38;			// 38
+	tArray<UInt32>*       tempForms;	// 38
 	UInt32				scriptAdded;	// 40 - Amount on the end of the tArray that is script-added
 	UInt32				unk44;			// 44
 };
@@ -1496,7 +1510,7 @@ public:
 	UInt32					unkEC;				// EC
 
 	MEMBER_FN_PREFIX(TESObjectCELL);
-	DEFINE_MEMBER_FN(GetHavokWorld, bhkWorld*, 0x003B4810);
+	DEFINE_MEMBER_FN(GetHavokWorld, bhkWorld*, 0x003B4800);
 };
 STATIC_ASSERT(offsetof(TESObjectCELL, objectList) == 0x70);
 STATIC_ASSERT(offsetof(TESObjectCELL, worldSpace) == 0xC8);
@@ -1677,7 +1691,7 @@ public:
 	TESDescription			description;	// 30
 	TESIcon					icon;			// 48
 
-	UInt8					unk58;			// 58
+	UInt8					trait;			// 58
 	UInt8					perkLevel;		// 59
 	UInt8					numRanks;		// 5A
 	UInt8					playable;		// 5B
@@ -1727,9 +1741,10 @@ class TESGlobal : public TESForm
 public:
 	enum { kTypeID = kFormType_GLOB };
 
-	UInt64	unk20;	// 20
-	UInt64	unk28;	// 28
-	UInt64	unk30;	// 30
+	const char* editorID;   // 20
+	UInt64	unk28;			// 28
+	float value;			// 30
+	UInt32    unk34;		// 34
 };
 
 // 08

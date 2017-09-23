@@ -43,7 +43,13 @@ public:
 	T	bottom;
 };
 
-class GMatrix3D
+class GMatrix3F
+{
+public:
+	float	m[3][4];
+};
+
+class GMatrix4F
 {
 public:
 	float	m[4][4];

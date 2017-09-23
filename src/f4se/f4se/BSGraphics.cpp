@@ -7,7 +7,7 @@ RelocPtr <BSRenderer*> g_renderer(0x0673EA18);
 RelocPtr <BSRenderManager> g_renderManager(0x061FEC00);
 
 // FA43F2F87927D8F20B17E756782BC91BB6BD04C2+3B
-RelocPtr <BSRenderTargetManager> g_renderTargetManager(0x037DF8D0);
+RelocPtr <BSRenderTargetManager> g_renderTargetManager(0x0386DCB0);
 
 // 4A4A200E8F9173F8CE99D39E27F4BDAF680DF52B+9C
 RelocPtr <BSShaderResourceManager> g_shaderResourceManager(0x05C27208);

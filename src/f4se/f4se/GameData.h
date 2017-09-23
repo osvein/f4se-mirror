@@ -285,7 +285,7 @@ public:
 	TESWorldSpace	* worldspace;	// 28
 
 	MEMBER_FN_PREFIX(LocationData);
-	DEFINE_MEMBER_FN(ctor, LocationData*, 0x001F8790, Actor * refr);
+	DEFINE_MEMBER_FN(ctor, LocationData*, 0x001F8780, Actor * refr);
 };
 
 struct DefaultObjectEntry
