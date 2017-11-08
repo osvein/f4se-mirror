@@ -240,10 +240,10 @@ public:
 	UInt32 CreateRefHandle(void);
 
 	MEMBER_FN_PREFIX(TESObjectREFR);
-	DEFINE_MEMBER_FN(GetReferenceName, const char *, 0x0040B5C0);
-	DEFINE_MEMBER_FN(GetWorldspace, TESWorldSpace*, 0x0040F0F0);
-	DEFINE_MEMBER_FN(GetInventoryWeight, float, 0x004002D0);
-	DEFINE_MEMBER_FN(GetCarryWeight, float, 0x00D85240);
+	DEFINE_MEMBER_FN(GetReferenceName, const char *, 0x0040B5E0);
+	DEFINE_MEMBER_FN(GetWorldspace, TESWorldSpace*, 0x0040F110);
+	DEFINE_MEMBER_FN(GetInventoryWeight, float, 0x004002F0);
+	DEFINE_MEMBER_FN(GetCarryWeight, float, 0x00D86B90);
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);
@@ -427,7 +427,7 @@ public:
 		Data08 * unk08;	// 08
 
 		MEMBER_FN_PREFIX(MiddleProcess);
-		DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00E5E8B0, Actor * actor, UInt32 flags); 
+		DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00E60200, Actor * actor, UInt32 flags); 
 	};
 	MiddleProcess * middleProcess;					// 300
 	UInt64	unk308[(0x338-0x308)/8];
@@ -460,9 +460,9 @@ public:
 	}
 
 	MEMBER_FN_PREFIX(Actor);
-	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D88240, bool bDoFaceGen, UInt32 unk2, bool DoQueue, UInt32 flags); // 0, 0, 1, 0
-	DEFINE_MEMBER_FN(IsHostileToActor, bool, 0x00D8F0D0, Actor * actor);
-	DEFINE_MEMBER_FN(UpdateEquipment, void, 0x004080D0); 
+	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D89B90, bool bDoFaceGen, UInt32 unk2, bool DoQueue, UInt32 flags); // 0, 0, 1, 0
+	DEFINE_MEMBER_FN(IsHostileToActor, bool, 0x00D90A20, Actor * actor);
+	DEFINE_MEMBER_FN(UpdateEquipment, void, 0x004080F0); 
 };
 STATIC_ASSERT(offsetof(Actor, equipData) == 0x428);
 STATIC_ASSERT(offsetof(Actor::MiddleProcess::Data08, equipData) == 0x288);

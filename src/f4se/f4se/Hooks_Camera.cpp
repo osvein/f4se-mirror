@@ -13,7 +13,7 @@ void Hooks_Camera_Init()
 }
 
 typedef void (* _SetCameraState)(TESCamera * camera, TESCameraState * newState);
-RelocAddr <_SetCameraState> SetCameraState(0x0082E7A0);
+RelocAddr <_SetCameraState> SetCameraState(0x0082E7B0);
 _SetCameraState SetCameraState_Original = nullptr;
 
 void SetCameraState_Hook(TESCamera * camera, TESCameraState * newCameraState)

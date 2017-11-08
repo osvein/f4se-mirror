@@ -2,13 +2,13 @@
 #include "f4se/BSGeometry.h"
 
 // ??_7NiStringExtraData@@6B@
-RelocAddr<uintptr_t> s_NiStringExtraDataVtbl(0x02E2B9A8);
+RelocAddr<uintptr_t> s_NiStringExtraDataVtbl(0x02E3FA28);
 // ??_7BSFaceGenBaseMorphExtraData@@6B@
-RelocAddr<uintptr_t> s_BSFaceGenBaseMorphExtraDataVtbl(0x02D010F8);
+RelocAddr<uintptr_t> s_BSFaceGenBaseMorphExtraDataVtbl(0x02D15108);
 // ??_7BSDynPosData@@6B@
-RelocAddr<uintptr_t> s_BSDynPosDataVtbl(0x02E2CC08);
-
-RelocAddr<uintptr_t> s_NiBinaryExtraDataVtbl(0x02E2F708);
+RelocAddr<uintptr_t> s_BSDynPosDataVtbl(0x02E40C88);
+// ??_7NiBinaryExtraData@@6B@
+RelocAddr<uintptr_t> s_NiBinaryExtraDataVtbl(0x02E43788);
 
 NiStringExtraData * NiStringExtraData::Create(const BSFixedString & name, const BSFixedString & string)
 {

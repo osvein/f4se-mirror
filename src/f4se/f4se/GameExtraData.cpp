@@ -2,11 +2,13 @@
 #include "f4se/GameObjects.h"
 
 // ??_7ExtraPowerLinks@@6B@
-RelocAddr <uintptr_t> s_ExtraPowerLinksVtbl(0x02C683A8);
+RelocAddr <uintptr_t> s_ExtraPowerLinksVtbl(0x02C7C3B8);
 
-RelocAddr <uintptr_t> s_ExtraInstanceDataVtbl(0x02C69C30);
+// ??_7ExtraInstanceData@@6B@
+RelocAddr <uintptr_t> s_ExtraInstanceDataVtbl(0x02C7DC40);
 
-RelocAddr <uintptr_t> s_ExtraHealthVtbl(0x02C68208);
+// ??_7ExtraHealth@@6B@
+RelocAddr <uintptr_t> s_ExtraHealthVtbl(0x02C7C218);
 
 bool ExtraDataList::PresenceBitfield::HasType(UInt32 type) const
 {

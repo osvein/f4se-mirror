@@ -520,4 +520,3 @@ namespace Serialization
 		return true;
 	}
 }
-

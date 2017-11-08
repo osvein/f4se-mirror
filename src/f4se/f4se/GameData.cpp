@@ -1,16 +1,16 @@
 #include "f4se/GameData.h"
 
 // 856197F11173AF60E35EBF54A88E7BF43AFC3588+305
-RelocPtr <DataHandler*> g_dataHandler(0x058ED480);
+RelocPtr <DataHandler*> g_dataHandler(0x05909100);
 
 // 5ED90DCE1A1D1EDBCC888F3EA1234E23E307DD26+6 (4 matches)
-RelocPtr <bool> g_isGameDataReady(0x05A76DA4);
+RelocPtr <bool> g_isGameDataReady(0x05A92A24);
 
 // 637A4CF3B8D5BEB4F483234F10F54E7595CA465F+A49
-RelocPtr <DefaultObjectMap*> g_defaultObjectMap(0x058F1AD0);
+RelocPtr <DefaultObjectMap*> g_defaultObjectMap(0x0590D750);
 
 // 637A4CF3B8D5BEB4F483234F10F54E7595CA465F+A3D
-RelocPtr <SimpleLock> g_defaultObjectMapLock(0x058F2538);
+RelocPtr <SimpleLock> g_defaultObjectMapLock(0x0590E1B8);
 
 class LoadedModFinder
 {

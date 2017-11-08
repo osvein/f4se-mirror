@@ -1370,11 +1370,12 @@ public:
 		UInt64	unk10[(0x78 - 0x08) >> 3];
 
 		MEMBER_FN_PREFIX(Evaluator);
-		DEFINE_MEMBER_FN(ctor, void, 0x0072A5E0, TESForm * a1, TESForm * a2, UInt64 unk1); // a1 might be player or subject, not sure yet
+		DEFINE_MEMBER_FN(ctor, void, 0x0072A5F0, TESForm * a1, TESForm * a2, UInt64 unk1); // a1 might be player or subject, not sure yet
 	};
 
 	MEMBER_FN_PREFIX(Condition);
-	DEFINE_MEMBER_FN(Evaluate, bool, 0x0072C3A0, Evaluator * eval); // Evaluates only a single condition
+	// DB2ACB0447C58B663FE4E9C862B96256D0C2716D+15
+	DEFINE_MEMBER_FN(Evaluate, bool, 0x0072C3B0, Evaluator * eval); // Evaluates only a single condition
 };
 STATIC_ASSERT(offsetof(Condition, referenceType) == 0x31);
 STATIC_ASSERT(sizeof(Condition) == 0x38);

@@ -1,3 +1,9 @@
+0.6.1
+- support for runtime 1.10.40
+
+0.6.0
+- support for runtime 1.10.26
+
 0.5.1
 - Fixed bug with F4SE based inventory-safe functions
 - Fixed crash when passing None structs to native functions taking structs as args

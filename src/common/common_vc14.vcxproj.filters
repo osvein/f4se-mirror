@@ -58,20 +58,6 @@
     <ClInclude Include="ITimer.h">
       <Filter>utilities</Filter>
     </ClInclude>
-    <ClInclude Include="ICriticalSection.h" />
-    <ClInclude Include="IReadWriteLock.h" />
-    <ClInclude Include="IThread.h" />
-    <ClInclude Include="IArchive.h" />
-    <ClInclude Include="IDatabase.h" />
-    <ClInclude Include="IFIFO.h" />
-    <ClInclude Include="ILinkedList.h" />
-    <ClInclude Include="IRangeMap.h" />
-    <ClInclude Include="ITextParser.h" />
-    <ClInclude Include="IConsole.h" />
-    <ClInclude Include="IDynamicCreate.h" />
-    <ClInclude Include="IMemPool.h" />
-    <ClInclude Include="IPipeClient.h" />
-    <ClInclude Include="IPipeServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPrefix.cpp" />
@@ -114,20 +100,5 @@
     <ClCompile Include="IDirectoryIterator.cpp">
       <Filter>utilities</Filter>
     </ClCompile>
-    <ClCompile Include="IReadWriteLock.cpp" />
-    <ClCompile Include="IThread.cpp" />
-    <ClCompile Include="IArchive.cpp" />
-    <ClCompile Include="IDatabase.cpp" />
-    <ClCompile Include="IFIFO.cpp" />
-    <ClCompile Include="IRangeMap.cpp" />
-    <ClCompile Include="ITextParser.cpp" />
-    <ClCompile Include="IConsole.cpp" />
-    <ClCompile Include="IDynamicCreate.cpp" />
-    <ClCompile Include="IMemPool.cpp" />
-    <ClCompile Include="IPipeClient.cpp" />
-    <ClCompile Include="IPipeServer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="IDatabase.inc" />
   </ItemGroup>
 </Project>

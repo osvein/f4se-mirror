@@ -4,10 +4,10 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	6
-#define F4SE_VERSION_INTEGER_BETA	0
-#define F4SE_VERSION_VERSTRING		"0, 0, 6, 0"
-#define F4SE_VERSION_PADDEDSTRING	"0007"
-#define F4SE_VERSION_RELEASEIDX		7
+#define F4SE_VERSION_INTEGER_BETA	1
+#define F4SE_VERSION_VERSTRING		"0, 0, 6, 1"
+#define F4SE_VERSION_PADDEDSTRING	"0008"
+#define F4SE_VERSION_RELEASEIDX		8
 
 #define MAKE_EXE_VERSION_EX(major, minor, build, sub)	((((major) & 0xFF) << 24) | (((minor) & 0xFF) << 16) | (((build) & 0xFFF) << 4) | ((sub) & 0xF))
 #define MAKE_EXE_VERSION(major, minor, build)			MAKE_EXE_VERSION_EX(major, minor, build, 0)
@@ -52,12 +52,13 @@
 #define RUNTIME_VERSION_1_9_4	MAKE_EXE_VERSION(1, 9, 4)	// 0x01090040	release - high-resolution texture pack
 #define RUNTIME_VERSION_1_10_20	MAKE_EXE_VERSION(1, 10, 20)	// 0x010A0140	beta/release - creation club
 #define RUNTIME_VERSION_1_10_26	MAKE_EXE_VERSION(1, 10, 26)	// 0x010A01A0	creation club update 2
+#define RUNTIME_VERSION_1_10_40	MAKE_EXE_VERSION(1, 10, 40)	// 0x010A0280	creation club update 3 (thanks for cleaning up plugin identification)
 
 #define PACKED_F4SE_VERSION		MAKE_EXE_VERSION(F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA)
 
 // information about the state of the game at the time of release
 #define F4SE_TARGETING_BETA_VERSION	0
-#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_10_26
-#define CURRENT_RELEASE_F4SE_STR	"0.6.0"
+#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_10_40
+#define CURRENT_RELEASE_F4SE_STR	"0.6.1"
 
 #endif /* __F4SE_VERSION_H__ */
