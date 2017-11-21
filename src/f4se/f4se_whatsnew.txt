@@ -1,3 +1,6 @@
+0.6.3
+- fixed compiling against outdated script files (ObjectReference was missing ClearFromOldLocations)
+
 0.6.2
 - fixed crash in ObjectReference::AttachWireLatent
 - fixed input handler
