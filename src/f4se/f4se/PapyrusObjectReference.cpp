@@ -22,8 +22,6 @@
 
 #include <set>
 
-RelocAddr<_PlaceAtMe_Native> PlaceAtMe_Native(0x01409120);
-
 DECLARE_STRUCT(ConnectPoint, "ObjectReference");
 
 namespace papyrusObjectReference {

@@ -11,17 +11,20 @@
 #include "f4se/PapyrusEvents.h"
 #include "f4se/PapyrusUtilities.h"
 
+#define HOOK_RAW_INPUT 0
 #define LOG_INPUT_HOOK 0
+
+typedef void (* _CreateMenuControlHandlers)(MenuControls * mem);
+RelocAddr <_CreateMenuControlHandlers> CreateMenuControlHandlers(0x012A7A90);
+_CreateMenuControlHandlers CreateMenuControlHandlers_Original = nullptr;
+
+#if HOOK_RAW_INPUT
 
 typedef BOOL (WINAPI * _RegisterRawInputDevices)(RAWINPUTDEVICE * devices, UINT numDevices, UINT structSize);
 _RegisterRawInputDevices Original_RegisterRawInputDevices = nullptr;
 
 typedef UINT (WINAPI * _GetRawInputData)(HRAWINPUT rawinput, UINT cmd, void * data, UINT * dataSize, UINT headerSize);
 _GetRawInputData Original_GetRawInputData = nullptr;
-
-typedef void (* _CreateMenuControlHandlers)(MenuControls * mem);
-RelocAddr <_CreateMenuControlHandlers> CreateMenuControlHandlers(0x012A6130);
-_CreateMenuControlHandlers CreateMenuControlHandlers_Original = nullptr;
 
 BOOL WINAPI Hook_RegisterRawInputDevices(RAWINPUTDEVICE * devices, UINT numDevices, UINT structSize)
 {
@@ -89,6 +92,8 @@ UINT WINAPI Hook_GetRawInputData(HRAWINPUT rawinput, UINT cmd, void * data, UINT
 
 	return result;
 }
+
+#endif
 
 class F4SEInputHandler : public BSInputEventUser
 {
@@ -175,6 +180,7 @@ void Hooks_Input_Init()
 
 void Hooks_Input_Commit()
 {
+#if HOOK_RAW_INPUT
 	void ** iat = (void **)GetIATAddr(GetModuleHandle(NULL), "user32.dll", "RegisterRawInputDevices");
 	Original_RegisterRawInputDevices = (_RegisterRawInputDevices)*iat;
 	SafeWrite64((uintptr_t)iat, (UInt64)Hook_RegisterRawInputDevices);
@@ -182,6 +188,7 @@ void Hooks_Input_Commit()
 	iat = (void **)GetIATAddr(GetModuleHandle(NULL), "user32.dll", "GetRawInputData");
 	Original_GetRawInputData = (_GetRawInputData)*iat;
 	SafeWrite64((uintptr_t)iat, (UInt64)Hook_GetRawInputData);
+#endif
 
 	// hook adding control handlers to MenuControls
 	{

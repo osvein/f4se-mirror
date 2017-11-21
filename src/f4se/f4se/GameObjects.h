@@ -19,6 +19,10 @@ class BGSFootstepSet;
 class SpellItem;
 class TESObjectMISC;
 class BGSDamageType;
+class VirtualMachine;
+
+typedef TESObjectREFR* (* _PlaceAtMe_Native)(VirtualMachine* vm, UInt32 stackId, TESObjectREFR** target, TESForm* form, SInt32 count, bool bForcePersist, bool bInitiallyDisabled, bool bDeleteWhenAble);
+extern RelocAddr<_PlaceAtMe_Native> PlaceAtMe_Native;
 
 // 20+
 class TESObject : public TESForm

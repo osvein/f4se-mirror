@@ -348,7 +348,7 @@ public:
 	// 98B654B565F35633CBE8804A5CBF84646AE30A1B+9
 	DEFINE_MEMBER_FN(Impl_ctor, BSGFxShaderFXTarget *, 0x020F16F0, GFxValue * source);
 	DEFINE_MEMBER_FN(Impl_dtor, void, 0x020F1650);
-	DEFINE_MEMBER_FN(Impl_Fn1, void, 0x00000000, void * unk1, void * unk2);	// bad address
+	DEFINE_MEMBER_FN(Impl_Fn1, void, 0x020F1B70, void * unk1, void * unk2);
 };
 STATIC_ASSERT(offsetof(BSGFxShaderFXTarget, red) == 0x80);
 STATIC_ASSERT(sizeof(BSGFxShaderFXTarget) == 0xB0);

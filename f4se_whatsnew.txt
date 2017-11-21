@@ -1,3 +1,7 @@
+0.6.2
+- fixed crash in ObjectReference::AttachWireLatent
+- fixed input handler
+
 0.6.1
 - support for runtime 1.10.40
 
