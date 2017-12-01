@@ -1167,7 +1167,7 @@ int Property Motion_Keyframed = 2 AutoReadOnly
 
 
 
-; F4SE additions built 2017-11-21 01:02:02.789000 UTC
+; F4SE additions built 2017-12-01 04:26:47.763000 UTC
 ; Returns all the mods for this reference
 ObjectMod[] Function GetAllMods() native
 

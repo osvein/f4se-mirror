@@ -145,7 +145,7 @@ public:
 	UInt32								numComponents;			// 108 - 0x1E
 
 	MEMBER_FN_PREFIX(HUDComponents);
-	DEFINE_MEMBER_FN(Impl_Destroy, void, 0x01282670);	// 3DD133AB9DDB89D138FB8958EB3A68CBF2F15DD9+FE
+	DEFINE_MEMBER_FN(Impl_Destroy, void, 0x01282730);	// 3DD133AB9DDB89D138FB8958EB3A68CBF2F15DD9+FE
 };
 
 // 220
@@ -223,8 +223,8 @@ public:
 
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043C70, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x020420E0, BSFixedString * name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x020436E0, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02041B50, BSFixedString * name);
 };
 
 extern RelocPtr <UI*> g_ui;

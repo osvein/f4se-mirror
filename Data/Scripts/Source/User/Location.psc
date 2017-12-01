@@ -80,7 +80,7 @@ Event OnLocationLoaded()
 EndEvent
 
 
-; F4SE additions built 2017-11-21 01:02:02.789000 UTC
+; F4SE additions built 2017-12-01 04:26:47.763000 UTC
 
 ; Returns the parent location
 Location Function GetParent() native

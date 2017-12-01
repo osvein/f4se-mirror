@@ -1,13 +1,13 @@
 #include "f4se/ScaleformValue.h"
 #include "f4se/GameEvents.h"
 
-RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020F2C10);
-RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020F2910);
-RelocAddr <_SetDefaultColors> SetDefaultColors(0x020F2B60);
+RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020F2680);
+RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020F2380);
+RelocAddr <_SetDefaultColors> SetDefaultColors(0x020F25D0);
 
-RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x0210DB60);
-RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x0210DE70);
-RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x0210DCF0);
+RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x0210D5D0);
+RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x0210D8E0);
+RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x0210D760);
 
 GFxValue::~GFxValue()
 {
