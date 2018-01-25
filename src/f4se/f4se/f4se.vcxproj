@@ -30,6 +30,7 @@
     <ClCompile Include="BSModelDB.cpp" />
     <ClCompile Include="BSParticleShaderEmitter.cpp" />
     <ClCompile Include="BSSkin.cpp" />
+    <ClCompile Include="CustomMenu.cpp" />
     <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="f4se.cpp" />
@@ -87,6 +88,7 @@
     <ClCompile Include="PapyrusEquipSlot.cpp" />
     <ClCompile Include="PapyrusEvents.cpp" />
     <ClCompile Include="PapyrusF4SE.cpp" />
+    <ClCompile Include="PapyrusFavoritesManager.cpp" />
     <ClCompile Include="PapyrusForm.cpp" />
     <ClCompile Include="PapyrusGame.cpp" />
     <ClCompile Include="PapyrusHeadPart.cpp" />
@@ -94,6 +96,7 @@
     <ClCompile Include="PapyrusInstanceData.cpp" />
     <ClCompile Include="PapyrusInterfaces.cpp" />
     <ClCompile Include="PapyrusLocation.cpp" />
+    <ClCompile Include="PapyrusMaterialSwap.cpp" />
     <ClCompile Include="PapyrusMath.cpp" />
     <ClCompile Include="PapyrusMiscObject.cpp" />
     <ClCompile Include="PapyrusNativeFunctions.cpp" />
@@ -144,6 +147,7 @@
     <ClInclude Include="BSModelDB.h" />
     <ClInclude Include="BSParticleShaderEmitter.h" />
     <ClInclude Include="BSSkin.h" />
+    <ClInclude Include="CustomMenu.h" />
     <ClInclude Include="NiSerialization.h" />
     <ClInclude Include="PapyrusComponent.h" />
     <ClInclude Include="PapyrusConstructibleObject.h" />
@@ -201,6 +205,7 @@
     <ClInclude Include="PapyrusEquipSlot.h" />
     <ClInclude Include="PapyrusEvents.h" />
     <ClInclude Include="PapyrusF4SE.h" />
+    <ClInclude Include="PapyrusFavoritesManager.h" />
     <ClInclude Include="PapyrusForm.h" />
     <ClInclude Include="PapyrusGame.h" />
     <ClInclude Include="PapyrusHeadPart.h" />
@@ -208,6 +213,7 @@
     <ClInclude Include="PapyrusInstanceData.h" />
     <ClInclude Include="PapyrusInterfaces.h" />
     <ClInclude Include="PapyrusLocation.h" />
+    <ClInclude Include="PapyrusMaterialSwap.h" />
     <ClInclude Include="PapyrusMath.h" />
     <ClInclude Include="PapyrusMiscObject.h" />
     <ClInclude Include="PapyrusNativeFunctions.h" />
@@ -275,11 +281,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)_1_10_50</TargetName>
+    <TargetName>$(ProjectName)_1_10_64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)_1_10_50</TargetName>
+    <TargetName>$(ProjectName)_1_10_64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -287,7 +293,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010A0320;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010A0400;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -312,10 +318,11 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010A0320;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;F4SE_EXPORTS;RUNTIME;RUNTIME_VERSION=0x010A0400;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

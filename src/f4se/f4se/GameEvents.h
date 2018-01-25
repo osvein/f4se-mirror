@@ -31,7 +31,8 @@ struct BGSInventoryListEvent
 
 struct MenuOpenCloseEvent
 {
-
+	BSFixedString	menuName;
+	bool			isOpen;
 };
 
 struct MenuModeChangeEvent

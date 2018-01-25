@@ -1,6 +1,6 @@
 Scriptname ConstructibleObject extends MiscObject Native Hidden
 
-; F4SE additions built 2017-12-01 04:26:47.763000 UTC
+; F4SE additions built 2018-01-25 06:00:13.838000 UTC
 struct ConstructibleComponent
 	Component object
 	int count

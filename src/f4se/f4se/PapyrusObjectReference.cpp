@@ -11,9 +11,11 @@
 #include "f4se/GameData.h"
 #include "f4se/GameWorkshop.h"
 
+#include "f4se/BSGeometry.h"
 #include "f4se/NiExtraData.h"
 #include "f4se/NiObjects.h"
 #include "f4se/NiNodes.h"
+#include "f4se/NiMaterials.h"
 #include "f4se/bhkWorld.h"
 
 #include "f4se/Serialization.h"
@@ -21,8 +23,11 @@
 #include "f4se/PapyrusDelayFunctors.h"
 
 #include <set>
+#include <regex>
+#include <unordered_map>
 
 DECLARE_STRUCT(ConnectPoint, "ObjectReference");
+DECLARE_EXTERN_STRUCT(RemapData);
 
 namespace papyrusObjectReference {
 
@@ -482,6 +487,112 @@ namespace papyrusObjectReference {
 		return true;
 	}
 
+	struct CompareMaterial {
+		bool operator()(const std::pair<BGSMaterialSwap::MaterialSwap*,float> lhs, const std::pair<BGSMaterialSwap::MaterialSwap*,float> rhs) {
+			return lhs.first->source < rhs.first->source;
+		}
+	};
+
+	VMArray<RemapData> ApplyMaterialSwapLatent(UInt32 stackId, TESObjectREFR * refr, BGSMaterialSwap * materialSwap, bool renameMaterial)
+	{
+		NiNode * rootNode[2];
+		rootNode[0] = refr->GetActorRootNode(false);
+		rootNode[1] = refr->GetActorRootNode(true);
+
+		int maxRoots = 2;
+		if(rootNode[0] == rootNode[1])
+			maxRoots = 1;
+
+		std::set<std::pair<BGSMaterialSwap::MaterialSwap*,float>, CompareMaterial> success;
+
+		for(int i = 0; i < 2; ++i)
+		{
+			rootNode[i]->Visit([&](NiAVObject * object)
+			{
+				BSGeometry * geometry = object->GetAsBSGeometry();
+				if(geometry) 
+				{
+					NiPointer<BSShaderProperty> shaderProperty = ni_cast(geometry->shaderProperty, BSShaderProperty);
+					if(shaderProperty)
+					{
+						std::string fullPath(shaderProperty->m_name.c_str());
+						if(fullPath.length() == 0)
+							return false;
+
+						fullPath = std::regex_replace(fullPath, std::regex("/+|\\\\+"), "\\"); // Replace multiple slashes or forward slashes with one backslash
+						fullPath = std::regex_replace(fullPath, std::regex("^\\\\+"), ""); // Remove all backslashes from the front
+						fullPath = std::regex_replace(fullPath, std::regex(".*?materials\\\\", std::regex_constants::icase), ""); // Remove everything before and including the materials path
+						BSFixedString fixedPath(fullPath.c_str());
+
+						auto materialLookup = materialSwap->materialSwaps.Find(&fixedPath);
+						if(materialLookup)
+						{
+							// Pull the old colorRemapIndex
+							float lastColorIndex = FLT_MAX;
+							BSLightingShaderProperty * lightingShader = ni_cast(shaderProperty, BSLightingShaderProperty);
+							if(lightingShader) {
+								BSLightingShaderMaterialBase * shaderMaterialBase = static_cast<BSLightingShaderMaterialBase *>(shaderProperty->shaderMaterial);
+								lastColorIndex = shaderMaterialBase->fLookupScale;
+							}
+
+							std::string materialPath("Materials\\");
+							materialPath.append(materialLookup->target.c_str());
+							BSShaderData shaderData;
+							if(!LoadMaterialFile(materialPath.c_str(), &shaderData, 0))
+								CALL_MEMBER_FN(&shaderData, ApplyMaterialData)(geometry, false);
+
+							// Shader property will be the same pointer unless it changes shader type
+							BSShaderProperty * newShaderProperty = ni_cast(geometry->shaderProperty, BSShaderProperty);
+							if(newShaderProperty)
+							{
+								// Renames the material after swap
+								if(renameMaterial) {
+									newShaderProperty->m_name = materialPath.c_str();
+								}
+
+								// Fill in the new colorRemapIndex
+								if(materialLookup->colorRemapIndex != FLT_MAX)
+								{
+									BSLightingShaderProperty * newLightingShader = ni_cast(newShaderProperty, BSLightingShaderProperty);
+									if(newLightingShader) {
+										BSLightingShaderMaterialBase * shaderMaterialBase = static_cast<BSLightingShaderMaterialBase *>(newLightingShader->shaderMaterial);
+										shaderMaterialBase->fLookupScale = materialLookup->colorRemapIndex;
+									}
+								}
+							}
+
+							success.emplace(std::make_pair(materialLookup, lastColorIndex));
+						}
+					}
+					
+				}
+				return false;
+			});
+		}
+
+		VMArray<RemapData> result;
+		for(auto & material : success)
+		{
+			RemapData res;
+			res.Set("source", material.first->target);
+			res.Set("target", material.first->source);
+			res.Set("colorIndex", material.second);
+			result.Push(&res);
+		}
+		return result;
+	}
+
+	DECLARE_DELAY_FUNCTOR(F4SEMaterialSwapFunctor, 2, ApplyMaterialSwapLatent, TESObjectREFR, VMArray<RemapData>, BGSMaterialSwap*, bool);
+
+	bool ApplyMaterialSwap(VirtualMachine * vm, UInt32 stackId, TESObjectREFR* refr, BGSMaterialSwap * materialSwap, bool renameMaterial)
+	{
+		if(!refr || !materialSwap)
+			return false;
+
+		F4SEDelayFunctorManagerInstance().Enqueue(new F4SEMaterialSwapFunctor(ApplyMaterialSwapLatent, vm, stackId, refr, materialSwap, renameMaterial));
+		return true;
+	}
+
 #ifdef _DEBUG
 	void ScrapLatent(UInt32 stackId, TESObjectREFR * refr)
 	{
@@ -509,6 +620,7 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 	f4seObjRegistry.RegisterClass<F4SEInventoryFunctor>();
 	f4seObjRegistry.RegisterClass<F4SEConnectPointsFunctor>();
 	f4seObjRegistry.RegisterClass<F4SETransmitConnectedPowerFunctor>();
+	f4seObjRegistry.RegisterClass<F4SEMaterialSwapFunctor>();
 
 #ifdef _DEBUG
 	f4seObjRegistry.RegisterClass<F4SEScrapFunctor>();
@@ -538,10 +650,14 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new LatentNativeFunction0<TESObjectREFR, bool>("TransmitConnectedPower", "ObjectReference", papyrusObjectReference::TransmitConnectedPower, vm));
 
+	vm->RegisterFunction(
+		new LatentNativeFunction2<TESObjectREFR, VMArray<RemapData>, BGSMaterialSwap*, bool>("ApplyMaterialSwap", "ObjectReference", papyrusObjectReference::ApplyMaterialSwap, vm));
+
 	vm->SetFunctionFlags("ObjectReference", "AttachWire", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("ObjectReference", "GetInventoryItems", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("ObjectReference", "GetConnectPoints", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("ObjectReference", "TransmitConnectedPower", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("ObjectReference", "ApplyMaterialSwap", IFunction::kFunctionFlag_NoWait);
 
 #ifdef _DEBUG
 	vm->RegisterFunction(

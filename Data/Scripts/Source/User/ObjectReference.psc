@@ -1167,7 +1167,7 @@ int Property Motion_Keyframed = 2 AutoReadOnly
 
 
 
-; F4SE additions built 2017-12-01 04:26:47.763000 UTC
+; F4SE additions built 2018-01-25 06:00:13.838000 UTC
 ; Returns all the mods for this reference
 ObjectMod[] Function GetAllMods() native
 
@@ -1232,3 +1232,9 @@ ConnectPoint[] Function GetConnectPoints() native
 ; e.g. progammatically placed conduits
 ; Should be called on each programmatically placed conduit/junction/radiatior
 bool Function TransmitConnectedPower() native
+
+; Returns the source/target pairs that succeeded in swapping
+; Rename material allows independent control over
+; [General]
+; bRenamePropertiesOnMaterialSwap=0
+MatSwap:RemapData[] Function ApplyMaterialSwap(MatSwap mSwap, bool renameMaterial = false) native

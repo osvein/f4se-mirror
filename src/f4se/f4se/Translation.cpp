@@ -106,7 +106,7 @@ namespace Translation
 				{
 					std::string ext = line.substr(lastDelim);
 
-					if(_stricmp(ext.c_str(), ".ESM") == 0 || _stricmp(ext.c_str(),".ESP") == 0)
+					if(_stricmp(ext.c_str(), ".ESM") == 0 || _stricmp(ext.c_str(),".ESP") == 0 || _stricmp(ext.c_str(),".ESL") == 0)
 					{
 						std::string name = line.substr(0, lastDelim);
 						ParseTranslation(translator, name);

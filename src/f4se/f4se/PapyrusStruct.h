@@ -179,6 +179,9 @@ struct IsStructType<VMStruct<NAME>>
 #define DECLARE_STRUCT(structName, scriptOwner) \
 	char StructName_##structName##[] = ##scriptOwner## "#" DECLARE_STRUCT_STRING(structName); \
 	typedef VMStruct<StructName_##structName##> ##structName##;
+#define DECLARE_EXTERN_STRUCT(structName) \
+	extern char StructName_##structName##[]; \
+	typedef VMStruct<StructName_##structName##> ##structName##;
 
 template <const char * T>
 void PackValue(VMValue * dst, VMStruct<T> * src, VirtualMachine * vm)

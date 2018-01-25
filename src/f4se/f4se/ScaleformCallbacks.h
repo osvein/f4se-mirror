@@ -27,7 +27,8 @@ public:
 		GFxValue		* unk18;	// 18
 		GFxValue		* args;		// 20
 		UInt32			numArgs;	// 28
-		void			* refCon;	// 30
+		UInt32			pad2C;		// 2C
+		UInt32			optionID;	// 30 pUserData
 	};
 
 	virtual void	Invoke(Args * args) = 0;
@@ -73,13 +74,14 @@ void RegisterFunction(GFxValue * dst, GFxMovieRoot * movie, const char * name)
 class BSGFxFunctionHandler : public GFxFunctionHandler
 {
 public:
-	virtual ~BSGFxFunctionHandler();
+	virtual ~BSGFxFunctionHandler() { };
 };
 
 class SWFToCodeFunctionHandler : public GFxFunctionHandler
 {
 public:
-	virtual ~SWFToCodeFunctionHandler();
+	virtual ~SWFToCodeFunctionHandler() { }
+	virtual void	RegisterFunctions() = 0;	// 02
 
-	virtual void Unk_02(void);
+	DEFINE_MEMBER_FN_2(RegisterNativeFunction, void, 0x021101A0, const char * name, UInt32 index);
 };

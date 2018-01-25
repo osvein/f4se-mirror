@@ -31,24 +31,26 @@
 #include "f4se/PapyrusConstructibleObject.h"
 #include "f4se/PapyrusComponent.h"
 #include "f4se/PapyrusMiscObject.h"
+#include "f4se/PapyrusMaterialSwap.h"
+#include "f4se/PapyrusFavoritesManager.h"
 
 #include "f4se/Serialization.h"
 
 #include "xbyak/xbyak.h"
 
-RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013E6620 + 0x461);
-RelocAddr <uintptr_t> DelayFunctorQueue_Start(0x01377730 + 0x6A);
+RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013E6A40 + 0x461);
+RelocAddr <uintptr_t> DelayFunctorQueue_Start(0x01377B50 + 0x6A);
 
 typedef bool (* _SaveRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, void * saveStorageWrapper);
-RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x01474530);
+RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x01474950);
 _SaveRegistrationHandles SaveRegistrationHandles_Original = nullptr;
 
 typedef bool (* _LoadRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, UInt16 version, void * loadStorageWrapper, void * unk2);
-RelocAddr <_LoadRegistrationHandles> LoadRegistrationHandles(0x014745C0);
+RelocAddr <_LoadRegistrationHandles> LoadRegistrationHandles(0x014749E0);
 _LoadRegistrationHandles LoadRegistrationHandles_Original = nullptr;
 
 typedef void (* _RevertGlobalData)(void * vm);
-RelocAddr <_RevertGlobalData> RevertGlobalData(0x01375D50);
+RelocAddr <_RevertGlobalData> RevertGlobalData(0x01376170);
 _RevertGlobalData RevertGlobalData_Original = nullptr;
 
 typedef std::list <F4SEPapyrusInterface::RegisterFunctions> PapyrusPluginList;
@@ -79,6 +81,9 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 
 	// WaterType
 	papyrusWaterType::RegisterFuncs(vm);
+
+	// MaterialSwap
+	papyrusMaterialSwap::RegisterFuncs(vm);
 
 	// F4SE
 	papyrusF4SE::RegisterFuncs(vm);
@@ -145,6 +150,9 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 
 	// MiscObject
 	papyrusMiscObject::RegisterFuncs(vm);
+
+	// FavoritesManager
+	papyrusFavoritesManager::RegisterFuncs(vm);
 
 	GetEventDispatcher<TESFurnitureEvent>()->AddEventSink(&g_furnitureEventSink);
 

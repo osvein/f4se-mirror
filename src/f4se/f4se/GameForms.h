@@ -1052,18 +1052,33 @@ class BGSMaterialSwap : public TESForm
 {
 public:
 	enum { kTypeID = kFormType_MSWP };
-							// 20
-	UInt32					unk20;
-	UInt32					unk24;
-	UInt32					unk28;
-	UInt32					unk2C;	// strange - written to in ctor as UInt64 as 0, but can't line up that way
-	UInt32					unk30;
-	UInt32					unk34;
-	UInt64					unk38; // init to a char[5]
-	UInt64					unk40;
-	UInt64					unk48;
+
+	struct MaterialSwap
+	{
+		BSFixedString		source;				// 00
+		BSFixedString		target;				// 08
+		float				colorRemapIndex;	// 10
+		UInt32				unk14;				// 14
+
+		operator BSFixedString() const						{ return source; }
+		bool operator==(const BSFixedString a_name) const	{ return source == a_name; }
+		static inline UInt32 GetHash(BSFixedString * key)
+		{
+			UInt32 hash;
+			CalculateCRC32_64(&hash, (UInt64)key->data, 0);
+			return hash;
+		}
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\tname: %s", source.c_str());
+			_MESSAGE("\t\ttarget: %s", target.c_str());
+			_MESSAGE("\t\tremapIndex: %f", colorRemapIndex);
+		}
+	};
+
+	tHashSet<MaterialSwap, BSFixedString> materialSwaps; // 20
 };
-STATIC_ASSERT(offsetof(BGSMaterialSwap, unk38) == 0x38);
 STATIC_ASSERT(sizeof(BGSMaterialSwap) == 0x50);
 
 class BGSMod

@@ -32,9 +32,9 @@ public:
 
 	MEMBER_FN_PREFIX(NiObject);
 	// 834C1A014705796BD4E62721AE5EFA5F72AE14DB+15
-	DEFINE_MEMBER_FN(Internal_LoadBinary, void, 0x01B95E60, void * stream);
+	DEFINE_MEMBER_FN(Internal_LoadBinary, void, 0x01B96280, void * stream);
 	// 99E296799A58456B4597D53A5954CD9AFFA441FB+1A
-	DEFINE_MEMBER_FN(Internal_SaveBinary, void, 0x01B95F00, void * stream);
+	DEFINE_MEMBER_FN(Internal_SaveBinary, void, 0x01B96320, void * stream);
 };
 
 // 20

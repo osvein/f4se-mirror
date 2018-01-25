@@ -243,7 +243,7 @@ public:
 	DEFINE_MEMBER_FN(GetReferenceName, const char *, 0x0040B5E0);
 	DEFINE_MEMBER_FN(GetWorldspace, TESWorldSpace*, 0x0040F110);
 	DEFINE_MEMBER_FN(GetInventoryWeight, float, 0x004002F0);
-	DEFINE_MEMBER_FN(GetCarryWeight, float, 0x00D86C50);
+	DEFINE_MEMBER_FN(GetCarryWeight, float, 0x00D87070);
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);
@@ -311,7 +311,7 @@ public:
 	virtual void	Unk_FB();
 	virtual void	Unk_FC();
 	virtual void	Unk_FD();
-	virtual void	Unk_FE();
+	virtual bool	IsInCombat(UInt64 unk1 = 0, UInt64 unk2 = 0);
 	virtual void	Unk_FF();
 	virtual void	Unk_100();
 	virtual void	Unk_101();
@@ -427,7 +427,7 @@ public:
 		Data08 * unk08;	// 08
 
 		MEMBER_FN_PREFIX(MiddleProcess);
-		DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00E602C0, Actor * actor, UInt32 flags); 
+		DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00E606E0, Actor * actor, UInt32 flags); 
 	};
 	MiddleProcess * middleProcess;					// 300
 	UInt64	unk308[(0x338-0x308)/8];
@@ -460,8 +460,8 @@ public:
 	}
 
 	MEMBER_FN_PREFIX(Actor);
-	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D89C50, bool bDoFaceGen, UInt32 unk2, bool DoQueue, UInt32 flags); // 0, 0, 1, 0
-	DEFINE_MEMBER_FN(IsHostileToActor, bool, 0x00D90AE0, Actor * actor);
+	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D8A070, bool bDoFaceGen, UInt32 unk2, bool DoQueue, UInt32 flags); // 0, 0, 1, 0
+	DEFINE_MEMBER_FN(IsHostileToActor, bool, 0x00D90F00, Actor * actor);
 	DEFINE_MEMBER_FN(UpdateEquipment, void, 0x004080F0); 
 };
 STATIC_ASSERT(offsetof(Actor, equipData) == 0x428);

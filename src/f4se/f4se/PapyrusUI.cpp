@@ -12,16 +12,62 @@
 #include "f4se/GameMenus.h"
 #include "f4se/PapyrusScaleformAdapter.h"
 
+#include "f4se/CustomMenu.h"
+
 namespace papyrusUI
 {
+	DECLARE_STRUCT(MenuData, "UI")
+
+	bool RegisterCustomMenu(StaticFunctionTag *, BSFixedString menuName, BSFixedString menuPath, BSFixedString rootPath, MenuData menuData)
+	{
+		if(!(*g_ui)->IsMenuRegistered(menuName) && !menuData.IsNone())
+		{
+			SimpleLocker locker(&g_customMenuLock);
+			g_customMenuData[menuName.c_str()].menuPath = menuPath;
+			g_customMenuData[menuName.c_str()].rootPath = rootPath;
+			menuData.Get("menuFlags", &g_customMenuData[menuName.c_str()].menuFlags);
+			menuData.Get("movieFlags", &g_customMenuData[menuName.c_str()].movieFlags);
+			menuData.Get("extendedFlags", &g_customMenuData[menuName.c_str()].extFlags);
+			menuData.Get("depth", &g_customMenuData[menuName.c_str()].depth);
+			(*g_ui)->Register(menuName.c_str(), CreateCustomMenu);
+			return true;
+		}
+		
+		return false;
+	}
+
 	bool IsMenuOpen(StaticFunctionTag *, BSFixedString menuName)
 	{
-		return (*g_ui)->IsMenuOpen(&menuName);
+		return (*g_ui)->IsMenuOpen(menuName);
+	}
+
+	bool OpenMenu(StaticFunctionTag *, BSFixedString menuName)
+	{
+		if((*g_ui)->IsMenuRegistered(menuName)) {
+			CALL_MEMBER_FN(*g_uiMessageManager, SendUIMessage)(menuName, kMessage_Open);
+			return true;
+		}
+		return false;
+	}
+
+	bool CloseMenu(StaticFunctionTag *, BSFixedString menuName)
+	{
+		if((*g_ui)->IsMenuRegistered(menuName)) {
+			CALL_MEMBER_FN(*g_uiMessageManager, SendUIMessage)(menuName, kMessage_Close);
+			return true;
+		}
+		return false;
+	}
+
+	bool IsMenuRegistered(StaticFunctionTag *, BSFixedString menuName)
+	{
+		return (*g_ui)->IsMenuRegistered(menuName);
 	}
 
 	bool UI_LatentSet(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath, VMVariable var)
 	{
-		IMenu * menu = (*g_ui)->GetMenu(&menuName);
+		SimpleLocker locker(g_menuTableLock);
+		IMenu * menu = (*g_ui)->GetMenu(menuName);
 		if(!menu)
 			return false;
 
@@ -40,9 +86,9 @@ namespace papyrusUI
 
 	VMVariable UI_LatentGet(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath)
 	{
+		SimpleLocker locker(g_menuTableLock);
 		VMVariable result;
-		// Work done here is now done on the main thread
-		IMenu * menu = (*g_ui)->GetMenu(&menuName);
+		IMenu * menu = (*g_ui)->GetMenu(menuName);
 		if(!menu)
 			return result;
 
@@ -62,9 +108,9 @@ namespace papyrusUI
 
 	VMVariable UI_LatentInvoke(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath, VMArray<VMVariable> arguments)
 	{
+		SimpleLocker locker(g_menuTableLock);
 		VMVariable result;
-		// Work done here is now done on the main thread
-		IMenu * menu = (*g_ui)->GetMenu(&menuName);
+		IMenu * menu = (*g_ui)->GetMenu(menuName);
 		if(!menu)
 			return result;
 
@@ -195,8 +241,8 @@ namespace papyrusUI
 
 	bool UI_LatentLoad(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath, BSFixedString assetPath, VMObject receiver, BSFixedString callback)
 	{
-		// Work done here is now done on the main thread
-		IMenu * menu = (*g_ui)->GetMenu(&menuName);
+		SimpleLocker locker(g_menuTableLock);
+		IMenu * menu = (*g_ui)->GetMenu(menuName);
 		if(!menu)
 			return false;
 
@@ -301,8 +347,26 @@ void papyrusUI::RegisterFuncs(VirtualMachine* vm)
 	vm->RegisterFunction(
 		new LatentNativeFunction5 <StaticFunctionTag, bool, BSFixedString, BSFixedString, BSFixedString, VMObject, BSFixedString>("Load", "UI", papyrusUI::Load, vm));
 
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, bool, BSFixedString>("IsMenuOpen", "UI", papyrusUI::IsMenuOpen, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, bool, BSFixedString>("OpenMenu", "UI", papyrusUI::OpenMenu, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, bool, BSFixedString>("CloseMenu", "UI", papyrusUI::CloseMenu, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, bool, BSFixedString>("IsMenuRegistered", "UI", papyrusUI::IsMenuRegistered, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction4 <StaticFunctionTag, bool, BSFixedString, BSFixedString, BSFixedString, MenuData>("RegisterCustomMenu", "UI", papyrusUI::RegisterCustomMenu, vm));
+
 	vm->SetFunctionFlags("UI", "Set", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("UI", "Get", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("UI", "Invoke", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("UI", "Load", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("UI", "IsMenuOpen", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("UI", "IsMenuRegistered", IFunction::kFunctionFlag_NoWait);
+	vm->SetFunctionFlags("UI", "RegisterCustomMenu", IFunction::kFunctionFlag_NoWait);
 }

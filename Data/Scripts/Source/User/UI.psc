@@ -2,6 +2,34 @@ Scriptname UI Native Hidden
 
 bool Function IsMenuOpen(string menu) native global
 
+; Returns whether the menu is registered
+bool Function IsMenuRegistered(string menu) native global
+
+struct MenuData
+	int menuFlags = 0x801849D
+	int movieFlags = 3
+	int extendedFlags = 3
+	int depth = 6
+endStruct
+
+bool Function RegisterBasicCustomMenu(string menuName, string menuPath, string rootPath) global
+	MenuData mData = new MenuData
+	return RegisterCustomMenu(menuName, menuPath, rootPath, mData)
+EndFunction
+
+; Registers a custom menu to be opened later
+; e.g.
+; UI.RegisterBasicCustomMenu("MyMenu", "TestMenu", "root1.Menu_mc")
+; UI.OpenMenu("MyMenu")
+; This would open Interface/TestMenu.swf and the root of the menu would be stage.Menu_mc
+bool Function RegisterCustomMenu(string menuName, string menuPath, string rootPath, MenuData mData) native global
+
+; Return value does not indicate the menu is ready, only that it sent the message
+bool Function OpenMenu(string menuName) native global
+
+; Return value does not indicate the menu is closed, only that it sent the message
+bool Function CloseMenu(string menuName) native global
+
 ; Sets a variable in AS3 to the newly assigned type
 ; Can accept arrays using VarArrayToVar
 bool Function Set(string menu, string path, Var arg) native global

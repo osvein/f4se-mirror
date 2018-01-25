@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\.."
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\..&quot;;&quot;$(SolutionDir)\..\..&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -111,7 +111,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\.."
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\..&quot;;&quot;$(SolutionDir)\..\..&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
 				RuntimeTypeInfo="true"
@@ -189,6 +189,26 @@
 				RelativePath=".\ISegmentStream.h"
 				>
 			</File>
+			<Filter
+				Name="pipe"
+				>
+				<File
+					RelativePath=".\IPipeClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\IPipeClient.h"
+					>
+				</File>
+				<File
+					RelativePath=".\IPipeServer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\IPipeServer.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="debug"
@@ -371,26 +391,6 @@
 			</File>
 			<File
 				RelativePath=".\IMemPool.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="pipe"
-			>
-			<File
-				RelativePath=".\IPipeClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IPipeClient.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IPipeServer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IPipeServer.h"
 				>
 			</File>
 		</Filter>

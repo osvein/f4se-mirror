@@ -60,9 +60,9 @@ public:
 	virtual void	Unk_20();
 	virtual void	Unk_21();
 	virtual void	Unk_22();
-	virtual void	Unk_23();
+	virtual bool	SetPropertyValue(VMIdentifier** identifier, const char* propertyName, VMValue* newValue, UInt64* unk4);
 	virtual void	Unk_24();
-	virtual void	Unk_25();
+	virtual bool	GetPropertyValueByIndex(VMIdentifier** identifier, SInt32 idx, VMValue* outValue);
 	virtual void	Unk_26();
 	virtual void	Unk_27();
 	virtual void	Unk_28();
@@ -219,7 +219,7 @@ public:
 	// ...
 
 	MEMBER_FN_PREFIX(GameVM);
-	DEFINE_MEMBER_FN(SendPapyrusEvent, void, 0x01374A10, UInt64 handle, const BSFixedString & eventName, std::function<bool(void*)> functor); // Signature not correct yet
+	DEFINE_MEMBER_FN(SendPapyrusEvent, void, 0x01374E30, UInt64 handle, const BSFixedString & eventName, std::function<bool(void*)> functor); // Signature not correct yet
 };
 
 extern RelocPtr <GameVM *> g_gameVM;

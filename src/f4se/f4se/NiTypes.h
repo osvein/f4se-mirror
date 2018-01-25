@@ -20,6 +20,11 @@ public:
 		if(m_pObject) m_pObject->DecRef();
 	}
 
+	inline operator bool() const
+	{
+		return m_pObject != nullptr;
+	}
+
 	inline operator T *() const
 	{
 		return m_pObject;

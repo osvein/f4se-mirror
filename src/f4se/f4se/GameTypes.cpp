@@ -36,20 +36,22 @@ bool StringCache::Ref::operator==(const char * lhs) const
 void SimpleLock::Lock(void)
 {
 	SInt32 myThreadID = GetCurrentThreadId();
-	if (threadID == myThreadID) {
-		lockCount++;
-		return;
+	if (threadID == myThreadID)
+	{
+		InterlockedIncrement(&lockCount);
 	}
+	else
+	{
+		UInt32 spinCount = 0;
+		while (InterlockedCompareExchange(&lockCount, 1, 0))
+			Sleep(++spinCount > kFastSpinThreshold);
 
-	UInt32 spinCount = 0;
-	while (InterlockedCompareExchange(&threadID, myThreadID, 0))
-		Sleep(++spinCount > kFastSpinThreshold);
-
-    lockCount = 1;
+		threadID = myThreadID;
+	}
 }
 
 void SimpleLock::Release(void)
 {
-	if (--lockCount == 0)
-		InterlockedCompareExchange(&threadID, 0, threadID);
+	if(InterlockedDecrement(&lockCount) == 0)
+		threadID = 0;
 }

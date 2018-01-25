@@ -4,6 +4,7 @@
 #include "f4se/GameTypes.h"
 #include "f4se/GameForms.h"
 #include "f4se/GameObjects.h"
+#include "f4se/GameInput.h"
 
 class TESObjectWEAP;
 class TESNPC;
@@ -317,3 +318,62 @@ public:
 
 extern RelocPtr <DefaultObjectMap*> g_defaultObjectMap;
 extern RelocPtr <SimpleLock> g_defaultObjectMapLock;
+
+class FavoritesManager : public BSIntrusiveRefCounted
+{
+public:
+	virtual ~FavoritesManager();
+
+	BSInputEventUser	inputEventUser;				// 10
+	BSTEventSink<void>	inventoryEventSink;			// 20
+	BSTEventSink<void>	favoriteChangedEventSink;	// 28
+
+	UInt64	unk30;	// 30
+	UInt64	unk38;	// 38
+	tArray<BSTEventSink<void>> favoritesSinks;	// 40
+	UInt64	unk58;	// 58
+	UInt64	unk60;	// 60
+	UInt64	unk68;	// 68
+	UInt64	unk70;	// 70
+	UInt64	unk78;	// 78
+	UInt64	unk80;	// 80
+	UInt64	unk88;	// 88
+	UInt64	unk90;	// 90
+
+	enum Favorites
+	{
+		kNumFavorites = 12
+	};
+
+	TESForm	* favorites[kNumFavorites];	// 98
+	void * queuedFile[11]; // 128
+	tHashSet<uintptr_t> unk150;	// 150
+
+	struct TaggedEntry
+	{
+		TESForm * form;	// 00
+		UInt32	unk08;	// 08
+		UInt32	unk0C;	// 0C
+
+		operator TESForm *() const					{ return form; }
+
+		static inline UInt32 GetHash(TESForm ** key)
+		{
+			UInt32 hash;
+			CalculateCRC32_64(&hash, (UInt64)*key, 0);
+			return hash;
+		}
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\tForm: %08X", form ? form->formID : 0);
+			_MESSAGE("\t\tunk08: %08X", unk08);
+		}
+	};
+
+	tHashSet<TaggedEntry, TESForm*> taggedForms;	// 180
+	// ...
+};
+STATIC_ASSERT(offsetof(FavoritesManager, taggedForms) == 0x180);
+
+extern RelocPtr <FavoritesManager*> g_favoritesManager;

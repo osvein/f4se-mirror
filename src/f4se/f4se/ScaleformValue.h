@@ -150,29 +150,29 @@ public:
 		void * unk1;
 
 		MEMBER_FN_PREFIX(ObjectInterface);
-		DEFINE_MEMBER_FN(HasMember, bool, 0x020AF6A0, void* pData, const char* name);
-		DEFINE_MEMBER_FN(GetMember, bool, 0x020A7A50, void* pData, const char* name, GFxValue* pValue, bool isDisplayObj);
-		DEFINE_MEMBER_FN(SetMember, bool, 0x020CFFD0, void* pData, const char* name, const GFxValue* pValue, bool isDisplayObj);
-		DEFINE_MEMBER_FN(Invoke, bool, 0x020B1710, void * pData, GFxValue * result, const char * name, GFxValue * args, UInt64 numArgs, UInt8 isDisplayObj);
-		DEFINE_MEMBER_FN(CreateEmptyMovieClip, bool, 0x02089AB0, void* pData, GFxValue* pValue, const char* instanceName, SInt32 depth);
-		DEFINE_MEMBER_FN(AttachMovie, bool, 0x02081020, void* pData, GFxValue* pValue, const char* symbolName, const char* instanceName, SInt32 depth, const void * initArgs);
-		DEFINE_MEMBER_FN(GetArraySize, UInt32, 0x020A1850, void * pData);
+		DEFINE_MEMBER_FN(HasMember, bool, 0x020AFAC0, void* pData, const char* name);
+		DEFINE_MEMBER_FN(GetMember, bool, 0x020A7E70, void* pData, const char* name, GFxValue* pValue, bool isDisplayObj);
+		DEFINE_MEMBER_FN(SetMember, bool, 0x020D03F0, void* pData, const char* name, const GFxValue* pValue, bool isDisplayObj);
+		DEFINE_MEMBER_FN(Invoke, bool, 0x020B1B30, void * pData, GFxValue * result, const char * name, GFxValue * args, UInt64 numArgs, UInt8 isDisplayObj);
+		DEFINE_MEMBER_FN(CreateEmptyMovieClip, bool, 0x02089ED0, void* pData, GFxValue* pValue, const char* instanceName, SInt32 depth);
+		DEFINE_MEMBER_FN(AttachMovie, bool, 0x02081440, void* pData, GFxValue* pValue, const char* symbolName, const char* instanceName, SInt32 depth, const void * initArgs);
+		DEFINE_MEMBER_FN(GetArraySize, UInt32, 0x020A1C70, void * pData);
 		// ref CC19A4FFD76032A42FBBC61E80011469E50993D7 (+4)
-		DEFINE_MEMBER_FN(SetArraySize, bool, 0x020CA410, void * pData, UInt32 size);
-		DEFINE_MEMBER_FN(GetElement, bool, 0x020A5540, void * pData, UInt32 index, GFxValue * value);
-		DEFINE_MEMBER_FN(PushBack, bool, 0x020C2360, void * pData, GFxValue * value);
-		DEFINE_MEMBER_FN(PopBack, bool, 0x020BE280, void * pData, GFxValue * value);
-		DEFINE_MEMBER_FN(VisitElements, void, 0x020DAAD0, void * pData, ArrayVisitor * visitor, UInt32 idx, SInt32 count);
+		DEFINE_MEMBER_FN(SetArraySize, bool, 0x020CA830, void * pData, UInt32 size);
+		DEFINE_MEMBER_FN(GetElement, bool, 0x020A5960, void * pData, UInt32 index, GFxValue * value);
+		DEFINE_MEMBER_FN(PushBack, bool, 0x020C2780, void * pData, GFxValue * value);
+		DEFINE_MEMBER_FN(PopBack, bool, 0x020BE6A0, void * pData, GFxValue * value);
+		DEFINE_MEMBER_FN(VisitElements, void, 0x020DAEF0, void * pData, ArrayVisitor * visitor, UInt32 idx, SInt32 count);
 		// ref D46DE0BD07CCA1A3763C21820E22DC491344D2C5 (+485)
-		DEFINE_MEMBER_FN(GotoLabeledFrame, bool, 0x020DAC00, void * pData, const char * frameLabel, bool stop);
+		DEFINE_MEMBER_FN(GotoLabeledFrame, bool, 0x020DB020, void * pData, const char * frameLabel, bool stop);
 		// ref 1A7DD5D4A014A3E7CBF9A53D55DA751C11218613 (+1E7)
-		DEFINE_MEMBER_FN(VisitMembers, void, 0x020DAC00, void * pData, ObjVisitor * visitor, bool isDisplayObj);
-		DEFINE_MEMBER_FN(GetText, bool, 0x020AD2C0, void * pData, GFxValue * value, bool html);
-		DEFINE_MEMBER_FN(SetText, bool, 0x020D30B0, void * pData, const char * text, bool html);
-		DEFINE_MEMBER_FN(GetDisplayInfo, bool, 0x020A4C30, void * pData, DisplayInfo * displayInfo);
-		DEFINE_MEMBER_FN(SetDisplayInfo, bool, 0x020CE8E0, void * pData, DisplayInfo * displayInfo);
-		DEFINE_MEMBER_FN(AddManaged_Internal, void, 0x020B9620, GFxValue * value, void * pData);
-		DEFINE_MEMBER_FN(ReleaseManaged_Internal, void, 0x020B9670, GFxValue * value, void * pData);
+		DEFINE_MEMBER_FN(VisitMembers, void, 0x020DB020, void * pData, ObjVisitor * visitor, bool isDisplayObj);
+		DEFINE_MEMBER_FN(GetText, bool, 0x020AD6E0, void * pData, GFxValue * value, bool html);
+		DEFINE_MEMBER_FN(SetText, bool, 0x020D34D0, void * pData, const char * text, bool html);
+		DEFINE_MEMBER_FN(GetDisplayInfo, bool, 0x020A5050, void * pData, DisplayInfo * displayInfo);
+		DEFINE_MEMBER_FN(SetDisplayInfo, bool, 0x020CED00, void * pData, DisplayInfo * displayInfo);
+		DEFINE_MEMBER_FN(AddManaged_Internal, void, 0x020B9A40, GFxValue * value, void * pData);
+		DEFINE_MEMBER_FN(ReleaseManaged_Internal, void, 0x020B9A90, GFxValue * value, void * pData);
 	};
 
 	ObjectInterface	* objectInterface;	// 00
@@ -230,7 +230,7 @@ public:
 	bool	SetDisplayInfo(DisplayInfo * displayInfo);
 
 	MEMBER_FN_PREFIX(GFxValue);
-	DEFINE_MEMBER_FN(RemoveChild_Internal, void, 0x0210CD30, GFxValue * name);
+	DEFINE_MEMBER_FN(RemoveChild_Internal, void, 0x0210D150, GFxValue * name);
 };
 
 // 38
@@ -304,7 +304,7 @@ public:
 
 	virtual void Unk_01(void * unk1, void * unk2)
 	{
-		CALL_MEMBER_FN(this, Impl_Fn1)(unk1, unk2);
+		Impl_Fn1(unk1, unk2);
 	};
 
 	virtual	EventResult	ReceiveEvent(ApplyColorUpdateEvent * evn, void * dispatcher);
@@ -344,11 +344,10 @@ public:
 
 	void SetFilterColor(bool isHostile);
 
-	MEMBER_FN_PREFIX(BSGFxShaderFXTarget);
 	// 98B654B565F35633CBE8804A5CBF84646AE30A1B+9
-	DEFINE_MEMBER_FN(Impl_ctor, BSGFxShaderFXTarget *, 0x020F1160, GFxValue * source);
-	DEFINE_MEMBER_FN(Impl_dtor, void, 0x020F10C0);
-	DEFINE_MEMBER_FN(Impl_Fn1, void, 0x020F15E0, void * unk1, void * unk2);
+	DEFINE_MEMBER_FN_1(Impl_ctor, BSGFxShaderFXTarget *, 0x020F1580, GFxValue * source);
+	DEFINE_MEMBER_FN_0(Impl_dtor, void, 0x020F14E0);
+	DEFINE_MEMBER_FN_2(Impl_Fn1, void, 0x020F1A00, void * unk1, void * unk2);
 };
 STATIC_ASSERT(offsetof(BSGFxShaderFXTarget, red) == 0x80);
 STATIC_ASSERT(sizeof(BSGFxShaderFXTarget) == 0xB0);
@@ -372,3 +371,9 @@ extern RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha;
 
 typedef void (* _SetExtDisplayInfo)(BSGFxDisplayObject::BSDisplayInfo * dInfo);
 extern RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo;
+
+typedef void(* _PlayUISound)(const char *);
+extern RelocAddr<_PlayUISound>	PlayUISound;
+
+typedef void(*_CreateBaseShaderTarget)(BSGFxShaderFXTarget * & component, GFxValue & stage);
+extern RelocAddr<_CreateBaseShaderTarget>	CreateBaseShaderTarget;

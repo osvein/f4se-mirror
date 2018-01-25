@@ -19,17 +19,24 @@
 #include "PapyrusScaleformAdapter.h"
 #include "GameInput.h"
 
+#include "CustomMenu.h"
+
 class BSScaleformManager;
 
 typedef BSScaleformManager * (* _BSScaleformManager_Ctor)(BSScaleformManager * mem);
-RelocAddr <_BSScaleformManager_Ctor> BSScaleformManager_Ctor(0x0210FE20);
+RelocAddr <_BSScaleformManager_Ctor> BSScaleformManager_Ctor(0x02110240);
 _BSScaleformManager_Ctor BSScaleformManager_Ctor_Original = nullptr;
 
 typedef UInt32 (* _BSScaleformTint)(BSGFxShaderFXTarget * value, float * colors, float multiplier);
-RelocAddr <_BSScaleformTint> BSScaleformTint(0x020F2380);
+RelocAddr <_BSScaleformTint> BSScaleformTint(0x020F27A0);
 _BSScaleformTint BSScaleformTint_Original = nullptr;
 
-RelocAddr <uintptr_t> ScaleformInitHook_Start(0x021104C0 + 0x188);
+RelocAddr <uintptr_t> ScaleformInitHook_Start(0x021108E0 + 0x188);
+
+RelocAddr <uintptr_t> IMenuCreateHook_Start(0x02042240 + 0x90A);
+
+// D7C709A779249EBC0C50BB992E9FD088A33B282F+76
+RelocAddr <uintptr_t> SetMenuName(0x01B41D50);
 
 //// plugin API
 struct ScaleformPluginInfo
@@ -445,5 +452,40 @@ void Hooks_Scaleform_Commit()
 		BSScaleformTint_Original = (_BSScaleformTint)codeBuf;
 
 		g_branchTrampoline.Write5Branch(BSScaleformTint.GetUIntPtr(), (uintptr_t)BSScaleformTint_Hook);
+	}
+
+	// Hook menu construction
+	{
+		struct MenuConstruction_Code : Xbyak::CodeGenerator {
+			MenuConstruction_Code(void * buf, uintptr_t originFuncAddr, uintptr_t funcAddr) : Xbyak::CodeGenerator(4096, buf)
+			{
+				Xbyak::Label retnLabel;
+				Xbyak::Label funcLabel1, funcLabel2;
+
+				// Put the original call back
+				call(ptr [rip + funcLabel1]);
+
+				// Pull the IMenu off the stack and call our new function
+				mov(rcx, ptr[rsp+0x388-0x348]);
+				call(ptr [rip + funcLabel2]);
+
+				// Jump back to the original location
+				jmp(ptr [rip + retnLabel]);
+
+				L(funcLabel1);
+				dq(originFuncAddr);
+
+				L(funcLabel2);
+				dq(funcAddr);
+
+				L(retnLabel);
+				dq(IMenuCreateHook_Start.GetUIntPtr() + 0x5);
+			}
+		};
+
+		void * codeBuf = g_localTrampoline.StartAlloc();
+		MenuConstruction_Code code(codeBuf, SetMenuName.GetUIntPtr(), (uintptr_t)LoadCustomMenu_Hook);
+		g_localTrampoline.EndAlloc(code.getCurr());
+		g_branchTrampoline.Write5Branch(IMenuCreateHook_Start.GetUIntPtr(), uintptr_t(code.getCode()));
 	}
 }

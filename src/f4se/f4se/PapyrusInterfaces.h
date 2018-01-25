@@ -192,7 +192,7 @@ public:
 	virtual void	Unk_0E(UInt64 unk0, UInt64 unk1, UInt8 unk2, UInt64 unk3, UInt64 unk4);
 
 	MEMBER_FN_PREFIX(IObjectBindPolicy);
-	DEFINE_MEMBER_FN(BindObject, void, 0x027086B0, VMIdentifier ** identifier, UInt64 handle);
+	DEFINE_MEMBER_FN(BindObject, void, 0x02708A80, VMIdentifier ** identifier, UInt64 handle);
 };
 
 class TESObjectREFR;
@@ -207,3 +207,24 @@ struct VMRefHandle
 
 typedef VMRefHandle * (* _GetRefFromHandle)(VMRefHandle * ref, UInt64 handle);
 extern RelocAddr <_GetRefFromHandle> GetRefFromHandle;
+
+class VMObjectTypeInfo;
+
+// 40
+struct VMPropertyInfo
+{
+	BSFixedString		scriptName;		// 00
+	BSFixedString		propertyName;	// 08
+	UInt64				unk10;			// 10
+	void*				unk18;			// 18
+	void*				unk20;			// 20
+	void*				unk28;			// 28
+	SInt32				index;			// 30	-1 if not found
+	UInt32				unk34;			// 34
+	BSFixedString		unk38;			// 38
+};
+STATIC_ASSERT(offsetof(VMPropertyInfo, index) == 0x30);
+STATIC_ASSERT(sizeof(VMPropertyInfo) == 0x40);
+
+typedef VMPropertyInfo * (*_GetVMPropertyInfo)(VMObjectTypeInfo* objectTypeInfo, VMPropertyInfo * outInfo, BSFixedString* propertyName, bool unk4); 	// unk4 = 1
+extern RelocAddr <_GetVMPropertyInfo> GetVMPropertyInfo;

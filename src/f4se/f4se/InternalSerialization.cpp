@@ -12,6 +12,8 @@
 #include "f4se/PapyrusObjects.h"
 #include "f4se/PapyrusDelayFunctors.h"
 
+#include "f4se/CustomMenu.h"
+
 // Internal
 
 static UInt8	s_savefileIndexMap[0xFF];
@@ -120,6 +122,18 @@ void Core_RevertCallback(const F4SESerializationInterface * intfc)
 
 	F4SEDelayFunctorManagerInstance().OnRevert();
 	F4SEObjectStorageInstance().ClearAndRelease();
+
+	// Unregister all custom menus
+	g_customMenuLock.Lock();
+	for(auto & menuData : g_customMenuData)
+	{
+		BSFixedString menuName(menuData.first.c_str());
+		if(!(*g_ui)->UnregisterMenu(menuName)) {
+			_DMESSAGE("Failed to unregister %s, instance still exists", menuName.c_str());
+		}
+	}
+	g_customMenuData.clear();
+	g_customMenuLock.Release();
 }
 
 void Core_SaveCallback(const F4SESerializationInterface * intfc)

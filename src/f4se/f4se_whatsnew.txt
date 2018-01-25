@@ -1,3 +1,13 @@
+0.6.5
+- support for runtime 1.10.64
+- Fixed bug with SimpleLock implementation
+- Added MatSwap class and MatSwap.Get/SetRemapData
+- Added ObjectReference.ApplyMaterialSwap
+- Added UI functions
+    - IsMenuRegistered
+    - RegisterCustomMenu
+    - Open/CloseMenu
+
 0.6.4
 - support for runtime 1.10.50
 

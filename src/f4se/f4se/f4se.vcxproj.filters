@@ -308,6 +308,15 @@
     <ClCompile Include="PapyrusMiscObject.cpp">
       <Filter>papyrus\functions</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusMaterialSwap.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusFavoritesManager.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomMenu.cpp">
+      <Filter>internal</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -671,6 +680,15 @@
     </ClInclude>
     <ClInclude Include="PapyrusMiscObject.h">
       <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusMaterialSwap.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusFavoritesManager.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomMenu.h">
+      <Filter>internal</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
