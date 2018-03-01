@@ -15,7 +15,7 @@
 #define LOG_INPUT_HOOK 0
 
 typedef void (* _CreateMenuControlHandlers)(MenuControls * mem);
-RelocAddr <_CreateMenuControlHandlers> CreateMenuControlHandlers(0x012A7F70);
+RelocAddr <_CreateMenuControlHandlers> CreateMenuControlHandlers(0x012A7F30);
 _CreateMenuControlHandlers CreateMenuControlHandlers_Original = nullptr;
 
 #if HOOK_RAW_INPUT

@@ -351,6 +351,8 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 		mswap->materialSwaps.Dump();
 	}*/
 
+	DumpClass((*g_favoritesManager), 0x100);
+
 	for(int i = 0; i < FavoritesManager::kNumFavorites; ++i)
 	{
 		DumpClass((*g_favoritesManager)->favorites[i], sizeof(TESForm)/8);
@@ -1526,11 +1528,11 @@ bool F4SETestCode_Execute(void * paramInfo, void * scriptData, TESObjectREFR * t
 
 #ifdef INVENTORY_HOOK
 typedef void * (* _Inventory_Hook1)(void * unk1, void * unk2, void * unk3);
-RelocAddr <_Inventory_Hook1> Inventory_Hook_1(0x0AEABF0);
+RelocAddr <_Inventory_Hook1> Inventory_Hook_1(0x00000000);
 _Inventory_Hook1 Inventory_Hook1_Original = nullptr;
 
 typedef void (* _Inventory_Hook2)(void * unk1, void * unk2);
-RelocAddr <_Inventory_Hook2> Inventory_Hook_2(0x00AEAE30);
+RelocAddr <_Inventory_Hook2> Inventory_Hook_2(0x00000000);
 _Inventory_Hook2 Inventory_Hook2_Original = nullptr;
 
 

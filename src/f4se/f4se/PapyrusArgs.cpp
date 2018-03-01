@@ -432,6 +432,11 @@ TESObjectREFR * VMRefOrInventoryObj::GetObjectReference()
 	return m_refData.refr;
 }
 
+TESObjectREFR * VMRefOrInventoryObj::GetOwner()
+{
+	return m_refData.owner;
+}
+
 bool VMRefOrInventoryObj::GetExtraData(TESForm ** baseForm, ExtraDataList ** extraData)
 {
 	TESObjectREFR * refr = m_refData.refr;

@@ -40,7 +40,7 @@ Function SetFogPower(float afPower) native
 ; Sets this cell as public or private
 Function SetPublic(bool abPublic = true) native
 
-; F4SE additions built 2018-01-25 06:00:13.838000 UTC
+; F4SE additions built 2018-03-01 05:24:15.994000 UTC
 
 ; Returns the water type for this cell, None if there is no WaterType
 WaterType Function GetWaterType() native

@@ -42,7 +42,7 @@ void LoadCustomMenu_Hook(IMenu * menu)
 			if(extFlags & CustomMenuData::kExtFlag_InheritColors)
 			{
 				gameMenu->shaderTarget->SetFilterColor(false);
-				(*g_colorUpdateDispatcher)->dispatcher.AddEventSink(gameMenu->shaderTarget);
+				(*g_colorUpdateDispatcher)->eventDispatcher.AddEventSink(gameMenu->shaderTarget);
 			}
 
 			if (menu->flags & IMenu::kFlag_ApplyDropDownFilter)

@@ -338,16 +338,15 @@ public:
 	UInt64	unk78;	// 78
 	UInt64	unk80;	// 80
 	UInt64	unk88;	// 88
-	UInt64	unk90;	// 90
 
 	enum Favorites
 	{
 		kNumFavorites = 12
 	};
 
-	TESForm	* favorites[kNumFavorites];	// 98
-	void * queuedFile[11]; // 128
-	tHashSet<uintptr_t> unk150;	// 150
+	TESForm	* favorites[kNumFavorites];	// 90
+	void * queuedFile[kNumFavorites];	// F0
+	tHashSet<uintptr_t> unk150;			// 150
 
 	struct TaggedEntry
 	{

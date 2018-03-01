@@ -493,11 +493,20 @@ namespace papyrusObjectReference {
 		}
 	};
 
-	VMArray<RemapData> ApplyMaterialSwapLatent(UInt32 stackId, TESObjectREFR * refr, BGSMaterialSwap * materialSwap, bool renameMaterial)
+	VMArray<RemapData> ApplyMaterialSwapLatent(UInt32 stackId, VMRefOrInventoryObj * thisObj, BGSMaterialSwap * materialSwap, bool renameMaterial)
 	{
+		TESForm * baseForm = nullptr;
+		ExtraDataList * extraDataList = nullptr;
+		thisObj->GetExtraData(&baseForm, &extraDataList);
+
+		// If the object found is an inventory item, use the owner of the inventory instead
+		TESObjectREFR * refr = DYNAMIC_CAST(baseForm, TESForm, TESObjectREFR);
+		if(!refr)
+			refr = thisObj->GetOwner();
+
 		NiNode * rootNode[2];
-		rootNode[0] = refr->GetActorRootNode(false);
-		rootNode[1] = refr->GetActorRootNode(true);
+		rootNode[0] = refr ? refr->GetActorRootNode(false) : nullptr;
+		rootNode[1] = refr ? refr->GetActorRootNode(true) : nullptr;
 
 		int maxRoots = 2;
 		if(rootNode[0] == rootNode[1])
@@ -505,8 +514,11 @@ namespace papyrusObjectReference {
 
 		std::set<std::pair<BGSMaterialSwap::MaterialSwap*,float>, CompareMaterial> success;
 
-		for(int i = 0; i < 2; ++i)
+		for(int i = 0; i < maxRoots; ++i)
 		{
+			if(!rootNode[i])
+				continue;
+
 			rootNode[i]->Visit([&](NiAVObject * object)
 			{
 				BSGeometry * geometry = object->GetAsBSGeometry();
@@ -582,9 +594,9 @@ namespace papyrusObjectReference {
 		return result;
 	}
 
-	DECLARE_DELAY_FUNCTOR(F4SEMaterialSwapFunctor, 2, ApplyMaterialSwapLatent, TESObjectREFR, VMArray<RemapData>, BGSMaterialSwap*, bool);
+	DECLARE_DELAY_FUNCTOR(F4SEMaterialSwapFunctor, 2, ApplyMaterialSwapLatent, VMRefOrInventoryObj, VMArray<RemapData>, BGSMaterialSwap*, bool);
 
-	bool ApplyMaterialSwap(VirtualMachine * vm, UInt32 stackId, TESObjectREFR* refr, BGSMaterialSwap * materialSwap, bool renameMaterial)
+	bool ApplyMaterialSwap(VirtualMachine * vm, UInt32 stackId, VMRefOrInventoryObj* refr, BGSMaterialSwap * materialSwap, bool renameMaterial)
 	{
 		if(!refr || !materialSwap)
 			return false;
@@ -651,7 +663,7 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 		new LatentNativeFunction0<TESObjectREFR, bool>("TransmitConnectedPower", "ObjectReference", papyrusObjectReference::TransmitConnectedPower, vm));
 
 	vm->RegisterFunction(
-		new LatentNativeFunction2<TESObjectREFR, VMArray<RemapData>, BGSMaterialSwap*, bool>("ApplyMaterialSwap", "ObjectReference", papyrusObjectReference::ApplyMaterialSwap, vm));
+		new LatentNativeFunction2<VMRefOrInventoryObj, VMArray<RemapData>, BGSMaterialSwap*, bool>("ApplyMaterialSwap", "ObjectReference", papyrusObjectReference::ApplyMaterialSwap, vm));
 
 	vm->SetFunctionFlags("ObjectReference", "AttachWire", IFunction::kFunctionFlag_NoWait);
 	vm->SetFunctionFlags("ObjectReference", "GetInventoryItems", IFunction::kFunctionFlag_NoWait);

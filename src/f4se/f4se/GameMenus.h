@@ -35,9 +35,9 @@ class UIMessageManager
 {
 public:
 	MEMBER_FN_PREFIX(UIMessageManager);
-	DEFINE_MEMBER_FN(SendUIMessage, void, 0x0204C9A0, BSFixedString& menuName, UInt32 type);
+	DEFINE_MEMBER_FN(SendUIMessage, void, 0x0204C960, BSFixedString& menuName, UInt32 type);
 	// 325A22C9C57B8175C01F1E071B4E272401994375+CB
-	DEFINE_MEMBER_FN(SendUIMessageEx, void, 0x012BA890, BSFixedString& menuName, UInt32 type, UIMessage * pExtraData);
+	DEFINE_MEMBER_FN(SendUIMessageEx, void, 0x012BA850, BSFixedString& menuName, UInt32 type, UIMessage * pExtraData);
 };
 extern RelocPtr<UIMessageManager*>	g_uiMessageManager;
 
@@ -174,15 +174,15 @@ public:
 private:
 	DEFINE_MEMBER_FN_0(Impl_ctor, void *, 0x00B32360);
 	DEFINE_MEMBER_FN_0(Impl_dtor, void *, 0x00B32420);
-	DEFINE_MEMBER_FN_2(Impl_DrawNextFrame, void, 0x0210ECE0, float unk0, void * unk1);
-	DEFINE_MEMBER_FN_1(Impl_ProcessMessage, UInt32, 0x0210EC60, UIMessage * msg);
-	DEFINE_MEMBER_FN_2(Impl_Unk07, bool, 0x0210F120, UInt32 unk0, void * unk1);
+	DEFINE_MEMBER_FN_2(Impl_DrawNextFrame, void, 0x0210ECA0, float unk0, void * unk1);
+	DEFINE_MEMBER_FN_1(Impl_ProcessMessage, UInt32, 0x0210EC20, UIMessage * msg);
+	DEFINE_MEMBER_FN_2(Impl_Unk07, bool, 0x0210F0E0, UInt32 unk0, void * unk1);
 	DEFINE_MEMBER_FN_1(Impl_Unk08, void, 0x00B328D0, UInt8 unk0);
-	DEFINE_MEMBER_FN_2(Impl_Unk09, void, 0x0210F360, BSFixedString & menuName, bool unk1);
+	DEFINE_MEMBER_FN_2(Impl_Unk09, void, 0x0210F320, BSFixedString & menuName, bool unk1);
 	DEFINE_MEMBER_FN_0(Impl_Unk0A, void, 0x00B32940);
 	DEFINE_MEMBER_FN_0(Impl_Unk0B, void, 0x00B32A00);
 	DEFINE_MEMBER_FN_0(Impl_Unk0C, void, 0x00B32A40);
-	DEFINE_MEMBER_FN_1(Impl_Unk0D, bool, 0x0210F4B0, bool unk0);
+	DEFINE_MEMBER_FN_1(Impl_Unk0D, bool, 0x0210F470, bool unk0);
 	DEFINE_MEMBER_FN_0(Impl_Unk10, bool, 0x00B326F0);
 	DEFINE_MEMBER_FN_0(Impl_Unk11, void, 0x00B32780);
 	DEFINE_MEMBER_FN_1(Impl_Unk12, void, 0x00B327F0, void * unk0);
@@ -273,9 +273,6 @@ public:
 	UInt64								unk98;					// 98
 	UInt64								unk100;					// 100
 	UInt32								numComponents;			// 108 - 0x1E
-
-	MEMBER_FN_PREFIX(HUDComponents);
-	DEFINE_MEMBER_FN(Impl_Destroy, void, 0x01282730);	// 3DD133AB9DDB89D138FB8958EB3A68CBF2F15DD9+FE
 };
 
 // 220
@@ -350,10 +347,10 @@ public:
 
 	bool UnregisterMenu(BSFixedString & name, bool force = false);
 
-	UInt64									unk08;
-	UInt64									unk10;
-	BSTEventDispatcher<MenuOpenCloseEvent>	menuOpenCloseEventSource;
-	UInt64									unk70[(0x190 - 0x70) / 8];	// 458
+	UInt64									unk08;						// 08
+	UInt64									unk10;						// 10
+	BSTEventDispatcher<MenuOpenCloseEvent>	menuOpenCloseEventSource;	// 70
+	UInt64									unk70[(0x190 - 0x70) / 8];
 	tArray<IMenu*>							menuStack;		// 190
 	MenuTable								menuTable;		// 1A8
 	UInt64									unk1D8;         // 1D8
@@ -365,8 +362,8 @@ public:
 
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043B00, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02041F70, const BSFixedString & name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043AC0, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02041F30, const BSFixedString & name);
 };
 
 extern RelocPtr <SimpleLock> g_menuTableLock;

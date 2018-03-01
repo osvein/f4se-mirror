@@ -32,7 +32,7 @@ class SimpleLock
 public:
 	SimpleLock() : threadID(0), lockCount(0) {}
 
-	void Lock(void);
+	void Lock(UInt32 pauseAttempts = 0);
 	void Release(void);
 };
 STATIC_ASSERT(sizeof(SimpleLock) == 0x8);
@@ -98,14 +98,14 @@ public:
 
 		MEMBER_FN_PREFIX(Ref);
 		// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B41BC0, const char * buf);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B41B80, const char * buf);
 		// 34CA732E6B3C7BCD20DEFC8B3711427E5285FF82+AA
-		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B429E0, const wchar_t * buf);
+		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B429A0, const wchar_t * buf);
 		// 489C5F60950D108691FCB6CB0026101275BE474A+79
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01B41CF0, const char * buf);
-		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B44240, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01B41CB0, const char * buf);
+		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B44200, const wchar_t * buf);
 
-		DEFINE_MEMBER_FN(Release, void, 0x01B42E50);
+		DEFINE_MEMBER_FN(Release, void, 0x01B42E10);
 
 		Ref();
 		Ref(const char * buf);

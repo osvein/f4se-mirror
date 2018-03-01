@@ -29,9 +29,9 @@ class VMArgList
 {
 public:
 	MEMBER_FN_PREFIX(VMArgList);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x02728EC0, VMState * state);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x02728E80, VMState * state);
 	// 4C8A9FE3A95B9DED322C9C0A78312E29F0A2CC7A+5B
-	DEFINE_MEMBER_FN(Get, VMValue *, 0x02728F20, VMState * state, UInt32 idx, UInt32 offset);
+	DEFINE_MEMBER_FN(Get, VMValue *, 0x02728EE0, VMState * state, UInt32 idx, UInt32 offset);
 };
 
 template <typename T>
@@ -318,6 +318,7 @@ public:
 	enum { kTypeID = kFormType_REFR };
 
 	TESObjectREFR * GetObjectReference();
+	TESObjectREFR * GetOwner();
 	bool GetExtraData(TESForm ** baseForm, ExtraDataList ** extraData);
 
 	void UnpackObject(VMValue * value)

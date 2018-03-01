@@ -181,15 +181,30 @@ public:
 	char				pad[3];
 };
 
-class ColorEventDispatcher
+class BSTGlobalEvent
 {
 public:
-	void * unk00;	// 00
-	void * unk08;	// 08
-	BSTEventDispatcher<ApplyColorUpdateEvent> dispatcher;	// 10
+	virtual ~BSTGlobalEvent();
+
+	template <typename T>
+	class EventSource
+	{
+	public:
+		virtual ~EventSource();
+
+		// void ** _vtbl;                           // 00
+		UInt64                  unk08;              // 08
+		BSTEventDispatcher<T>   eventDispatcher;    // 10
+	};
+
+	// void ** _vtbl;                               // 00
+	UInt64    unk08;                                // 08
+	UInt64    unk10;                                // 10
+	tArray<EventSource<void*>*> eventSources;       // 18
 };
 
-extern RelocPtr <ColorEventDispatcher*> g_colorUpdateDispatcher;
+extern RelocPtr <BSTGlobalEvent*> g_globalEvents;
+extern RelocPtr <BSTGlobalEvent::EventSource<ApplyColorUpdateEvent>*> g_colorUpdateDispatcher;
 
 template<typename EventT>
 BSTEventDispatcher<EventT> * GetEventDispatcher() { };

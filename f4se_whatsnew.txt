@@ -1,3 +1,7 @@
+0.6.6
+- support for runtime 1.10.75
+- Fixed SimpleLock implementation (again)
+
 0.6.5
 - support for runtime 1.10.64
 - Fixed bug with SimpleLock implementation

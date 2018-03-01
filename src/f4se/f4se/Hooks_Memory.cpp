@@ -8,10 +8,10 @@
 
 #if 0
 
-static RelocAddr <uintptr_t> kHook_IMemoryStoreCtor_Offset(0x01F90780);
-static RelocAddr <void *> kHook_IMemoryStoreCtor_VTable(0x039853F8);
+static RelocAddr <uintptr_t> kHook_IMemoryStoreCtor_Offset(0x00000000);
+static RelocAddr <void *> kHook_IMemoryStoreCtor_VTable(0x00000000);
 
-static RelocAddr <uintptr_t> kHook_IMemoryStoreDtor_Offset(0x01F907A0);
+static RelocAddr <uintptr_t> kHook_IMemoryStoreDtor_Offset(0x00000000);
 
 typedef std::set <IMemoryStoreBase *> HeapList;
 static HeapList s_heaps;

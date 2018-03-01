@@ -39,7 +39,7 @@ public:
 	BSScaleformImageLoader	* imageLoader;	// 28
 
 	MEMBER_FN_PREFIX(BSScaleformManager);
-	DEFINE_MEMBER_FN(LoadMovie, bool, 0x021108E0, IMenu * menu, GFxMovieView *&, const char * name, const char * stagePath, UInt32 flags);
+	DEFINE_MEMBER_FN(LoadMovie, bool, 0x021108A0, IMenu * menu, GFxMovieView *&, const char * name, const char * stagePath, UInt32 flags);
 };
 
 extern RelocPtr <BSScaleformManager *> g_scaleformManager;

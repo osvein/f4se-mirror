@@ -33,25 +33,55 @@ bool StringCache::Ref::operator==(const char * lhs) const
 	return res;
 }
 
-void SimpleLock::Lock(void)
+void SimpleLock::Lock(UInt32 pauseAttempts)
 {
 	SInt32 myThreadID = GetCurrentThreadId();
+
+	_mm_lfence();
 	if (threadID == myThreadID)
 	{
 		InterlockedIncrement(&lockCount);
 	}
 	else
 	{
-		UInt32 spinCount = 0;
-		while (InterlockedCompareExchange(&lockCount, 1, 0))
-			Sleep(++spinCount > kFastSpinThreshold);
+		UInt32 attempts = 0;
+		if (InterlockedCompareExchange(&lockCount, 1, 0))
+		{
+			do
+			{
+				++attempts;
+				_mm_pause();
+				if (attempts >= pauseAttempts) {
+					UInt32 spinCount = 0;
+					while (InterlockedCompareExchange(&lockCount, 1, 0))
+						Sleep(++spinCount < kFastSpinThreshold ? 1 : 0);
+					break;
+				}
+			} while (InterlockedCompareExchange(&lockCount, 1, 0));
+			_mm_lfence();
+		}
 
 		threadID = myThreadID;
+		_mm_sfence();
 	}
 }
 
 void SimpleLock::Release(void)
 {
-	if(InterlockedDecrement(&lockCount) == 0)
-		threadID = 0;
+	SInt32 myThreadID = GetCurrentThreadId();
+
+	_mm_lfence();
+	if (threadID == myThreadID)
+	{
+		if (lockCount == 1)
+		{
+			threadID = 0;
+			_mm_mfence();
+			InterlockedCompareExchange(&lockCount, 0, 1);
+		}
+		else
+		{
+			InterlockedDecrement(&lockCount);
+		}
+	}
 }

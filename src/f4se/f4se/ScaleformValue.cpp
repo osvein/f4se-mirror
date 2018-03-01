@@ -1,15 +1,15 @@
 #include "f4se/ScaleformValue.h"
 #include "f4se/GameEvents.h"
 
-RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020F2AA0);
-RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020F27A0);
-RelocAddr <_SetDefaultColors> SetDefaultColors(0x020F29F0);
+RelocAddr <_GetFilterColorByType> GetFilterColorByType(0x020F2A60);
+RelocAddr <_ApplyColorFilter> ApplyColorFilter(0x020F2760);
+RelocAddr <_SetDefaultColors> SetDefaultColors(0x020F29B0);
 
-RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x0210D9F0);
-RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x0210DD00);
-RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x0210DB80);
+RelocAddr <_GetExtDisplayInfo> GetExtDisplayInfo(0x0210D9B0);
+RelocAddr <_SetExtDisplayInfoAlpha> SetExtDisplayInfoAlpha(0x0210DCC0);
+RelocAddr <_SetExtDisplayInfo> SetExtDisplayInfo(0x0210DB40);
 
-RelocAddr <_PlayUISound>			PlayUISound(0x012BE1A0);
+RelocAddr <_PlayUISound>			PlayUISound(0x012BE160);
 RelocAddr <_CreateBaseShaderTarget>	CreateBaseShaderTarget(0x00B06C20);
 
 GFxValue::~GFxValue()
@@ -266,5 +266,5 @@ EventResult	BSGFxShaderFXTarget::ReceiveEvent(ApplyColorUpdateEvent * evn, void 
 BSGFxShaderFXTarget::~BSGFxShaderFXTarget()
 {
 	if((*g_colorUpdateDispatcher))
-		(*g_colorUpdateDispatcher)->dispatcher.RemoveEventSink(this);
+		(*g_colorUpdateDispatcher)->eventDispatcher.RemoveEventSink(this);
 }

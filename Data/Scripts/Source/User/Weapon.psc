@@ -6,7 +6,7 @@ Function Fire(ObjectReference akSource, Ammo akAmmo = None) native
 ; Get the ammo for this weapon base object
 Ammo Function GetAmmo() native
 
-; F4SE additions built 2018-01-25 06:00:13.838000 UTC
+; F4SE additions built 2018-03-01 05:24:15.994000 UTC
 
 ; Gets/sets the weapons embedded mod
 ObjectMod Function GetEmbeddedMod() native
