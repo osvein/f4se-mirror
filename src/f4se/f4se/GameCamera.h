@@ -2,6 +2,7 @@
 
 #include "f4se_common/Relocation.h"
 #include "f4se/GameEvents.h"
+#include "f4se/GameInput.h"
 
 class NiNode;
 
@@ -61,9 +62,7 @@ public:
 		kNumCameraStates
 	};
 
-	void								* BSInputEventReceiver;			// 38
-	SInt32								unk40;							// 40
-	UInt32								unk44;							// 44
+	BSInputEventReceiver				inputEventReceiver;				// 38
 	BSTEventSink<void>					idleInputSink;					// 48
 	BSTEventSink<UserEventEnabledEvent>	userEventEnabledSink;			// 50
 	BSTEventSink<void>					otherEventEnabledSink;			// 58

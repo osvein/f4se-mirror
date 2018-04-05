@@ -19,7 +19,8 @@ enum MessageType
 	kMessage_Open,
 	kMessage_Close = 3,
 	kMessage_Scaleform = 5,//keydown/up
-	kMessage_Message
+	kMessage_Message,
+	kMessage_Platform = 11
 };
 
 class UIMessage
@@ -35,7 +36,7 @@ class UIMessageManager
 {
 public:
 	MEMBER_FN_PREFIX(UIMessageManager);
-	DEFINE_MEMBER_FN(SendUIMessage, void, 0x0204C960, BSFixedString& menuName, UInt32 type);
+	DEFINE_MEMBER_FN(SendUIMessage, void, 0x0204C9D0, BSFixedString& menuName, UInt32 type);
 	// 325A22C9C57B8175C01F1E071B4E272401994375+CB
 	DEFINE_MEMBER_FN(SendUIMessageEx, void, 0x012BA850, BSFixedString& menuName, UInt32 type, UIMessage * pExtraData);
 };
@@ -65,7 +66,7 @@ public:
 		kFlag_Unk0100 = 0x100,
 		kFlag_HideOther = 0x200,
 		kFlag_DisableInteractive = 0x4000,
-		kFlag_Unk0400 = 0x400,
+		kFlag_UpdateCursorOnPlatformChange = 0x400,
 		kFlag_Unk1000 = 0x1000,
 		kFlag_ItemMenu = 0x2000,
 		kFlag_Unk10000 = 0x10000,	// mouse cursor
@@ -174,15 +175,15 @@ public:
 private:
 	DEFINE_MEMBER_FN_0(Impl_ctor, void *, 0x00B32360);
 	DEFINE_MEMBER_FN_0(Impl_dtor, void *, 0x00B32420);
-	DEFINE_MEMBER_FN_2(Impl_DrawNextFrame, void, 0x0210ECA0, float unk0, void * unk1);
-	DEFINE_MEMBER_FN_1(Impl_ProcessMessage, UInt32, 0x0210EC20, UIMessage * msg);
-	DEFINE_MEMBER_FN_2(Impl_Unk07, bool, 0x0210F0E0, UInt32 unk0, void * unk1);
+	DEFINE_MEMBER_FN_2(Impl_DrawNextFrame, void, 0x0210ED10, float unk0, void * unk1);
+	DEFINE_MEMBER_FN_1(Impl_ProcessMessage, UInt32, 0x0210EC90, UIMessage * msg);
+	DEFINE_MEMBER_FN_2(Impl_Unk07, bool, 0x0210F150, UInt32 unk0, void * unk1);
 	DEFINE_MEMBER_FN_1(Impl_Unk08, void, 0x00B328D0, UInt8 unk0);
-	DEFINE_MEMBER_FN_2(Impl_Unk09, void, 0x0210F320, BSFixedString & menuName, bool unk1);
+	DEFINE_MEMBER_FN_2(Impl_Unk09, void, 0x0210F390, BSFixedString & menuName, bool unk1);
 	DEFINE_MEMBER_FN_0(Impl_Unk0A, void, 0x00B32940);
 	DEFINE_MEMBER_FN_0(Impl_Unk0B, void, 0x00B32A00);
 	DEFINE_MEMBER_FN_0(Impl_Unk0C, void, 0x00B32A40);
-	DEFINE_MEMBER_FN_1(Impl_Unk0D, bool, 0x0210F470, bool unk0);
+	DEFINE_MEMBER_FN_1(Impl_Unk0D, bool, 0x0210F4E0, bool unk0);
 	DEFINE_MEMBER_FN_0(Impl_Unk10, bool, 0x00B326F0);
 	DEFINE_MEMBER_FN_0(Impl_Unk11, void, 0x00B32780);
 	DEFINE_MEMBER_FN_1(Impl_Unk12, void, 0x00B327F0, void * unk0);
@@ -289,6 +290,81 @@ public:
 };
 STATIC_ASSERT(offsetof(HUDMenu, unk200) == 0x200);
 
+// 18
+class PipboySubMenu : public BSTEventSink<struct PipboyValueChangedEvent>
+{
+public:
+
+	virtual ~PipboySubMenu();
+
+	virtual	void Unk02();	// Pure, called by PipboySubMenu::ReceiveEvent
+
+	GFxValue	*value;
+	UInt64		unk10;
+};
+
+// 18
+class PipboyQuestMenu : public PipboySubMenu
+{
+public:
+
+	virtual ~PipboyQuestMenu();	
+};
+
+
+// 18 
+class PipboyValue
+{
+public:
+	virtual ~PipboyValue();
+	virtual	void Unk01();	// Sets unk0C to 0
+	virtual void Unk02();	// pure
+	virtual void Unk03(void *arg1);
+	virtual void Unk04();	// pure
+
+	UInt32		unk08;	// 08 - init'd to incremental variable
+	UInt8		unk0C;	// 0C - init'd to 1
+	UInt8		unk0D;	// 0D - init'd to 1
+	UInt16		pad0E;	// 0E
+	PipboyValue	*unk10;	// 10
+};
+
+template <class T>
+class PipboyPrimitiveValue : public PipboyValue
+{
+public:
+
+	T	value;	// 18	
+};
+STATIC_ASSERT(offsetof(PipboyPrimitiveValue<bool>, value) == 0x18);
+
+class PipboyObject : public PipboyValue
+{
+public:
+	struct PipboyTableItem
+	{
+		BSFixedString	key;
+		PipboyValue		*value;
+
+		bool operator==(const BSFixedString & a_name) const { return key == a_name; }
+		operator BSFixedString() const { return key; }
+
+		static inline UInt32 GetHash(BSFixedString * key)
+		{
+			UInt32 hash;
+			CalculateCRC32_64(&hash, (UInt64)key->data, 0);
+			return hash;
+		}
+	};
+
+
+	virtual ~PipboyObject();
+
+	tHashSet<PipboyTableItem, BSFixedString>	table;	// 18
+	//...
+};
+STATIC_ASSERT(offsetof(PipboyObject, table) == 0x18);
+
 // 00C
 class MenuTableItem
 {
@@ -362,8 +438,8 @@ public:
 
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043AC0, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02041F30, const BSFixedString & name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043B30, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02041FA0, const BSFixedString & name);
 };
 
 extern RelocPtr <SimpleLock> g_menuTableLock;

@@ -1,3 +1,8 @@
+0.6.7
+- support for runtime 1.10.82
+- Added ObjectReference.Get/SetMaterialSwap
+- Fixed ObjectReference.ApplyMaterialSwap crash
+
 0.6.6
 - support for runtime 1.10.75
 - Fixed SimpleLock implementation (again)

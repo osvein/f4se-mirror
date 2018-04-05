@@ -197,8 +197,8 @@ public:
 	UInt32			unk11C;				// 11C
 
 	MEMBER_FN_PREFIX(NiAVObject);
-	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C93750, BSFixedString * name, bool unk1, bool unk2);
-	DEFINE_MEMBER_FN(SetScenegraphChange, void, 0x01BA4590);
+	DEFINE_MEMBER_FN(GetAVObjectByName, NiAVObject*, 0x01C937C0, BSFixedString * name, bool unk1, bool unk2);
+	DEFINE_MEMBER_FN(SetScenegraphChange, void, 0x01BA4600);
 
 	// Return true in the functor to halt traversal
 	template<typename T>

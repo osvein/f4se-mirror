@@ -43,6 +43,15 @@ template <> void PackValue <VMObject>(VMValue * dst, VMObject * src, VirtualMach
 	src->PackObject(dst);
 }
 
+template <> void PackValue <VMRefOrInventoryObj>(VMValue * dst, VMRefOrInventoryObj * src, VirtualMachine * vm)
+{
+	src->PackObject(dst);
+}
+template <> void PackValue <VMRefOrInventoryObj>(VMValue * dst, VMRefOrInventoryObj ** src, VirtualMachine * vm)
+{
+	(*src)->PackObject(dst);
+}
+
 void BindID(VMIdentifier ** identifier, void * srcData, VirtualMachine * vm, IObjectHandlePolicy * handlePolicy, UInt32 typeID)
 {
 	UInt32	unk = 0;

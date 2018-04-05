@@ -103,6 +103,11 @@ struct ChargenCharacterUpdateEvent
 
 };
 
+struct QuickContainerStateEvent
+{
+
+};
+
 struct TESCombatEvent 
 {
 	TESObjectREFR	* source;	// 00

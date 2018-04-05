@@ -55,7 +55,7 @@ public:
 		virtual ~StaticTextureIndexed();
 
 		MEMBER_FN_PREFIX(StaticTextureIndexed);
-		DEFINE_MEMBER_FN(ctor, StaticTextureIndexed*, 0x01CE6690, UInt32 unk1, int unk2, bool unk3);
+		DEFINE_MEMBER_FN(ctor, StaticTextureIndexed*, 0x01CE6700, UInt32 unk1, int unk2, bool unk3);
 
 		UInt64	unk48[(0x78 - 0x48) >> 3];
 	};

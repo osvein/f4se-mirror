@@ -14,9 +14,9 @@
 #define HOOK_RAW_INPUT 0
 #define LOG_INPUT_HOOK 0
 
-typedef void (* _CreateMenuControlHandlers)(MenuControls * mem);
-RelocAddr <_CreateMenuControlHandlers> CreateMenuControlHandlers(0x012A7F30);
-_CreateMenuControlHandlers CreateMenuControlHandlers_Original = nullptr;
+typedef void (* _CreatePlayerControlHandlers)(PlayerControls * mem);
+RelocAddr <_CreatePlayerControlHandlers> CreatePlayerControlHandlers(0x00F44B00);
+_CreatePlayerControlHandlers CreatePlayerControlHandlers_Original = nullptr;
 
 #if HOOK_RAW_INPUT
 
@@ -95,10 +95,10 @@ UINT WINAPI Hook_GetRawInputData(HRAWINPUT rawinput, UINT cmd, void * data, UINT
 
 #endif
 
-class F4SEInputHandler : public BSInputEventUser
+class F4SEInputHandler : public PlayerInputHandler
 {
 public:
-	F4SEInputHandler() : BSInputEventUser(true) { }
+	F4SEInputHandler() : PlayerInputHandler() { }
 
 	virtual void OnButtonEvent(ButtonEvent * inputEvent)
 	{
@@ -166,11 +166,12 @@ public:
 
 F4SEInputHandler g_inputHandler;
 
-void CreateMenuControlHandlers_Hook(MenuControls * menuControls)
+void CreatePlayerControlHandlers_Hook(PlayerControls * menuControls)
 {
-	CreateMenuControlHandlers_Original(menuControls);
+	// Process F4SE handlers first so no events will be blocked
+	menuControls->inputEvents1.Push(&g_inputHandler);
 
-	menuControls->inputEvents.Push(&g_inputHandler);
+	CreatePlayerControlHandlers_Original(menuControls);
 }
 
 void Hooks_Input_Init()
@@ -192,8 +193,8 @@ void Hooks_Input_Commit()
 
 	// hook adding control handlers to MenuControls
 	{
-		struct CreateMenuControlHandlers_Code : Xbyak::CodeGenerator {
-			CreateMenuControlHandlers_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)
+		struct CreatePlayerControlHandlers_Code : Xbyak::CodeGenerator {
+			CreatePlayerControlHandlers_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)
 			{
 				Xbyak::Label retnLabel;
 
@@ -202,16 +203,16 @@ void Hooks_Input_Commit()
 				jmp(ptr [rip + retnLabel]);
 
 				L(retnLabel);
-				dq(CreateMenuControlHandlers.GetUIntPtr() + 5);
+				dq(CreatePlayerControlHandlers.GetUIntPtr() + 5);
 			}
 		};
 
 		void * codeBuf = g_localTrampoline.StartAlloc();
-		CreateMenuControlHandlers_Code code(codeBuf);
+		CreatePlayerControlHandlers_Code code(codeBuf);
 		g_localTrampoline.EndAlloc(code.getCurr());
 
-		CreateMenuControlHandlers_Original = (_CreateMenuControlHandlers)codeBuf;
+		CreatePlayerControlHandlers_Original = (_CreatePlayerControlHandlers)codeBuf;
 
-		g_branchTrampoline.Write5Branch(CreateMenuControlHandlers.GetUIntPtr(), (uintptr_t)CreateMenuControlHandlers_Hook);
+		g_branchTrampoline.Write5Branch(CreatePlayerControlHandlers.GetUIntPtr(), (uintptr_t)CreatePlayerControlHandlers_Hook);
 	}
 }

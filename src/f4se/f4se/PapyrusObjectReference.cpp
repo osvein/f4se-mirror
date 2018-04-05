@@ -261,6 +261,73 @@ namespace papyrusObjectReference {
 	}
 
 
+	void SetMaterialSwap(VMRefOrInventoryObj * thisObj, BGSMaterialSwap * newSwap)
+	{
+		if(thisObj)
+		{
+			TESForm * baseForm = nullptr;
+			ExtraDataList * extraDataList = nullptr;
+			thisObj->GetExtraData(&baseForm, &extraDataList);
+
+			if(baseForm)
+			{
+				if(extraDataList)
+				{
+					BSExtraData * extraData = extraDataList->GetByType(ExtraDataType::kExtraData_MaterialSwap);
+					if(extraData)
+					{
+						if(newSwap)
+						{
+							ExtraMaterialSwap * materialSwap = DYNAMIC_CAST(extraData, BSExtraData, ExtraMaterialSwap);
+							if(materialSwap)
+							{
+								materialSwap->materialSwap = newSwap;
+							}
+						}
+						else
+						{
+							extraDataList->Remove(ExtraDataType::kExtraData_MaterialSwap, extraData);
+							Heap_Free(extraData);
+						}
+					}
+					else if(newSwap)
+					{
+						extraDataList->Add(ExtraDataType::kExtraData_MaterialSwap, ExtraMaterialSwap::Create(newSwap));
+					}
+				}
+			}
+		}
+	}
+
+	BGSMaterialSwap * GetMaterialSwap(VMRefOrInventoryObj * thisObj)
+	{
+		if(!thisObj)
+			return nullptr;
+
+		TESForm * baseForm = nullptr;
+		ExtraDataList * extraDataList = nullptr;
+		thisObj->GetExtraData(&baseForm, &extraDataList);
+
+		if(baseForm)
+		{
+			if(extraDataList)
+			{
+				BSExtraData * extraData = extraDataList->GetByType(ExtraDataType::kExtraData_MaterialSwap);
+				if(extraData)
+				{
+					ExtraMaterialSwap * materialSwap = DYNAMIC_CAST(extraData, BSExtraData, ExtraMaterialSwap);
+					if(materialSwap)
+					{
+						return materialSwap->materialSwap;
+					}
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
+
 	VMArray<TESForm*> GetInventoryItemsLatent(UInt32 stackId, TESObjectREFR * refr)
 	{
 		VMArray<TESForm*> results;
@@ -495,12 +562,8 @@ namespace papyrusObjectReference {
 
 	VMArray<RemapData> ApplyMaterialSwapLatent(UInt32 stackId, VMRefOrInventoryObj * thisObj, BGSMaterialSwap * materialSwap, bool renameMaterial)
 	{
-		TESForm * baseForm = nullptr;
-		ExtraDataList * extraDataList = nullptr;
-		thisObj->GetExtraData(&baseForm, &extraDataList);
-
-		// If the object found is an inventory item, use the owner of the inventory instead
-		TESObjectREFR * refr = DYNAMIC_CAST(baseForm, TESForm, TESObjectREFR);
+		// If the item is a reference use that, otherwise use the owner
+		TESObjectREFR * refr = thisObj->GetObjectReference();
 		if(!refr)
 			refr = thisObj->GetOwner();
 
@@ -655,6 +718,12 @@ void papyrusObjectReference::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction0<TESObjectREFR, float>("GetInventoryWeight", "ObjectReference", papyrusObjectReference::GetInventoryWeight, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1<VMRefOrInventoryObj, void, BGSMaterialSwap*>("SetMaterialSwap", "ObjectReference", papyrusObjectReference::SetMaterialSwap, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction0<VMRefOrInventoryObj, BGSMaterialSwap*>("GetMaterialSwap", "ObjectReference", papyrusObjectReference::GetMaterialSwap, vm));
 
 	vm->RegisterFunction(
 		new LatentNativeFunction0<TESObjectREFR, VMArray<ConnectPoint>>("GetConnectPoints", "ObjectReference", papyrusObjectReference::GetConnectPoints, vm));

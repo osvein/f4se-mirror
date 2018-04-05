@@ -13,6 +13,7 @@ class NiNode;
 class ExtraDataList;
 class TESWorldSpace;
 class BGSScene;
+class TESQuest;
 
 typedef bool (* _CreateHandleByREFR)(UInt32 * handle, TESObjectREFR * ref);
 extern RelocAddr <_CreateHandleByREFR> CreateHandleByREFR;
@@ -485,7 +486,24 @@ public:
 	BSTEventSink<PerkEntryUpdatedEvent::PerkValueEvents>	perkValueEvents;	// 4B0
 	IMovementPlayerControlsFilter		movementControlsFilter;	// 4B8
 
-	UInt64	unk458[(0xB70-0x4C0)/8];	// 4C0
+	UInt8	unk4C0[0x7D8 - 0x4C0];		// 4C0
+
+	struct Objective
+	{
+		void				* unk00;	// 0
+		TESQuest			* owner;	// 8
+		// ...
+	};
+
+	struct ObjectiveData
+	{
+		Objective *data;	// 0
+		UInt32	instance;	// 4
+		UInt32	number;		// 8
+	};
+
+	tArray<ObjectiveData> objData;	// 7D8
+	UInt64	unk458[(0xB70 - 0x7F0) / 8];	// 7F0
 	ActorEquipData	* playerEquipData;	// B70 - First person?
 	NiNode			* firstPersonSkeleton;	// B78
 	UInt64	unkB68[(0xD00-0xB80)/8];	// B78

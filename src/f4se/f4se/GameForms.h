@@ -1762,6 +1762,48 @@ public:
 	UInt32    unk34;		// 34
 };
 
+// 28
+class BGSStoryManagerTreeForm : public TESForm
+{
+public:
+	UInt64		unk20;		// 20
+};
+
+// 2F0
+class TESQuest : public BGSStoryManagerTreeForm
+{
+public:
+
+	enum { kTypeID = kFormType_QUST };	
+	
+	TESFullName	fullName;	// 28
+	UInt64	unk38[(0xF0 - 0x38) >> 3];	// 038
+	UInt32	unkF0;		// 0F0
+	UInt16	flags;		// 0F4
+	UInt8	priority;	// 0F6
+	UInt8	type;		// 0F7
+
+	UInt64	unk0F8[(0x2F0 - 0xF8) >> 3];	// 0F8
+
+	bool IsCompleted()
+	{
+		return ((flags >> 1) & 1);
+	}
+
+	void SetActive(bool active)
+	{
+		if (active)
+		{
+			flags |= 0x800;
+		}
+		else
+		{
+			flags &= ~0x800;
+		}
+	}
+};
+STATIC_ASSERT(offsetof(TESQuest, type) == 0xF7);
+
 // 08
 class IFormFactory
 {

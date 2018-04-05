@@ -326,6 +326,8 @@ class ExtraMaterialSwap : public BSExtraData
 {
 public:
 	BGSMaterialSwap * materialSwap;
+
+	static ExtraMaterialSwap* Create(BGSMaterialSwap * matSwap);
 };
 
 

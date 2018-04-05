@@ -5,7 +5,7 @@ RelocPtr <UI*> g_ui(0x05909918);
 
 RelocAddr <_HasHUDContext> HasHUDContext(0x00A4F210);
 
-RelocAddr<_GetChildElement>		GetChildElement(0x020F0B90);
+RelocAddr<_GetChildElement>		GetChildElement(0x020F0C00);
 
 // 2CA5233612B3158658DB6DB9C90FD0258F1836E2+F1
 RelocPtr <UIMessageManager*>	g_uiMessageManager(0x05909B48);

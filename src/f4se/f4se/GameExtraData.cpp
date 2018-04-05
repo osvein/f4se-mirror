@@ -10,6 +10,9 @@ RelocAddr <uintptr_t> s_ExtraInstanceDataVtbl(0x02C7DC50);
 // ??_7ExtraHealth@@6B@
 RelocAddr <uintptr_t> s_ExtraHealthVtbl(0x02C7C228);
 
+// ??_7ExtraMaterialSwap@@6B@
+RelocAddr <uintptr_t> s_ExtraMaterialSwapVtbl(0x02C7C928);
+
 bool ExtraDataList::PresenceBitfield::HasType(UInt32 type) const
 {
 	UInt32 index = (type >> 3);
@@ -141,4 +144,12 @@ ExtraHealth* ExtraHealth::Create(float value)
 	pHeath->type = kExtraData_Health;
 	pHeath->health = value;
 	return pHeath;
+}
+
+ExtraMaterialSwap* ExtraMaterialSwap::Create(BGSMaterialSwap * matSwap)
+{
+	ExtraMaterialSwap* pMatSwap = (ExtraMaterialSwap*)BSExtraData::Create(sizeof(ExtraMaterialSwap), s_ExtraMaterialSwapVtbl.GetUIntPtr());
+	pMatSwap->type = kExtraData_MaterialSwap;
+	pMatSwap->materialSwap = matSwap;
+	return pMatSwap;
 }

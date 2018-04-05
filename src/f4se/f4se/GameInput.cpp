@@ -10,6 +10,9 @@ RelocPtr <InputManager*> g_inputMgr(0x05A13260);
 // 596277207F98DF39B4A6684C55367AE307B03594+17
 RelocPtr<MenuControls*> g_menuControls(0x05909B58); // BSInputEventReceiver
 
+// F719767F2CF934BC5BEE3EF3CBDFC3AA7BF47C13+2A8
+RelocPtr<PlayerControls*> g_playerControls(0x05A13268);
+
 UInt8 InputManager::AllowTextInput(bool allow)
 {
 	if(allow)

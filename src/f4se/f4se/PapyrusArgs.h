@@ -29,9 +29,9 @@ class VMArgList
 {
 public:
 	MEMBER_FN_PREFIX(VMArgList);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x02728E80, VMState * state);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x02728EF0, VMState * state);
 	// 4C8A9FE3A95B9DED322C9C0A78312E29F0A2CC7A+5B
-	DEFINE_MEMBER_FN(Get, VMValue *, 0x02728EE0, VMState * state, UInt32 idx, UInt32 offset);
+	DEFINE_MEMBER_FN(Get, VMValue *, 0x02728F50, VMState * state, UInt32 idx, UInt32 offset);
 };
 
 template <typename T>
@@ -321,6 +321,11 @@ public:
 	TESObjectREFR * GetOwner();
 	bool GetExtraData(TESForm ** baseForm, ExtraDataList ** extraData);
 
+	void PackObject(VMValue * dst)
+	{
+		*dst = m_value;
+	}
+
 	void UnpackObject(VMValue * value)
 	{
 		if(value->IsIdentifier() && value->data.id) {
@@ -331,9 +336,11 @@ public:
 			m_refData.refr = nullptr;
 			m_refData.uniqueId = 0;
 		}
+		m_value = *value;
 	}
 
 protected:
+	VMValue     m_value;
 	VMRefHandle m_refData;
 };
 
@@ -366,6 +373,7 @@ template <> void PackValue <bool>(VMValue * dst, bool * src, VirtualMachine * vm
 template <> void PackValue <BSFixedString>(VMValue * dst, BSFixedString * src, VirtualMachine * vm);
 template <> void PackValue <VMVariable>(VMValue * dst, VMVariable * src, VirtualMachine * vm);
 template <> void PackValue <VMObject>(VMValue * dst, VMObject * src, VirtualMachine * vm);
+template <> void PackValue <VMRefOrInventoryObj>(VMValue * dst, VMRefOrInventoryObj * src, VirtualMachine * vm);
 
 void PackHandle(VMValue * dst, void * src, UInt32 typeID, VirtualMachine * registry);
 
@@ -378,6 +386,7 @@ void PackValue(VMValue * dst, T ** src, VirtualMachine * vm)
 	typedef std::remove_pointer <T>::type	BaseType;
 	PackHandle(dst, *src, BaseType::kTypeID, vm);
 }
+template <> void PackValue <VMRefOrInventoryObj>(VMValue * dst, VMRefOrInventoryObj ** src, VirtualMachine * vm);
 
 template <> void UnpackValue <float>(float * dst, VMValue * src);
 template <> void UnpackValue <UInt32>(UInt32 * dst, VMValue * src);

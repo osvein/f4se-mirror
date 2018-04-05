@@ -1167,7 +1167,7 @@ int Property Motion_Keyframed = 2 AutoReadOnly
 
 
 
-; F4SE additions built 2018-03-01 05:24:15.994000 UTC
+; F4SE additions built 2018-04-05 02:30:59.354000 UTC
 ; Returns all the mods for this reference
 ObjectMod[] Function GetAllMods() native
 
@@ -1238,3 +1238,17 @@ bool Function TransmitConnectedPower() native
 ; [General]
 ; bRenamePropertiesOnMaterialSwap=0
 MatSwap:RemapData[] Function ApplyMaterialSwap(MatSwap mSwap, bool renameMaterial = false) native
+
+; Sets the internal persistent material swap
+; Adding persistent material swaps will increase save-size by a small amount
+; Setting this to None will remove persistence and free up save-space
+; This function does not apply a visual update, you must use ApplyMaterialSwap
+; This will make the game take care of setting the material swap when the game is loaded
+; ApplyMaterialSwap is a more greedy method of applying materials so the nif objects
+; the game applies materials to may not match up with the ApplyMaterialSwap function
+; Behavior may not be as expected when applied to living references, weapons, or armor placed in the world
+Function SetMaterialSwap(MatSwap mSwap) native
+
+; Gets the internal persistent material swap
+; ObjectReferences placed in the world via Editor may have this already filled
+MatSwap Function GetMaterialSwap() native

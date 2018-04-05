@@ -3,6 +3,7 @@
 #include "f4se_common/Utilities.h"
 #include "f4se_common/Relocation.h"
 #include "f4se/GameTypes.h"
+#include "f4se/GameEvents.h"
 
 // 28
 class InputEvent
@@ -36,7 +37,7 @@ public:
 	UInt64		eventType;		// 10
 	InputEvent	* next;			// 18
 	UInt32		unk20;			// 20
-	UInt32		unk24;			// 24
+	UInt32		unk24;			// 24 - When this != 2 it means stop processing
 };
 STATIC_ASSERT(sizeof(InputEvent) == 0x28);
 
@@ -222,6 +223,7 @@ class BSPCVirtualKeyboardDevice : public BSVirtualKeyboardDevice
 };
 STATIC_ASSERT(sizeof(BSPCVirtualKeyboardDevice) == 0x70);
 
+// 10
 class BSInputEventUser
 {
 public:
@@ -243,13 +245,40 @@ public:
 private:
 	// GameMenuBase:BSInputEventUser override should be the only one calling this function
 	friend class GameMenuBase;
-	DEFINE_MEMBER_FN_1(Impl_OnGameMenuBaseButtonEvent, bool, 0x0210F500, ButtonEvent * button);
+	DEFINE_MEMBER_FN_1(Impl_OnGameMenuBaseButtonEvent, bool, 0x0210F570, ButtonEvent * button);
 };
 
+// 30
+class PlayerInputHandler : public BSInputEventUser
+{
+public:
+	PlayerInputHandler() : BSInputEventUser(true), 
+		unk10(0), unk18(0), unk19(0), unk1A(0), unk1C(0), unk20(0), unk21(0), unk22(0), unk24(0), unk28(0), unk2C(0) { }
+
+	virtual void Unk_09() { };
+	virtual void Unk_0A(void * unk1) { };
+
+	UInt64	unk10;	// 10
+	UInt8	unk18;	// 18
+	UInt8	unk19;	// 19
+	UInt16	unk1A;	// 1A
+	UInt32	unk1C;	// 1C
+	UInt8	unk20;  // 20 
+	UInt8	unk21;	// 21 unk21 == 1 has something to do with an additional vfunc
+	UInt16	unk22;	// 22
+	UInt32	unk24;	// 24
+	UInt8	unk28;	// 28
+	UInt32	unk2C;	// 2C
+};
+
+// 10
 class BSInputEventReceiver
 {
 public:
 	virtual ~BSInputEventReceiver();
+
+	UInt32	unk08;	// 08
+	UInt32	unk0C;	// 0C
 };
 
 class MenuControls : public BSInputEventReceiver
@@ -257,14 +286,45 @@ class MenuControls : public BSInputEventReceiver
 public:
 	virtual ~MenuControls(); // Executes receiving function
 
-	SInt32	unk08;	// 08 - Negative 1 is special case
-	UInt32	unk0C;	// 0C
 	UInt64	unk10;	// 10
 	tArray<BSInputEventUser*>	inputEvents;	// 18
 	BSInputEventUser			* events[8];	// 30
 };
 
 extern RelocPtr<MenuControls*> g_menuControls;
+
+class PlayerControls : public BSInputEventReceiver
+{
+public:
+	virtual ~PlayerControls();
+
+	BSTEventSink<MenuOpenCloseEvent>		openCloseEvent;				// 10
+	BSTEventSink<MenuModeChangeEvent>		menuModeChangeEvent;		// 18
+	BSTEventSink<TESFurnitureEvent>			furnitureEvent;				// 20
+	BSTEventSink<UserEventEnabledEvent>		userEventEnabledEvent;		// 28
+	void*									movementInterface;			// 30 - IMovementPlayerControls
+	BSTEventSink<QuickContainerStateEvent>	quickContainerStateEvent;	// 38
+
+	UInt64	unk40;	// 40
+	UInt64	unk48;	// 48
+	UInt64	unk50;	// 50
+	UInt64	unk58;	// 58
+	UInt64	unk60;	// 60
+	UInt32	unk68;	// 68
+	UInt32	unk6C;	// 6C
+	UInt32	unk70;	// 70
+	UInt32	unk74;	// 74
+	UInt32	unk78;	// 78
+	UInt32	unk7C;	// 7C
+	UInt32	unk80;	// 80
+	float	unk84;	// 84
+	UInt32	unk88;	// 88
+	UInt32	unk8C;	// 8C
+	tArray<PlayerInputHandler*>	inputEvents1;	// 90
+	tArray<PlayerInputHandler*>	inputEvents2;	// A8 - This subset has to do with unk20 and unk21 on the handler
+	// ...
+};
+extern RelocPtr<PlayerControls*> g_playerControls;
 
 class InputDeviceManager
 {
