@@ -10,7 +10,7 @@ RelocPtr <bool> g_isGameDataReady(0x05A91A64);
 RelocPtr <DefaultObjectMap*> g_defaultObjectMap(0x0590C750);
 
 // 637A4CF3B8D5BEB4F483234F10F54E7595CA465F+A3D
-RelocPtr <SimpleLock> g_defaultObjectMapLock(0x0590D1B8);
+RelocPtr <BSReadWriteLock> g_defaultObjectMapLock(0x0590D1B8);
 
 // C449692A90CCF8E972B00FE2979EF8ADEED6925A+3D
 RelocPtr <FavoritesManager*> g_favoritesManager(0x05A98CE0);
@@ -83,7 +83,7 @@ UInt16 DataHandler::GetLoadedLightModIndex(const char* modName)
 
 BGSDefaultObject * DefaultObjectMap::GetDefaultObject(BSFixedString name)
 {
-	SimpleLocker locker(g_defaultObjectMapLock);
+	BSReadLocker locker(g_defaultObjectMapLock);
 	if(*g_defaultObjectMap) {
 		auto entry = (*g_defaultObjectMap)->Find(&name.data);
 		if(entry) {

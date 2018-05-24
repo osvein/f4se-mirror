@@ -36,9 +36,9 @@ class UIMessageManager
 {
 public:
 	MEMBER_FN_PREFIX(UIMessageManager);
-	DEFINE_MEMBER_FN(SendUIMessage, void, 0x0204C9D0, BSFixedString& menuName, UInt32 type);
+	DEFINE_MEMBER_FN(SendUIMessage, void, 0x0204CA30, BSFixedString& menuName, UInt32 type);
 	// 325A22C9C57B8175C01F1E071B4E272401994375+CB
-	DEFINE_MEMBER_FN(SendUIMessageEx, void, 0x012BA850, BSFixedString& menuName, UInt32 type, UIMessage * pExtraData);
+	DEFINE_MEMBER_FN(SendUIMessageEx, void, 0x012BA8B0, BSFixedString& menuName, UInt32 type, UIMessage * pExtraData);
 };
 extern RelocPtr<UIMessageManager*>	g_uiMessageManager;
 
@@ -173,21 +173,21 @@ public:
 
 	DEFINE_STATIC_HEAP(ScaleformHeap_Allocate, ScaleformHeap_Free)
 private:
-	DEFINE_MEMBER_FN_0(Impl_ctor, void *, 0x00B32360);
-	DEFINE_MEMBER_FN_0(Impl_dtor, void *, 0x00B32420);
-	DEFINE_MEMBER_FN_2(Impl_DrawNextFrame, void, 0x0210ED10, float unk0, void * unk1);
-	DEFINE_MEMBER_FN_1(Impl_ProcessMessage, UInt32, 0x0210EC90, UIMessage * msg);
-	DEFINE_MEMBER_FN_2(Impl_Unk07, bool, 0x0210F150, UInt32 unk0, void * unk1);
-	DEFINE_MEMBER_FN_1(Impl_Unk08, void, 0x00B328D0, UInt8 unk0);
-	DEFINE_MEMBER_FN_2(Impl_Unk09, void, 0x0210F390, BSFixedString & menuName, bool unk1);
-	DEFINE_MEMBER_FN_0(Impl_Unk0A, void, 0x00B32940);
-	DEFINE_MEMBER_FN_0(Impl_Unk0B, void, 0x00B32A00);
-	DEFINE_MEMBER_FN_0(Impl_Unk0C, void, 0x00B32A40);
-	DEFINE_MEMBER_FN_1(Impl_Unk0D, bool, 0x0210F4E0, bool unk0);
-	DEFINE_MEMBER_FN_0(Impl_Unk10, bool, 0x00B326F0);
-	DEFINE_MEMBER_FN_0(Impl_Unk11, void, 0x00B32780);
-	DEFINE_MEMBER_FN_1(Impl_Unk12, void, 0x00B327F0, void * unk0);
-	DEFINE_MEMBER_FN_2(Impl_Unk13, void, 0x00B32840, void * unk0, void * unk1);
+	DEFINE_MEMBER_FN_0(Impl_ctor, void *, 0x00B323C0);
+	DEFINE_MEMBER_FN_0(Impl_dtor, void *, 0x00B32480);
+	DEFINE_MEMBER_FN_2(Impl_DrawNextFrame, void, 0x0210ED70, float unk0, void * unk1);
+	DEFINE_MEMBER_FN_1(Impl_ProcessMessage, UInt32, 0x0210ECF0, UIMessage * msg);
+	DEFINE_MEMBER_FN_2(Impl_Unk07, bool, 0x0210F1B0, UInt32 unk0, void * unk1);
+	DEFINE_MEMBER_FN_1(Impl_Unk08, void, 0x00B32930, UInt8 unk0);
+	DEFINE_MEMBER_FN_2(Impl_Unk09, void, 0x0210F3F0, BSFixedString & menuName, bool unk1);
+	DEFINE_MEMBER_FN_0(Impl_Unk0A, void, 0x00B329A0);
+	DEFINE_MEMBER_FN_0(Impl_Unk0B, void, 0x00B32A60);
+	DEFINE_MEMBER_FN_0(Impl_Unk0C, void, 0x00B32AA0)
+	DEFINE_MEMBER_FN_1(Impl_Unk0D, bool, 0x0210F540, bool unk0);
+	DEFINE_MEMBER_FN_0(Impl_Unk10, bool, 0x00B32750);
+	DEFINE_MEMBER_FN_0(Impl_Unk11, void, 0x00B327E0);
+	DEFINE_MEMBER_FN_1(Impl_Unk12, void, 0x00B32850, void * unk0);
+	DEFINE_MEMBER_FN_2(Impl_Unk13, void, 0x00B328A0, void * unk0, void * unk1);
 };
 STATIC_ASSERT(offsetof(GameMenuBase, shaderTarget) == 0x88);
 
@@ -206,7 +206,7 @@ public:
 	UInt32	unk1E4;				// 1E4
 	UInt64	unk1E8[(0x218-0x1E8)/8];
 
-	DEFINE_MEMBER_FN_0(LoadCharacterParameters, void, 0x00B41400); // This function updates all the internals from the current character
+	DEFINE_MEMBER_FN_0(LoadCharacterParameters, void, 0x00B41460); // This function updates all the internals from the current character
 																 // It's followed by a call to onCommitCharacterPresetChange
 };
 STATIC_ASSERT(offsetof(LooksMenu, nextBoneID) == 0x150);
@@ -252,9 +252,9 @@ public:
 	UInt8							padF3[5];		// F3
 
 	MEMBER_FN_PREFIX(HUDComponentBase);
-	DEFINE_MEMBER_FN_3(Impl_ctor, HUDComponentBase *, 0x00A228F0, GFxValue * parent, const char * componentName, HUDContextArray<BSFixedString> * contextList);
-	DEFINE_MEMBER_FN_0(Impl_IsVisible, bool, 0x00A22C30);
-	DEFINE_MEMBER_FN_0(Impl_UpdateComponent, void, 0x00A22990);
+	DEFINE_MEMBER_FN_3(Impl_ctor, HUDComponentBase *, 0x00A22950, GFxValue * parent, const char * componentName, HUDContextArray<BSFixedString> * contextList);
+	DEFINE_MEMBER_FN_0(Impl_IsVisible, bool, 0x00A22C90);
+	DEFINE_MEMBER_FN_0(Impl_UpdateComponent, void, 0x00A229F0);
 	
 };
 STATIC_ASSERT(offsetof(HUDComponentBase, contexts) == 0xC8);
@@ -416,7 +416,7 @@ public:
 	template<typename T>
 	void ForEachMenu(T & menuFunc)
 	{
-		g_menuTableLock->Lock();
+		g_menuTableLock->LockForReadAndWrite();
 		menuTable.ForEach(menuFunc);
 		g_menuTableLock->Release();
 	}
@@ -438,9 +438,9 @@ public:
 
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043B30, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02041FA0, const BSFixedString & name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043B90, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02042000, const BSFixedString & name);
 };
 
-extern RelocPtr <SimpleLock> g_menuTableLock;
+extern RelocPtr <BSReadWriteLock> g_menuTableLock;
 extern RelocPtr <UI*> g_ui;

@@ -22,7 +22,7 @@ bool ExtraDataList::PresenceBitfield::HasType(UInt32 type) const
 
 bool ExtraDataList::HasType(UInt32 type)
 {
-	SimpleLocker locker(&m_lock);
+	BSReadLocker locker(&m_lock);
 	return (m_presence) ? m_presence->HasType(type) : false;
 }
 
@@ -42,7 +42,7 @@ bool ExtraDataList::Remove(UInt8 type, BSExtraData* toRemove)
 {
 	if (!toRemove) return false;
 
-	SimpleLocker locker(&m_lock);
+	BSReadAndWriteLocker locker(&m_lock);
 	if (HasType(type)) {
 		bool bRemoved = false;
 		if (m_data == toRemove) {
@@ -70,7 +70,7 @@ bool ExtraDataList::Add(UInt8 type, BSExtraData* toAdd)
 {
 	if (!toAdd || HasType(type)) return false;
 
-	SimpleLocker locker(&m_lock);
+	BSReadAndWriteLocker locker(&m_lock);
 	BSExtraData* next = m_data;
 	m_data = toAdd;
 	toAdd->next = next;
@@ -83,7 +83,7 @@ BSExtraData* ExtraDataList::GetByType(UInt32 type)
 	if (!HasType(type))
 		return NULL;
 
-	SimpleLocker locker(&m_lock);
+	BSReadLocker locker(&m_lock);
 	for(BSExtraData * traverse = m_data; traverse; traverse = traverse->next) {
 		if(traverse->type == type)
 			return traverse;

@@ -1,18 +1,29 @@
+0.6.8
+- support for runtime 1.10.89
+- changed locking implementations to BSReadWriteLock
+- added Scaleform functions to load dds images
+    - MountImage(menuName, pathToMount, mountName)
+    - UnmountImage(menuName, pathToUnmount)
+    - Image is loaded through URLRequest("img://mountName")
+- added Scaleform receiving function
+    - function onF4SEObjCreated(codeObject:Object):void
+    - This function is called on the menu root document as well as first-level children
+
 0.6.7
 - support for runtime 1.10.82
-- Added ObjectReference.Get/SetMaterialSwap
-- Fixed ObjectReference.ApplyMaterialSwap crash
+- added ObjectReference.Get/SetMaterialSwap
+- fixed ObjectReference.ApplyMaterialSwap crash
 
 0.6.6
 - support for runtime 1.10.75
-- Fixed SimpleLock implementation (again)
+- fixed SimpleLock implementation (again)
 
 0.6.5
 - support for runtime 1.10.64
-- Fixed bug with SimpleLock implementation
-- Added MatSwap class and MatSwap.Get/SetRemapData
-- Added ObjectReference.ApplyMaterialSwap
-- Added UI functions
+- fixed bug with SimpleLock implementation
+- added MatSwap class and MatSwap.Get/SetRemapData
+- added ObjectReference.ApplyMaterialSwap
+- added UI functions
     - IsMenuRegistered
     - RegisterCustomMenu
     - Open/CloseMenu

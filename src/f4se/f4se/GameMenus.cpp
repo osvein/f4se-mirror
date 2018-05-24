@@ -3,15 +3,15 @@
 // 2CA5233612B3158658DB6DB9C90FD0258F1836E2+AD
 RelocPtr <UI*> g_ui(0x05909918);
 
-RelocAddr <_HasHUDContext> HasHUDContext(0x00A4F210);
+RelocAddr <_HasHUDContext> HasHUDContext(0x00A4F270);
 
-RelocAddr<_GetChildElement>		GetChildElement(0x020F0C00);
+RelocAddr<_GetChildElement>		GetChildElement(0x020F0C60);
 
 // 2CA5233612B3158658DB6DB9C90FD0258F1836E2+F1
 RelocPtr <UIMessageManager*>	g_uiMessageManager(0x05909B48);
 
 // E8B45849BEED1FD76CD4D25F030C48F09D0B41F1+90
-RelocPtr <SimpleLock> g_menuTableLock(0x065B04B8);
+RelocPtr <BSReadWriteLock> g_menuTableLock(0x065B04B8);
 
 bool UI::IsMenuOpen(const BSFixedString & menuName)
 {
@@ -20,7 +20,7 @@ bool UI::IsMenuOpen(const BSFixedString & menuName)
 
 bool UI::IsMenuRegistered(BSFixedString & menuName)
 {
-	SimpleLocker locker(g_menuTableLock);
+	BSReadLocker locker(g_menuTableLock);
 	MenuTableItem * item = menuTable.Find(&menuName);
 	if (item) {
 		return true;
@@ -34,7 +34,7 @@ IMenu * UI::GetMenu(BSFixedString & menuName)
 	if (!menuName.data->Get<char>())
 		return nullptr;
 
-	SimpleLocker locker(g_menuTableLock);
+	BSReadAndWriteLocker locker(g_menuTableLock);
 	MenuTableItem * item = menuTable.Find(&menuName);
 	if (!item) {
 		return nullptr;
@@ -54,7 +54,7 @@ IMenu * UI::GetMenuByMovie(GFxMovieView * movie)
 		return nullptr;
 	}
 
-	SimpleLocker locker(g_menuTableLock);
+	BSReadAndWriteLocker locker(g_menuTableLock);
 
 	IMenu * menu = nullptr;
 	menuTable.ForEach([movie, &menu](MenuTableItem * item)
@@ -77,7 +77,7 @@ IMenu * UI::GetMenuByMovie(GFxMovieView * movie)
 
 bool UI::UnregisterMenu(BSFixedString & name, bool force)
 {
-	SimpleLocker locker(g_menuTableLock);
+	BSReadAndWriteLocker locker(g_menuTableLock);
 	MenuTableItem * item = menuTable.Find(&name);
 	if (!item || (item->menuInstance && !force)) {
 		return false;

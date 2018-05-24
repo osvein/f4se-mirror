@@ -22,7 +22,7 @@ namespace papyrusUI
 	{
 		if(!(*g_ui)->IsMenuRegistered(menuName) && !menuData.IsNone())
 		{
-			SimpleLocker locker(&g_customMenuLock);
+			BSReadAndWriteLocker locker(&g_customMenuLock);
 			g_customMenuData[menuName.c_str()].menuPath = menuPath;
 			g_customMenuData[menuName.c_str()].rootPath = rootPath;
 			menuData.Get("menuFlags", &g_customMenuData[menuName.c_str()].menuFlags);
@@ -66,7 +66,7 @@ namespace papyrusUI
 
 	bool UI_LatentSet(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath, VMVariable var)
 	{
-		SimpleLocker locker(g_menuTableLock);
+		BSReadAndWriteLocker locker(g_menuTableLock);
 		IMenu * menu = (*g_ui)->GetMenu(menuName);
 		if(!menu)
 			return false;
@@ -86,7 +86,7 @@ namespace papyrusUI
 
 	VMVariable UI_LatentGet(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath)
 	{
-		SimpleLocker locker(g_menuTableLock);
+		BSReadAndWriteLocker locker(g_menuTableLock);
 		VMVariable result;
 		IMenu * menu = (*g_ui)->GetMenu(menuName);
 		if(!menu)
@@ -108,7 +108,7 @@ namespace papyrusUI
 
 	VMVariable UI_LatentInvoke(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath, VMArray<VMVariable> arguments)
 	{
-		SimpleLocker locker(g_menuTableLock);
+		BSReadAndWriteLocker locker(g_menuTableLock);
 		VMVariable result;
 		IMenu * menu = (*g_ui)->GetMenu(menuName);
 		if(!menu)
@@ -241,7 +241,7 @@ namespace papyrusUI
 
 	bool UI_LatentLoad(UInt32 stackId, StaticFunctionTag *, BSFixedString menuName, BSFixedString varPath, BSFixedString assetPath, VMObject receiver, BSFixedString callback)
 	{
-		SimpleLocker locker(g_menuTableLock);
+		BSReadAndWriteLocker locker(g_menuTableLock);
 		IMenu * menu = (*g_ui)->GetMenu(menuName);
 		if(!menu)
 			return false;

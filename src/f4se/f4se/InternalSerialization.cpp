@@ -1,5 +1,4 @@
 #include <map>
-#include <algorithm>
 #include <string>
 
 #include "common/IFileStream.h"
@@ -124,7 +123,7 @@ void Core_RevertCallback(const F4SESerializationInterface * intfc)
 	F4SEObjectStorageInstance().ClearAndRelease();
 
 	// Unregister all custom menus
-	g_customMenuLock.Lock();
+	g_customMenuLock.LockForReadAndWrite();
 	for(auto & menuData : g_customMenuData)
 	{
 		BSFixedString menuName(menuData.first.c_str());
@@ -133,7 +132,7 @@ void Core_RevertCallback(const F4SESerializationInterface * intfc)
 		}
 	}
 	g_customMenuData.clear();
-	g_customMenuLock.Release();
+	g_customMenuLock.Unlock();
 }
 
 void Core_SaveCallback(const F4SESerializationInterface * intfc)

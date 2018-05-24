@@ -1,7 +1,7 @@
 Scriptname Component extends Form Native Hidden
 
 
-; F4SE additions built 2018-04-05 02:30:59.354000 UTC
+; F4SE additions built 2018-05-24 03:51:38.593000 UTC
 MiscObject Function GetScrapItem() native
 
 Function SetScrapItem(MiscObject akMisc) native

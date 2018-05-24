@@ -37,6 +37,65 @@ public:
 };
 STATIC_ASSERT(sizeof(SimpleLock) == 0x8);
 
+// 08
+class BSReadWriteLock
+{
+	enum
+	{
+		kFastSpinThreshold = 10000,
+		kLockWrite = 0x80000000,
+		kLockCountMask = 0xFFFFFFF
+	};
+
+	volatile SInt32	threadID;	// 00
+	volatile SInt32	lockValue;	// 04
+
+public:
+	BSReadWriteLock() : threadID(0), lockValue(0) {}
+
+	//void LockForRead();
+	//void LockForWrite();
+	DEFINE_MEMBER_FN_0(LockForRead, void, 0x01B107D0);
+	DEFINE_MEMBER_FN_0(LockForWrite, void, 0x01B10850);
+	void LockForReadAndWrite();
+
+	bool TryLockForWrite();
+	bool TryLockForRead();
+
+	void Unlock();
+};
+STATIC_ASSERT(sizeof(BSReadWriteLock) == 0x8);
+
+class BSReadLocker
+{
+public:
+	BSReadLocker(BSReadWriteLock * lock) { m_lock = lock; m_lock->LockForRead(); }
+	~BSReadLocker() { m_lock->Unlock(); }
+
+protected:
+	BSReadWriteLock	* m_lock;
+};
+
+class BSWriteLocker
+{
+public:
+	BSWriteLocker(BSReadWriteLock * lock) { m_lock = lock; m_lock->LockForWrite(); }
+	~BSWriteLocker() { m_lock->Unlock(); }
+
+protected:
+	BSReadWriteLock	* m_lock;
+};
+
+class BSReadAndWriteLocker
+{
+public:
+	BSReadAndWriteLocker(BSReadWriteLock * lock) { m_lock = lock; m_lock->LockForReadAndWrite(); }
+	~BSReadAndWriteLocker() { m_lock->Unlock(); }
+
+protected:
+	BSReadWriteLock	* m_lock;
+};
+
 class SimpleLocker
 {
 public:
@@ -98,14 +157,14 @@ public:
 
 		MEMBER_FN_PREFIX(Ref);
 		// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B41B80, const char * buf);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B41BE0, const char * buf);
 		// 34CA732E6B3C7BCD20DEFC8B3711427E5285FF82+AA
-		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B429A0, const wchar_t * buf);
+		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B42A00, const wchar_t * buf);
 		// 489C5F60950D108691FCB6CB0026101275BE474A+79
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01B41CB0, const char * buf);
-		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B44200, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01B41D10, const char * buf);
+		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B44260, const wchar_t * buf);
 
-		DEFINE_MEMBER_FN(Release, void, 0x01B42E10);
+		DEFINE_MEMBER_FN(Release, void, 0x01B42E70);
 
 		Ref();
 		Ref(const char * buf);

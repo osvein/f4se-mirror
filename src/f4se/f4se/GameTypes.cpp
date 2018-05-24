@@ -85,3 +85,145 @@ void SimpleLock::Release(void)
 		}
 	}
 }
+
+/*
+// This implementation isn't quite right when compared to the came code, something is off
+void BSReadWriteLock::LockForRead()
+{
+	SInt32 myThreadID = GetCurrentThreadId();
+
+	if (threadID == myThreadID)
+	{
+		InterlockedIncrement(&lockValue);
+	}
+	else
+	{
+		UInt32 lockCount = lockValue & kLockCountMask;
+		UInt32 spinCount = 0;
+		UInt32 lockResult = InterlockedCompareExchange(&lockValue, lockCount + 1, lockCount);
+		while (lockResult != lockCount + 1)
+		{
+			if ((lockResult & kLockWrite) != 0)
+			{
+				Sleep(++spinCount < kFastSpinThreshold ? 0 : 1);
+				lockResult = lockValue;
+			}
+
+			lockCount = lockValue & kLockCountMask;
+			lockResult = InterlockedCompareExchange(&lockValue, lockCount + 1, lockCount);
+		}
+
+		threadID = myThreadID;
+	}
+}
+*/
+
+/*
+void BSReadWriteLock::LockForWrite()
+{
+	SInt32 myThreadID = GetCurrentThreadId();
+
+	if (threadID == myThreadID)
+	{
+		InterlockedIncrement(&lockValue);
+	}
+	else
+	{
+		UInt32 spinCount = 0;
+		while (InterlockedCompareExchange(&lockValue, UInt32(1 | kLockWrite), 0) != UInt32(1 | kLockWrite))
+			Sleep(++spinCount < kFastSpinThreshold ? 0 : 1);
+
+		threadID = myThreadID;
+		_mm_mfence();
+	}
+}
+*/
+
+void BSReadWriteLock::LockForReadAndWrite()
+{
+	SInt32 myThreadID = GetCurrentThreadId();
+
+	if (threadID == myThreadID)
+	{
+		InterlockedIncrement(&lockValue);
+	}
+	else
+	{
+		UInt32 spinCount = 0;
+		while (InterlockedCompareExchange(&lockValue, 1, 0) != 1)
+			Sleep(++spinCount >= kFastSpinThreshold ? 1 : 0);
+	}
+}
+
+bool BSReadWriteLock::TryLockForWrite()
+{
+	SInt32 myThreadID = GetCurrentThreadId();
+
+	bool result = false;
+	if (threadID == myThreadID)
+	{
+		InterlockedIncrement(&lockValue);
+		result = true;
+	}
+	else
+	{
+		result = InterlockedCompareExchange(&lockValue, UInt32(1 | kLockWrite), 0) == UInt32(1 | kLockWrite);
+		if (result)
+		{
+			threadID = myThreadID;
+			_mm_mfence();
+		}
+	}
+	return result;
+}
+bool BSReadWriteLock::TryLockForRead()
+{
+	SInt32 myThreadID = GetCurrentThreadId();
+
+	bool result = false;
+	if (threadID == myThreadID)
+	{
+		InterlockedIncrement(&lockValue);
+		result = true;
+	}
+	else
+	{
+		UInt32 lockCount = lockValue & kLockCountMask;
+		UInt32 lockResult = InterlockedCompareExchange(&lockValue, lockCount + 1, lockCount);
+		while ((lockResult & kLockWrite) == 0)
+		{
+			if (lockResult == lockCount)
+				break;
+
+			lockCount = lockResult & kLockCountMask;
+			lockResult = InterlockedCompareExchange(&lockValue, lockCount + 1, lockCount);
+		}
+
+		result = ~(lockResult >> 31) & 1;
+	}
+
+	return result;
+}
+
+void BSReadWriteLock::Unlock()
+{
+	SInt32 myThreadID = GetCurrentThreadId();
+	if (threadID == myThreadID)
+	{
+		UInt32 lockCount = lockValue - 1;
+		if (lockValue == kLockWrite)
+		{
+			threadID = 0;
+			_mm_mfence();
+			InterlockedExchange(&lockValue, 0);
+		}
+		else
+		{
+			InterlockedDecrement(&lockValue);
+		}
+	}
+	else
+	{
+		InterlockedDecrement(&lockValue);
+	}
+}

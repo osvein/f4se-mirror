@@ -18,25 +18,28 @@
 #include "PapyrusEvents.h"
 #include "PapyrusScaleformAdapter.h"
 #include "GameInput.h"
+#include "NiTextures.h"
 
 #include "CustomMenu.h"
+
+#include <unordered_set>
 
 class BSScaleformManager;
 
 typedef BSScaleformManager * (* _BSScaleformManager_Ctor)(BSScaleformManager * mem);
-RelocAddr <_BSScaleformManager_Ctor> BSScaleformManager_Ctor(0x02110270);
+RelocAddr <_BSScaleformManager_Ctor> BSScaleformManager_Ctor(0x021102D0);
 _BSScaleformManager_Ctor BSScaleformManager_Ctor_Original = nullptr;
 
 typedef UInt32 (* _BSScaleformTint)(BSGFxShaderFXTarget * value, float * colors, float multiplier);
-RelocAddr <_BSScaleformTint> BSScaleformTint(0x020F27D0);
+RelocAddr <_BSScaleformTint> BSScaleformTint(0x020F2830);
 _BSScaleformTint BSScaleformTint_Original = nullptr;
 
-RelocAddr <uintptr_t> ScaleformInitHook_Start(0x02110910 + 0x188);
+RelocAddr <uintptr_t> ScaleformInitHook_Start(0x02110970 + 0x188);
 
-RelocAddr <uintptr_t> IMenuCreateHook_Start(0x02042270 + 0x90A);
+RelocAddr <uintptr_t> IMenuCreateHook_Start(0x020422D0 + 0x90A);
 
 // D7C709A779249EBC0C50BB992E9FD088A33B282F+76
-RelocAddr <uintptr_t> SetMenuName(0x01B41D10);
+RelocAddr <uintptr_t> SetMenuName(0x01B41D70);
 
 //// plugin API
 struct ScaleformPluginInfo
@@ -49,6 +52,9 @@ typedef std::list <ScaleformPluginInfo> PluginList;
 static PluginList s_plugins;
 
 bool g_logScaleform = false;
+
+static std::unordered_map<std::string, std::unordered_set<NiTexture*>> s_mountedTextures;
+static BSReadWriteLock s_mountedTexturesLock;
 
 bool RegisterScaleformPlugin(const char * name, F4SEScaleformInterface::RegisterCallback callback)
 {
@@ -269,6 +275,136 @@ public:
 	}
 };
 
+class F4SEScaleform_MountImage : public GFxFunctionHandler
+{
+public:
+	virtual void Invoke(Args * args)
+	{
+		ASSERT(args->numArgs >= 3);
+		ASSERT(args->args[0].GetType() == GFxValue::kType_String);
+		ASSERT(args->args[1].GetType() == GFxValue::kType_String);
+		ASSERT(args->args[2].GetType() == GFxValue::kType_String);
+
+		const char * menuName = args->args[0].GetString();
+		const char * filePath = args->args[1].GetString();
+		const char * imageName = args->args[2].GetString();
+
+		NiTexture * texture = nullptr;
+		LoadTextureByPath(filePath, true, texture, 0, 0, 0);
+
+		bool result = false;
+		if(texture)
+		{
+			BSReadAndWriteLocker locker(&s_mountedTexturesLock);
+
+			auto & textures = s_mountedTextures[menuName];
+			auto sit = textures.find(texture);
+			if(sit != textures.end())
+			{
+				// Already mounted
+				result = true;
+			}
+			else
+			{
+				auto imageLoader = (*g_scaleformManager)->imageLoader;
+				if(imageLoader)
+				{
+					texture->name = imageName;
+					texture->IncRef();
+					textures.insert(texture);
+					result = imageLoader->MountImage(&texture);
+				}
+			}
+
+			// LoadTextureByPath increases refcount
+			texture->DecRef();
+		}
+
+		args->result->SetBool(result);
+	}
+};
+
+class F4SEScaleform_UnmountImage : public GFxFunctionHandler
+{
+public:
+	virtual void Invoke(Args * args)
+	{
+		ASSERT(args->numArgs >= 2);
+		ASSERT(args->args[0].GetType() == GFxValue::kType_String);
+		ASSERT(args->args[1].GetType() == GFxValue::kType_String);
+
+		const char * menuName = args->args[0].GetString();
+		const char * filePath = args->args[1].GetString();
+
+		NiTexture * texture = nullptr;
+		LoadTextureByPath(filePath, true, texture, 0, 0, 0);
+
+		bool result = false;
+		if(texture)
+		{
+			BSReadAndWriteLocker locker(&s_mountedTexturesLock);
+			auto it = s_mountedTextures.find(menuName);
+			if(it != s_mountedTextures.end())
+			{
+				auto sit = it->second.find(texture);
+				if(sit != it->second.end())
+				{
+					auto imageLoader = (*g_scaleformManager)->imageLoader;
+					if(imageLoader)
+					{
+						result = imageLoader->UnmountImage(&texture);
+						it->second.erase(texture);
+						texture->DecRef();
+					}
+				}
+
+				if(it->second.empty())
+				{
+					s_mountedTextures.erase(it);
+				}
+			}
+
+			// LoadTextureByPath increases refcount
+			texture->DecRef();
+		}
+
+		args->result->SetBool(result);
+	}
+};
+
+class F4SEOpenCloseHandler : public BSTEventSink<MenuOpenCloseEvent>
+{
+public:
+	virtual ~F4SEOpenCloseHandler() { };
+	virtual	EventResult	ReceiveEvent(MenuOpenCloseEvent * evn, void * dispatcher) override
+	{
+		// Unmount textures if the menu is being destroyed
+		if(!evn->isOpen)
+		{
+			BSReadAndWriteLocker locker(&s_mountedTexturesLock);
+			auto it = s_mountedTextures.find(evn->menuName.c_str());
+			if(it != s_mountedTextures.end())
+			{
+				auto imageLoader = (*g_scaleformManager)->imageLoader;
+				if(imageLoader)
+				{
+					for(auto & texture : it->second)
+					{
+						imageLoader->UnmountImage(&const_cast<NiTexture*>(texture));
+						texture->DecRef();
+					}
+				}
+				
+				it->second.clear();
+				s_mountedTextures.erase(it);
+			}
+		}
+
+		return kEvent_Continue;
+	};
+};
+
+F4SEOpenCloseHandler g_menuOpenCloseHandler;
 
 void ScaleformInitHook_Install(GFxMovieView * view)
 {
@@ -290,6 +426,8 @@ void ScaleformInitHook_Install(GFxMovieView * view)
 	RegisterFunction<F4SEScaleform_SendExternalEvent>(&f4se, movieRoot, "SendExternalEvent");
 	RegisterFunction<F4SEScaleform_CallFunctionNoWait>(&f4se, movieRoot, "CallFunctionNoWait");
 	RegisterFunction<F4SEScaleform_GetDirectoryListing>(&f4se, movieRoot, "GetDirectoryListing");
+	RegisterFunction<F4SEScaleform_MountImage>(&f4se, movieRoot, "MountImage");
+	RegisterFunction<F4SEScaleform_UnmountImage>(&f4se, movieRoot, "UnmountImage");
 	
 	GFxValue	version;
 	movieRoot->CreateObject(&version);
@@ -316,6 +454,31 @@ void ScaleformInitHook_Install(GFxMovieView * view)
 	f4se.SetMember("plugins", &plugins);
 
 	root.SetMember("f4se", &f4se);
+
+	if(root.IsObject())
+	{
+		GFxValue funcObj;
+		if(root.HasMember("onF4SEObjCreated") && root.GetMember("onF4SEObjCreated", &funcObj) && funcObj.IsFunction())
+		{
+			root.Invoke("onF4SEObjCreated", nullptr, &f4se, 1);
+		}
+
+		GFxValue child;
+		GFxValue numChildren;
+		if(root.GetMember("numChildren", &numChildren))
+		{
+			for(SInt32 i = 0; i < numChildren.GetInt(); ++i)
+			{
+				GFxValue index(i);
+				root.Invoke("getChildAt", &child, &index, 1);
+
+				if(child.HasMember("onF4SEObjCreated") && child.GetMember("onF4SEObjCreated", &funcObj) && funcObj.IsFunction())
+				{
+					child.Invoke("onF4SEObjCreated", nullptr, &f4se, 1);
+				}
+			}
+		}
+	}
 	
 	GFxValue dispatchEvent;
 	GFxValue eventArgs[3];
@@ -339,6 +502,11 @@ BSScaleformManager * BSScaleformManager_Ctor_Hook(BSScaleformManager * mgr)
 	{
 		GFxLogState * logger = (GFxLogState*)result->stateBag->GetStateAddRef(GFxState::kInterface_Log);
 		logger->logger = new F4SEGFxLogger();
+	}
+
+	if(*g_ui)
+	{
+		(*g_ui)->menuOpenCloseEventSource.AddEventSink(&g_menuOpenCloseHandler);
 	}
 
 	return result;

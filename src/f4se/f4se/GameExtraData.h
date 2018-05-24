@@ -267,7 +267,7 @@ public:
 	BSExtraData			* m_data;		// 08
 	void				* unk10;		// 10
 	PresenceBitfield	* m_presence;	// 18
-	SimpleLock			m_lock;			// 20
+	BSReadWriteLock		m_lock;			// 20
 };
 STATIC_ASSERT(sizeof(ExtraDataList) == 0x28);
 

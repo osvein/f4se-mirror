@@ -4,7 +4,7 @@ Scriptname Perk extends Form Native Hidden
 Event OnEntryRun(int auiEntryID, ObjectReference akTarget, Actor akOwner)
 EndEvent
 
-; F4SE additions built 2018-04-05 02:30:59.354000 UTC
+; F4SE additions built 2018-05-24 03:51:38.593000 UTC
 
 ; Returns whether this perk is playable
 bool Function IsPlayable() native

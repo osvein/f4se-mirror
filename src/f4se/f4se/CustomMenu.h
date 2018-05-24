@@ -20,8 +20,8 @@ struct CustomMenuData
 	};
 };
 
-extern SimpleLock										 g_customMenuLock;
-extern std::unordered_map<std::string, CustomMenuData>	 g_customMenuData;
+extern BSReadWriteLock									g_customMenuLock;
+extern std::unordered_map<std::string, CustomMenuData>	g_customMenuData;
 
 class CustomMenu : public GameMenuBase
 {

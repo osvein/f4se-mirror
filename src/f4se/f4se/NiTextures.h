@@ -55,7 +55,7 @@ public:
 		virtual ~StaticTextureIndexed();
 
 		MEMBER_FN_PREFIX(StaticTextureIndexed);
-		DEFINE_MEMBER_FN(ctor, StaticTextureIndexed*, 0x01CE6700, UInt32 unk1, int unk2, bool unk3);
+		DEFINE_MEMBER_FN(ctor, StaticTextureIndexed*, 0x01CE6760, UInt32 unk1, int unk2, bool unk3);
 
 		UInt64	unk48[(0x78 - 0x48) >> 3];
 	};
@@ -79,7 +79,7 @@ public:
 	BSFixedString	textures[10];	// 10
 
 	MEMBER_FN_PREFIX(BSShaderTextureSet);
-	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C3530);
+	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C3590);
 };
 STATIC_ASSERT(sizeof(BSShaderTextureSet) == 0x60);
 
@@ -88,3 +88,7 @@ extern RelocAddr <_CreateBSShaderTextureSet> CreateBSShaderTextureSet;
 
 typedef NiTexture * (* _CreateTexture)(const BSFixedString & name, UInt8 unk1); // unk1 is true on diffuses?
 extern RelocAddr <_CreateTexture> CreateTexture;
+
+// unk1=1, unk2=0, unk3=0, unk4=0
+typedef void (* _LoadTextureByPath)(const char * filePath, bool unk1, NiTexture *& texture, SInt32 unk2, UInt64 unk3, UInt64 unk4);
+extern RelocAddr <_LoadTextureByPath> LoadTextureByPath;

@@ -1,8 +1,8 @@
 #include "f4se/CustomMenu.h"
 #include "f4se/ScaleformLoader.h"
 
-SimpleLock										 g_customMenuLock;
-std::unordered_map<std::string, CustomMenuData>	 g_customMenuData;
+BSReadWriteLock									g_customMenuLock;
+std::unordered_map<std::string, CustomMenuData>	g_customMenuData;
 
 CustomMenu::CustomMenu() : GameMenuBase()
 {
@@ -12,7 +12,7 @@ CustomMenu::CustomMenu() : GameMenuBase()
 // Normally this code would happen in the constructor, but the menu name isn't set until after construction
 void LoadCustomMenu_Hook(IMenu * menu)
 {
-	SimpleLocker locker(&g_customMenuLock);
+	BSReadAndWriteLocker locker(&g_customMenuLock);
 	auto menuData = g_customMenuData.find(menu->menuName.c_str());
 	if(menuData != g_customMenuData.end())
 	{

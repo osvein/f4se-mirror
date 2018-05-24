@@ -1525,7 +1525,7 @@ public:
 	UInt32					unkEC;				// EC
 
 	MEMBER_FN_PREFIX(TESObjectCELL);
-	DEFINE_MEMBER_FN(GetHavokWorld, bhkWorld*, 0x003B4820);
+	DEFINE_MEMBER_FN(GetHavokWorld, bhkWorld*, 0x003B4880);
 };
 STATIC_ASSERT(offsetof(TESObjectCELL, objectList) == 0x70);
 STATIC_ASSERT(offsetof(TESObjectCELL, worldSpace) == 0xC8);

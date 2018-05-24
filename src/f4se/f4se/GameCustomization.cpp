@@ -20,8 +20,8 @@ RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A4620);
 RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002AA8A0);
 
 RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A47C0); // For manipulating the tint lists, their signatures aren't quite right yet
-RelocAddr <_MergeTintTextures> MergeTintTextures(0x00689A30);
-RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00689820);
+RelocAddr <_MergeTintTextures> MergeTintTextures(0x00689A90);
+RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00689880);
 
 // 8290027174FC425F1C5C8233B65132B99D1A37E1+F6
 RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensityMap(0x0374D370 - 0x08);

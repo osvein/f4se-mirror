@@ -7,6 +7,7 @@
 
 #include "f4se/InputMap.h"
 #include "f4se/GameInput.h"
+#include "f4se/GameMenus.h"
 
 #include "f4se/PapyrusEvents.h"
 #include "f4se/PapyrusUtilities.h"
@@ -14,8 +15,12 @@
 #define HOOK_RAW_INPUT 0
 #define LOG_INPUT_HOOK 0
 
+typedef void (* _CreateMenuControlHandlers)(MenuControls * mem);
+RelocAddr <_CreateMenuControlHandlers> CreateMenuControlHandlers(0x012A7F90);
+_CreateMenuControlHandlers CreateMenuControlHandlers_Original = nullptr;
+
 typedef void (* _CreatePlayerControlHandlers)(PlayerControls * mem);
-RelocAddr <_CreatePlayerControlHandlers> CreatePlayerControlHandlers(0x00F44B00);
+RelocAddr <_CreatePlayerControlHandlers> CreatePlayerControlHandlers(0x00F44B60);
 _CreatePlayerControlHandlers CreatePlayerControlHandlers_Original = nullptr;
 
 #if HOOK_RAW_INPUT
@@ -95,6 +100,68 @@ UINT WINAPI Hook_GetRawInputData(HRAWINPUT rawinput, UINT cmd, void * data, UINT
 
 #endif
 
+void HandleButtonEvent(ButtonEvent * inputEvent)
+{
+	UInt32	keyCode;
+	UInt32	deviceType = inputEvent->deviceType;
+	UInt32	keyMask = inputEvent->keyMask;
+
+	// Mouse
+	if (deviceType == InputEvent::kDeviceType_Mouse)
+		keyCode = InputMap::kMacro_MouseButtonOffset + keyMask; 
+	// Gamepad
+	else if (deviceType == InputEvent::kDeviceType_Gamepad)
+		keyCode = InputMap::GamepadMaskToKeycode(keyMask);
+	// Keyboard
+	else
+		keyCode = keyMask;
+
+	// Valid scancode?
+	if (keyCode >= InputMap::kMaxMacros)
+		return;
+
+	BSFixedString	control	= *inputEvent->GetControlID();
+	float			timer	= inputEvent->timer;
+
+	bool isDown	= inputEvent->isDown == 1.0f && timer == 0.0f;
+	bool isUp	= inputEvent->isDown == 0.0f && timer != 0.0f;
+
+	if (isDown)
+	{
+		g_inputKeyEventRegs.ForEach(
+			keyCode,
+			[&keyCode](const EventRegistration<NullParameters> & reg)
+		{
+			SendPapyrusEvent1<UInt32>(reg.handle, reg.scriptName, "OnKeyDown", keyCode);
+		}
+		);
+		g_inputControlEventRegs.ForEach(
+			control,
+			[&control](const EventRegistration<NullParameters> & reg)
+		{
+			SendPapyrusEvent1<BSFixedString>(reg.handle, reg.scriptName, "OnControlDown", control);
+		}
+		);
+	}
+	else if (isUp)
+	{
+		g_inputKeyEventRegs.ForEach(
+			keyCode,
+			[&keyCode, &timer](const EventRegistration<NullParameters> & reg)
+		{
+			SendPapyrusEvent2<UInt32, float>(reg.handle, reg.scriptName, "OnKeyUp", keyCode, timer);
+		}
+		);
+		g_inputControlEventRegs.ForEach(
+			control,
+			[&control, &timer](const EventRegistration<NullParameters> & reg)
+		{
+			SendPapyrusEvent2<BSFixedString, float>(reg.handle, reg.scriptName, "OnControlUp", control, timer);
+		}
+		);
+	}
+}
+
 class F4SEInputHandler : public PlayerInputHandler
 {
 public:
@@ -102,76 +169,47 @@ public:
 
 	virtual void OnButtonEvent(ButtonEvent * inputEvent)
 	{
-		UInt32	keyCode;
-		UInt32	deviceType = inputEvent->deviceType;
-		UInt32	keyMask = inputEvent->keyMask;
-
-		// Mouse
-		if (deviceType == InputEvent::kDeviceType_Mouse)
-			keyCode = InputMap::kMacro_MouseButtonOffset + keyMask; 
-		// Gamepad
-		else if (deviceType == InputEvent::kDeviceType_Gamepad)
-			keyCode = InputMap::GamepadMaskToKeycode(keyMask);
-		// Keyboard
-		else
-			keyCode = keyMask;
-
-		// Valid scancode?
-		if (keyCode >= InputMap::kMaxMacros)
+		if((*g_ui)->numPauseGame)
+		{
 			return;
-
-		BSFixedString	control	= *inputEvent->GetControlID();
-		float			timer	= inputEvent->timer;
-
-		bool isDown	= inputEvent->isDown == 1.0f && timer == 0.0f;
-		bool isUp	= inputEvent->isDown == 0.0f && timer != 0.0f;
-
-		if (isDown)
-		{
-			g_inputKeyEventRegs.ForEach(
-				keyCode,
-				[&keyCode](const EventRegistration<NullParameters> & reg)
-				{
-					SendPapyrusEvent1<UInt32>(reg.handle, reg.scriptName, "OnKeyDown", keyCode);
-				}
-			);
-			g_inputControlEventRegs.ForEach(
-				control,
-				[&control](const EventRegistration<NullParameters> & reg)
-				{
-					SendPapyrusEvent1<BSFixedString>(reg.handle, reg.scriptName, "OnControlDown", control);
-				}
-			);
 		}
-		else if (isUp)
+		
+		HandleButtonEvent(inputEvent);
+	}
+};
+
+class F4SEInputMenuHandler : public BSInputEventUser
+{
+public:
+	F4SEInputMenuHandler() : BSInputEventUser(true) { }
+
+	virtual void OnButtonEvent(ButtonEvent * inputEvent)
+	{
+		if(!(*g_ui)->numPauseGame)
 		{
-			g_inputKeyEventRegs.ForEach(
-				keyCode,
-				[&keyCode, &timer](const EventRegistration<NullParameters> & reg)
-				{
-					SendPapyrusEvent2<UInt32, float>(reg.handle, reg.scriptName, "OnKeyUp", keyCode, timer);
-				}
-			);
-			g_inputControlEventRegs.ForEach(
-				control,
-				[&control, &timer](const EventRegistration<NullParameters> & reg)
-				{
-					SendPapyrusEvent2<BSFixedString, float>(reg.handle, reg.scriptName, "OnControlUp", control, timer);
-				}
-			);
+			return;
 		}
+
+		HandleButtonEvent(inputEvent);
 	}
 };
 
 
 F4SEInputHandler g_inputHandler;
+F4SEInputMenuHandler g_inputMenuHandler;
 
-void CreatePlayerControlHandlers_Hook(PlayerControls * menuControls)
+void CreatePlayerControlHandlers_Hook(PlayerControls * playerControls)
 {
 	// Process F4SE handlers first so no events will be blocked
-	menuControls->inputEvents1.Push(&g_inputHandler);
+	playerControls->inputEvents1.Push(&g_inputHandler);
 
-	CreatePlayerControlHandlers_Original(menuControls);
+	CreatePlayerControlHandlers_Original(playerControls);
+}
+
+void CreateMenuControlHandlers_Hook(MenuControls * menuControls)
+{
+	CreateMenuControlHandlers_Original(menuControls);
+	menuControls->inputEvents.Push(&g_inputMenuHandler);
 }
 
 void Hooks_Input_Init()
@@ -191,7 +229,7 @@ void Hooks_Input_Commit()
 	SafeWrite64((uintptr_t)iat, (UInt64)Hook_GetRawInputData);
 #endif
 
-	// hook adding control handlers to MenuControls
+	// hook adding control handlers to PlayerControls
 	{
 		struct CreatePlayerControlHandlers_Code : Xbyak::CodeGenerator {
 			CreatePlayerControlHandlers_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)
@@ -214,5 +252,30 @@ void Hooks_Input_Commit()
 		CreatePlayerControlHandlers_Original = (_CreatePlayerControlHandlers)codeBuf;
 
 		g_branchTrampoline.Write5Branch(CreatePlayerControlHandlers.GetUIntPtr(), (uintptr_t)CreatePlayerControlHandlers_Hook);
+	}
+
+	// hook adding control handlers to MenuControls
+	{
+		struct CreateMenuControlHandlers_Code : Xbyak::CodeGenerator {
+			CreateMenuControlHandlers_Code(void * buf) : Xbyak::CodeGenerator(4096, buf)
+			{
+				Xbyak::Label retnLabel;
+
+				mov(ptr[rsp+0x08], rbx);
+
+				jmp(ptr [rip + retnLabel]);
+
+				L(retnLabel);
+				dq(CreateMenuControlHandlers.GetUIntPtr() + 5);
+			}
+		};
+
+		void * codeBuf = g_localTrampoline.StartAlloc();
+		CreateMenuControlHandlers_Code code(codeBuf);
+		g_localTrampoline.EndAlloc(code.getCurr());
+
+		CreateMenuControlHandlers_Original = (_CreateMenuControlHandlers)codeBuf;
+
+		g_branchTrampoline.Write5Branch(CreateMenuControlHandlers.GetUIntPtr(), (uintptr_t)CreateMenuControlHandlers_Hook);
 	}
 }

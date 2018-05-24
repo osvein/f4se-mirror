@@ -317,7 +317,7 @@ public:
 };
 
 extern RelocPtr <DefaultObjectMap*> g_defaultObjectMap;
-extern RelocPtr <SimpleLock> g_defaultObjectMapLock;
+extern RelocPtr <BSReadWriteLock> g_defaultObjectMapLock;
 
 class FavoritesManager : public BSIntrusiveRefCounted
 {

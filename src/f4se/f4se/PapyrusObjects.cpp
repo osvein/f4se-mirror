@@ -256,7 +256,7 @@ bool WriteF4SEObject(const F4SESerializationInterface* intfc, IF4SEObject* obj)
 	intfc->OpenRecord('OBJE', version);
 
 	size_t rawLen = strlen(name);
-	UInt32 len    = (std::min)(rawLen, kMaxNameLen);
+	UInt32 len    = min(rawLen, kMaxNameLen);
 
 	if (! WriteData(intfc, &len))
 		return false;
