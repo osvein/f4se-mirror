@@ -34,7 +34,7 @@ IMenu * UI::GetMenu(BSFixedString & menuName)
 	if (!menuName.data->Get<char>())
 		return nullptr;
 
-	BSReadAndWriteLocker locker(g_menuTableLock);
+	BSReadLocker locker(g_menuTableLock);
 	MenuTableItem * item = menuTable.Find(&menuName);
 	if (!item) {
 		return nullptr;
@@ -54,7 +54,7 @@ IMenu * UI::GetMenuByMovie(GFxMovieView * movie)
 		return nullptr;
 	}
 
-	BSReadAndWriteLocker locker(g_menuTableLock);
+	BSReadLocker locker(g_menuTableLock);
 
 	IMenu * menu = nullptr;
 	menuTable.ForEach([movie, &menu](MenuTableItem * item)

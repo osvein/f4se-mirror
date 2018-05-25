@@ -1,3 +1,6 @@
+0.6.9
+- fixes UI.Load deadlock
+
 0.6.8
 - support for runtime 1.10.89
 - changed locking implementations to BSReadWriteLock
