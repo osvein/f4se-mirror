@@ -578,6 +578,21 @@ public:
 	};
 
 	Data	data;	// 08
+
+	UInt32 GetSlotMask() const { return data.parts; }
+	void SetSlotMask(UInt32 mask) { data.parts = mask; }
+
+	UInt32 AddSlotToMask(UInt32 slot)
+	{
+		data.parts |= slot;
+		return data.parts;
+	}
+
+	UInt32 RemoveSlotFromMask(UInt32 slot)
+	{
+		data.parts &= ~slot;
+		return data.parts;
+	}
 };
 
 // 08

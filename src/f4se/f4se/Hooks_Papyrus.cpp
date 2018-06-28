@@ -33,24 +33,26 @@
 #include "f4se/PapyrusMiscObject.h"
 #include "f4se/PapyrusMaterialSwap.h"
 #include "f4se/PapyrusFavoritesManager.h"
+#include "f4se/PapyrusArmorAddon.h"
+#include "f4se/PapyrusArmor.h"
 
 #include "f4se/Serialization.h"
 
 #include "xbyak/xbyak.h"
 
-RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013E6A60 + 0x461);
-RelocAddr <uintptr_t> DelayFunctorQueue_Start(0x01377B70 + 0x6A);
+RelocAddr <uintptr_t> RegisterPapyrusFunctions_Start(0x013E6AA0 + 0x461);
+RelocAddr <uintptr_t> DelayFunctorQueue_Start(0x01377BB0 + 0x6A);
 
 typedef bool (* _SaveRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, void * saveStorageWrapper);
-RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x01474970);
+RelocAddr <_SaveRegistrationHandles> SaveRegistrationHandles(0x014749B0);
 _SaveRegistrationHandles SaveRegistrationHandles_Original = nullptr;
 
 typedef bool (* _LoadRegistrationHandles)(void * unk1, void * vm, void * handleReaderWriter, UInt16 version, void * loadStorageWrapper, void * unk2);
-RelocAddr <_LoadRegistrationHandles> LoadRegistrationHandles(0x01474A00);
+RelocAddr <_LoadRegistrationHandles> LoadRegistrationHandles(0x01474A40);
 _LoadRegistrationHandles LoadRegistrationHandles_Original = nullptr;
 
 typedef void (* _RevertGlobalData)(void * vm);
-RelocAddr <_RevertGlobalData> RevertGlobalData(0x01376190);
+RelocAddr <_RevertGlobalData> RevertGlobalData(0x013761D0);
 _RevertGlobalData RevertGlobalData_Original = nullptr;
 
 typedef std::list <F4SEPapyrusInterface::RegisterFunctions> PapyrusPluginList;
@@ -60,6 +62,14 @@ bool RegisterPapyrusPlugin(F4SEPapyrusInterface::RegisterFunctions callback)
 {
 	s_pap_plugins.push_back(callback);
 	return true;
+}
+
+void GetExternalEventRegistrations(const char * eventName, void * data, F4SEPapyrusInterface::RegistrantFunctor functor)
+{
+	g_externalEventRegs.ForEach(BSFixedString(eventName), [&functor, &data](const EventRegistration<ExternalEventParameters> & reg)
+	{
+		functor(reg.handle, reg.scriptName.c_str(), reg.params.callbackName.c_str(), data);
+	});
 }
 
 void Hooks_Papyrus_Init()
@@ -153,6 +163,12 @@ void RegisterPapyrusFunctions_Hook(VirtualMachine ** vmPtr)
 
 	// FavoritesManager
 	papyrusFavoritesManager::RegisterFuncs(vm);
+
+	// ArmorAddon
+	papyrusArmorAddon::RegisterFuncs(vm);
+
+	// Armor
+	papyrusArmor::RegisterFuncs(vm);
 
 	GetEventDispatcher<TESFurnitureEvent>()->AddEventSink(&g_furnitureEventSink);
 

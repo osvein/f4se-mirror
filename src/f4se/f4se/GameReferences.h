@@ -244,7 +244,7 @@ public:
 	DEFINE_MEMBER_FN(GetReferenceName, const char *, 0x0040B640);
 	DEFINE_MEMBER_FN(GetWorldspace, TESWorldSpace*, 0x0040F170);
 	DEFINE_MEMBER_FN(GetInventoryWeight, float, 0x00400350);
-	DEFINE_MEMBER_FN(GetCarryWeight, float, 0x00D87090);
+	DEFINE_MEMBER_FN(GetCarryWeight, float, 0x00D870D0);
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);
@@ -428,7 +428,7 @@ public:
 		Data08 * unk08;	// 08
 
 		MEMBER_FN_PREFIX(MiddleProcess);
-		DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00E60700, Actor * actor, UInt32 flags); 
+		DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00E60740, Actor * actor, UInt32 flags); 
 	};
 	MiddleProcess * middleProcess;					// 300
 	UInt64	unk308[(0x338-0x308)/8];
@@ -461,8 +461,8 @@ public:
 	}
 
 	MEMBER_FN_PREFIX(Actor);
-	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D8A090, bool bDoFaceGen, UInt32 unk2, bool DoQueue, UInt32 flags); // 0, 0, 1, 0
-	DEFINE_MEMBER_FN(IsHostileToActor, bool, 0x00D90F20, Actor * actor);
+	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D8A0D0, bool bDoFaceGen, UInt32 unk2, bool DoQueue, UInt32 flags); // 0, 0, 1, 0
+	DEFINE_MEMBER_FN(IsHostileToActor, bool, 0x00D90F60, Actor * actor);
 	DEFINE_MEMBER_FN(UpdateEquipment, void, 0x00408150); 
 };
 STATIC_ASSERT(offsetof(Actor, equipData) == 0x428);

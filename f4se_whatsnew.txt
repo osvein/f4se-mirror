@@ -1,3 +1,16 @@
+0.6.10
+- support for runtime 1.10.98
+- added GetExternalEventRegistrations to Papyrus Plugin API
+    - Returns all scripts and callbackName registered with F4SE's RegisterForExternalEvent
+- added Form functions
+    - Get/SetRaceForm
+    - GetSlotMask
+    - AddSlotToMask
+    - RemoveSlotFromMask
+- added Armor.GetArmorAddons
+- added ArmorAddon class
+    - GetAdditionalRaces
+
 0.6.9
 - fixes UI.Load deadlock
 

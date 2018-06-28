@@ -55,8 +55,10 @@ public:
 
 	//void LockForRead();
 	//void LockForWrite();
-	DEFINE_MEMBER_FN_0(LockForRead, void, 0x01B107D0);
-	DEFINE_MEMBER_FN_0(LockForWrite, void, 0x01B10850);
+
+	DEFINE_MEMBER_FN_0(LockForRead, void, 0x01B10810);
+	DEFINE_MEMBER_FN_0(LockForWrite, void, 0x01B10890);
+
 	void LockForReadAndWrite();
 
 	bool TryLockForWrite();
@@ -157,14 +159,14 @@ public:
 
 		MEMBER_FN_PREFIX(Ref);
 		// D3703E13297FD78BE317E0223C90DAB9021465DD+6F
-		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B41BE0, const char * buf);
+		DEFINE_MEMBER_FN(ctor, Ref *, 0x01B41C20, const char * buf);
 		// 34CA732E6B3C7BCD20DEFC8B3711427E5285FF82+AA
-		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B42A00, const wchar_t * buf);
+		DEFINE_MEMBER_FN(ctor_w, Ref *, 0x01B42A40, const wchar_t * buf);
 		// 489C5F60950D108691FCB6CB0026101275BE474A+79
-		DEFINE_MEMBER_FN(Set, Ref *, 0x01B41D10, const char * buf);
-		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B44260, const wchar_t * buf);
+		DEFINE_MEMBER_FN(Set, Ref *, 0x01B41D50, const char * buf);
+		DEFINE_MEMBER_FN(Set_w, Ref *, 0x01B442A0, const wchar_t * buf);
 
-		DEFINE_MEMBER_FN(Release, void, 0x01B42E70);
+		DEFINE_MEMBER_FN(Release, void, 0x01B42EB0);
 
 		Ref();
 		Ref(const char * buf);

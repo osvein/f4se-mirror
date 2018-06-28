@@ -29,9 +29,9 @@ class VMArgList
 {
 public:
 	MEMBER_FN_PREFIX(VMArgList);
-	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x02728F70, VMState * state);
+	DEFINE_MEMBER_FN(GetOffset, UInt32, 0x02728FB0, VMState * state);
 	// 4C8A9FE3A95B9DED322C9C0A78312E29F0A2CC7A+5B
-	DEFINE_MEMBER_FN(Get, VMValue *, 0x02728FD0, VMState * state, UInt32 idx, UInt32 offset);
+	DEFINE_MEMBER_FN(Get, VMValue *, 0x02729010, VMState * state, UInt32 idx, UInt32 offset);
 };
 
 template <typename T>
@@ -43,7 +43,7 @@ public:
 
 	enum { kTypeID = 0 };
 
-	VMArray(std::vector<T> & vec)
+	VMArray(std::vector<T> & vec) : m_arr(nullptr), m_none(false)
 	{
 		for(auto & v : vec)
 		{

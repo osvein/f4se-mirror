@@ -48,7 +48,8 @@ static const F4SEScaleformInterface g_F4SEScaleformInterface =
 static const F4SEPapyrusInterface g_F4SEPapyrusInterface =
 {
 	F4SEPapyrusInterface::kInterfaceVersion,
-	RegisterPapyrusPlugin
+	RegisterPapyrusPlugin,
+	GetExternalEventRegistrations
 };
 
 #include "f4se/Serialization.h"

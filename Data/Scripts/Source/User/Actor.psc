@@ -1101,9 +1101,9 @@ bool Function CanMoveVertical() native debugOnly
 ; Check to see if the actor can strafe side to side.
 bool Function CanStrafe() native debugOnly
 
-; F4SE additions built 2018-05-24 03:51:38.593000 UTC
+; F4SE additions built 2018-06-28 05:04:24.044000 UTC
 struct WornItem
-	Form item ; Can be ARMO or WEAP
+	Form item ; Can be ARMO, WEAP or ARMA
 	Form model ; Can be ARMA or WEAP depending on item
 	string modelName ; Model override name
 	Form materialSwap ; Material swap form
@@ -1112,6 +1112,8 @@ EndStruct
 
 ; Slot index is valid from 0-43
 ; Item can be none and still contain other information at a particular slot
+; When the item is an ARMA, it means that the item takes multiple slots,
+; and that particular slot is not where the ARMO lives
 WornItem Function GetWornItem(int slotIndex, bool firstPerson = false) native
 
 ; Returns all the mods for the item at the particular index

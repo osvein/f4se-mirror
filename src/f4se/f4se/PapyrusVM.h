@@ -55,13 +55,17 @@ public:
 	virtual void	RegisterFunction(IFunction * fn);
 	virtual void	SetFunctionFlagsEx(const char * className, UInt32 unk0, const char * fnName, UInt32 flags);
 	virtual void	SetFunctionFlags(const char * className, const char * fnName, UInt32 flags);
-	virtual void	Unk_1E();
+#if _MSC_VER == 1700
+	virtual void	ForEachIdentifier(UInt64 handle, const std::function<UInt32(VMIdentifier*)> & functor); // return 1 to continue
+#else
+	virtual void	ForEachIdentifier(UInt64 handle, void * stdFunction);
+#endif
 	virtual bool	GetObjectIdentifier(UInt64 handle, const char * typeName, UInt64 unk1, VMIdentifier ** identifier, UInt8 unk2);
 	virtual void	Unk_20();
 	virtual void	Unk_21();
-	virtual void	Unk_22();
+	virtual void	CastAs(VMIdentifier** idInOut, VMObjectTypeInfo ** typeAs, UInt64 unk1); // checks (typeAs->unk40 & 3) == 3 first
 	virtual bool	SetPropertyValue(VMIdentifier** identifier, const char* propertyName, VMValue* newValue, UInt64* unk4);
-	virtual void	Unk_24();
+	virtual bool	GetPropertyValue(VMIdentifier** identifier, const char* propertyName, VMValue * result);
 	virtual bool	GetPropertyValueByIndex(VMIdentifier** identifier, SInt32 idx, VMValue* outValue);
 	virtual void	Unk_26();
 	virtual void	Unk_27();
@@ -219,7 +223,7 @@ public:
 	// ...
 
 	MEMBER_FN_PREFIX(GameVM);
-	DEFINE_MEMBER_FN(SendPapyrusEvent, void, 0x01374E50, UInt64 handle, const BSFixedString & eventName, std::function<bool(void*)> functor); // Signature not correct yet
+	DEFINE_MEMBER_FN(SendPapyrusEvent, void, 0x01374E90, UInt64 handle, const BSFixedString & eventName, std::function<bool(void*)> functor); // Signature not correct yet
 };
 
 extern RelocPtr <GameVM *> g_gameVM;

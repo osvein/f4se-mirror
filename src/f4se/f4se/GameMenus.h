@@ -36,9 +36,9 @@ class UIMessageManager
 {
 public:
 	MEMBER_FN_PREFIX(UIMessageManager);
-	DEFINE_MEMBER_FN(SendUIMessage, void, 0x0204CA30, BSFixedString& menuName, UInt32 type);
+	DEFINE_MEMBER_FN(SendUIMessage, void, 0x0204CA70, BSFixedString& menuName, UInt32 type);
 	// 325A22C9C57B8175C01F1E071B4E272401994375+CB
-	DEFINE_MEMBER_FN(SendUIMessageEx, void, 0x012BA8B0, BSFixedString& menuName, UInt32 type, UIMessage * pExtraData);
+	DEFINE_MEMBER_FN(SendUIMessageEx, void, 0x012BA8F0, BSFixedString& menuName, UInt32 type, UIMessage * pExtraData);
 };
 extern RelocPtr<UIMessageManager*>	g_uiMessageManager;
 
@@ -175,15 +175,15 @@ public:
 private:
 	DEFINE_MEMBER_FN_0(Impl_ctor, void *, 0x00B323C0);
 	DEFINE_MEMBER_FN_0(Impl_dtor, void *, 0x00B32480);
-	DEFINE_MEMBER_FN_2(Impl_DrawNextFrame, void, 0x0210ED70, float unk0, void * unk1);
-	DEFINE_MEMBER_FN_1(Impl_ProcessMessage, UInt32, 0x0210ECF0, UIMessage * msg);
-	DEFINE_MEMBER_FN_2(Impl_Unk07, bool, 0x0210F1B0, UInt32 unk0, void * unk1);
+	DEFINE_MEMBER_FN_2(Impl_DrawNextFrame, void, 0x0210EDB0, float unk0, void * unk1);
+	DEFINE_MEMBER_FN_1(Impl_ProcessMessage, UInt32, 0x0210ED30, UIMessage * msg);
+	DEFINE_MEMBER_FN_2(Impl_Unk07, bool, 0x0210F1F0, UInt32 unk0, void * unk1);
 	DEFINE_MEMBER_FN_1(Impl_Unk08, void, 0x00B32930, UInt8 unk0);
-	DEFINE_MEMBER_FN_2(Impl_Unk09, void, 0x0210F3F0, BSFixedString & menuName, bool unk1);
+	DEFINE_MEMBER_FN_2(Impl_Unk09, void, 0x0210F430, BSFixedString & menuName, bool unk1);
 	DEFINE_MEMBER_FN_0(Impl_Unk0A, void, 0x00B329A0);
 	DEFINE_MEMBER_FN_0(Impl_Unk0B, void, 0x00B32A60);
 	DEFINE_MEMBER_FN_0(Impl_Unk0C, void, 0x00B32AA0)
-	DEFINE_MEMBER_FN_1(Impl_Unk0D, bool, 0x0210F540, bool unk0);
+	DEFINE_MEMBER_FN_1(Impl_Unk0D, bool, 0x0210F580, bool unk0);
 	DEFINE_MEMBER_FN_0(Impl_Unk10, bool, 0x00B32750);
 	DEFINE_MEMBER_FN_0(Impl_Unk11, void, 0x00B327E0);
 	DEFINE_MEMBER_FN_1(Impl_Unk12, void, 0x00B32850, void * unk0);
@@ -438,8 +438,8 @@ public:
 
 protected:
 	MEMBER_FN_PREFIX(UI);
-	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043B90, const char * name, CreateFunc creator, UInt64 unk1);
-	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02042000, const BSFixedString & name);
+	DEFINE_MEMBER_FN(RegisterMenu, void, 0x02043BD0, const char * name, CreateFunc creator, UInt64 unk1);
+	DEFINE_MEMBER_FN(IsMenuOpen, bool, 0x02042040, const BSFixedString & name);
 };
 
 extern RelocPtr <BSReadWriteLock> g_menuTableLock;

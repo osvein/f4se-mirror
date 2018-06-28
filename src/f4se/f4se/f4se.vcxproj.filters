@@ -317,6 +317,12 @@
     <ClCompile Include="CustomMenu.cpp">
       <Filter>internal</Filter>
     </ClCompile>
+    <ClCompile Include="PapyrusArmor.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PapyrusArmorAddon.cpp">
+      <Filter>papyrus\functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -689,6 +695,12 @@
     </ClInclude>
     <ClInclude Include="CustomMenu.h">
       <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusArmor.h">
+      <Filter>papyrus\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="PapyrusArmorAddon.h">
+      <Filter>papyrus\functions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

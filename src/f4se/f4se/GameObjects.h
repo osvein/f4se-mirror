@@ -461,26 +461,21 @@ class TESObjectARMA : public TESObject
 public:
 	enum { kTypeID = kFormType_ARMA };
 
-	TESRaceForm					raceForm;		// 20
-	BGSBipedObjectForm			bipedObject;	// 30
-	UInt64						unk040;			// 40
-	UInt64						unk048;			// 48
-	BGSModelMaterialSwap		swap50[2];		// 50
-	BGSModelMaterialSwap		swapD0[2];		// D0
-	BGSModelMaterialSwap		swap150[2];		// 150
-	BGSTextureSet*				unk1D0;			// 1D0 
-	BGSTextureSet*				unk1D8;			// 1D8 
-	BGSListForm*				unk1E0;			// 1E0 
-	UInt64						unk1E8;
-	void*						unk1F0;
-	UInt32						unk1F8;
-	UInt32						pad1FC;
-	UInt32						unk200;
-	UInt32						pad204;
-	BGSFootstepSet*				footstepSet208; // 208
-	BGSArtObject*				art210;			// 210
-	void*						unk218;
-	void*						unk220;
+	TESRaceForm					raceForm;			// 20
+	BGSBipedObjectForm			bipedObject;		// 30
+	UInt64						unk040;				// 40
+	UInt64						unk048;				// 48
+	BGSModelMaterialSwap		swap50[2];			// 50
+	BGSModelMaterialSwap		swapD0[2];			// D0
+	BGSModelMaterialSwap		swap150[2];			// 150
+	BGSTextureSet*				unk1D0[2];			// 1D0
+	BGSListForm*				unk1E0;				// 1E0
+	UInt64						unk1E8;				// 1E8
+	tArray<TESRace*>			additionalRaces;	// 1F0
+	BGSFootstepSet*				footstepSet;		// 208
+	BGSArtObject*				art;				// 210
+	void*						unk218;				// 218
+	void*						unk220;				// 220
 
 	// Constructs a node name from the specified armor and actor
 	bool GetNodeName(char * dest, TESNPC * refr, TESObjectARMO * armor);

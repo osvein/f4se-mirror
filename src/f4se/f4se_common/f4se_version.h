@@ -4,10 +4,10 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	6
-#define F4SE_VERSION_INTEGER_BETA	9
-#define F4SE_VERSION_VERSTRING		"0, 0, 6, 9"
-#define F4SE_VERSION_PADDEDSTRING	"0015"
-#define F4SE_VERSION_RELEASEIDX		15
+#define F4SE_VERSION_INTEGER_BETA	10
+#define F4SE_VERSION_VERSTRING		"0, 0, 6, 10"
+#define F4SE_VERSION_PADDEDSTRING	"0016"
+#define F4SE_VERSION_RELEASEIDX		16
 
 #define MAKE_EXE_VERSION_EX(major, minor, build, sub)	((((major) & 0xFF) << 24) | (((minor) & 0xFF) << 16) | (((build) & 0xFFF) << 4) | ((sub) & 0xF))
 #define MAKE_EXE_VERSION(major, minor, build)			MAKE_EXE_VERSION_EX(major, minor, build, 0)
@@ -58,12 +58,13 @@
 #define RUNTIME_VERSION_1_10_75	MAKE_EXE_VERSION(1, 10, 75)	// 0x010A04B0	creation club update 6
 #define RUNTIME_VERSION_1_10_82	MAKE_EXE_VERSION(1, 10, 82)	// 0x010A0520	creation club update 7 (startup speed?)
 #define RUNTIME_VERSION_1_10_89	MAKE_EXE_VERSION(1, 10, 89)	// 0x010A0590	creation club update 8
+#define RUNTIME_VERSION_1_10_98	MAKE_EXE_VERSION(1, 10, 98)	// 0x010A0620	creation club update 9
 
 #define PACKED_F4SE_VERSION		MAKE_EXE_VERSION(F4SE_VERSION_INTEGER, F4SE_VERSION_INTEGER_MINOR, F4SE_VERSION_INTEGER_BETA)
 
 // information about the state of the game at the time of release
 #define F4SE_TARGETING_BETA_VERSION	0
-#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_10_89
-#define CURRENT_RELEASE_F4SE_STR	"0.6.9"
+#define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_10_98
+#define CURRENT_RELEASE_F4SE_STR	"0.6.10"
 
 #endif /* __F4SE_VERSION_H__ */

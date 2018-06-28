@@ -154,14 +154,14 @@ public:
 		kType_LODLandscape,
 		kType_Snow,
 		kType_MultiLayerParallax,
-		kType_Unknown12,
-		kType_Unknown13,
-		kType_Snow2,
-		kType_Unknown15,
+		kType_TreeAnim,
+		kType_LODObjects,
+		kType_MultiIndexSnow,
+		kType_LODObjectsHD,
 		kType_Eye,
-		kType_Unknown17,
-		kType_LODLandscape2,
-		kType_Landscape2,
+		kType_Cloud,
+		kType_LODLandscapeNoise,
+		kType_LODLandscapeBlend,
 		kType_Dismemberment
 	};
 
@@ -202,7 +202,7 @@ public:
 	BSNonReentrantSpinLock	LoadTextureSetLock;				// BC
 
 	MEMBER_FN_PREFIX(BSLightingShaderMaterialBase);
-	DEFINE_MEMBER_FN(Copy, void, 0x0284ABE0, const BSLightingShaderMaterialBase * src);
+	DEFINE_MEMBER_FN(Copy, void, 0x0284AC20, const BSLightingShaderMaterialBase * src);
 };
 
 // D0
@@ -515,9 +515,9 @@ public:
 	UInt32				eClampMode;*/
 
 	MEMBER_FN_PREFIX(BSShaderData);
-	DEFINE_MEMBER_FN(ctor, void, 0x027E25A0);
+	DEFINE_MEMBER_FN(ctor, void, 0x027E25E0);
 	DEFINE_MEMBER_FN(dtor, void, 0x003900D0);
-	DEFINE_MEMBER_FN(ApplyMaterialData, void, 0x027E94C0, BSGeometry * trishape, bool unk1);
+	DEFINE_MEMBER_FN(ApplyMaterialData, void, 0x027E9500, BSGeometry * trishape, bool unk1);
 };
 STATIC_ASSERT(sizeof(BSShaderData) == 0x1E0);
 

@@ -217,6 +217,64 @@ namespace papyrusForm
 
 		return BSFixedString();
 	}
+
+	TESRace * GetRaceForm(TESForm * thisForm)
+	{
+		if(!thisForm)
+			return nullptr;
+
+		TESRaceForm* pRaceForm = DYNAMIC_CAST(thisForm, TESForm, TESRaceForm);
+		if (pRaceForm) {
+			return pRaceForm->race;
+		}
+
+		return nullptr;
+	}
+
+	void SetRaceForm(TESForm * thisForm, TESRace * race)
+	{
+		if (thisForm && race) {
+			TESRaceForm* pRaceForm = DYNAMIC_CAST(thisForm, TESForm, TESRaceForm);
+			if(pRaceForm)
+				pRaceForm->race = race;
+		}
+	}
+
+	UInt32 GetSlotMask(TESForm* thisForm)
+	{
+		BGSBipedObjectForm* pBipedObject = DYNAMIC_CAST(thisForm, TESForm, BGSBipedObjectForm);
+		return (pBipedObject) ? pBipedObject->GetSlotMask() : 0;
+	}
+
+	void SetSlotMask(TESForm* thisForm, UInt32 slotMask)
+	{
+		if (thisForm) {
+			BGSBipedObjectForm* pBipedObject = DYNAMIC_CAST(thisForm, TESForm, BGSBipedObjectForm);
+			if(pBipedObject)
+				pBipedObject->SetSlotMask(slotMask);
+		}
+	}
+
+	UInt32 AddSlotToMask(TESForm* thisForm, UInt32 slot)
+	{
+		BGSBipedObjectForm* pBipedObject = DYNAMIC_CAST(thisForm, TESForm, BGSBipedObjectForm);
+		return (pBipedObject) ? pBipedObject->AddSlotToMask(slot) : 0;
+
+	}
+
+	UInt32 RemoveSlotFromMask(TESForm* thisForm, UInt32 slot)
+	{
+		BGSBipedObjectForm* pBipedObject = DYNAMIC_CAST(thisForm, TESForm, BGSBipedObjectForm);
+		return (pBipedObject) ? pBipedObject->RemoveSlotFromMask(slot) : 0;
+	}
+
+	UInt32 GetMaskForSlot(StaticFunctionTag*, UInt32 slot) 
+	{
+		if (slot < 29 || slot > 61)
+			return 0;
+
+		return (1 << (slot - 30));
+	}
 }
 
 void papyrusForm::RegisterFuncs(VirtualMachine* vm)
@@ -280,4 +338,26 @@ void papyrusForm::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction1 <TESForm, void, BGSEquipSlot*>("SetEquipType", "Form", papyrusForm::SetEquipType, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction0 <TESForm, TESRace*> ("GetRaceForm", "Form", papyrusForm::GetRaceForm, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <TESForm, void, TESRace*> ("SetRaceForm", "Form", papyrusForm::SetRaceForm, vm));
+
+	// Slot Mask
+	vm->RegisterFunction(
+		new NativeFunction0 <TESForm, UInt32>("GetSlotMask", "Form", papyrusForm::GetSlotMask, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <TESForm, void, UInt32>("SetSlotMask", "Form", papyrusForm::SetSlotMask, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <TESForm, UInt32, UInt32>("AddSlotToMask", "Form", papyrusForm::AddSlotToMask, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <TESForm, UInt32, UInt32>("RemoveSlotFromMask", "Form", papyrusForm::RemoveSlotFromMask, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, UInt32, UInt32> ("GetMaskForSlot", "Form", papyrusForm::GetMaskForSlot, vm));
 }

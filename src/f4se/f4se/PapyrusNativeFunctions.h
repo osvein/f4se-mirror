@@ -79,7 +79,7 @@ public:
 		UInt32		pad0C;
 
 		MEMBER_FN_PREFIX(ParameterInfo);
-		DEFINE_MEMBER_FN(GetParam, UInt64, 0x02732D70, UInt32 idx, BSFixedString * outName, UInt64 * outType);
+		DEFINE_MEMBER_FN(GetParam, UInt64, 0x02732DB0, UInt32 idx, BSFixedString * outName, UInt64 * outType);
 	};
 
 	virtual BSFixedString *	GetName()							{ return &m_fnName; }
@@ -109,9 +109,9 @@ public:
 	virtual bool			Run(VMValue * baseValue, VirtualMachine * vm, UInt32 arg2, VMValue * resultValue, VMState * state) = 0;
 
 	MEMBER_FN_PREFIX(NativeFunctionBase);
-	DEFINE_MEMBER_FN(Impl_Invoke, UInt32, 0x027324C0, void * arg0, void * arg1, VirtualMachine * arg2, VMState * arg3);
-	DEFINE_MEMBER_FN(Impl_GetSourceFile, BSFixedString *, 0x02732390);
-	DEFINE_MEMBER_FN(Impl_GetParamName, bool, 0x027323B0, UInt32 idx, BSFixedString * out);
+	DEFINE_MEMBER_FN(Impl_Invoke, UInt32, 0x02732500, void * arg0, void * arg1, VirtualMachine * arg2, VMState * arg3);
+	DEFINE_MEMBER_FN(Impl_GetSourceFile, BSFixedString *, 0x027323D0);
+	DEFINE_MEMBER_FN(Impl_GetParamName, bool, 0x027323F0, UInt32 idx, BSFixedString * out);
 
 	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free);
 
@@ -143,8 +143,8 @@ public:
 	virtual bool	Run(VMValue * baseValue, VirtualMachine * vm, UInt32 arg2, VMValue * resultValue, VMState * state) = 0;
 
 	MEMBER_FN_PREFIX(NativeFunction);
-	DEFINE_MEMBER_FN(Impl_ctor, NativeFunction *, 0x027329C0, const char * fnName, const char * className, UInt32 unk0, UInt32 numParams);
-	DEFINE_MEMBER_FN(Impl_dtor, void, 0x02732BE0);
+	DEFINE_MEMBER_FN(Impl_ctor, NativeFunction *, 0x02732A00, const char * fnName, const char * className, UInt32 unk0, UInt32 numParams);
+	DEFINE_MEMBER_FN(Impl_dtor, void, 0x02732C20);
 
 protected:
 	void	* m_callback;	// 50

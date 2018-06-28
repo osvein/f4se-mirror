@@ -4,7 +4,7 @@
 typedef void * (* _Runtime_DynamicCast_Internal)(void * srcObj, UInt32 arg1, const void * fromType, const void * toType, UInt32 arg4);
 
 // 11BCFFABF53E33EAC4BAE470FD237D36B63F868A+ED
-RelocAddr <_Runtime_DynamicCast_Internal> Runtime_DynamicCast_Internal(0x0295BBEA);	// __RTDynamicCast
+RelocAddr <_Runtime_DynamicCast_Internal> Runtime_DynamicCast_Internal(0x0295BC2A);	// __RTDynamicCast
 
 void * Runtime_DynamicCast(void * srcObj, const void * fromType, const void * toType)
 {

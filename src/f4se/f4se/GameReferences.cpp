@@ -12,13 +12,13 @@ RelocAddr <_CreateHandleByREFR> CreateHandleByREFR(0x0000A8A0);
 // 3A53807E195FFAEA7AA0EF7FD42D84E4EA0B755A+D0
 RelocPtr <UInt32> g_invalidRefHandle(0x03905E84);
 
-RelocAddr <_HasDetectionLOS> HasDetectionLOS(0x0135B520);
+RelocAddr <_HasDetectionLOS> HasDetectionLOS(0x0135B560);
 
 RelocAddr <_GetLinkedRef_Native> GetLinkedRef_Native(0x00480EE0);
 
 RelocAddr <_SetLinkedRef_Native> SetLinkedRef_Native(0x00480F00);
 
-RelocAddr <_MoveRefrToPosition> MoveRefrToPosition(0x013FE680);
+RelocAddr <_MoveRefrToPosition> MoveRefrToPosition(0x013FE6C0);
 
 UInt32 TESObjectREFR::CreateRefHandle(void)
 {

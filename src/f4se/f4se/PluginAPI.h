@@ -176,12 +176,15 @@ struct F4SEPapyrusInterface
 {
 	enum
 	{
-		kInterfaceVersion = 1
+		kInterfaceVersion = 2
 	};
 	UInt32	interfaceVersion;
 
 	typedef bool (* RegisterFunctions)(VirtualMachine * vm);
 	bool	(* Register)(RegisterFunctions callback);
+
+	typedef void (* RegistrantFunctor)(UInt64 handle, const char * scriptName, const char * callbackName, void * data);
+	void	(* GetExternalEventRegistrations)(const char * eventName, void * data, RegistrantFunctor functor);
 };
 
 struct F4SETaskInterface
