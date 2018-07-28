@@ -64,7 +64,7 @@ public:
 	virtual void	Unk_20();
 	virtual void	Unk_21();
 	virtual void	CastAs(VMIdentifier** idInOut, VMObjectTypeInfo ** typeAs, UInt64 unk1); // checks (typeAs->unk40 & 3) == 3 first
-	virtual bool	SetPropertyValue(VMIdentifier** identifier, const char* propertyName, VMValue* newValue, UInt64* unk4);
+	virtual bool	SetPropertyValue(VMIdentifier** identifier, const char* propertyName, VMValue * newValue, UInt64* unk4);
 	virtual bool	GetPropertyValue(VMIdentifier** identifier, const char* propertyName, VMValue * result);
 	virtual bool	GetPropertyValueByIndex(VMIdentifier** identifier, SInt32 idx, VMValue* outValue);
 	virtual void	Unk_26();
@@ -171,6 +171,76 @@ public:
 		}
 	};
 
+	class IdentifierItem
+	{
+	public:
+		UInt64					handle;	// 00
+		UInt32					count;	// 08
+		UInt32					pad0C;	// 0C
+		union
+		{
+			VMIdentifier * one;
+			VMIdentifier ** many;
+		} identifier;
+
+		class IScriptVisitor
+		{
+		public:
+			virtual ~IScriptVisitor() { }
+
+			virtual bool Visit(VMIdentifier * obj) = 0;
+		};
+
+		inline VMIdentifier * GetScriptObject(VMIdentifier * identifier)
+		{
+			return reinterpret_cast<VMIdentifier*>(reinterpret_cast<uintptr_t>(identifier) & ~1LL);
+		}
+
+		void ForEachScript(IScriptVisitor * visitor)
+		{
+			if(count == 1)
+			{
+				visitor->Visit(GetScriptObject(identifier.one));
+			}
+			else
+			{
+				for(UInt32 i = 0; i < count; ++i)
+				{
+					if(!visitor->Visit(GetScriptObject(identifier.many[i])))
+						return;
+				}
+			}
+		}
+
+		bool operator==(const IdentifierItem & rhs) const	{ return handle == rhs.handle; }
+		operator UInt64() const	{ return handle; }
+
+		static inline UInt64 GetHash(UInt64* pHandle)
+		{
+			UInt32 hash;
+			CalculateCRC32_64(&hash, (UInt64)*pHandle, 0);
+			return hash;
+		}
+
+		void Dump(void)
+		{
+			_MESSAGE("\t\thandle: %016I64X", handle);
+			_MESSAGE("\t\tscripts:");
+			
+			class DumpVisitor : public IScriptVisitor
+			{
+			public:
+				virtual bool Visit(VMIdentifier* obj)
+				{
+					_MESSAGE("\t\t\t%s", obj->m_typeInfo->m_typeName.c_str());
+					return true;
+				}
+			};
+			DumpVisitor visitor;
+			ForEachScript(&visitor);
+		}
+	};
+
 	tHashSet<ComplexTypeInfoItem, BSFixedString> m_objectTypes;		// 168
 	tHashSet<ComplexTypeInfoItem, BSFixedString> m_structTypes;		// 198
 	tHashSet<FormTypeName, UInt32> m_typeNames;	// 1C8
@@ -178,9 +248,12 @@ public:
 	bool HasStack(UInt32 stackId);
 
 	UInt64	unk1F8[(0xBD58 - 0x1F8) >> 3];
-	SimpleLock stackLock;							// BD58
+	BSReadWriteLock stackLock;						// BD58
 	tHashSet<StackTableItem, UInt32> m_allStacks;	// BD60
 	tHashSet<StackTableItem, UInt32> m_waitStacks;	// BD90
+	UInt64	unkBDC0[(0xBDF8 - 0xBDC0) >> 3];		// BDC0
+	BSReadWriteLock scriptsLock;					// BDF8
+	tHashSet<IdentifierItem, UInt64> m_attachedScripts;	// BE00
 };
 STATIC_ASSERT(offsetof(VirtualMachine, m_objectTypes) == 0x168);
 STATIC_ASSERT(offsetof(VirtualMachine, m_structTypes) == 0x198);

@@ -590,7 +590,7 @@ namespace papyrusObjectReference {
 					NiPointer<BSShaderProperty> shaderProperty = ni_cast(geometry->shaderProperty, BSShaderProperty);
 					if(shaderProperty)
 					{
-						std::string fullPath(shaderProperty->m_name.c_str());
+						std::string fullPath(shaderProperty->m_name ? shaderProperty->m_name.c_str() : nullptr);
 						if(fullPath.length() == 0)
 							return false;
 

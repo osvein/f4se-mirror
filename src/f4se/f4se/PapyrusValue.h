@@ -6,6 +6,8 @@
 
 #include "f4se/PapyrusInterfaces.h"
 
+class VMIdentifier;
+
 // 58
 class VMObjectTypeInfo : public IComplexType
 {
@@ -18,10 +20,49 @@ public:
 	UInt64				unk28;		// 28
 	UInt64				unk30;		// 30
 	UInt64				unk38;		// 38
-	UInt64				unk40;		// 40
-	UInt64				unk48;		// 48
-	UInt64				unk50;		// 50
+	struct MemberData
+	{
+		unsigned unk00 : 3; // This == 3 is usually always checked before accessing properties
+		unsigned unk03 : 5;
+		unsigned numMembers : 10; // Variables + Properties
+		unsigned unk19 : 14;
+	} memberData;
+	struct PropertyData
+	{
+		unsigned numVariables : 10; // Sometimes this is 0 and member != numProperties
+		unsigned numProperties : 10; // Excludes variables
+		unsigned unk21: 12;
+	} propertyData;
+	UInt32				numFunc;	// 48
+	UInt32				unk4C;		// 4C
+
+	struct PropertyElement
+	{
+		BSFixedString		propertyName;	// 00
+
+		union // Can be number or IComplexType or IComplexType | 1 (array)
+		{
+			UInt64			value;
+			IComplexType	* id;
+		} type;								// 08
+		UInt64	unk10;						// 10 - Not sure what this is, maybe a hash?
+	};
+
+	struct Properties
+	{
+		BSFixedString		unk00;
+		BSFixedString		unk08;
+		BSFixedString		unk10;
+		BSFixedString		unk18;
+		BSFixedString		unk20;
+		BSFixedString		unk28;
+		PropertyElement		defs[0];
+	};
+	Properties			* properties;		// 50
 };
+STATIC_ASSERT(offsetof(VMObjectTypeInfo, memberData) == 0x40);
+STATIC_ASSERT(offsetof(VMObjectTypeInfo, propertyData) == 0x44);
+STATIC_ASSERT(offsetof(VMObjectTypeInfo, properties) == 0x50);
 
 // 70
 class VMStructTypeInfo : public IComplexType
@@ -68,40 +109,6 @@ public:
 	tHashSet<MemberItem, BSFixedString> m_members;
 };
 
-// 30
-class VMIdentifier
-{
-public:
-	enum
-	{
-		kLockBit = 0x80000000,
-		kFastSpinThreshold = 10000
-	};
-
-	SInt32				m_refCount;		// 00
-	UInt32				unk04;			// 04
-	VMObjectTypeInfo	* m_typeInfo;	// 08
-	void				* unk10;		// 10
-	UInt64				unk18;			// 18
-	volatile UInt64		m_handle;		// 20
-	volatile SInt32		m_lock;			// 28
-	UInt32				unk2C;			// 2C
-
-	UInt64	GetHandle(void);
-
-	SInt32	Lock(void);
-	void	Unlock(SInt32 oldLock);
-
-	// lock and refcount?
-	void	IncrementLock(void);
-	SInt32	DecrementLock(void);
-
-	void	Destroy(void);
-
-	MEMBER_FN_PREFIX(VMIdentifier);
-	DEFINE_MEMBER_FN(Destroy_Internal, void, 0x02710F50);
-};
-
 // 10
 class VMValue
 {
@@ -109,23 +116,8 @@ public:
 	VMValue() { type.value = kType_None; data.p = nullptr; }
 	~VMValue() { CALL_MEMBER_FN(this, Destroy)(); }
 
-	VMValue(const VMValue & other)
-	{
-		if(&other != this)
-		{
-			type.value = kType_None;
-			data.p = nullptr;
-			CALL_MEMBER_FN(this, Set)(&other);
-		}
-	}
-	VMValue& operator=(const VMValue& other)
-	{
-		if(&other == this)
-			return *this;
-		
-		CALL_MEMBER_FN(this, Set)(&other);
-		return *this;
-	}
+	VMValue(const VMValue & other);
+	VMValue& operator=(const VMValue& other);
 
 	enum
 	{
@@ -202,136 +194,67 @@ public:
 		BSFixedString *	GetStr(void) const	{ return (BSFixedString *)(&str); }
 	} data;	
 
-	void	SetNone(void)
-	{
-		CALL_MEMBER_FN(this, Destroy)();
+	void	SetNone(void);
+	void	SetInt(SInt32 i);
+	void	SetFloat(float f);
+	void	SetBool(bool b);
+	void	SetString(const char * str);
 
-		type.value = kType_None;
-		data.u = 0;
-	}
+	void	SetVariable(VMValue * value);
+	void	SetComplexType(IComplexType * typeInfo);
+	void	SetIdentifier(VMIdentifier	** identifier);
 
-	void	SetInt(SInt32 i)
-	{
-		CALL_MEMBER_FN(this, Destroy)();
+	bool	IsIntegralType() const;
+	bool	IsIntegralArrayType() const;
+	bool	IsComplexArrayType() const;
+	bool	IsArrayType() const;
+	bool	IsComplexType() const;
+	bool	IsIdentifier();
 
-		type.value = kType_Int;
-		data.i = i;
-	}
+	IComplexType * GetComplexType();
+	IComplexType * GetComplexType() const;
 
-	void	SetFloat(float f)
-	{
-		CALL_MEMBER_FN(this, Destroy)();
-
-		type.value = kType_Float;
-		data.f = f;
-	}
-
-	void	SetBool(bool b)
-	{
-		CALL_MEMBER_FN(this, Destroy)();
-
-		type.value = kType_Bool;
-		data.b = b;
-	}
-
-	
-	void	SetString(const char * str)
-	{
-		CALL_MEMBER_FN(this, Destroy)();
-
-		type.value = kType_String;
-		CALL_MEMBER_FN(data.GetStr(), Set)(str);
-	}
-
-	void	SetVariable(VMValue * value)
-	{
-		CALL_MEMBER_FN(this, Destroy)();
-
-		type.value = kType_Variable;
-		data.var = value;
-	}
-
-	void	SetComplexType(IComplexType * typeInfo)
-	{
-		CALL_MEMBER_FN(this, Destroy)();
-
-		type.id = typeInfo;
-		data.p = nullptr;
-	}
-
-	void	SetIdentifier(VMIdentifier	** identifier)
-	{
-		IComplexType * typeInfo = GetComplexType();
-		if(typeInfo && typeInfo->GetType() == kType_Identifier)
-		{
-			CALL_MEMBER_FN(this, Destroy)();
-
-			if(*identifier)
-				(*identifier)->IncrementLock();
-
-			data.id = *identifier;
-		}
-	}
-
-	bool	IsIntegralType() const
-	{
-		return type.value >= kType_String && type.value <= kType_Variable;
-	}
-
-	bool	IsIntegralArrayType() const
-	{
-		return type.value >= kType_IntegralStart && type.value <= kType_IntegralEnd;
-	}
-
-	bool	IsComplexArrayType() const
-	{
-		return (IsComplexType() && (type.value & 0x01LL));
-	}
-
-	bool	IsArrayType() const
-	{
-		return IsIntegralArrayType() || IsComplexArrayType();
-	}
-
-	bool	IsComplexType() const
-	{
-		return type.value >= kType_ArrayEnd;
-	}
-
-	bool	IsIdentifier()
-	{
-		IComplexType * typeInfo = GetComplexType();
-		return typeInfo ? typeInfo->GetType() == kType_Identifier : false;
-	}
-
-	IComplexType * GetComplexType()
-	{
-		return IsComplexType() ? reinterpret_cast<IComplexType *>(type.value & ~0x01LL) : nullptr;
-	}
-
-	IComplexType * GetComplexType() const
-	{
-		return IsComplexType() ? reinterpret_cast<IComplexType *>(type.value & ~0x01LL) : nullptr;
-	}
-
-	UInt8 GetTypeEnum() const // Returns the sanitized number
-	{
-		IComplexType * typeInfo = GetComplexType();
-		if(typeInfo)
-		{
-			UInt32 typeId = typeInfo->GetType();
-			if(IsArrayType())
-				typeId += kType_ArrayOffset;
-			return typeId;
-		}
-
-		return type.value;
-	}
+	UInt8 GetTypeEnum() const;
 
 	MEMBER_FN_PREFIX(VMValue);
 	DEFINE_MEMBER_FN(Set, void, 0x02715F60, const VMValue * src);
 	DEFINE_MEMBER_FN(Destroy, void, 0x02715910);
 	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
+};
+
+// 30 - Sized based on number of properties
+class VMIdentifier
+{
+public:
+	enum
+	{
+		kLockBit = 0x80000000,
+		kFastSpinThreshold = 10000
+	};
+
+	SInt32				m_refCount;		// 00
+	UInt32				unk04;			// 04
+	VMObjectTypeInfo	* m_typeInfo;	// 08
+	void				* unk10;		// 10
+	UInt64				unk18;			// 18
+	volatile UInt64		m_handle;		// 20
+	volatile SInt32		m_lock;			// 28
+	UInt32				unk2C;			// 2C
+	VMValue				properties[0];	// 30
+
+	UInt64	GetHandle(void);
+
+	SInt32	Lock(void);
+	void	Unlock(SInt32 oldLock);
+
+	// lock and refcount?
+	void	IncrementLock(void);
+	SInt32	DecrementLock(void);
+
+	void	Destroy(void);
+
+	MEMBER_FN_PREFIX(VMIdentifier);
+	DEFINE_MEMBER_FN(Destroy_Internal, void, 0x02710F50);
 };
 
 UInt64 GetArrayType(UInt64 type);

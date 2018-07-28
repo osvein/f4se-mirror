@@ -5,6 +5,6 @@ RelocPtr <GameVM *> g_gameVM(0x0590C388);
 
 bool VirtualMachine::HasStack(UInt32 stackId)
 {
-	SimpleLocker locker(&stackLock);
+	BSReadLocker locker(&stackLock);
 	return m_allStacks.Find(&stackId) != NULL;
 }

@@ -31,6 +31,7 @@ class ActorValueInfo;
 class Condition;
 class TESObjectREFR;
 class BGSDamageType;
+class BGSRefAlias;
 
 typedef bool (* _EvaluationConditions)(Condition ** condition, TESObjectREFR * ref1, TESObjectREFR * ref2);
 extern RelocAddr <_EvaluationConditions> EvaluationConditions; // Evaluates whole condition LinkedList
@@ -1514,6 +1515,14 @@ public:
 	float		inventoryWeight;	// 70 - is (-1) when not calculated
 	UInt32		unk74;				// 74
 	SimpleLock	inventoryLock;		// 78
+};
+
+class IAliasFunctor
+{
+public:
+	virtual ~IAliasFunctor() { }
+
+	virtual UInt32 Visit(BGSRefAlias * alias) = 0;
 };
 
 // 08

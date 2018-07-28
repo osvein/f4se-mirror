@@ -44,6 +44,9 @@ Function SetAmmoCapacity(Owner akOwner, int capacity) native global
 Ammo Function GetAmmo(Owner akOwner) native global
 Function SetAmmo(Owner akOwner, Ammo akAmmo) native global
 
+LeveledItem Function GetAddAmmoList(Owner akOwner) native global
+Function SetAddAmmoList(Owner akOwner, LeveledItem akAmmo) native global
+
 int Function GetAccuracyBonus(Owner akOwner) native global
 Function SetAccuracyBonus(Owner akOwner, int bonus) native global
 

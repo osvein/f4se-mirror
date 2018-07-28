@@ -245,6 +245,7 @@ public:
 	DEFINE_MEMBER_FN(GetWorldspace, TESWorldSpace*, 0x0040F170);
 	DEFINE_MEMBER_FN(GetInventoryWeight, float, 0x00400350);
 	DEFINE_MEMBER_FN(GetCarryWeight, float, 0x00D870D0);
+	DEFINE_MEMBER_FN_1(ForEachAlias, void, 0x003F7840, IAliasFunctor * functor);
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, parentCell) == 0xB8);
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0xE0);

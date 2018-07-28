@@ -287,7 +287,7 @@ public:
 		BGSSoundDescriptorForm		* unk48;					// 48 BGSSoundDescriptorForm *
 		UInt64						unk50;						// 50
 		BGSImpactDataSet			* unk58;					// 58 BGSImpactDataSet*
-		TESLevItem					* unk60;					// 60 TESLevItem *
+		TESLevItem					* addAmmoList;				// 60 TESLevItem *
 		TESAmmo						* ammo;						// 68 TESAmmo *
 		BGSEquipSlot				* equipSlot;				// 70 BGSEquipSlot*
 		SpellItem					* unk78;					// 78 SpellItem*

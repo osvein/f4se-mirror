@@ -130,6 +130,20 @@ namespace papyrusInstanceData
 		}
 	}
 
+	TESLevItem* GetAddAmmoList(StaticFunctionTag*, Owner thisInstance)
+	{
+		auto instanceData = GetWeaponInstanceData(&thisInstance);
+		return (instanceData) ? instanceData->addAmmoList : nullptr;
+	}
+
+	void SetAddAmmoList(StaticFunctionTag*, Owner thisInstance, TESLevItem* item)
+	{
+		auto instanceData = GetWeaponInstanceData(&thisInstance);
+		if (instanceData) {
+			instanceData->addAmmoList = item;
+		}
+	}
+
 	UInt32 GetAmmoCapacity(StaticFunctionTag*, Owner thisInstance)
 	{
 		auto instanceData = GetWeaponInstanceData(&thisInstance);
@@ -682,6 +696,13 @@ void papyrusInstanceData::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction2 <StaticFunctionTag, void, Owner, TESAmmo*>("SetAmmo", "InstanceData", papyrusInstanceData::SetAmmo, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction1 <StaticFunctionTag, TESLevItem*, Owner>("GetAddAmmoList", "InstanceData", papyrusInstanceData::GetAddAmmoList, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction2 <StaticFunctionTag, void, Owner, TESLevItem*>("SetAddAmmoList", "InstanceData", papyrusInstanceData::SetAddAmmoList, vm));
+
 
 	vm->RegisterFunction(
 		new NativeFunction1 <StaticFunctionTag, UInt32, Owner>("GetAccuracyBonus", "InstanceData", papyrusInstanceData::GetAccuracyBonus, vm));

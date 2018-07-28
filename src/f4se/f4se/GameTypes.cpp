@@ -152,6 +152,9 @@ void BSReadWriteLock::LockForReadAndWrite()
 		UInt32 spinCount = 0;
 		while (InterlockedCompareExchange(&lockValue, 1, 0) != 1)
 			Sleep(++spinCount >= kFastSpinThreshold ? 1 : 0);
+
+		threadID = myThreadID;
+		_mm_mfence();
 	}
 }
 

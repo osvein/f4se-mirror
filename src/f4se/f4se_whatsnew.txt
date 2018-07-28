@@ -1,3 +1,8 @@
+0.6.11
+- support for runtime 1.10.106
+- added InstanceData.Get/SetAddAmmoList
+- fixed nullptr crash with material swaps with no material name
+
 0.6.10
 - support for runtime 1.10.98
 - added GetExternalEventRegistrations to Papyrus Plugin API

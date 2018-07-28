@@ -1804,6 +1804,66 @@ public:
 };
 STATIC_ASSERT(offsetof(TESQuest, type) == 0xF7);
 
+// 28
+class BGSBaseAlias // Not actually a form, but its used like one in Papyrus
+{
+public:
+	virtual ~BGSBaseAlias();
+	virtual void		Unk01(void) = 0;
+	virtual void		Unk02(void) = 0;
+	virtual void		Unk03(void) = 0;
+	virtual void		Unk04(void) = 0;
+	virtual void		Unk05(void) = 0;
+	virtual void		Unk06(void) = 0;
+	virtual void		Unk07(void) = 0;
+
+	enum { kTypeID = kFormType_Alias };
+
+	StringCache::Ref	name;		// 08
+	TESQuest			* owner;	// 10
+	UInt64				aliasId;	// 18
+	UInt16				flags;		// 20
+	UInt16				pad22;		// 22
+	UInt32				pad24;		// 24
+};
+
+// 48
+class BGSRefAlias : public BGSBaseAlias
+{
+public:
+	enum { kTypeID = kFormType_ReferenceAlias };
+
+	UInt64	unk28;	// 28
+	UInt64	unk30;	// 30
+	UInt64	unk38;	// 38
+	UInt64	unk40;	// 40
+};
+
+// 50
+class BGSRefCollectionAlias : public BGSBaseAlias
+{
+public:
+	enum { kTypeID = kFormType_RefCollectionAlias };
+
+	UInt64	unk48; // 48
+};
+
+// 60
+class BGSLocAlias : public BGSBaseAlias
+{
+public:
+	enum { kTypeID = kFormType_LocationAlias };
+
+	UInt64	unk28;	// 28
+	UInt64	unk30;	// 30
+	UInt64	unk38;	// 38
+	UInt64	unk40;	// 40
+	SInt64	unk48;	// 48
+	SInt64	unk50;	// 50
+	UInt32	unk58;	// 58
+	UInt32	unk5C;	// 5C
+};
+
 // 08
 class IFormFactory
 {
