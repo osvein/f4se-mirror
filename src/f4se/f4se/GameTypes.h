@@ -179,10 +179,10 @@ public:
 		bool operator<(const Ref& lhs) const { return data < lhs.data; }
 
 		const char * c_str() const { return operator const char *(); }
-		operator const char *() const { return data->Get<char>(); }
+		operator const char *() const { return data ? data->Get<char>() : nullptr; }
 
 		const wchar_t * wc_str() { return operator const wchar_t *(); }
-		operator const wchar_t *() { return data->Get<wchar_t>(); }
+		operator const wchar_t *() { return data ? data->Get<wchar_t>() : nullptr; }
 	};
 
 	// 10

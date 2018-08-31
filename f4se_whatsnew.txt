@@ -1,3 +1,6 @@
+0.6.12
+- support for runtime 1.10.111
+
 0.6.11
 - support for runtime 1.10.106
 - added InstanceData.Get/SetAddAmmoList
