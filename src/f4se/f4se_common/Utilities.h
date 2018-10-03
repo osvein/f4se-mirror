@@ -161,6 +161,7 @@
 	return (reinterpret_cast<empty_struct*>(this)->*fn)(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);												\
 	}
 
+
 // this is the solution to getting a pointer-to-member-function pointer
 template <typename T>
 uintptr_t GetFnAddr(T src)
