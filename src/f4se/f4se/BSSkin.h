@@ -1,5 +1,6 @@
 #pragma once
 
+#include <xmmintrin.h>
 #include "NiObjects.h"
 
 class BSSkin

@@ -18,8 +18,8 @@
 static UInt8	s_savefileIndexMap[0xFF];
 static UInt8	s_numSavefileMods = 0;
 
-static UInt8	s_savefileLightIndexMap[0xFFF];
-static UInt8	s_numSavefileLightMods = 0;
+static UInt16	s_savefileLightIndexMap[0xFFF];
+static UInt16	s_numSavefileLightMods = 0;
 
 void LoadModList(const F4SESerializationInterface * intfc)
 {

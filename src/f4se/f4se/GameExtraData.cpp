@@ -28,6 +28,11 @@ bool ExtraDataList::HasType(UInt32 type)
 
 void ExtraDataList::MarkType(UInt32 type, bool bCleared)
 {
+	if (!m_presence) {
+		m_presence = (PresenceBitfield*)Heap_Allocate(sizeof(PresenceBitfield));
+		memset(m_presence, 0, sizeof(PresenceBitfield));
+	}
+
 	UInt32 index = (type >> 3);
 	UInt8 bitMask = 1 << (type % 8);
 	UInt8& flag = m_presence->bits[index];

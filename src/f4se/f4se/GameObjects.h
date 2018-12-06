@@ -436,7 +436,8 @@ public:
 		UInt32 value;								// 48
 		UInt32 health;								// 4C
 		UInt32 unk50;								// 50
-		UInt32 armorRating;							// 54
+		UInt16 armorRating;							// 54
+		UInt16 unk56;								// 56
 	};
 	InstanceData				instanceData;	// 250 - 2A8 ( 592 - 680)
 

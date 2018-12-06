@@ -5,7 +5,6 @@ typedef UInt32	PluginHandle;	// treat this as an opaque type
 class GFxMovieView;
 class GFxValue;
 class ITaskDelegate;
-
 class F4SEDelayFunctorManager;
 class F4SEObjectRegistry;
 class F4SEPersistentObjectStorage;
@@ -191,11 +190,12 @@ struct F4SETaskInterface
 {
 	enum
 	{
-		kInterfaceVersion = 1
+		kInterfaceVersion = 2
 	};
 	UInt32	interfaceVersion;
 
 	void	(* AddTask)(ITaskDelegate * task);
+	void	(* AddUITask)(ITaskDelegate * task);
 };
 
 struct F4SEObjectInterface

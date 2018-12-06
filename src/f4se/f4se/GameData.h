@@ -51,7 +51,9 @@ struct ModInfo		// referred to by game as TESFile
 	ModInfo								** refModInfo;		// 360
 	UInt64								unk368;				// 360
 	UInt8								modIndex;			// 370
-	UInt8								pad[7];				// 371
+	UInt8								pad371;				// 371
+	UInt16								lightIndex;			// 372
+	UInt8								pad[4];				// 371
 	BSString							author;				// 378
 	BSString							description;		// 388
 	// ...

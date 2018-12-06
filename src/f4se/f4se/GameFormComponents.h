@@ -1510,11 +1510,11 @@ class BGSInventoryList
 public:
 	UInt64	unk00;	// 00
 	tArray<BSTEventSink<BGSInventoryListEvent::Event>> eventSinks;	// 08
-	UInt64	unk20[(0x58-0x20)/8];	// 20
-	tArray<BGSInventoryItem> items;	// 58
-	float		inventoryWeight;	// 70 - is (-1) when not calculated
-	UInt32		unk74;				// 74
-	SimpleLock	inventoryLock;		// 78
+	UInt64	unk20[(0x58-0x20)/8];		// 20
+	tArray<BGSInventoryItem> items;		// 58
+	float			inventoryWeight;	// 70 - is (-1) when not calculated
+	UInt32			unk74;				// 74
+	BSReadWriteLock	inventoryLock;		// 78
 };
 
 class IAliasFunctor

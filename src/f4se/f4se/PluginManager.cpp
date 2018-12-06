@@ -81,7 +81,8 @@ static const F4SETaskInterface	g_F4SETaskInterface =
 {
 	F4SETaskInterface::kInterfaceVersion,
 
-	TaskInterface::AddTask
+	TaskInterface::AddTask,
+	TaskInterface::AddUITask
 };
 
 #include "f4se/PapyrusDelayFunctors.h"

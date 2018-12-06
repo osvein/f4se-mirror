@@ -336,7 +336,7 @@ namespace papyrusObjectReference {
 
 		auto inventory = refr->inventoryList;
 		if(inventory) {
-			inventory->inventoryLock.Lock();
+			inventory->inventoryLock.LockForRead();
 
 			for(int i = 0; i < inventory->items.count; i++) {
 				BGSInventoryItem item;
@@ -345,7 +345,7 @@ namespace papyrusObjectReference {
 				results.Push(&item.form);
 			}
 
-			inventory->inventoryLock.Release();
+			inventory->inventoryLock.Unlock();
 		}
 
 		return results;

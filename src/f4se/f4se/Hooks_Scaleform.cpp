@@ -5,6 +5,7 @@
 
 #include "f4se_common/f4se_version.h"
 #include "common/IDirectoryIterator.h"
+#include "f4se/PluginManager.h"
 
 #include "Translation.h"
 
@@ -210,6 +211,42 @@ public:
 	}
 };
 
+class F4SEScaleform_CallGlobalFunctionNoWait : public GFxFunctionHandler
+{
+public:
+	virtual void Invoke(Args * args)
+	{
+		ASSERT(args->numArgs >= 2);
+		ASSERT(args->args[0].GetType() == GFxValue::kType_String);
+		ASSERT(args->args[1].GetType() == GFxValue::kType_String);
+
+		VirtualMachine * vm = (*g_gameVM)->m_virtualMachine;
+
+		BSFixedString className(args->args[0].GetString());
+		BSFixedString functionName(args->args[1].GetString());
+
+		args->result->SetBool(false);
+
+		VMValue packedArgs;
+		UInt32 length = args->numArgs - 2;
+		VMValue::ArrayData * arrayData = nullptr;
+		vm->CreateArray(&packedArgs, length, &arrayData);
+
+		packedArgs.type.value = VMValue::kType_VariableArray;
+		packedArgs.data.arr = arrayData;
+
+		for (UInt32 i = 0; i < length; i++)
+		{
+			VMValue * var = new VMValue;
+			PlatformAdapter::ConvertScaleformValue(var, &args->args[i + 2], vm);
+			arrayData->arr.entries[i].SetVariable(var);
+		}
+
+		CallGlobalFunctionNoWait_Internal(vm, 0, 0, &className, &functionName, &packedArgs);
+
+		args->result->SetBool(true);
+	}
+};
 
 class F4SEScaleform_GetDirectoryListing : public GFxFunctionHandler
 {
@@ -425,6 +462,7 @@ void ScaleformInitHook_Install(GFxMovieView * view)
 	RegisterFunction<F4SEScaleform_AllowTextInput>(&f4se, movieRoot, "AllowTextInput");
 	RegisterFunction<F4SEScaleform_SendExternalEvent>(&f4se, movieRoot, "SendExternalEvent");
 	RegisterFunction<F4SEScaleform_CallFunctionNoWait>(&f4se, movieRoot, "CallFunctionNoWait");
+	RegisterFunction<F4SEScaleform_CallGlobalFunctionNoWait>(&f4se, movieRoot, "CallGlobalFunctionNoWait");
 	RegisterFunction<F4SEScaleform_GetDirectoryListing>(&f4se, movieRoot, "GetDirectoryListing");
 	RegisterFunction<F4SEScaleform_MountImage>(&f4se, movieRoot, "MountImage");
 	RegisterFunction<F4SEScaleform_UnmountImage>(&f4se, movieRoot, "UnmountImage");
@@ -627,8 +665,7 @@ void Hooks_Scaleform_Commit()
 		struct MenuConstruction_Code : Xbyak::CodeGenerator {
 			MenuConstruction_Code(void * buf, uintptr_t originFuncAddr, uintptr_t funcAddr) : Xbyak::CodeGenerator(4096, buf)
 			{
-				Xbyak::Label retnLabel;
-				Xbyak::Label funcLabel1, funcLabel2;
+				Xbyak::Label retnLabel, funcLabel1, funcLabel2;
 
 				// Put the original call back
 				call(ptr [rip + funcLabel1]);

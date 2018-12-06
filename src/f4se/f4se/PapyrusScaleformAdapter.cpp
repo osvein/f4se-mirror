@@ -199,9 +199,9 @@ namespace PlatformAdapter
 					src->GetMember("__type__", &gType);
 					GFxValue gHandle;
 					src->GetMember("__handleHigh__", &gHandle);
-					handle |= ((UInt64)gHandle.GetInt()) << 32;
+					handle |= ((UInt64)gHandle.GetUInt()) << 32;
 					src->GetMember("__handleLow__", &gHandle);
-					handle |= (UInt64)gHandle.GetInt();
+					handle |= (UInt64)gHandle.GetUInt();
 
 					BSFixedString typeName(gType.GetString());
 
