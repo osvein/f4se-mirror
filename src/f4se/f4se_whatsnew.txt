@@ -1,3 +1,6 @@
+0.6.15
+- fix crash when loading cosaves with light mod list entries
+
 0.6.14
 - support for runtime 1.10.120
 

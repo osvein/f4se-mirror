@@ -60,14 +60,28 @@ void SaveModList(const F4SESerializationInterface * intfc)
 	}
 }
 
-void LoadLightModList(const F4SESerializationInterface * intfc)
+void LoadLightModList(const F4SESerializationInterface * intfc, bool fixedSize)
 {
 	_MESSAGE("Loading light mod list:");
 
 	char name[0x104] = { 0 };
 	UInt16 nameLen = 0;
 
-	intfc->ReadRecordData(&s_numSavefileLightMods, sizeof(s_numSavefileLightMods));
+	if(fixedSize)
+	{
+		UInt16 numMods = 0;
+		intfc->ReadRecordData(&numMods, sizeof(numMods));
+
+		s_numSavefileLightMods = numMods;
+	}
+	else
+	{
+		UInt8 numMods = 0;
+		intfc->ReadRecordData(&numMods, sizeof(numMods));
+
+		s_numSavefileLightMods = numMods;
+	}
+
 	for (UInt32 i = 0; i < s_numSavefileLightMods; i++)
 	{
 		intfc->ReadRecordData(&nameLen, sizeof(nameLen));
@@ -82,9 +96,9 @@ void LoadLightModList(const F4SESerializationInterface * intfc)
 
 void SaveLightModList(const F4SESerializationInterface * intfc)
 {
-	UInt8 modCount = (*g_dataHandler)->modList.lightMods.count;
+	UInt16 modCount = (*g_dataHandler)->modList.lightMods.count;
 
-	intfc->OpenRecord('LMOD', 0);
+	intfc->OpenRecord('LIMD', 0);
 	intfc->WriteRecordData(&modCount, sizeof(modCount));
 
 	_MESSAGE("Saving light mod list:");
@@ -177,9 +191,14 @@ void Core_LoadCallback(const F4SESerializationInterface * intfc)
 			LoadModList(intfc);
 			break;
 
-		// Light Mod list
+		// Light Mod list (legacy)
 		case 'LMOD':
-			LoadLightModList(intfc);
+			LoadLightModList(intfc, false);
+			break;
+
+		// Light mod list (16-bit size)
+		case 'LIMD':
+			LoadLightModList(intfc, true);
 			break;
 
 			// Key input events
