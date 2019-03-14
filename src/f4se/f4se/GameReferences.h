@@ -460,6 +460,7 @@ public:
 	{
 		return (actorFlags & kFlag_Teammate) == kFlag_Teammate;
 	}
+	bool GetEquippedExtraData(UInt32 slotIndex, ExtraDataList ** extraData);
 
 	MEMBER_FN_PREFIX(Actor);
 	DEFINE_MEMBER_FN(QueueUpdate, void, 0x00D8A0D0, bool bDoFaceGen, UInt32 unk2, bool DoQueue, UInt32 flags); // 0, 0, 1, 0

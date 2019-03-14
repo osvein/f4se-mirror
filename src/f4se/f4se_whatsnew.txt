@@ -1,3 +1,6 @@
+0.6.16
+- Game.UpdateThirdPerson, Game.GetCameraState (based on code from Neanka, thanks)
+
 0.6.15
 - fix crash when loading cosaves with light mod list entries
 

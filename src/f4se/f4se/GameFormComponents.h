@@ -811,11 +811,19 @@ public:
 	enum Flags
 	{
 		kUnk1 = 0x80000,
-		kUnk2 = 0x40000
+		kUnk2 = 0x40000,
+
+		kWeaponStateShift = 1,
+		kWeaponStateMask = 0x07,
+
+		kWeaponState_Drawn = 0x03,
 	};
 
 	UInt32	unk08;	// 08
 	UInt32	flags;	// 0C
+
+	UInt32 GetWeaponState() { return (flags >> kWeaponStateShift) & kWeaponStateMask; }
+	bool IsWeaponDrawn()	{ return GetWeaponState() >= kWeaponState_Drawn; }
 };
 
 // 08

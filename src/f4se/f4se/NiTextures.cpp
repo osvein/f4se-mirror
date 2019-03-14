@@ -2,6 +2,6 @@
 
 RelocAddr <_CreateTexture> CreateTexture(0x01BA5100);
 
-RelocAddr <_CreateBSShaderTextureSet> CreateBSShaderTextureSet(0x027E2180);
+RelocAddr <_CreateBSShaderTextureSet> CreateBSShaderTextureSet(0x027BD0B0);
 
-RelocAddr <_LoadTextureByPath> LoadTextureByPath(0x027FB1A0);
+RelocAddr <_LoadTextureByPath> LoadTextureByPath(0x027D60D0);

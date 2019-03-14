@@ -1,7 +1,7 @@
 #include "f4se/GameAPI.h"
 
 // B53CEF7AA7FC153E48CDE9DBD36CD8242577E27F+11D
-RelocPtr <Heap> g_mainHeap(0x03905A00);
+RelocPtr <Heap> g_mainHeap(0x038CC980);
 
 void * Heap_Allocate(size_t size)
 {
@@ -14,10 +14,10 @@ void Heap_Free(void * ptr)
 }
 
 // CF40EA3DCB94FC3927A17CCA60198108D4742CA7+68
-RelocPtr <ConsoleManager *> g_console(0x05919B30);
+RelocPtr <ConsoleManager *> g_console(0x058E0AB0);
 
 // 1C0F98B1DC3F82F9BD55E938765C22AD25B75571+15
-RelocAddr <UInt32 *> g_consoleHandle(0x05B144A8);
+RelocAddr <UInt32 *> g_consoleHandle(0x05ADB428);
 
 void Console_Print(const char * fmt, ...)
 {

@@ -379,7 +379,7 @@ bool Function UsingGamepad() native global
 ; Issue a warning to the script log and warning system
 Function Warning(string asMessage) native global betaOnly
 
-; F4SE additions built 2018-08-30 03:53:15.899000 UTC
+; F4SE additions built 2019-03-14 04:47:05.463000 UTC
 ; Returns the current console ref
 ObjectReference Function GetCurrentConsoleRef() native global
 
@@ -402,3 +402,23 @@ Function SetGameSettingFloat(string setting, float value) global native
 Function SetGameSettingInt(string setting, int value) global native
 Function SetGameSettingBool(string setting, bool value) global native
 Function SetGameSettingString(string setting, string value) global native
+
+; refreshes the third person camera state
+Function UpdateThirdPerson() native global
+
+; returns the current camera state
+; -1 - unknown/there is no camera yet
+; 0 - first person
+; 1 - auto vanity
+; 2 - VATS
+; 3 - free
+; 4 - iron sights
+; 5 - transition
+; 6 - tween menu
+; 7 - third person 1
+; 8 - third person 2
+; 9 - furniture
+; 10 - horse
+; 11 - bleedout
+; 12 - dialogue
+int Function GetCameraState() native global

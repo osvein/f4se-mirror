@@ -65,30 +65,28 @@ namespace papyrusActor
 		if(slotIndex >= ActorEquipData::kMaxSlots)
 			return result;
 
-		// This should be possible but check anyway
-		ActorEquipData * equipData = actor->equipData;
-		if(!equipData)
-			return result;
-
-		// Make sure there is an item in this slot
-		auto item = equipData->slots[slotIndex].item;
-		if(!item)
-			return result;
-
-		// Array is valid after this point, just means there are no mods if the following are false
-		result.SetNone(false);
-
-		auto extraData = equipData->slots[slotIndex].extraData;
-		if(!extraData)
-			return result;
-		auto data = extraData->data;
-		if(!data || !data->forms)
-			return result;
-
-		for(UInt32 i = 0; i < data->blockSize / sizeof(BGSObjectInstanceExtra::Data::Form); i++)
+		ExtraDataList * stackDataList = nullptr;
+		if (actor->GetEquippedExtraData(slotIndex, &stackDataList) && stackDataList)
 		{
-			BGSMod::Attachment::Mod * objectMod = (BGSMod::Attachment::Mod *)Runtime_DynamicCast(LookupFormByID(data->forms[i].formId), RTTI_TESForm, RTTI_BGSMod__Attachment__Mod);
-			result.Push(&objectMod);
+			result.SetNone(false);
+
+			BSExtraData * extraData = stackDataList->GetByType(ExtraDataType::kExtraData_ObjectInstance);
+			if (extraData)
+			{
+				BGSObjectInstanceExtra * objectModData = DYNAMIC_CAST(extraData, BSExtraData, BGSObjectInstanceExtra);
+				if (objectModData)
+				{
+					auto data = objectModData->data;
+					if (!data || !data->forms)
+						return result;
+
+					for (UInt32 i = 0; i < data->blockSize / sizeof(BGSObjectInstanceExtra::Data::Form); i++)
+					{
+						BGSMod::Attachment::Mod * objectMod = (BGSMod::Attachment::Mod *)Runtime_DynamicCast(LookupFormByID(data->forms[i].formId), RTTI_TESForm, RTTI_BGSMod__Attachment__Mod);
+						result.Push(&objectMod);
+					}
+				}
+			}
 		}
 
 		return result;

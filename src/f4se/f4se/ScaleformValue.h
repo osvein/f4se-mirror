@@ -4,6 +4,7 @@
 #include "f4se/GameEvents.h"
 #include "f4se/ScaleformTypes.h"
 
+class GFxMovieView;
 class GFxMovieRoot;
 
 // 20
@@ -147,7 +148,8 @@ public:
 			virtual void Visit(const char * member, GFxValue * value) = 0;
 		};
 
-		void * unk1;
+		void			* unk00;
+		GFxMovieView	* view;
 
 		MEMBER_FN_PREFIX(ObjectInterface);
 		DEFINE_MEMBER_FN(HasMember, bool, 0x020AFB90, void* pData, const char* name);

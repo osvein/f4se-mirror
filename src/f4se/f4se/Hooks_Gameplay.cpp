@@ -8,7 +8,7 @@
 #include "xbyak/xbyak.h"
 
 // DDB041F109C6211C69F6E5F20EEC28E4448B796B+53
-RelocAddr <char *> g_gameVersion(0x02C87748);
+RelocAddr <char *> g_gameVersion(0x02C5D6E8);
 
 RelocAddr <uintptr_t> kHook_ShowVersion_Offset(0x00BBC390 + 0x53 + 3);
 RelocAddr <uintptr_t> kHook_ShowVersion_OffsetBase(0x00BBC390 + 0x5A);

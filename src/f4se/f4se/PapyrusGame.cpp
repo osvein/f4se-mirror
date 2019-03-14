@@ -7,6 +7,8 @@
 #include "f4se/GameReferences.h"
 #include "f4se/GameData.h"
 #include "f4se/GameSettings.h"
+#include "f4se/GameCamera.h"
+#include "f4se/GameRTTI.h"
 
 
 namespace papyrusGame
@@ -156,6 +158,31 @@ namespace papyrusGame
 			_WARNING("SetGameSettingString: %s not found", name.data);
 		}
 	}
+
+	void UpdateThirdPerson(StaticFunctionTag * base)
+	{
+		PlayerCharacter * player = *g_player;
+		PlayerCamera * playerCamera = *g_playerCamera;
+		if(playerCamera && player)
+		{
+			ThirdPersonState * thirdPersonCamera = DYNAMIC_CAST(
+				playerCamera->cameraStates[PlayerCamera::kCameraState_ThirdPerson2],
+				TESCameraState, ThirdPersonState);
+			if(thirdPersonCamera)
+			{
+				thirdPersonCamera->UpdateMode(player->actorState.IsWeaponDrawn());
+			}
+		}
+	}
+
+	SInt32 GetCameraState(StaticFunctionTag * base)
+	{
+		PlayerCamera * playerCamera = *g_playerCamera;
+		if(playerCamera)
+			return playerCamera->GetCameraStateId(playerCamera->cameraState);
+
+		return -1;
+	}
 }
 
 void papyrusGame::RegisterFuncs(VirtualMachine* vm)
@@ -183,4 +210,12 @@ void papyrusGame::RegisterFuncs(VirtualMachine* vm)
 
 	vm->RegisterFunction(
 		new NativeFunction2 <StaticFunctionTag, void, BSFixedString, BSFixedString>("SetGameSettingString", "Game", papyrusGame::SetGameSettingString, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction0 <StaticFunctionTag, void>("UpdateThirdPerson", "Game", papyrusGame::UpdateThirdPerson, vm));
+
+	vm->RegisterFunction(
+		new NativeFunction0 <StaticFunctionTag, SInt32>("GetCameraState", "Game", papyrusGame::GetCameraState, vm));
+
+	vm->SetFunctionFlags("Game", "GetCameraState", IFunction::kFunctionFlag_NoWait);
 }

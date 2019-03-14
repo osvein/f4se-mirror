@@ -38,7 +38,7 @@ void Hooks_GameData_Init()
 void Hooks_GameData_Commit()
 {
 	// ??_7InitGameDataThread@?A0x1eb8b661@@6B@
-	RelocAddr <uintptr_t> InitGameDataThread_Run(0x02D65EE8 + 8); 
+	RelocAddr <uintptr_t> InitGameDataThread_Run(0x02D3BE88 + 8); 
 
 	SafeWrite64(InitGameDataThread_Run.GetUIntPtr(), (UInt64)InitGameDataRun_Hook);
 	g_branchTrampoline.Write6Branch(GameDataReady_Original.GetUIntPtr(), (uintptr_t)GameDataReady_Hook);

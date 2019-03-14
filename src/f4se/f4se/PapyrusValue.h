@@ -154,7 +154,7 @@ public:
 		tArray<VMValue>		arr;	// 18
 
 		MEMBER_FN_PREFIX(ArrayData);
-		DEFINE_MEMBER_FN(Destroy, void, 0x0273D000);
+		DEFINE_MEMBER_FN(Destroy, void, 0x02717F30);
 	};
 
 	struct StructData
@@ -217,8 +217,8 @@ public:
 	UInt8 GetTypeEnum() const;
 
 	MEMBER_FN_PREFIX(VMValue);
-	DEFINE_MEMBER_FN(Set, void, 0x02715F60, const VMValue * src);
-	DEFINE_MEMBER_FN(Destroy, void, 0x02715910);
+	DEFINE_MEMBER_FN(Set, void, 0x026F0E90, const VMValue * src);
+	DEFINE_MEMBER_FN(Destroy, void, 0x026F0840);
 	DEFINE_STATIC_HEAP(Heap_Allocate, Heap_Free)
 };
 
@@ -254,7 +254,7 @@ public:
 	void	Destroy(void);
 
 	MEMBER_FN_PREFIX(VMIdentifier);
-	DEFINE_MEMBER_FN(Destroy_Internal, void, 0x02710F50);
+	DEFINE_MEMBER_FN(Destroy_Internal, void, 0x026EBE80);
 };
 
 UInt64 GetArrayType(UInt64 type);
