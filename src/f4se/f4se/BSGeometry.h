@@ -171,7 +171,8 @@ public:
 	UInt32	unk15C;							// 15C
 
 	MEMBER_FN_PREFIX(BSGeometry);
-	DEFINE_MEMBER_FN(UpdateShaderProperty, UInt32, 0x02845180);
+	// 523E6E56493B00C91D9A86659158A735D8A58371+B
+	DEFINE_MEMBER_FN(UpdateShaderProperty, UInt32, 0x028200B0);
 };
 STATIC_ASSERT(sizeof(BSGeometry) == 0x160);
 

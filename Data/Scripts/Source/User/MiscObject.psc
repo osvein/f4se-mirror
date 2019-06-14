@@ -4,7 +4,7 @@ Scriptname MiscObject extends Form Native Hidden
 int Function GetObjectComponentCount( Component akComponent ) native
 
 
-; F4SE additions built 2019-03-14 04:47:05.463000 UTC
+; F4SE additions built 2019-06-14 04:55:00.171000 UTC
 struct MiscComponent
 	Component object
 	int count

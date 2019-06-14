@@ -3,6 +3,7 @@
 #include "f4se_common/Relocation.h"
 #include "f4se/GameEvents.h"
 #include "f4se/GameInput.h"
+#include "f4se/NiTypes.h"
 
 class NiNode;
 class TESCameraState;
@@ -16,14 +17,14 @@ public:
 	virtual void Unk_09();
 	virtual void Unk_0A();
 	virtual void Unk_0B(void * arg);
-	virtual void Unk_0C(float * out);	// 4 floats out
-	virtual void Unk_0D(float * out);	// 3 floats out
+	virtual void GetRotation(NiQuaternion * out);
+	virtual void GetPosition(NiPoint3 * out);
 	virtual void Unk_0E();
 	virtual void Unk_0F();
 	virtual void Unk_10();
 
 	void	* unk18;	// 18
-	UInt32	unk20;		// 20
+	UInt32	stateID;	// 20
 	UInt32	pad24;		// 24
 };
 

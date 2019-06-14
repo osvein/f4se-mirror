@@ -23,7 +23,7 @@ Function StartObjectProfiling() native debugOnly
 ; Will do nothing on release console builds, and if the Papyrus:bEnableProfiling ini setting is off
 Function StopObjectProfiling() native debugOnly
 
-; F4SE additions built 2019-03-14 04:47:05.463000 UTC
+; F4SE additions built 2019-06-14 04:55:00.171000 UTC
 
 ; returns the form's name, full name if possible
 string Function GetName() native
