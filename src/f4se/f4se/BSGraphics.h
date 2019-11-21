@@ -16,7 +16,7 @@ public:
 	CRITICAL_SECTION	m_textureLock;			// 2590
 
 	MEMBER_FN_PREFIX(BSRenderManager);
-	DEFINE_MEMBER_FN(CreateBSGeometryData, BSGeometryData*, 0x01D0BC40, UInt32 * blockSize, UInt8 * vertexData, UInt64 vertexDesc, BSGeometryData::TriangleData * triData); // Creates a block with a vertex copy in the resource pool with a reference to the supplied triblock (partial deep copy)
+	DEFINE_MEMBER_FN(CreateBSGeometryData, BSGeometryData*, 0x01D0BD60, UInt32 * blockSize, UInt8 * vertexData, UInt64 vertexDesc, BSGeometryData::TriangleData * triData); // Creates a block with a vertex copy in the resource pool with a reference to the supplied triblock (partial deep copy)
 };
 STATIC_ASSERT(offsetof(BSRenderManager, m_textureLock) == 0x2590);
 
@@ -56,12 +56,12 @@ public:
 
 	MEMBER_FN_PREFIX(BSRenderTargetManager);
 	// D16605905EE44603E286262CE17CFC8383EABDDC+84
-	DEFINE_MEMBER_FN(LockTextureType, void, 0x01D32890, UInt32 type);
+	DEFINE_MEMBER_FN(LockTextureType, void, 0x01D329B0, UInt32 type);
 	// D16605905EE44603E286262CE17CFC8383EABDDC+32F
-	DEFINE_MEMBER_FN(ReleaseTextureType, void, 0x01D32920, UInt32 type);
-	DEFINE_MEMBER_FN(GetRenderData, BSRenderData *, 0x01D327F0, UInt32 type, UInt64 unk1, UInt64 unk2, UInt32 unk3); // type, 0, 1, 0
+	DEFINE_MEMBER_FN(ReleaseTextureType, void, 0x01D32A40, UInt32 type);
+	DEFINE_MEMBER_FN(GetRenderData, BSRenderData *, 0x01D32910, UInt32 type, UInt64 unk1, UInt64 unk2, UInt32 unk3); // type, 0, 1, 0
 	// D16605905EE44603E286262CE17CFC8383EABDDC+1EF
-	DEFINE_MEMBER_FN(Unk_01, void, 0x01D32840, UInt32 type, BSRenderData *, UInt8 unk3); // type, rendererData, 1
+	DEFINE_MEMBER_FN(Unk_01, void, 0x01D32960, UInt32 type, BSRenderData *, UInt8 unk3); // type, rendererData, 1
 };
 
 // 1B8

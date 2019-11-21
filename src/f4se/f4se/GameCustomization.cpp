@@ -3,25 +3,25 @@
 #include "f4se/GameObjects.h"
 
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+B5
-RelocPtr <CharacterCreation*> g_characterCreation(0x05A673F0);	// array
+RelocPtr <CharacterCreation*> g_characterCreation(0x05A67420);	// array
 // 6E6D6B9C5754133F46724CAD540B520D846299B9+AF
-RelocPtr <UInt32> g_characterIndex(0x05A67410);
+RelocPtr <UInt32> g_characterIndex(0x05A67440);
 
 // 89B16A159EF66C1743643F2F457380448C4803F0+18
 RelocPtr <BSFaceGenManager*> g_faceGenManager(0x058D0880);
 
 // E5618E306F15B8DF84D22F68B984045D0DD91165+29
-RelocPtr <TESNPC*> g_customizationDummy1(0x059DAD68);	// Either Nora or Nate's dummy actors
+RelocPtr <TESNPC*> g_customizationDummy1(0x059DAD98);	// Either Nora or Nate's dummy actors
 // E5618E306F15B8DF84D22F68B984045D0DD91165+32
-RelocPtr <TESNPC*> g_customizationDummy2(0x059DAD30);	// Either Nora or Nate's dummy actors
+RelocPtr <TESNPC*> g_customizationDummy2(0x059DAD60);	// Either Nora or Nate's dummy actors
 
-RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A5630);
-RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A4620);
-RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002AA8A0);
+RelocAddr<_CreateCharacterTintEntry> CreateCharacterTintEntry(0x002A5750);
+RelocAddr<_CopyCharacterTints> CopyCharacterTints(0x002A4740);
+RelocAddr<_ClearCharacterTints> ClearCharacterTints(0x002AA9C0);
 
-RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A47C0); // For manipulating the tint lists, their signatures aren't quite right yet
-RelocAddr <_MergeTintTextures> MergeTintTextures(0x00689A90);
-RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x00689880);
+RelocAddr <_FillTintTemplates> FillTintTemplates(0x002A48E0); // For manipulating the tint lists, their signatures aren't quite right yet
+RelocAddr <_MergeTintTextures> MergeTintTextures(0x00689BB0);
+RelocAddr <_CreateMergeTintTextures> CreateMergeTintTextures(0x006899A0);
 
 // 8290027174FC425F1C5C8233B65132B99D1A37E1+F6
 RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensityMap(0x03715370 - 0x08);
@@ -29,11 +29,11 @@ RelocPtr <tHashSet<CharacterCreation::MorphIntensity, TESNPC*>> g_morphIntensity
 // These are for creating new instances
 
 // ??_7Mask@Template@BGSCharacterTint@@6B@
-RelocAddr <uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02C6ACF8);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_MaskVtbl(0x02C6AD88);
 // ??_7Palette@Template@BGSCharacterTint@@6B@
-RelocAddr <uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02C6AD28);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_PaletteVtbl(0x02C6ADB8);
 // ??_7TextureSet@Template@BGSCharacterTint@@6B@
-RelocAddr <uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02C6AD58);
+RelocAddr <uintptr_t> s_BGSCharacterTint_Template_TextureSetVtbl(0x02C6ADE8);
 
 bool BGSCharacterTint::Entry::IsEqual(Entry * rhs)
 {

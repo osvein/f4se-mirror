@@ -1,7 +1,7 @@
 Scriptname HeadPart Extends Form Native Hidden
 
 
-; F4SE additions built 2019-06-14 04:55:00.171000 UTC
+; F4SE additions built 2019-11-21 06:16:04.370000 UTC
 int Property Type_Misc = 0 AutoReadOnly
 int Property Type_Face = 1 AutoReadOnly
 int Property Type_Eyes = 2 AutoReadOnly

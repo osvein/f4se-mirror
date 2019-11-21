@@ -1,4 +1,5 @@
 #include "Hooks_SaveLoad.h"
+#include "GameForms.h"
 
 #include "f4se_common/BranchTrampoline.h"
 #include "f4se_common/Relocation.h"
@@ -12,15 +13,17 @@
 class BGSSaveLoadGame;
 
 typedef void (* _SaveGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1);
-RelocAddr <_SaveGame> SaveGame(0x00CDE3D0);
+RelocAddr <_SaveGame> SaveGame(0x00CDE4F0);
 _SaveGame SaveGame_Original = nullptr;
 
 typedef bool (* _LoadGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt8 unk1, void * unk2);
-RelocAddr <_LoadGame> LoadGame(0x00CDE8D0);
+RelocAddr <_LoadGame> LoadGame(0x00CDE9F0);
 _LoadGame LoadGame_Original = nullptr;
 
+RelocAddr <uintptr_t> NewGame_Enter(0x012A23E0 + 0x5A);
+
 typedef void (* _DeleteSaveGame)(BGSSaveLoadGame * saveLoadMgr, const char * name, UInt32 unk1, UInt8 unk2);
-RelocAddr <_DeleteSaveGame> DeleteSaveGame(0x00CECE30);
+RelocAddr <_DeleteSaveGame> DeleteSaveGame(0x00CECF50);
 _DeleteSaveGame DeleteSaveGame_Original = nullptr;
 
 void SaveGame_Hook(BGSSaveLoadGame * saveLoadMgr, const char * saveName, UInt8 unk1)
@@ -59,6 +62,18 @@ void DeleteSaveGame_Hook(BGSSaveLoadGame * saveLoadMgr, const char * saveName, U
 	PluginManager::Dispatch_Message(0, F4SEMessagingInterface::kMessage_DeleteGame, (void*)saveName, strlen(saveName), NULL);
 	DeleteSaveGame_Original(saveLoadMgr, saveName, unk1, unk2);
 	Serialization::HandleDeleteSave(saveName);
+}
+
+class TESQuest;
+
+UInt8 TESQuest::NewGame_Hook(UInt8 * unk1, UInt8 unk2)
+{
+#ifdef _DEBUG
+	_MESSAGE("Executing TESQuest::NewGame_Hook.");
+#endif
+	UInt8 ret = CALL_MEMBER_FN(this, NewGame_Internal)(unk1, unk2);
+	PluginManager::Dispatch_Message(0, F4SEMessagingInterface::kMessage_NewGame, (void*)this, sizeof(void*), NULL);
+	return ret;
 }
 
 void Hooks_SaveLoad_Init()
@@ -118,6 +133,9 @@ void Hooks_SaveLoad_Commit()
 
 		g_branchTrampoline.Write5Branch(LoadGame.GetUIntPtr(), (uintptr_t)LoadGame_Hook);
 	}
+
+	// new game
+	g_branchTrampoline.Write5Call(NewGame_Enter, GetFnAddr(&TESQuest::NewGame_Hook));
 
 	// delete save game
 	{

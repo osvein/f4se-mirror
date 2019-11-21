@@ -38,13 +38,28 @@ struct ModInfo		// referred to by game as TESFile
 	void								* unk68;			// 068
 	char								name[MAX_PATH];		// 070
 	char								directory[MAX_PATH];	// 174
-	UInt64								unk278[0xD8/8];		// 278
+	UInt64								unk278[0xB8/8];		// 278
 	struct Dependency
 	{
 		void		* unk00;	// 00
 		const char	* name;		// 08
 		Dependency	* next;		// 10
 	};
+
+	enum RecordFlag
+	{
+		kRecordFlags_None = 0,
+		kRecordFlags_ESM = 1 << 0,
+		kRecordFlags_Active = 1 << 3,
+		kRecordFlags_Localized = 1 << 7,
+		kRecordFlags_ESL = 1 << 9
+	};
+
+	UInt32								flags;				// 330
+	UInt32							recordFlags;		// 334
+	UInt64								unk338;				// 338
+	UInt64								unk340;				// 340
+	UInt64								unk348;				// 348
 	Dependency							* depends;			// 350
 	UInt32								numRefMods;			// 358
 	UInt32								unk35C;				// 35C
@@ -57,8 +72,34 @@ struct ModInfo		// referred to by game as TESFile
 	BSString							author;				// 378
 	BSString							description;		// 388
 	// ...
+
+	// Checks if a particular formID is part of the mod
+	bool IsFormInMod(UInt32 formID) const
+	{
+		if (!IsLight() && (formID >> 24) == modIndex)
+			return true;
+		if (IsLight() && (formID >> 24) == 0xFE && ((formID & 0x00FFF000) >> 12) == lightIndex)
+			return true;
+		return false;
+	}
+
+	// Returns either a modIndex or a modIndex|lightIndex pair
+	UInt32 GetPartialIndex() const
+	{
+		return !IsLight() ? modIndex : (0xFE000 | lightIndex);
+	}
+
+	// Converts the lower bits of a FormID to a full FormID depending on plugin type
+	UInt32 GetFormID(UInt32 formLower) const
+	{
+		return !IsLight() ? UInt32(modIndex) << 24 | (formLower & 0xFFFFFF) : 0xFE000000 | (UInt32(lightIndex) << 12) | (formLower & 0xFFF);
+	}
+
+	bool IsActive() const { return modIndex != 0xFF; }
+	bool IsLight() const { return (recordFlags & kRecordFlags_ESL) == kRecordFlags_ESL; }
 };
 
+STATIC_ASSERT(offsetof(ModInfo, recordFlags) == 0x334);
 STATIC_ASSERT(offsetof(ModInfo, author) == 0x378);
 
 struct ModList
@@ -288,7 +329,7 @@ public:
 	TESWorldSpace	* worldspace;	// 28
 
 	MEMBER_FN_PREFIX(LocationData);
-	DEFINE_MEMBER_FN(ctor, LocationData*, 0x001F8780, Actor * refr);
+	DEFINE_MEMBER_FN(ctor, LocationData*, 0x001F8830, Actor * refr);
 };
 
 struct DefaultObjectEntry

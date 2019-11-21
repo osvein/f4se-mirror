@@ -55,7 +55,7 @@ public:
 		virtual ~StaticTextureIndexed();
 
 		MEMBER_FN_PREFIX(StaticTextureIndexed);
-		DEFINE_MEMBER_FN(ctor, StaticTextureIndexed*, 0x01CE67A0, UInt32 unk1, int unk2, bool unk3);
+		DEFINE_MEMBER_FN(ctor, StaticTextureIndexed*, 0x01CE68C0, UInt32 unk1, int unk2, bool unk3);
 
 		UInt64	unk48[(0x78 - 0x48) >> 3];
 	};
@@ -79,7 +79,7 @@ public:
 	BSFixedString	textures[10];	// 10
 
 	MEMBER_FN_PREFIX(BSShaderTextureSet);
-	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C3590);
+	DEFINE_MEMBER_FN(Copy, BSShaderTextureSet*, 0x004C36B0);
 };
 STATIC_ASSERT(sizeof(BSShaderTextureSet) == 0x60);
 

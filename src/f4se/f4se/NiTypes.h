@@ -184,6 +184,24 @@ public:
 	float	m_fY;	// 8
 	float	m_fZ;	// C
 
+	NiQuaternion operator*(const NiQuaternion& q2) const
+	{
+		NiQuaternion tmp;
+		tmp.m_fX = m_fX * q2.m_fW + m_fY * q2.m_fZ - m_fZ * q2.m_fY + m_fW * q2.m_fX;
+		tmp.m_fY = -m_fX * q2.m_fZ + m_fY * q2.m_fW + m_fZ * q2.m_fX + m_fW * q2.m_fY;
+		tmp.m_fZ = m_fX * q2.m_fY - m_fY * q2.m_fX + m_fZ * q2.m_fW + m_fW * q2.m_fZ;
+		tmp.m_fW = -m_fX * q2.m_fX - m_fY * q2.m_fY - m_fZ * q2.m_fZ + m_fW * q2.m_fW;
+		return tmp;
+	}
+
+	NiPoint3 operator* (const NiPoint3& pt) const
+	{
+		NiPoint3 tmp;
+		tmp.x = m_fW * m_fW*pt.x + 2 * m_fY*m_fW*pt.z - 2 * m_fZ*m_fW*pt.y + m_fX * m_fX*pt.x + 2 * m_fY*m_fX*pt.y + 2 * m_fZ*m_fX*pt.z - m_fZ * m_fZ*pt.x - m_fY * m_fY*pt.x;
+		tmp.y = 2 * m_fX*m_fY*pt.x + m_fY * m_fY*pt.y + 2 * m_fZ*m_fY*pt.z + 2 * m_fW*m_fZ*pt.x - m_fZ * m_fZ*pt.y + m_fW * m_fW*pt.y - 2 * m_fX*m_fW*pt.z - m_fX * m_fX*pt.y;
+		tmp.z = 2 * m_fX*m_fZ*pt.x + 2 * m_fY*m_fZ*pt.y + m_fZ * m_fZ*pt.z - 2 * m_fW*m_fY*pt.x - m_fY * m_fY*pt.z + 2 * m_fW*m_fX*pt.y - m_fX * m_fX*pt.z + m_fW * m_fW*pt.z;
+		return tmp;
+	}
 
 	void SetEulerAngles(float pitch, float roll, float yaw)
 	{
@@ -276,8 +294,11 @@ public:
 		float   arr[12];
 	};
 
+	NiMatrix43 operator* (const NiMatrix43& rhs) const;
 	NiMatrix43 Transpose() const;
 	NiPoint3 operator* (const NiPoint3& pt) const;
+	void GetEulerAngles(float * heading, float * attitude, float * bank);
+	void SetEulerAngles(float heading, float attitude, float bank);
 };
 
 // math.h
@@ -291,6 +312,8 @@ public:
 	NiPoint3	pos;	// 30
 	float		scale;	// 3C
 
+
+	NiTransform operator*(const NiTransform &rhs) const;
 	NiPoint3 operator*(const NiPoint3 & pt) const;
 };
 STATIC_ASSERT(sizeof(NiTransform) == 0x40);

@@ -15,11 +15,7 @@
 
 // Internal
 
-static UInt8	s_savefileIndexMap[0xFF];
-static UInt8	s_numSavefileMods = 0;
-
-static UInt16	s_savefileLightIndexMap[0xFFF];
-static UInt16	s_numSavefileLightMods = 0;
+static std::unordered_map<UInt32, UInt32> s_savedModIndexMap;
 
 void LoadModList(const F4SESerializationInterface * intfc)
 {
@@ -28,35 +24,23 @@ void LoadModList(const F4SESerializationInterface * intfc)
 	char name[0x104] = { 0 };
 	UInt16 nameLen = 0;
 
-	intfc->ReadRecordData(&s_numSavefileMods, sizeof(s_numSavefileMods));
-	for (UInt32 i = 0; i < s_numSavefileMods; i++)
+	UInt8 numSavedMods = 0;
+	intfc->ReadRecordData(&numSavedMods, sizeof(numSavedMods));
+	for (UInt32 i = 0; i < numSavedMods; i++)
 	{
 		intfc->ReadRecordData(&nameLen, sizeof(nameLen));
 		intfc->ReadRecordData(&name, nameLen);
 		name[nameLen] = 0;
 
-		UInt8 newIndex = (*g_dataHandler)->GetLoadedModIndex(name);
-		s_savefileIndexMap[i] = newIndex;
-		_MESSAGE("\t(%d -> %d)\t%s", i, newIndex, &name);
-	}
-}
-
-void SaveModList(const F4SESerializationInterface * intfc)
-{
-	UInt8 modCount = (*g_dataHandler)->modList.loadedMods.count;
-
-	intfc->OpenRecord('MODS', 0);
-	intfc->WriteRecordData(&modCount, sizeof(modCount));
-
-	_MESSAGE("Saving mod list:");
-
-	for (UInt32 i = 0; i < modCount; i++)
-	{
-		ModInfo * modInfo = (*g_dataHandler)->modList.loadedMods[i];
-		UInt16 nameLen = strlen(modInfo->name);
-		intfc->WriteRecordData(&nameLen, sizeof(nameLen));
-		intfc->WriteRecordData(modInfo->name, nameLen);
-		_MESSAGE("\t(%d)\t%s", i, &modInfo->name);
+		const ModInfo * modInfo = (*g_dataHandler)->LookupModByName(name);
+		if (modInfo) {
+			UInt32 newIndex = modInfo->GetPartialIndex();
+			s_savedModIndexMap[i] = newIndex;
+			_MESSAGE("\t(%d -> %d)\t%s", i, newIndex, &name);
+		}
+		else {
+			s_savedModIndexMap[i] = 0xFF;
+		}
 	}
 }
 
@@ -67,60 +51,139 @@ void LoadLightModList(const F4SESerializationInterface * intfc, bool fixedSize)
 	char name[0x104] = { 0 };
 	UInt16 nameLen = 0;
 
+	UInt32 modCount = 0;
 	if(fixedSize)
 	{
 		UInt16 numMods = 0;
 		intfc->ReadRecordData(&numMods, sizeof(numMods));
-
-		s_numSavefileLightMods = numMods;
+		modCount = numMods;
 	}
 	else
 	{
 		UInt8 numMods = 0;
 		intfc->ReadRecordData(&numMods, sizeof(numMods));
-
-		s_numSavefileLightMods = numMods;
+		modCount = numMods;
 	}
 
-	for (UInt32 i = 0; i < s_numSavefileLightMods; i++)
+	for (UInt32 i = 0; i < modCount; i++)
 	{
 		intfc->ReadRecordData(&nameLen, sizeof(nameLen));
 		intfc->ReadRecordData(&name, nameLen);
 		name[nameLen] = 0;
 
-		UInt16 newIndex = (*g_dataHandler)->GetLoadedLightModIndex(name);
-		s_savefileLightIndexMap[i] = newIndex;
-		_MESSAGE("\t(%d -> %d)\t%s", i, newIndex, &name);
+		const ModInfo * modInfo = (*g_dataHandler)->LookupModByName(name);
+		if (modInfo) {
+			UInt32 newIndex = modInfo->GetPartialIndex();
+			s_savedModIndexMap[0xFE000 | i] = newIndex;
+			_MESSAGE("\t(%d -> %d)\t%s", i & 0xFF, newIndex & 0xFFF, &name);
+		}
+		else {
+			s_savedModIndexMap[0xFE000 | i] = 0xFF;
+		}
 	}
 }
 
-void SaveLightModList(const F4SESerializationInterface * intfc)
+void SavePluginsList(const F4SESerializationInterface * intfc)
 {
-	UInt16 modCount = (*g_dataHandler)->modList.lightMods.count;
+	DataHandler * dhand = (*g_dataHandler);
 
-	intfc->OpenRecord('LIMD', 0);
+	struct IsActiveFunctor
+	{
+		bool Accept(ModInfo * modInfo)
+		{
+			return modInfo && modInfo->IsActive();
+		}
+	};
+	struct LoadedModVisitor
+	{
+		LoadedModVisitor(std::function<bool(ModInfo*)> func) : modInfoVisitor(func) { }
+		bool Accept(ModInfo * modInfo)
+		{
+			return modInfoVisitor(modInfo);
+		}
+		std::function<bool(ModInfo*)> modInfoVisitor;
+	};
+
+	UInt16 modCount = dhand->modList.modInfoList.CountIf(IsActiveFunctor());
+
+	intfc->OpenRecord('PLGN', 0);
 	intfc->WriteRecordData(&modCount, sizeof(modCount));
 
-	_MESSAGE("Saving light mod list:");
+	_MESSAGE("Saving plugin list:");
 
+
+	dhand->modList.modInfoList.Visit(LoadedModVisitor([&](ModInfo* modInfo)
+	{
+		if (modInfo && modInfo->IsActive())
+		{
+			intfc->WriteRecordData(&modInfo->modIndex, sizeof(modInfo->modIndex));
+			if (modInfo->modIndex == 0xFE) {
+				intfc->WriteRecordData(&modInfo->lightIndex, sizeof(modInfo->lightIndex));
+			}
+
+			UInt16 nameLen = strlen(modInfo->name);
+			intfc->WriteRecordData(&nameLen, sizeof(nameLen));
+			intfc->WriteRecordData(modInfo->name, nameLen);
+			if (modInfo->modIndex != 0xFE)
+			{
+				_MESSAGE("\t[%d]\t%s", modInfo->modIndex, &modInfo->name);
+			}
+			else
+			{
+				_MESSAGE("\t[FE:%d]\t%s", modInfo->lightIndex, &modInfo->name);
+			}
+		}
+		return true; // Continue
+	}));
+}
+
+void LoadPluginList(const F4SESerializationInterface * intfc)
+{
+	DataHandler * dhand = (*g_dataHandler);
+
+	_MESSAGE("Loading plugin list:");
+
+	char name[0x104] = { 0 };
+	UInt16 nameLen = 0;
+
+	UInt16 modCount = 0;
+	intfc->ReadRecordData(&modCount, sizeof(modCount));
 	for (UInt32 i = 0; i < modCount; i++)
 	{
-		ModInfo * modInfo = (*g_dataHandler)->modList.lightMods[i];
-		UInt16 nameLen = strlen(modInfo->name);
-		intfc->WriteRecordData(&nameLen, sizeof(nameLen));
-		intfc->WriteRecordData(modInfo->name, nameLen);
-		_MESSAGE("\t(%d)\t%s", i, &modInfo->name);
+		UInt8 modIndex = 0xFF;
+		UInt16 lightModIndex = 0xFFFF;
+		intfc->ReadRecordData(&modIndex, sizeof(modIndex));
+		if (modIndex == 0xFE) {
+			intfc->ReadRecordData(&lightModIndex, sizeof(lightModIndex));
+		}
+
+		intfc->ReadRecordData(&nameLen, sizeof(nameLen));
+		intfc->ReadRecordData(&name, nameLen);
+		name[nameLen] = 0;
+
+		UInt32 newIndex = 0xFF;
+		UInt32 oldIndex = modIndex == 0xFE ? (0xFE000 | lightModIndex) : modIndex;
+
+		const ModInfo * modInfo = dhand->LookupModByName(name);
+		if (modInfo) {
+			newIndex = modInfo->GetPartialIndex();
+		}
+
+		s_savedModIndexMap[oldIndex] = newIndex;
+
+		_MESSAGE("\t(%d -> %d)\t%s", oldIndex, newIndex, name);
 	}
 }
 
-UInt8 ResolveModIndex(UInt8 modIndex)
+UInt32 ResolveModIndex(UInt32 modIndex)
 {
-	return (modIndex < s_numSavefileMods) ? s_savefileIndexMap[modIndex] : 0xFF;
-}
+	auto it = s_savedModIndexMap.find(modIndex);
+	if (it != s_savedModIndexMap.end())
+	{
+		return it->second;
+	}
 
-UInt16 ResolveLightModIndex(UInt16 modIndex)
-{
-	return (modIndex < s_numSavefileLightMods) ? s_savefileLightIndexMap[modIndex] : 0xFFFF;
+	return 0xFF;
 }
 
 //// Callbacks
@@ -153,8 +216,7 @@ void Core_SaveCallback(const F4SESerializationInterface * intfc)
 {
 	using namespace Serialization;
 
-	SaveModList(intfc);
-	SaveLightModList(intfc);
+	SavePluginsList(intfc);
 
 	_MESSAGE("Saving key input event registrations...");
 	g_inputKeyEventRegs.Save(intfc, 'KEYR', InternalEventVersion::kCurrentVersion);
@@ -186,17 +248,22 @@ void Core_LoadCallback(const F4SESerializationInterface * intfc)
 	{
 		switch (type)
 		{
-		// Mod list
+		// Plugins list
+		case 'PLGN':
+			LoadPluginList(intfc);
+			break;
+
+		// Mod list (DEPRECATED)
 		case 'MODS':
 			LoadModList(intfc);
 			break;
 
-		// Light Mod list (legacy)
+		// Light Mod list (legacy) (DEPRECATED)
 		case 'LMOD':
 			LoadLightModList(intfc, false);
 			break;
 
-		// Light mod list (16-bit size)
+		// Light mod list (16-bit size) (DEPRECATED)
 		case 'LIMD':
 			LoadLightModList(intfc, true);
 			break;

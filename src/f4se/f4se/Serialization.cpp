@@ -276,32 +276,31 @@ namespace Serialization
 
 	bool ResolveFormId(UInt32 formId, UInt32 * formIdOut)
 	{
-		UInt8	modID = formId >> 24;
+		UInt32	modID = formId >> 24;
 
 		if (modID == 0xFF)
 		{
 			*formIdOut = formId;
 			return true;
 		}
-		else if(modID == 0xFE)
-		{
-			UInt16	modLightID = (formId & 0x00FFF000) >> 12;
-			UInt32 lightIndex = (UInt32)ResolveLightModIndex(modLightID);
-			if(lightIndex == 0xFFFF)
-				return false;
 
-			*formIdOut = (formId & 0xFF000FFF) | (lightIndex << 12);
-			return true;
+		if (modID == 0xFE)
+		{
+			modID = formId >> 12;
 		}
 
-		UInt8	loadedModID = ResolveModIndex(modID);
-
-		if (loadedModID == 0xFF) 
-			return false;
-
-		// fixup ID, success
-		*formIdOut = (formId & 0x00FFFFFF) | (((UInt32)loadedModID) << 24);
-		return true;
+		UInt32	loadedModID = ResolveModIndex(modID);
+		if (loadedModID < 0xFF)
+		{
+			*formIdOut = (formId & 0x00FFFFFF) | (((UInt32)loadedModID) << 24);
+			return true;
+		}
+		else if (loadedModID > 0xFF)
+		{
+			*formIdOut = (loadedModID << 12) | (formId & 0x00000FFF);
+			return true;
+		}
+		return false;
 	}
 
 	bool ResolveHandle(UInt64 handle, UInt64 * handleOut)
@@ -313,25 +312,24 @@ namespace Serialization
 			*handleOut = handle;
 			return true;
 		}
-		else if(modID == 0xFE)
-		{
-			UInt16	modLightID = (handle & 0x00FFF000) >> 12;
-			UInt32 lightIndex = (UInt32)ResolveLightModIndex(modLightID);
-			if(lightIndex == 0xFFFF)
-				return false;
 
-			*handleOut = (handle & 0xFFFFFFFFFF000FFF) | (lightIndex << 12);
-			return true;
+		if (modID == 0xFE)
+		{
+			modID = (handle >> 12) & 0xFFFFF;
 		}
 
-		UInt8	loadedModID = ResolveModIndex(modID);
-
-		if (loadedModID == 0xFF) 
-			return false;
-
-		// fixup ID, success
-		*handleOut = (handle & 0xFFFFFFFF00FFFFFF) | (((UInt64)loadedModID) << 24);
-		return true;
+		UInt64	loadedModID = (UInt64)ResolveModIndex(modID);
+		if (loadedModID < 0xFF)
+		{
+			*handleOut = (handle & 0xFFFFFFFF00FFFFFF) | (((UInt64)loadedModID) << 24);
+			return true;
+		}
+		else if (loadedModID > 0xFF)
+		{
+			*handleOut = (handle & 0xFFFFFFFF00000FFF) | (loadedModID << 12);
+			return true;
+		}
+		return false;
 	}
 
 	// internal event handlers

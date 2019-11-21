@@ -4,7 +4,7 @@
 RelocPtr <DataHandler*> g_dataHandler(0x058CF080);
 
 // 5ED90DCE1A1D1EDBCC888F3EA1234E23E307DD26+6
-RelocPtr <bool> g_isGameDataReady(0x05A589E4);
+RelocPtr <bool> g_isGameDataReady(0x05A58A14);
 
 // 637A4CF3B8D5BEB4F483234F10F54E7595CA465F+A49
 RelocPtr <DefaultObjectMap*> g_defaultObjectMap(0x058D36D0);
@@ -13,7 +13,7 @@ RelocPtr <DefaultObjectMap*> g_defaultObjectMap(0x058D36D0);
 RelocPtr <BSReadWriteLock> g_defaultObjectMapLock(0x058D4138);
 
 // C449692A90CCF8E972B00FE2979EF8ADEED6925A+3D
-RelocPtr <FavoritesManager*> g_favoritesManager(0x05A5FC60);
+RelocPtr <FavoritesManager*> g_favoritesManager(0x05A5FC90);
 
 class LoadedModFinder
 {
