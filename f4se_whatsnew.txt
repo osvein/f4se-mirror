@@ -1,3 +1,6 @@
+0.6.19
+- fix serialization of light mod list
+
 0.6.18
 - support for runtime 1.10.162
 - send kMessage_NewGame on new game (thanks to HLP for porting from skse64)

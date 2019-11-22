@@ -4,8 +4,8 @@
 // these have to be macros so they can be used in the .rc
 #define F4SE_VERSION_INTEGER		0
 #define F4SE_VERSION_INTEGER_MINOR	6
-#define F4SE_VERSION_INTEGER_BETA	18
-#define F4SE_VERSION_VERSTRING		"0, 0, 6, 18"
+#define F4SE_VERSION_INTEGER_BETA	19
+#define F4SE_VERSION_VERSTRING		"0, 0, 6, 19"
 #define F4SE_VERSION_PADDEDSTRING	"0018"
 #define F4SE_VERSION_RELEASEIDX		21
 
@@ -72,6 +72,6 @@
 // information about the state of the game at the time of release
 #define F4SE_TARGETING_BETA_VERSION	0
 #define CURRENT_RELEASE_RUNTIME		RUNTIME_VERSION_1_10_162
-#define CURRENT_RELEASE_F4SE_STR	"0.6.18"
+#define CURRENT_RELEASE_F4SE_STR	"0.6.19"
 
 #endif /* __F4SE_VERSION_H__ */
