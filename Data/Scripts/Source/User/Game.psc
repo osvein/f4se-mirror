@@ -379,7 +379,7 @@ bool Function UsingGamepad() native global
 ; Issue a warning to the script log and warning system
 Function Warning(string asMessage) native global betaOnly
 
-; F4SE additions built 2019-11-21 06:16:04.370000 UTC
+; F4SE additions built 2019-12-05 07:14:07.082000 UTC
 ; Returns the current console ref
 ObjectReference Function GetCurrentConsoleRef() native global
 
