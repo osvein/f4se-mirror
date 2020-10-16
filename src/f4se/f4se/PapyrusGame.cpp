@@ -49,7 +49,7 @@ namespace papyrusGame
 	VMArray<PluginInfo> GetInstalledLightPlugins(StaticFunctionTag * base)
 	{
 		VMArray<PluginInfo> result;
-		UInt8 modCount = (*g_dataHandler)->modList.lightMods.count;
+		UInt32 modCount = (*g_dataHandler)->modList.lightMods.count;
 		for (UInt32 i = 0; i < modCount; i++)
 		{
 			ModInfo * modInfo = (*g_dataHandler)->modList.lightMods[i];
